@@ -2,7 +2,8 @@
 #include <limits>
 #include <optional>
 
-#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
 
 #include <uniassert/uniassert.h>
@@ -18,8 +19,8 @@
 #include <QImage>
 #include <QImageReader>
 #include <QPushButton>
-//#include <QRandomGenerator>
-//#include <QSettings>
+// #include <QRandomGenerator>
+// #include <QSettings>
 #include <QSplashScreen>
 #include <QStandardPaths>
 #include <QVariant>
@@ -45,4 +46,3 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QUrl>*/
-
