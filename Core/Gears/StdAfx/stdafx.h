@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QImage>
 #include <QImageReader>
@@ -33,6 +34,8 @@
 #include <QtCore/private/qandroidextras_p.h>
 #include <jni.h>
 #endif
+
+#include <UI/FrameWidgets/DefaultFrameWidget.h>
 
 /*#include <QOpenGLBuffer>
 #include <QOpenGLFramebufferObject>

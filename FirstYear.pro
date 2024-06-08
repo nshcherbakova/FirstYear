@@ -20,16 +20,23 @@ PRECOMPILED_HEADER = Core/Gears/StdAfx/stdafx.h
 
 SOURCES += \
     Core/Gears/StdAfx/stdafx.cpp \
+    Core/Project/Project.cpp \
     UI/FrameWidgets/DefaultFrameWidget.cpp \
+    UI/FrameWidgets/PhotoWidget.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Core/Gears/StdAfx/stdafx.h \
+    Core/Project/Project.h \
     UI/FrameWidgets/DefaultFrameWidget.h \
+    UI/FrameWidgets/PhotoWidget.h \
     mainwindow.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resource.qrc

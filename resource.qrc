@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images/frame">
+        <file alias="month_stub">resources/Images/month_image_stub.jpg</file>
+    </qresource>
+</RCC>

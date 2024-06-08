@@ -3,10 +3,7 @@
 #define FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
 #include <QWidget>
 
-class QGridLayout;
-
 namespace FirstYear::UI {
-class PhotoWidget;
 class DefaultFrameWidget final : public QWidget {
   Q_OBJECT
 public:
@@ -19,12 +16,11 @@ signals:
 
 public slots:
 
-private:
-  void InitPhotos();
+private: // QWidget
+  virtual void paintEvent(QPaintEvent *event) override final;
 
 private:
-  QGridLayout *layout_;
-  std::vector<PhotoWidget *> photos_;
+private:
 };
 
 } // namespace FirstYear::UI
