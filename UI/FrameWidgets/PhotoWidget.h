@@ -1,6 +1,7 @@
 #pragma once
 #ifndef FIRSTYEAR_UI_PHOTO_WIDGET_H
 #define FIRSTYEAR_UI_PHOTO_WIDGET_H
+#include <QLabel>
 #include <QPixmap>
 #include <QWidget>
 
@@ -12,7 +13,7 @@ public:
   PhotoWidget &operator=(const PhotoWidget &) = delete;
 
 public:
-  void setImage(QImage image);
+  void setImage(QPixmap image);
   void setText(QString text);
 
 signals:
@@ -27,6 +28,8 @@ private:
 private:
   QPixmap image_;
   QString text_;
+  QLabel image_widget_;
+  QLabel text_widget_;
 };
 
 } // namespace FirstYear::UI

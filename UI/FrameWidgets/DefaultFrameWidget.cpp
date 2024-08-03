@@ -29,7 +29,8 @@ void DefaultFrameWidget::InitPhotos() {
   for (size_t i = 0; i < photos_.size(); i++) {
     auto &photo = photos_[i];
     photo = new PhotoWidget(*this);
-    photo->setText(QString("%1").arg(i));
+    photo->setText(QString("%1 month").arg(i));
+    photo->setImage(QPixmap(":images/frame/month_stub"));
     photo->show();
 
     layout_->addWidget(photo, row, column);

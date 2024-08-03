@@ -19,6 +19,7 @@
 #include <QHBoxLayout>
 #include <QImage>
 #include <QImageReader>
+#include <QPixmap>
 #include <QPushButton>
 // #include <QRandomGenerator>
 // #include <QSettings>

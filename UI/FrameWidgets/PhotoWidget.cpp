@@ -4,25 +4,17 @@
 namespace FirstYear::UI {
 
 PhotoWidget::PhotoWidget(QWidget &parent)
-    : QWidget(&parent), image_(":images/frame/month_stub") {
+    : QWidget(&parent), image_widget_(this), text_widget_(this) {
 
   setContentsMargins(0, 0, 0, 0);
-  auto palette = QWidget::palette();
-  palette.setColor(QPalette::Window, Qt::red);
-  setPalette(palette);
-
-  setMinimumSize({100, 100});
-  update();
+  setMinimumSize({100, 120});
+  image_widget_.setGeometry({0, 0, 100, 100});
+  text_widget_.setGeometry({0, 100, 100, 20});
+  text_widget_.setAlignment(Qt::AlignCenter);
 }
-/*
-void PhotoWidget::paintEvent(QPaintEvent *) {
-  QPainter painter(this);
 
-  // Draw background
-}*/
-
-void PhotoWidget::setImage(QImage image) {
-  // image_ = image;
+void PhotoWidget::setImage(QPixmap image) {
+  image_ = image;
   update();
 }
 
@@ -33,14 +25,12 @@ void PhotoWidget::setText(QString text) {
 
 void PhotoWidget::update() {
   if (!image_.isNull()) {
-    // setImage(image_);
-
-    auto label = new QLabel(this);
-    label->setPixmap(image_);
+    image_ = image_.scaledToWidth(100);
+    image_widget_.setPixmap(image_);
   }
+
   if (!text_.isNull()) {
-    auto label = new QLabel(this);
-    label->setText(text_);
+    text_widget_.setText(text_);
   }
 
   // Draw background
