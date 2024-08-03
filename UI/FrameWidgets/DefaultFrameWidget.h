@@ -21,6 +21,7 @@ public slots:
 
 private:
   void InitPhotos();
+  QString OpenFile();
 
 private:
   QGridLayout *layout_;

@@ -3,6 +3,7 @@
 #define FIRSTYEAR_UI_PHOTO_WIDGET_H
 #include <QLabel>
 #include <QPixmap>
+#include <QPushButton>
 #include <QWidget>
 
 namespace FirstYear::UI {
@@ -17,6 +18,7 @@ public:
   void setText(QString text);
 
 signals:
+  void SignalImagePressed();
 
 public slots:
 
@@ -28,7 +30,7 @@ private:
 private:
   QPixmap image_;
   QString text_;
-  QLabel image_widget_;
+  QPushButton image_widget_;
   QLabel text_widget_;
 };
 

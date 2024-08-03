@@ -17,6 +17,7 @@
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QImage>
 #include <QImageReader>
 #include <QPixmap>

@@ -4,6 +4,11 @@
 
 namespace FirstYear::UI {
 
+static const char *c_open_image_str = "Open Image";
+static const char *c_file_types_str = "Image Files (*.png *.jpg *.jpeg *.bmp)";
+static const QStringList c_mime_type_filters({"image/jpeg", "image/pjpeg",
+                                              "image/png", "image/bmp"});
+
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent)
     : QWidget(&parent), layout_(new QGridLayout()) {
 
@@ -31,6 +36,11 @@ void DefaultFrameWidget::InitPhotos() {
     photo = new PhotoWidget(*this);
     photo->setText(QString("%1 month").arg(i));
     photo->setImage(QPixmap(":images/frame/month_stub"));
+    connect(photo, &PhotoWidget::SignalImagePressed, this, [&] {
+      auto file = this->OpenFile();
+      QPixmap picture(file);
+      photo->setImage(picture);
+    });
     photo->show();
 
     layout_->addWidget(photo, row, column);
@@ -47,6 +57,34 @@ void DefaultFrameWidget::InitPhotos() {
   setLayout(layout_);
 }
 
+QString DefaultFrameWidget::OpenFile() {
+  QString image_file_name;
+  QString path = image_file_name;
+  /*  if (path.isEmpty()) {
+        const QSettings settings(QSettings::Scope::UserScope);
+        path = settings.value(c_last_opend_dir).toString();
+    }*/
+
+  QFileDialog dialog(this, c_open_image_str, path, c_file_types_str);
+
+  dialog.setMimeTypeFilters(c_mime_type_filters);
+  dialog.setFileMode(QFileDialog::ExistingFile);
+
+  QStringList file_names;
+  if (dialog.exec()) {
+    file_names = dialog.selectedFiles();
+  }
+
+  if (!file_names.isEmpty()) {
+    image_file_name = file_names.front();
+
+    ///   QSettings settings(QSettings::Scope::UserScope);
+    //   settings.setValue(c_last_opend_dir,
+    //                     QFileInfo(image_file_name_).dir().path());
+  }
+
+  return image_file_name;
+}
 /*
 void DefaultFrameWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
