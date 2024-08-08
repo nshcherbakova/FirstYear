@@ -2,15 +2,14 @@
 #ifndef FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
 #define FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
 #include <QWidget>
-
-class QGridLayout;
+#include <Types.h>
 
 namespace FirstYear::UI {
-class PhotoWidget;
+
 class DefaultFrameWidget final : public QWidget {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget(QWidget &parent);
+  explicit DefaultFrameWidget(QWidget &parent, const Core::ProjectPtr &project);
   DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
 
 public: // IWidget
@@ -20,7 +19,7 @@ signals:
 public slots:
 
 private:
-  void InitPhotos();
+  void InitPhotos(const Core::ProjectPtr &project);
   QString OpenFile();
 
 private:

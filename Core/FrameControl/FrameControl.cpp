@@ -1,26 +1,41 @@
-#include "DefaultFrameWidget.h"
+
+#include "FrameControl.h"
+#include <Core/Project/FileSystemProjectLoader.h>
+#include <Core/Project/FileSystemProjectWriter.h>
+#include <Core/Project/Project.h>
 #include <stdafx.h>
 
-namespace FirstYear::UI {
+constexpr const char *DEF_PROGECT_NAME = "Frame";
+namespace FirstYear::Core {
 
-DefaultFrameWidget::DefaultFrameWidget(QWidget &parent) : QWidget(&parent) {
+FrameControl::FrameControl() {}
 
-  setContentsMargins(0, 0, 0, 0);
-  setGeometry(parent.geometry());
-  setAutoFillBackground(true);
-  auto palette = QWidget::palette();
-  // palette.setColor(QPalette::Window, c_widget_background_color);
-  setPalette(palette);
+ProjectPtr FrameControl::LoadProject() {
+  if (auto name = LastProjectName(); !name.isEmpty()) {
+    LoadProject(name);
+  }
+  if (!current_project_) {
+    CreateNewProject();
+  }
 
-  // spdlog::info("FiltersWidget UI created");
-
-  setEnabled(false);
+  return current_project_;
 }
 
-void DefaultFrameWidget::paintEvent(QPaintEvent *) {
-  QPainter painter(this);
-
-  // Draw background
+void FrameControl::SaveProject() {
+  FileSystemProjectWriter::Write(current_project_);
 }
 
-} // namespace FirstYear::UI
+void FrameControl::LoadProject(QString name) {
+  current_project_ = FileSystemProjectLoader::Load(name);
+}
+
+ProjectPtr FrameControl::CurrentProject() { return current_project_; }
+
+QString FrameControl::LastProjectName() const { return DEF_PROGECT_NAME; }
+
+void FrameControl::CreateNewProject() {
+  current_project_ = std::make_shared<Project>();
+  current_project_->monthes_.resize(12);
+}
+
+} // namespace FirstYear::Core

@@ -9,7 +9,8 @@ static const char *c_file_types_str = "Image Files (*.png *.jpg *.jpeg *.bmp)";
 static const QStringList c_mime_type_filters({"image/jpeg", "image/pjpeg",
                                               "image/png", "image/bmp"});
 
-DefaultFrameWidget::DefaultFrameWidget(QWidget &parent)
+DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
+                                       const Core::ProjectPtr &project)
     : QWidget(&parent), layout_(new QGridLayout()) {
 
   setContentsMargins(0, 0, 0, 0);
@@ -19,12 +20,12 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent)
   // palette.setColor(QPalette::Window, Qt::red);
   setPalette(palette);
 
-  InitPhotos();
+  InitPhotos(project);
 
   spdlog::info("DefaultFrameWidget UI created");
 }
 
-void DefaultFrameWidget::InitPhotos() {
+void DefaultFrameWidget::InitPhotos(const Core::ProjectPtr &project) {
 
   layout_->setSizeConstraint(QLayout::SetFixedSize);
   photos_.resize(12);
@@ -32,18 +33,28 @@ void DefaultFrameWidget::InitPhotos() {
   int row = 0;
   int column = 0;
   for (size_t i = 0; i < photos_.size(); i++) {
-    auto &photo = photos_[i];
-    photo = new PhotoWidget(*this);
-    photo->setText(QString("%1 month").arg(i));
-    photo->setImage(QPixmap(":images/frame/month_stub"));
-    connect(photo, &PhotoWidget::SignalImagePressed, this, [&] {
+    auto &photo_widget = photos_[i];
+    photo_widget = new PhotoWidget(*this);
+    photo_widget->setText(QString("%1 month").arg(i));
+
+    if (project->monthes_[i].text)
+      photo_widget->setImage(*project->monthes_[i].text);
+    else
+      photo_widget->setImage(QPixmap(":images/frame/month_stub"));
+
+    if (project->monthes_[i].photo)
+      photo_widget->setImage(*project->monthes_[i].photo);
+    else
+      photo_widget->setImage(QPixmap(":images/frame/month_stub"));
+
+    connect(photo_widget, &PhotoWidget::SignalImagePressed, this, [&] {
       auto file = this->OpenFile();
       QPixmap picture(file);
-      photo->setImage(picture);
+      photo_widget->setImage(picture);
     });
-    photo->show();
+    photo_widget->show();
 
-    layout_->addWidget(photo, row, column);
+    layout_->addWidget(photo_widget, row, column);
     if (column == 3) {
       column = 0;
       row++;

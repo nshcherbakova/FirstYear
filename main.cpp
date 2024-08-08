@@ -46,7 +46,11 @@ int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
   QCoreApplication::setOrganizationName(c_org_str);
   QCoreApplication::setApplicationName(c_app_str);
-  MainWindow w;
+
+  FirstYear::Core::FrameControl frame_control;
+  auto project = frame_control.LoadProject();
+
+  MainWindow w(project);
   w.show();
 
   auto res = a.exec();

@@ -19,7 +19,10 @@ INCLUDEPATH +=$$PROJECT_PATH/Core/Gears/StdAfx/ \
 PRECOMPILED_HEADER = Core/Gears/StdAfx/stdafx.h
 
 SOURCES += \
+    Core/FrameControl/FrameControl.cpp \
     Core/Gears/StdAfx/stdafx.cpp \
+    Core/Project/FileSystemProjectLoader.cpp \
+    Core/Project/FileSystemProjectWriter.cpp \
     Core/Project/Project.cpp \
     UI/FrameWidgets/DefaultFrameWidget.cpp \
     UI/FrameWidgets/PhotoWidget.cpp \
@@ -27,7 +30,11 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    Core/FrameControl/FrameControl.h \
     Core/Gears/StdAfx/stdafx.h \
+    Core/Project/FileSystemProjectLoader.h \
+    Core/Project/FileSystemProjectWriter.h \
+    Core/Project/IProjecLoader.h \
     Core/Project/Project.h \
     UI/FrameWidgets/DefaultFrameWidget.h \
     UI/FrameWidgets/PhotoWidget.h \

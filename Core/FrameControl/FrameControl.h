@@ -1,27 +1,32 @@
 #pragma once
-#ifndef FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
-#define FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
-#include <QWidget>
+#ifndef FIRSTYEAR_FRAME_CONTROL_H
+#define FIRSTYEAR_FRAME_CONTROL_H
+#include <Types.h>
 
-namespace FirstYear::UI {
-class DefaultFrameWidget final : public QWidget {
-  Q_OBJECT
+namespace FirstYear::Core {
+class FrameControl final {
 public:
-  explicit DefaultFrameWidget(QWidget &parent);
-  DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
+  explicit FrameControl();
+  FrameControl &operator=(const FrameControl &) = delete;
+
+  ProjectPtr LoadProject();
+  void SaveProject();
+  ProjectPtr CurrentProject();
 
 public: // IWidget
         // virtual void onShow(const bool visible) override final;
-signals:
+  // signals:
 
-public slots:
-
-private: // QWidget
-  virtual void paintEvent(QPaintEvent *event) override final;
+  // public slots:
 
 private:
+  void LoadProject(QString name);
+  QString LastProjectName() const;
+  void CreateNewProject();
+
 private:
+  ProjectPtr current_project_;
 };
 
-} // namespace FirstYear::UI
-#endif // FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
+} // namespace FirstYear::Core
+#endif // FIRSTYEAR_FRAME_CONTROL_H

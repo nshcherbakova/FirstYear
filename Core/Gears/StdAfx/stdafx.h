@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <limits>
+#include <memory>
 #include <optional>
 
 #include <spdlog/sinks/rotating_file_sink.h>
@@ -37,6 +38,9 @@
 #include <jni.h>
 #endif
 
+#include <Core/FrameControl/FrameControl.h>
+#include <Core/Project/Project.h>
+#include <Types.h>
 #include <UI/FrameWidgets/DefaultFrameWidget.h>
 
 /*#include <QOpenGLBuffer>
