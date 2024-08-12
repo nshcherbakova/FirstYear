@@ -11,8 +11,8 @@ namespace FirstYear::Core {
 struct MonthItem {
   std::optional<QPixmap> photo;
   int angle = 0;
-  unsigned int scale = 1;
-  std::pair<int, int> center_coordinates = {0, 0};
+  int scale = 1;
+  QPoint center_coordinates = {0, 0};
   std::optional<QString> text;
   QString filter_id_;
 };

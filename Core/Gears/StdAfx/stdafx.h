@@ -21,6 +21,9 @@
 #include <QIcon>
 #include <QImage>
 #include <QImageReader>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
 #include <QPixmap>
 #include <QPushButton>
 // #include <QRandomGenerator>

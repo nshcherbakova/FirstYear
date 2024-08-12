@@ -1,6 +1,7 @@
 #pragma once
 #ifndef FIRSTYEAR_FRAME_CONTROL_H
 #define FIRSTYEAR_FRAME_CONTROL_H
+#include <QString>
 #include <Types.h>
 
 namespace FirstYear::Core {
