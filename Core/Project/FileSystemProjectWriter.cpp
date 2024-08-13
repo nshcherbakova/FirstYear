@@ -4,6 +4,7 @@
 
 constexpr const char *PROJECT_NAME = "FirstYear";
 constexpr const char *METADAT_NAME = "metadata";
+constexpr const char *IMAGE_FORMAT = "JPG";
 namespace FirstYear::Core {
 
 bool CheckExistingProject() {
@@ -108,6 +109,12 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project) {
 
     month_metadata_file.write(month_metadata_document.toJson());
     month_metadata_file.close();
+
+    if (project->monthes_[i].photo) {
+      if (!project->monthes_[i].photo->save(path, IMAGE_FORMAT)) {
+        spdlog::info("Error, image was not saved {0}", path.toStdString());
+      }
+    }
   }
 }
 
