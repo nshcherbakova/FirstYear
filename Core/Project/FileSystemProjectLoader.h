@@ -9,6 +9,9 @@ namespace FirstYear::Core {
 class FileSystemProjectLoader {
 public:
   static ProjectPtr Load(QString name);
+
+private:
+  static bool LoadMonth(int month_number, ProjectPtr &project);
 };
 
 } // namespace FirstYear::Core

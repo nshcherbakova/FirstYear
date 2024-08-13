@@ -8,6 +8,7 @@ namespace FirstYear::Core {
 class FileSystemProjectWriter {
 public:
   static void Write(const ProjectPtr &project);
+  static void Write(const ProjectPtr &project, int month);
 };
 
 } // namespace FirstYear::Core

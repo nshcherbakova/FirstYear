@@ -7,27 +7,30 @@ constexpr const char *METADAT_NAME = "metadata";
 constexpr const char *IMAGE_FORMAT = "JPG";
 namespace FirstYear::Core {
 
-bool CheckExistingProject() {
-  auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+QString project_path_ =
+    QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
+    PROJECT_NAME;
+QString project_metadata_path_ = project_path_ + "//" + METADAT_NAME;
+QString month_path_template_ = project_path_ + "//%1";
+QString month_metadata_path_template_ = project_path_ + "//%1//" + METADAT_NAME;
+QString month_photo_path_template_ = month_path_template_ + "//photo";
 
-  return QDir().exists(path + PROJECT_NAME);
-}
+bool CheckExistingProject() { return QDir().exists(project_path_); }
 
 bool CreateProject() {
-  auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-  QDir project_dir(path + PROJECT_NAME);
+  QDir project_dir(project_path_);
   UNI_ENSURE_RETURN(!project_dir.exists(), false);
-  QDir().mkpath(path + PROJECT_NAME);
+  QDir().mkpath(project_path_);
 
-  QFile projetct_metadata(path + PROJECT_NAME + "//" + METADAT_NAME);
+  QFile projetct_metadata(project_path_ + "//" + METADAT_NAME);
   if (!projetct_metadata.open(QIODevice::WriteOnly)) {
     spdlog::error("Error while creating file {0}",
                   projetct_metadata.fileName().toStdString());
     return false;
   }
 
-  for (int i = 1; i <= 12; i++) {
-    QString month_path = path + PROJECT_NAME + "//" + QString::number(i);
+  for (int i = 0; i < 12; i++) {
+    QString month_path = project_path_ + "//" + QString::number(i);
     QDir().mkpath(month_path);
 
     QFile month_metadata(month_path + "//" + METADAT_NAME);
@@ -40,26 +43,6 @@ bool CreateProject() {
   return true;
 }
 
-/*
-struct MonthItem {
-  std::optional<QPixmap> photo;
-  int angle = 0;
-  unsigned int scale = 1;
-  std::pair<int, int> center_coordinates = {0, 0};
-  std::optional<QString> text;
-  QString filter_id_;
-};
-
-class Project {
-public:
-  using MonthItems = std::vector<MonthItem>;
-
-  QString id_;
-  QString title_ = "First year";
-  QString frame_id_;
-  MonthItems monthes_;
-};
-*/
 void FileSystemProjectWriter::Write(const ProjectPtr &project) {
   UNI_ASSERT(project);
   if (!CheckExistingProject()) {
@@ -74,48 +57,53 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project) {
 
   QJsonDocument project_metadata_document(project_metadata);
 
-  const auto path =
-      QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-
-  QFile projetct_metadata_file(path + PROJECT_NAME + "//" + METADAT_NAME);
+  QFile projetct_metadata_file(project_metadata_path_);
   projetct_metadata_file.open(QIODevice::WriteOnly);
 
   projetct_metadata_file.write(project_metadata_document.toJson());
   projetct_metadata_file.close();
 
   for (int i = 0; i < 12; i++) {
-    QJsonObject month_metadata;
-    month_metadata.insert("angle", project->monthes_[i].angle);
-    month_metadata.insert("scale", project->monthes_[i].scale);
-
-    QJsonObject point;
-    point.insert("x", project->monthes_[i].center_coordinates.x());
-    point.insert("y", project->monthes_[i].center_coordinates.y());
-
-    month_metadata.insert("center_coordinates", point);
-
-    if (project->monthes_[i].text) {
-      month_metadata.insert("text", *project->monthes_[i].text);
-    }
-    month_metadata.insert("filter_id_", project->monthes_[i].filter_id_);
-
-    QJsonDocument month_metadata_document(project_metadata);
-
-    const QString month_path =
-        path + PROJECT_NAME + "//" + QString::number(i + 1);
-
-    QFile month_metadata_file(month_path + "//" + METADAT_NAME);
-    month_metadata_file.open(QIODevice::WriteOnly);
-
-    month_metadata_file.write(month_metadata_document.toJson());
-    month_metadata_file.close();
-
-    if (project->monthes_[i].photo) {
-      if (!project->monthes_[i].photo->save(path, IMAGE_FORMAT)) {
-        spdlog::info("Error, image was not saved {0}", path.toStdString());
-      }
-    }
+    Write(project, i);
   }
 }
 
+void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
+  UNI_ASSERT(project);
+  UNI_ASSERT(month >= 0 && month < 12);
+
+  QJsonObject month_metadata;
+  month_metadata.insert("angle", project->monthes_[month].angle);
+  month_metadata.insert("scale", project->monthes_[month].scale);
+
+  QJsonObject point;
+  point.insert("x", project->monthes_[month].center_coordinates.x());
+  point.insert("y", project->monthes_[month].center_coordinates.y());
+
+  month_metadata.insert("center_coordinates", point);
+
+  if (project->monthes_[month].text) {
+    month_metadata.insert("text", *project->monthes_[month].text);
+  }
+  month_metadata.insert("filter_id_", project->monthes_[month].filter_id);
+
+  QJsonDocument month_metadata_document(month_metadata);
+
+  const QString month_path = month_path_template_.arg(QString::number(month));
+
+  QFile month_metadata_file(
+      month_metadata_path_template_.arg(QString::number(month)));
+  month_metadata_file.open(QIODevice::WriteOnly);
+
+  month_metadata_file.write(month_metadata_document.toJson());
+  month_metadata_file.close();
+
+  if (project->monthes_[month].photo) {
+    if (!project->monthes_[month].photo->save(
+            month_photo_path_template_.arg(month), IMAGE_FORMAT)) {
+      spdlog::info("Error, image was not saved {0}",
+                   month_photo_path_template_.arg(month).toStdString());
+    }
+  }
+}
 } // namespace FirstYear::Core

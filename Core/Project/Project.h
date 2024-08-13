@@ -14,7 +14,7 @@ struct MonthItem {
   int scale = 1;
   QPoint center_coordinates = {0, 0};
   std::optional<QString> text;
-  QString filter_id_;
+  QString filter_id;
 };
 
 class Project {
