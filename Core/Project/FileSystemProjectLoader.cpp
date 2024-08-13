@@ -1,16 +1,6 @@
 #include "FileSystemProjectLoader.h"
+#include "Constants.h"
 #include <stdafx.h>
-
-constexpr const char *PROJECT_NAME = "FirstYear";
-constexpr const char *METADAT_NAME = "metadata";
-
-QString project_path_ =
-    QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
-    PROJECT_NAME;
-QString project_metadata_path_ = project_path_ + "//" + METADAT_NAME;
-QString month_path_template_ = project_path_ + "//%1";
-QString month_metadata_path_template_ = project_path_ + "//%1//" + METADAT_NAME;
-QString month_photo_path_template_ = month_path_template_ + "//photo";
 
 namespace FirstYear::Core {
 /*
@@ -34,8 +24,7 @@ public:
 };
 */
 bool ReadString(const QJsonObject &json, QString key, QString &value) {
-  if (const QJsonValue json_value = json[key];
-      json_value.isObject() && json_value.isString()) {
+  if (const QJsonValue json_value = json[key]; json_value.isString()) {
     value = json_value.toString();
     return true;
   }
@@ -45,7 +34,7 @@ bool ReadString(const QJsonObject &json, QString key, QString &value) {
 }
 
 bool ReadInt(const QJsonObject &json, QString key, int &value) {
-  if (const QJsonValue json_value = json[key]; json_value.isObject()) {
+  if (const QJsonValue json_value = json[key]; json_value.isDouble()) {
     value = json_value.toInt();
     return true;
   }
@@ -56,12 +45,13 @@ bool ReadInt(const QJsonObject &json, QString key, int &value) {
 
 ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
   auto project = std::make_shared<Project>();
+  project->monthes_.resize(12);
 
   QFile project_metadata_file(project_metadata_path_);
 
   if (!project_metadata_file.open(QIODevice::ReadOnly)) {
-    spdlog::error("Couldn't open file {0}.",
-                  project_metadata_path_.toStdString());
+    spdlog::info("Couldn't open file {0}.",
+                 project_metadata_path_.toStdString());
     return nullptr;
   }
 
@@ -173,7 +163,7 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     month.center_coordinates = {x, y};
   }
 
-  QPixmap photo(month_path_template_.arg(month_number));
+  QPixmap photo(month_photo_path_template_.arg(month_number));
   if (!photo.isNull()) {
     month.photo = photo;
   }

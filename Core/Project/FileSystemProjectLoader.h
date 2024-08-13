@@ -1,17 +1,18 @@
 #pragma once
 #ifndef FIRSTYEAR_CORE_FS_PROJECT_LOADER_H
 #define FIRSTYEAR_CORE_FS_PROJECT_LOADER_H
+#include "Constants.h"
 #include <QString>
 #include <Types.h>
 
 namespace FirstYear::Core {
 
-class FileSystemProjectLoader {
+class FileSystemProjectLoader : protected ProjectConstants {
 public:
-  static ProjectPtr Load(QString name);
+  ProjectPtr Load(QString name);
 
 private:
-  static bool LoadMonth(int month_number, ProjectPtr &project);
+  bool LoadMonth(int month_number, ProjectPtr &project);
 };
 
 } // namespace FirstYear::Core

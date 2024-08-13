@@ -1,28 +1,22 @@
 #include "FileSystemProjectWriter.h"
-#include "Project.h"
 #include <stdafx.h>
 
-constexpr const char *PROJECT_NAME = "FirstYear";
-constexpr const char *METADAT_NAME = "metadata";
-constexpr const char *IMAGE_FORMAT = "JPG";
 namespace FirstYear::Core {
 
-QString project_path_ =
-    QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
-    PROJECT_NAME;
-QString project_metadata_path_ = project_path_ + "//" + METADAT_NAME;
-QString month_path_template_ = project_path_ + "//%1";
-QString month_metadata_path_template_ = project_path_ + "//%1//" + METADAT_NAME;
-QString month_photo_path_template_ = month_path_template_ + "//photo";
+bool FileSystemProjectWriter::CheckExistingProject() {
+  return QDir().exists(project_path_);
+}
 
-bool CheckExistingProject() { return QDir().exists(project_path_); }
-
-bool CreateProject() {
+bool FileSystemProjectWriter::CreateProjectFiles() {
   QDir project_dir(project_path_);
   UNI_ENSURE_RETURN(!project_dir.exists(), false);
-  QDir().mkpath(project_path_);
+  if (!QDir().mkpath(project_path_)) {
+    spdlog::error("Error while creating directory {0}",
+                  project_path_.toStdString());
+    return false;
+  }
 
-  QFile projetct_metadata(project_path_ + "//" + METADAT_NAME);
+  QFile projetct_metadata(project_metadata_path_);
   if (!projetct_metadata.open(QIODevice::WriteOnly)) {
     spdlog::error("Error while creating file {0}",
                   projetct_metadata.fileName().toStdString());
@@ -30,13 +24,13 @@ bool CreateProject() {
   }
 
   for (int i = 0; i < 12; i++) {
-    QString month_path = project_path_ + "//" + QString::number(i);
+    QString month_path = month_path_template_.arg(QString::number(i));
     QDir().mkpath(month_path);
 
-    QFile month_metadata(month_path + "//" + METADAT_NAME);
+    QFile month_metadata(month_metadata_path_template_.arg(QString::number(i)));
     if (!month_metadata.open(QIODevice::WriteOnly)) {
       spdlog::error("Error while creating file {0}",
-                    projetct_metadata.fileName().toStdString());
+                    month_metadata.fileName().toStdString());
     }
   }
 
@@ -44,9 +38,10 @@ bool CreateProject() {
 }
 
 void FileSystemProjectWriter::Write(const ProjectPtr &project) {
+  spdlog::debug("Save project to {0}", project_path_.toStdString());
   UNI_ASSERT(project);
   if (!CheckExistingProject()) {
-    auto status = CreateProject();
+    auto status = CreateProjectFiles();
     UNI_ENSURE_RETURN(status);
   }
 
@@ -85,7 +80,7 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   if (project->monthes_[month].text) {
     month_metadata.insert("text", *project->monthes_[month].text);
   }
-  month_metadata.insert("filter_id_", project->monthes_[month].filter_id);
+  month_metadata.insert("filter_id", project->monthes_[month].filter_id);
 
   QJsonDocument month_metadata_document(month_metadata);
 

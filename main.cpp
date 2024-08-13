@@ -55,6 +55,7 @@ int main(int argc, char *argv[]) {
 
   auto res = a.exec();
 
+  frame_control.SaveProject();
   spdlog::info("Application closed");
 
   return res;

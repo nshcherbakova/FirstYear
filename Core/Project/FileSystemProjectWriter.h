@@ -1,14 +1,19 @@
 #pragma once
 #ifndef FIRSTYEAR_CORE_FS_PROJECT_WRITER_H
 #define FIRSTYEAR_CORE_FS_PROJECT_WRITER_H
+#include "Constants.h"
 #include <Types.h>
 
 namespace FirstYear::Core {
 
-class FileSystemProjectWriter {
+class FileSystemProjectWriter : protected ProjectConstants {
 public:
-  static void Write(const ProjectPtr &project);
-  static void Write(const ProjectPtr &project, int month);
+  void Write(const ProjectPtr &project);
+  void Write(const ProjectPtr &project, int month);
+
+private:
+  bool CheckExistingProject();
+  bool CreateProjectFiles();
 };
 
 } // namespace FirstYear::Core

@@ -32,6 +32,7 @@ SOURCES += \
 HEADERS += \
     Core/FrameControl/FrameControl.h \
     Core/Gears/StdAfx/stdafx.h \
+    Core/Project/Constants.h \
     Core/Project/FileSystemProjectLoader.h \
     Core/Project/FileSystemProjectWriter.h \
     Core/Project/IProjecLoader.h \

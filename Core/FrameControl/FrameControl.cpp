@@ -22,11 +22,11 @@ ProjectPtr FrameControl::LoadProject() {
 }
 
 void FrameControl::SaveProject() {
-  FileSystemProjectWriter::Write(current_project_);
+  FileSystemProjectWriter().Write(current_project_);
 }
 
 void FrameControl::LoadProject(QString name) {
-  current_project_ = FileSystemProjectLoader::Load(name);
+  current_project_ = FileSystemProjectLoader().Load(name);
 }
 
 ProjectPtr FrameControl::CurrentProject() { return current_project_; }

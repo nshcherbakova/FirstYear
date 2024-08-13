@@ -35,22 +35,23 @@ void DefaultFrameWidget::InitPhotos(const Core::ProjectPtr &project) {
   for (size_t i = 0; i < photos_.size(); i++) {
     auto &photo_widget = photos_[i];
     photo_widget = new PhotoWidget(*this);
-    photo_widget->setText(QString("%1 month").arg(i));
 
     if (project->monthes_[i].text)
-      photo_widget->setImage(*project->monthes_[i].text);
+      photo_widget->setText(*project->monthes_[i].text);
     else
-      photo_widget->setImage(QPixmap(":images/frame/month_stub"));
+      photo_widget->setText(QString("%1 month").arg(i));
 
     if (project->monthes_[i].photo)
       photo_widget->setImage(*project->monthes_[i].photo);
     else
       photo_widget->setImage(QPixmap(":images/frame/month_stub"));
 
-    connect(photo_widget, &PhotoWidget::SignalImagePressed, this, [&] {
+    connect(photo_widget, &PhotoWidget::SignalImagePressed, this, [&, i] {
       auto file = this->OpenFile();
       QPixmap picture(file);
       photo_widget->setImage(picture);
+      //  project->monthes_[i].photo.(QPixmap());
+      project->monthes_[i].photo = picture;
     });
     photo_widget->show();
 
