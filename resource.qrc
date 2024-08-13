@@ -1,5 +1,16 @@
 <RCC>
     <qresource prefix="/images/frame">
-        <file alias="month_stub">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_0">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_1">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_2">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_3">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_4">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_5">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_6">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_7">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_8">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_9">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_10">resources/Images/month_image_stub.jpg</file>
+        <file alias="month_stub_11">resources/Images/month_image_stub.jpg</file>
     </qresource>
 </RCC>

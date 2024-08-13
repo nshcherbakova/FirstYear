@@ -21,6 +21,7 @@ public slots:
 private:
   void InitPhotos(const Core::ProjectPtr &project);
   QString OpenFile();
+  QPixmap GetStubPhoto(int month);
 
 private:
   QGridLayout *layout_;
