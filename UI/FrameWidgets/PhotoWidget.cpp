@@ -7,7 +7,7 @@ static const char *c_image_widget_button_style_str =
     "QPushButton{ background-color: rgba(255, 255, 255, 0);}";
 
 PhotoWidget::PhotoWidget(QWidget &parent)
-    : QWidget(&parent), image_widget_(this), text_widget_(this) {
+    : QWidget(&parent), image_widget_(*this), text_widget_(this) {
 
   setContentsMargins(0, 0, 0, 0);
   setMinimumSize({100, 120});
@@ -23,19 +23,22 @@ PhotoWidget::PhotoWidget(QWidget &parent)
 
 void PhotoWidget::setImage(QPixmap image) {
   image_ = image;
-  update();
+  updateData();
 }
 
 void PhotoWidget::setText(QString text) {
   text_ = text;
-  update();
+  updateData();
 }
 
-void PhotoWidget::update() {
+void PhotoWidget::setImageParameters(double scale, QPoint offset) {
+  image_widget_.setImageParameters(scale, offset);
+  updateData();
+}
+
+void PhotoWidget::updateData() {
   if (!image_.isNull()) {
-    image_ = image_.scaledToHeight(100);
-    image_widget_.setIcon(QIcon(image_));
-    image_widget_.setIconSize(image_.rect().size());
+    image_widget_.setImage(image_);
   }
 
   if (!text_.isNull()) {

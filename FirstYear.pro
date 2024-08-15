@@ -25,6 +25,7 @@ SOURCES += \
     Core/Project/FileSystemProjectWriter.cpp \
     Core/Project/Project.cpp \
     UI/FrameWidgets/DefaultFrameWidget.cpp \
+    UI/FrameWidgets/ImageButton.cpp \
     UI/FrameWidgets/PhotoWidget.cpp \
     main.cpp \
     mainwindow.cpp
@@ -38,6 +39,7 @@ HEADERS += \
     Core/Project/IProjecLoader.h \
     Core/Project/Project.h \
     UI/FrameWidgets/DefaultFrameWidget.h \
+    UI/FrameWidgets/ImageButton.h \
     UI/FrameWidgets/PhotoWidget.h \
     mainwindow.h
 

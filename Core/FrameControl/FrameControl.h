@@ -12,6 +12,7 @@ public:
 
   ProjectPtr LoadProject();
   void SaveProject();
+  void SaveProjectMonth(int month);
   ProjectPtr CurrentProject();
 
 public: // IWidget

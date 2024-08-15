@@ -1,9 +1,9 @@
 #pragma once
 #ifndef FIRSTYEAR_UI_PHOTO_WIDGET_H
 #define FIRSTYEAR_UI_PHOTO_WIDGET_H
+#include "ImageButton.h"
 #include <QLabel>
 #include <QPixmap>
-#include <QPushButton>
 #include <QWidget>
 
 namespace FirstYear::UI {
@@ -16,7 +16,7 @@ public:
 public:
   void setImage(QPixmap image);
   void setText(QString text);
-
+  void setImageParameters(double scale, QPoint offset);
 signals:
   void SignalImagePressed();
 
@@ -25,12 +25,12 @@ public slots:
 private: // QWidget
          // virtual void paintEvent(QPaintEvent *event) override final;
 private:
-  void update();
+  void updateData();
 
 private:
   QPixmap image_;
   QString text_;
-  QPushButton image_widget_;
+  ImageButton image_widget_;
   QLabel text_widget_;
 };
 

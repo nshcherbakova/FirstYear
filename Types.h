@@ -8,7 +8,6 @@ namespace FirstYear::Core {
 class Project;
 using ProjectPtr = std::shared_ptr<Project>;
 class FrameControl;
-
 } // namespace FirstYear::Core
 
 namespace FirstYear::UI {

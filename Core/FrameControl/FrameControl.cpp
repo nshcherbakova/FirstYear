@@ -25,6 +25,10 @@ void FrameControl::SaveProject() {
   FileSystemProjectWriter().Write(current_project_);
 }
 
+void FrameControl::SaveProjectMonth(int month) {
+  FileSystemProjectWriter().Write(current_project_, month);
+}
+
 void FrameControl::LoadProject(QString name) {
   current_project_ = FileSystemProjectLoader().Load(name);
 }

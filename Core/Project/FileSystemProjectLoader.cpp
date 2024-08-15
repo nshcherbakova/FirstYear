@@ -1,5 +1,4 @@
 #include "FileSystemProjectLoader.h"
-#include "Constants.h"
 #include <stdafx.h>
 
 namespace FirstYear::Core {
@@ -43,6 +42,15 @@ bool ReadInt(const QJsonObject &json, QString key, int &value) {
   return false;
 }
 
+bool ReadDouble(const QJsonObject &json, QString key, double &value) {
+  if (const QJsonValue json_value = json[key]; json_value.isDouble()) {
+    value = json_value.toDouble();
+    return true;
+  }
+
+  spdlog::error("Error while reading a double from json.");
+  return false;
+}
 ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
   auto project = std::make_shared<Project>();
   project->monthes_.resize(12);
@@ -120,7 +128,7 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     return false;
   }
 
-  if (!ReadInt(month_json, "scale", month.scale)) {
+  if (!ReadDouble(month_json, "scale", month.scale)) {
     spdlog::error("Error while reading a {0} month photo scale from json {1}.",
                   month_number, month_metadata.toStdString());
     return false;

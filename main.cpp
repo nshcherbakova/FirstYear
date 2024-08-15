@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   FirstYear::Core::FrameControl frame_control;
   auto project = frame_control.LoadProject();
 
-  MainWindow w(project);
+  MainWindow w(frame_control);
   w.show();
 
   auto res = a.exec();

@@ -9,7 +9,7 @@ namespace FirstYear::UI {
 class DefaultFrameWidget final : public QWidget {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget(QWidget &parent, const Core::ProjectPtr &project);
+  explicit DefaultFrameWidget(QWidget &parent, Core::FrameControl &control);
   DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
 
 public: // IWidget
@@ -19,7 +19,7 @@ signals:
 public slots:
 
 private:
-  void InitPhotos(const Core::ProjectPtr &project);
+  void InitPhotos(Core::FrameControl &control);
   QString OpenFile();
   QPixmap GetStubPhoto(int month);
 

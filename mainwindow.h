@@ -8,7 +8,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  MainWindow(const FirstYear::Core::ProjectPtr &project);
+  MainWindow(FirstYear::Core::FrameControl &control);
   ~MainWindow();
 
 private:

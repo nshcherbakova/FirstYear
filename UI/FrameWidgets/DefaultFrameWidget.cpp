@@ -13,7 +13,7 @@ static const char *c_stub_month_photo_template_str =
 static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
 
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
-                                       const Core::ProjectPtr &project)
+                                       Core::FrameControl &control)
     : QWidget(&parent), layout_(new QGridLayout()) {
 
   setContentsMargins(0, 0, 0, 0);
@@ -23,7 +23,7 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
   // palette.setColor(QPalette::Window, Qt::red);
   setPalette(palette);
 
-  InitPhotos(project);
+  InitPhotos(control);
 
   spdlog::info("DefaultFrameWidget UI created");
 }
@@ -32,8 +32,9 @@ QPixmap DefaultFrameWidget::GetStubPhoto(int month) {
   return QPixmap(QString(c_stub_month_photo_template_str).arg(month));
 }
 
-void DefaultFrameWidget::InitPhotos(const Core::ProjectPtr &project) {
+void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
+  auto project = control.CurrentProject();
   layout_->setSizeConstraint(QLayout::SetFixedSize);
   photos_.resize(12);
 
@@ -48,17 +49,36 @@ void DefaultFrameWidget::InitPhotos(const Core::ProjectPtr &project) {
     else
       photo_widget->setText(QString("%1 month").arg(i));
 
+    QPixmap photo;
     if (project->monthes_[i].photo)
-      photo_widget->setImage(*project->monthes_[i].photo);
+      photo = *project->monthes_[i].photo;
     else
-      photo_widget->setImage(GetStubPhoto(i));
+      photo = GetStubPhoto(i);
 
-    connect(photo_widget, &PhotoWidget::SignalImagePressed, this, [&, i] {
-      auto file = this->OpenFile();
-      QPixmap picture(file);
-      photo_widget->setImage(picture);
-      project->monthes_[i].photo = picture;
-    });
+    QRect photo_rect = photo.rect();
+    QRect widget_rect = photo_widget->rect();
+    double k1 = photo_rect.width() / photo_rect.height();
+    double k2 = widget_rect.width() / widget_rect.height();
+    double scale = 1;
+    QPoint offset;
+    if (k1 > k2) {
+      scale = photo_rect.height() / widget_rect.height();
+      offset.setX(photo_rect.width() - widget_rect.width() * scale);
+    } else {
+      scale = photo_rect.width() / widget_rect.width();
+      offset.setY(photo_rect.height() - widget_rect.height() * scale);
+    }
+    photo_widget->setImage(photo);
+    photo_widget->setImageParameters(scale, offset);
+
+    connect(photo_widget, &PhotoWidget::SignalImagePressed, this,
+            [&, i, project] {
+              auto file = this->OpenFile();
+              QPixmap picture(file);
+              photo_widget->setImage(picture);
+              project->monthes_[i].photo = picture;
+              control.SaveProjectMonth(i);
+            });
     photo_widget->show();
 
     layout_->addWidget(photo_widget, row, column);
@@ -70,8 +90,6 @@ void DefaultFrameWidget::InitPhotos(const Core::ProjectPtr &project) {
     }
   }
 
-  //  layout_->setGeometry(geometry());
-  //   layout_->addWidget(new QLabel(":images/frame/month_stub"));
   setLayout(layout_);
 }
 
