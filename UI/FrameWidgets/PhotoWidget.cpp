@@ -21,31 +21,11 @@ PhotoWidget::PhotoWidget(QWidget &parent)
   text_widget_.setAlignment(Qt::AlignCenter);
 }
 
-void PhotoWidget::setImage(QPixmap image) {
-  image_ = image;
-  updateData();
+void PhotoWidget::setPhoto(const Photo &photo) {
+  photo_ = photo;
+  image_widget_.setPhoto(photo);
 }
 
-void PhotoWidget::setText(QString text) {
-  text_ = text;
-  updateData();
-}
-
-void PhotoWidget::setImageParameters(double scale, QPoint offset) {
-  image_widget_.setImageParameters(scale, offset);
-  updateData();
-}
-
-void PhotoWidget::updateData() {
-  if (!image_.isNull()) {
-    image_widget_.setImage(image_);
-  }
-
-  if (!text_.isNull()) {
-    text_widget_.setText(text_);
-  }
-
-  // Draw background
-}
+void PhotoWidget::setText(QString text) { text_widget_.setText(text); }
 
 } // namespace FirstYear::UI

@@ -3,8 +3,10 @@
 #define FIRSTYEAR_UI_IMAGE_BUTTON_H
 #include <QPixmap>
 #include <QPushButton>
+#include <UI/FrameWidgets/Photo.h>
 
 namespace FirstYear::UI {
+
 class ImageButton final : public QPushButton {
   Q_OBJECT
 public:
@@ -12,14 +14,11 @@ public:
   ImageButton &operator=(const ImageButton &) = delete;
 
 public:
-  void setImage(QPixmap image);
-  void setImageParameters(double scale, QPoint offset);
+  void setPhoto(const Photo &photo);
   void paintEvent(QPaintEvent *);
 
 private:
-  QPixmap image_;
-  double scale_ = 1;
-  QPoint offset_;
+  Photo photo_;
 };
 
 } // namespace FirstYear::UI

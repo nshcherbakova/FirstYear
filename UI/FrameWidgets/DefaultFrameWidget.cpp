@@ -68,14 +68,13 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
       scale = photo_rect.width() / widget_rect.width();
       offset.setY(photo_rect.height() - widget_rect.height() * scale);
     }
-    photo_widget->setImage(photo);
-    photo_widget->setImageParameters(scale, offset);
+    photo_widget->setPhoto({photo, scale, offset});
 
     connect(photo_widget, &PhotoWidget::SignalImagePressed, this,
             [&, i, project] {
               auto file = this->OpenFile();
               QPixmap picture(file);
-              photo_widget->setImage(picture);
+              photo_widget->setPhoto({photo, scale, offset});
               project->monthes_[i].photo = picture;
               control.SaveProjectMonth(i);
             });

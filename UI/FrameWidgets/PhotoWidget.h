@@ -5,8 +5,10 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QWidget>
+#include <UI/FrameWidgets/Photo.h>
 
 namespace FirstYear::UI {
+
 class PhotoWidget final : public QWidget {
   Q_OBJECT
 public:
@@ -14,22 +16,14 @@ public:
   PhotoWidget &operator=(const PhotoWidget &) = delete;
 
 public:
-  void setImage(QPixmap image);
   void setText(QString text);
-  void setImageParameters(double scale, QPoint offset);
+  void setPhoto(const Photo &photo);
+  Photo getPhoto();
 signals:
   void SignalImagePressed();
 
-public slots:
-
-private: // QWidget
-         // virtual void paintEvent(QPaintEvent *event) override final;
 private:
-  void updateData();
-
-private:
-  QPixmap image_;
-  QString text_;
+  Photo photo_;
   ImageButton image_widget_;
   QLabel text_widget_;
 };

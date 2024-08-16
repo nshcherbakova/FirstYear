@@ -1,16 +1,18 @@
-#include "ImageButton.h"
+#include "PhotoTuneWidget.h"
 #include <stdafx.h>
 
 namespace FirstYear::UI {
 
-ImageButton::ImageButton(QWidget &parent) : QPushButton(&parent) {}
+PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
 
-void ImageButton::setPhoto(const Photo &photo) {
-  photo_ = photo;
-  update();
+  setContentsMargins(0, 0, 0, 0);
 }
 
-void ImageButton::paintEvent(QPaintEvent *) {
+void PhotoTuneWidget::setPhoto(const Photo &photo) { photo_ = photo; }
+
+Photo PhotoTuneWidget::getPhoto() const { return photo_; }
+
+void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
 
   // Draw background
@@ -22,4 +24,5 @@ void ImageButton::paintEvent(QPaintEvent *) {
 
   painter.drawPixmap(dirty_rect, photo_.image, image_rect);
 }
+
 } // namespace FirstYear::UI

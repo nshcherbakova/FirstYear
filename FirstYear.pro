@@ -26,6 +26,7 @@ SOURCES += \
     Core/Project/Project.cpp \
     UI/FrameWidgets/DefaultFrameWidget.cpp \
     UI/FrameWidgets/ImageButton.cpp \
+    UI/FrameWidgets/PhotoTuneWidget.cpp \
     UI/FrameWidgets/PhotoWidget.cpp \
     main.cpp \
     mainwindow.cpp
@@ -40,6 +41,8 @@ HEADERS += \
     Core/Project/Project.h \
     UI/FrameWidgets/DefaultFrameWidget.h \
     UI/FrameWidgets/ImageButton.h \
+    UI/FrameWidgets/Photo.h \
+    UI/FrameWidgets/PhotoTuneWidget.h \
     UI/FrameWidgets/PhotoWidget.h \
     mainwindow.h
 

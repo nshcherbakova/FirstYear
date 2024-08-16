@@ -27,7 +27,7 @@
 #include <QPixmap>
 #include <QPushButton>
 // #include <QRandomGenerator>
-// #include <QSettings>
+#include <QSettings>
 #include <QSplashScreen>
 #include <QStandardPaths>
 #include <QVariant>
@@ -45,16 +45,4 @@
 #include <Core/Project/Project.h>
 #include <Types.h>
 #include <UI/FrameWidgets/DefaultFrameWidget.h>
-
-/*#include <QOpenGLBuffer>
-#include <QOpenGLFramebufferObject>
-#include <QOpenGLFunctions>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLTexture>
-#include <QOpenGLVertexArrayObject>*/
-
-/*#include <QHttpMultiPart>
-#include <QHttpPart>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QUrl>*/
+#include <UI/FrameWidgets/Photo.h>
