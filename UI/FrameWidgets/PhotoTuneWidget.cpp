@@ -18,6 +18,8 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
 
   int move_step = 10;
 
+  double rotate_step = 0.5;
+
   int button_with = 40;
   int buttom_margin = 20;
   int button_space = 10;
@@ -55,7 +57,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
     //  if(this->photo_.image.width()*this->photo_.scale +
     //  this->>photo_.offset.x() > FRAME_RIGHT)
     {
-      this->photo_.offset += {move_step, 0};
+      this->photo_.offset -= {move_step, 0};
       this->update();
     }
   });
@@ -70,7 +72,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
     //  if(this->photo_.image.width()*this->photo_.scale +
     //  this->>photo_.offset.x() > FRAME_RIGHT)
     {
-      this->photo_.offset -= {move_step, 0};
+      this->photo_.offset += {move_step, 0};
       this->update();
     }
   });
@@ -106,6 +108,22 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
       this->update();
     }
   });
+
+  auto rotate = new QPushButton(this);
+  rotate->setGeometry(geometry().width() - buttom_margin - 2 * button_with -
+                          button_space,
+                      2 * button_space + buttom_margin + 4 * button_with,
+                      button_with, button_with);
+  rotate->setText("r");
+  rotate->setContentsMargins(0, 0, 0, 0);
+  connect(rotate, &QPushButton::clicked, this, [&, rotate_step]() {
+    //  if(this->photo_.image.width()*this->photo_.scale +
+    //  this->>photo_.offset.x() > FRAME_RIGHT)
+    {
+      this->photo_.angle += rotate_step;
+      this->update();
+    }
+  });
 }
 
 void PhotoTuneWidget::setPhoto(const Photo &photo) {
@@ -135,10 +153,17 @@ void PhotoTuneWidget::paintEvent(QPaintEvent *) {
 
   // Draw background
   QRectF dirty_rect = rect().toRectF();
-  QRectF image_rect = dirty_rect;
-  image_rect.setWidth(dirty_rect.width() * photo_.scale);
-  image_rect.setHeight(dirty_rect.height() * photo_.scale);
-  image_rect.moveTo(photo_.offset);
+  QRectF image_rect = photo_.image.rect();
+  /*  image_rect.setWidth(dirty_rect.width() * photo_.scale);
+    image_rect.setHeight(dirty_rect.height() * photo_.scale);
+    image_rect.moveTo(photo_.offset);*/
+
+  QTransform tr;
+  tr.translate(photo_.offset.x(), photo_.offset.y());
+  tr.rotate(photo_.angle);
+  tr.scale(photo_.scale, photo_.scale);
+
+  painter.setTransform(tr);
 
   painter.drawPixmap(dirty_rect, photo_.image, image_rect);
 }

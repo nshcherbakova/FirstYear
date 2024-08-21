@@ -7,6 +7,7 @@ namespace FirstYear::UI {
 struct Photo {
   QPixmap image;
   double scale = 1;
+  double angle = 0;
   QPoint offset;
 };
 

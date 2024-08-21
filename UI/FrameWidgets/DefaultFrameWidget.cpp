@@ -73,7 +73,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
       scale = photo_rect.width() / widget_rect.width();
       offset.setY(photo_rect.height() - widget_rect.height() * scale);
     }
-    photo_widget->setPhoto({photo, scale, offset});
+    photo_widget->setPhoto({photo, scale, 0, offset});
 
     connect(photo_widget, &PhotoWidget::SignalImagePressed, this,
             [&, i, project, photo] {
@@ -84,7 +84,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                    control.SaveProjectMonth(i);*/
 
               //   photo_tune_widget_->setGeometry(this->geometry());
-              photo_tune_widget_->setPhoto({photo, scale, offset});
+              photo_tune_widget_->setPhoto({photo, scale, 0, offset});
               photo_tune_widget_->setEnabled(true);
               photo_tune_widget_->setVisible(true);
               photo_tune_widget_->show();
