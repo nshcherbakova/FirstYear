@@ -3,6 +3,7 @@
 #define FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
 #include <QWidget>
 #include <Types.h>
+#include <UI/FrameWidgets/PhotoTuneWidget.h>
 
 namespace FirstYear::UI {
 
@@ -26,6 +27,7 @@ private:
 private:
   QGridLayout *layout_;
   std::vector<PhotoWidget *> photos_;
+  PhotoTuneWidget *photo_tune_widget_;
 };
 
 } // namespace FirstYear::UI

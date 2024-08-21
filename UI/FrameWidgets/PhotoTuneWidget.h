@@ -19,6 +19,7 @@ public:
   Photo getPhoto() const;
 
   void paintEvent(QPaintEvent *);
+  void mouseDoubleClickEvent(QMouseEvent *event);
 
 private:
   Photo photo_;

@@ -1,4 +1,5 @@
 #include "DefaultFrameWidget.h"
+#include "PhotoTuneWidget.h"
 #include "PhotoWidget.h"
 #include <stdafx.h>
 
@@ -25,6 +26,9 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
 
   InitPhotos(control);
 
+  photo_tune_widget_ = new PhotoTuneWidget(*this->parentWidget());
+  photo_tune_widget_->hide();
+  //  photo_tune_widget_->setGeometry(parent.geometry());
   spdlog::info("DefaultFrameWidget UI created");
 }
 
@@ -35,6 +39,7 @@ QPixmap DefaultFrameWidget::GetStubPhoto(int month) {
 void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
   auto project = control.CurrentProject();
+  layout_->setGeometry(rect());
   layout_->setSizeConstraint(QLayout::SetFixedSize);
   photos_.resize(12);
 
@@ -55,8 +60,8 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
     else
       photo = GetStubPhoto(i);
 
-    QRect photo_rect = photo.rect();
-    QRect widget_rect = photo_widget->rect();
+    QRectF photo_rect = photo.rect();
+    QRectF widget_rect = photo_widget->rect();
     double k1 = photo_rect.width() / photo_rect.height();
     double k2 = widget_rect.width() / widget_rect.height();
     double scale = 1;
@@ -71,16 +76,24 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
     photo_widget->setPhoto({photo, scale, offset});
 
     connect(photo_widget, &PhotoWidget::SignalImagePressed, this,
-            [&, i, project] {
-              auto file = this->OpenFile();
-              QPixmap picture(file);
-              photo_widget->setPhoto({photo, scale, offset});
-              project->monthes_[i].photo = picture;
-              control.SaveProjectMonth(i);
+            [&, i, project, photo] {
+              /*     auto file = this->OpenFile();
+                   QPixmap picture(file);
+                   photo_widget->setPhoto({picture, scale, offset});
+                   project->monthes_[i].photo = picture;
+                   control.SaveProjectMonth(i);*/
+
+              //   photo_tune_widget_->setGeometry(this->geometry());
+              photo_tune_widget_->setPhoto({photo, scale, offset});
+              photo_tune_widget_->setEnabled(true);
+              photo_tune_widget_->setVisible(true);
+              photo_tune_widget_->show();
+              photo_tune_widget_->setVisible(true);
             });
     photo_widget->show();
 
     layout_->addWidget(photo_widget, row, column);
+
     if (column == 3) {
       column = 0;
       row++;
