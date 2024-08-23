@@ -85,10 +85,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
               //   photo_tune_widget_->setGeometry(this->geometry());
               photo_tune_widget_->setPhoto({photo, scale, 0, offset});
-              photo_tune_widget_->setEnabled(true);
-              photo_tune_widget_->setVisible(true);
               photo_tune_widget_->show();
-              photo_tune_widget_->setVisible(true);
             });
     photo_widget->show();
 

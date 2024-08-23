@@ -173,6 +173,6 @@ void PhotoTuneWidget::paintEvent(QPaintEvent *) {
 
 void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   QWidget::mouseReleaseEvent(event);
-  setVisible(false);
+  hide();
 }
 } // namespace FirstYear::UI
