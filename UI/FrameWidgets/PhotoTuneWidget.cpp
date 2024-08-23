@@ -18,7 +18,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
 
   int move_step = 10;
 
-  double rotate_step = 0.5;
+  double rotate_step = 0.1;
 
   int button_with = 40;
   int buttom_margin = 20;
@@ -154,14 +154,17 @@ void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   // Draw background
   QRectF dirty_rect = rect().toRectF();
   QRectF image_rect = photo_.image.rect();
-  /*  image_rect.setWidth(dirty_rect.width() * photo_.scale);
-    image_rect.setHeight(dirty_rect.height() * photo_.scale);
-    image_rect.moveTo(photo_.offset);*/
+  image_rect.setWidth(dirty_rect.width() * photo_.scale);
+  image_rect.setHeight(dirty_rect.height() * photo_.scale);
+  image_rect.moveTo(photo_.offset);
 
   QTransform tr;
-  tr.translate(photo_.offset.x(), photo_.offset.y());
-  tr.rotate(photo_.angle);
-  tr.scale(photo_.scale, photo_.scale);
+
+  QPointF dp = dirty_rect.center();
+
+  tr.translate(dp.x(), dp.y());
+  tr.rotate(photo_.angle, Qt::ZAxis);
+  tr.translate(-dp.x(), -dp.y());
 
   painter.setTransform(tr);
 
