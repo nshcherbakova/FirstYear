@@ -20,6 +20,13 @@ void ImageButton::paintEvent(QPaintEvent *) {
   image_rect.setHeight(dirty_rect.height() * photo_.scale);
   image_rect.moveTo(photo_.offset);
 
+  QTransform tr;
+  QPointF dp = dirty_rect.center();
+  tr.translate(dp.x(), dp.y());
+  tr.rotate(photo_.angle, Qt::ZAxis);
+  tr.translate(-dp.x(), -dp.y());
+  painter.setTransform(tr);
+
   painter.drawPixmap(dirty_rect, photo_.image, image_rect);
 }
 } // namespace FirstYear::UI

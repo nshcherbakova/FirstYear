@@ -126,7 +126,8 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   });
 }
 
-void PhotoTuneWidget::setPhoto(const Photo &photo) {
+void PhotoTuneWidget::setPhoto(int id, const Photo &photo) {
+  id_ = id;
   photo_ = photo;
   QRectF photo_rect = photo.image.rect();
   QRectF widget_rect = rect();
@@ -143,7 +144,7 @@ void PhotoTuneWidget::setPhoto(const Photo &photo) {
                        widget_rect.height() * photo_.scale);
   }
 }
-
+int PhotoTuneWidget::getPhotoId() const { return id_; }
 Photo PhotoTuneWidget::getPhoto() const { return photo_; }
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
@@ -159,13 +160,10 @@ void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   image_rect.moveTo(photo_.offset);
 
   QTransform tr;
-
   QPointF dp = dirty_rect.center();
-
   tr.translate(dp.x(), dp.y());
   tr.rotate(photo_.angle, Qt::ZAxis);
   tr.translate(-dp.x(), -dp.y());
-
   painter.setTransform(tr);
 
   painter.drawPixmap(dirty_rect, photo_.image, image_rect);
@@ -174,5 +172,6 @@ void PhotoTuneWidget::paintEvent(QPaintEvent *) {
 void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   QWidget::mouseReleaseEvent(event);
   hide();
+  emit SignalImageTuned();
 }
 } // namespace FirstYear::UI

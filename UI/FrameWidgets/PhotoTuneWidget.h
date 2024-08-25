@@ -14,14 +14,19 @@ public:
   explicit PhotoTuneWidget(QWidget &parent);
   PhotoTuneWidget &operator=(const PhotoTuneWidget &) = delete;
 
+signals:
+  void SignalImageTuned();
+
 public:
-  void setPhoto(const Photo &photo);
+  void setPhoto(int id, const Photo &photo);
   Photo getPhoto() const;
+  int getPhotoId() const;
 
   void paintEvent(QPaintEvent *);
   void mouseDoubleClickEvent(QMouseEvent *event);
 
 private:
+  int id_ = 0;
   Photo photo_;
 };
 

@@ -24,11 +24,11 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
   // palette.setColor(QPalette::Window, Qt::red);
   setPalette(palette);
 
-  InitPhotos(control);
-
   photo_tune_widget_ = new PhotoTuneWidget(*this->parentWidget());
   photo_tune_widget_->hide();
-  //  photo_tune_widget_->setGeometry(parent.geometry());
+
+  InitPhotos(control);
+
   spdlog::info("DefaultFrameWidget UI created");
 }
 
@@ -45,7 +45,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
   int row = 0;
   int column = 0;
-  for (size_t i = 0; i < photos_.size(); i++) {
+  for (int i = 0; i < photos_.size(); i++) {
     auto &photo_widget = photos_[i];
     photo_widget = new PhotoWidget(*this);
 
@@ -78,15 +78,22 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
     connect(photo_widget, &PhotoWidget::SignalImagePressed, this,
             [&, i, project, photo] {
               /*     auto file = this->OpenFile();
-                   QPixmap picture(file);
-                   photo_widget->setPhoto({picture, scale, offset});
-                   project->monthes_[i].photo = picture;
-                   control.SaveProjectMonth(i);*/
-
-              //   photo_tune_widget_->setGeometry(this->geometry());
-              photo_tune_widget_->setPhoto({photo, scale, 0, offset});
+                         QPixmap picture(file);
+                         photo_widget->setPhoto({picture, scale, offset});
+                         project->monthes_[i].photo = picture;
+                         control.SaveProjectMonth(i);*/
+              photo_tune_widget_->setPhoto(i, Photo({photo, scale, 0, offset}));
               photo_tune_widget_->show();
             });
+
+    connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
+            [&, i, photo_widget] {
+              if (photo_tune_widget_->getPhotoId() == i) {
+                const auto new_photo_data = photo_tune_widget_->getPhoto();
+                photo_widget->setPhoto(new_photo_data);
+              }
+            });
+
     photo_widget->show();
 
     layout_->addWidget(photo_widget, row, column);
