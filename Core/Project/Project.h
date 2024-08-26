@@ -8,11 +8,15 @@
 #include <vector>
 
 namespace FirstYear::Core {
-struct MonthItem {
-  std::optional<QPixmap> photo;
-  int angle = 0;
+struct PhotoData {
+  QPixmap image;
+  double angle = 0;
   double scale = 1;
-  QPoint center_coordinates = {0, 0};
+  QPoint offset;
+};
+
+struct MonthItem {
+  PhotoData photo_data;
   std::optional<QString> text;
   QString filter_id;
 };

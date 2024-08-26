@@ -21,7 +21,7 @@ PhotoWidget::PhotoWidget(QWidget &parent)
   text_widget_.setAlignment(Qt::AlignCenter);
 }
 
-void PhotoWidget::setPhoto(const Photo &photo) {
+void PhotoWidget::setPhoto(const Core::PhotoData &photo) {
   photo_ = photo;
   image_widget_.setPhoto(photo);
 }

@@ -45,52 +45,41 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
   int row = 0;
   int column = 0;
-  for (int i = 0; i < photos_.size(); i++) {
+  for (int i = 0; i < (int)photos_.size(); i++) {
+    auto &month = project->monthes_[i];
+
     auto &photo_widget = photos_[i];
     photo_widget = new PhotoWidget(*this);
 
-    if (project->monthes_[i].text)
-      photo_widget->setText(*project->monthes_[i].text);
+    if (month.text)
+      photo_widget->setText(*month.text);
     else
       photo_widget->setText(QString("%1 month").arg(i));
 
-    QPixmap photo;
-    if (project->monthes_[i].photo)
-      photo = *project->monthes_[i].photo;
-    else
-      photo = GetStubPhoto(i);
+    auto photo_data = month.photo_data;
+    if (photo_data.image.isNull())
+      photo_data.image = GetStubPhoto(i);
 
-    QRectF photo_rect = photo.rect();
-    QRectF widget_rect = photo_widget->rect();
-    double k1 = photo_rect.width() / photo_rect.height();
-    double k2 = widget_rect.width() / widget_rect.height();
-    double scale = 1;
-    QPoint offset;
-    if (k1 > k2) {
-      scale = photo_rect.height() / widget_rect.height();
-      offset.setX(photo_rect.width() - widget_rect.width() * scale);
-    } else {
-      scale = photo_rect.width() / widget_rect.width();
-      offset.setY(photo_rect.height() - widget_rect.height() * scale);
-    }
-    photo_widget->setPhoto({photo, scale, 0, offset});
+    photo_widget->setPhoto(photo_data);
 
     connect(photo_widget, &PhotoWidget::SignalImagePressed, this,
-            [&, i, project, photo] {
+            [&, i, month, photo_data] {
               /*     auto file = this->OpenFile();
                          QPixmap picture(file);
                          photo_widget->setPhoto({picture, scale, offset});
-                         project->monthes_[i].photo = picture;
+                         month.photo = picture;
                          control.SaveProjectMonth(i);*/
-              photo_tune_widget_->setPhoto(i, Photo({photo, scale, 0, offset}));
+              photo_tune_widget_->setPhoto(i, photo_data);
               photo_tune_widget_->show();
             });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
-            [&, i, photo_widget] {
+            [&, i, project, photo_widget] {
               if (photo_tune_widget_->getPhotoId() == i) {
                 const auto new_photo_data = photo_tune_widget_->getPhoto();
                 photo_widget->setPhoto(new_photo_data);
+                project->monthes_[i].photo_data = new_photo_data;
+                control.SaveProjectMonth(i);
               }
             });
 

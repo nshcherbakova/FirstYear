@@ -14,7 +14,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
 
   double zoom_step = 0.1;
   double ZOOM_MIN = 0.1;
-  double ZOOM_MAX = 3.0;
+  double ZOOM_MAX = 10.0;
 
   int move_step = 10;
 
@@ -27,9 +27,9 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   zoom_in->setGeometry(buttom_margin, buttom_margin, button_with, button_with);
   zoom_in->setText("+");
   zoom_in->setContentsMargins(0, 0, 0, 0);
-  connect(zoom_in, &QPushButton::clicked, this, [&, zoom_step, ZOOM_MIN]() {
-    if (this->photo_.scale >= ZOOM_MIN) {
-      this->photo_.scale -= zoom_step;
+  connect(zoom_in, &QPushButton::clicked, this, [&, zoom_step, ZOOM_MAX]() {
+    if (this->photo_.scale < ZOOM_MAX) {
+      this->photo_.scale += zoom_step;
       this->update();
     }
   });
@@ -40,9 +40,9 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
                         button_with);
   zoom_out->setText("-");
   zoom_out->setContentsMargins(0, 0, 0, 0);
-  connect(zoom_out, &QPushButton::clicked, this, [&, zoom_step, ZOOM_MAX]() {
-    if (this->photo_.scale < ZOOM_MAX) {
-      this->photo_.scale += zoom_step;
+  connect(zoom_out, &QPushButton::clicked, this, [&, zoom_step, ZOOM_MIN]() {
+    if (this->photo_.scale >= ZOOM_MIN) {
+      this->photo_.scale -= zoom_step;
       this->update();
     }
   });
@@ -126,7 +126,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   });
 }
 
-void PhotoTuneWidget::setPhoto(int id, const Photo &photo) {
+void PhotoTuneWidget::setPhoto(int id, const Core::PhotoData &photo) {
   id_ = id;
   photo_ = photo;
   QRectF photo_rect = photo.image.rect();
@@ -134,39 +134,45 @@ void PhotoTuneWidget::setPhoto(int id, const Photo &photo) {
   double k1 = photo_rect.width() / photo_rect.height();
   double k2 = widget_rect.width() / widget_rect.height();
 
-  photo_.offset = QPoint();
-  if (k1 > k2) {
-    photo_.scale = photo_rect.height() / widget_rect.height();
-    photo_.offset.setX(photo_rect.width() - widget_rect.width() * photo_.scale);
+  internal_scale_ = 1;
+  internal_offset_ = QPoint();
+
+  if (k1 < k2) {
+    internal_scale_ = (double)widget_rect.height() / photo_rect.height();
   } else {
-    photo_.scale = photo_rect.width() / widget_rect.width();
-    photo_.offset.setY(photo_rect.height() -
-                       widget_rect.height() * photo_.scale);
+    internal_scale_ = (double)widget_rect.width() / photo_rect.width();
   }
+
+  internal_offset_ = (QPoint(photo_rect.width() * internal_scale_,
+                             photo_rect.height() * internal_scale_) -
+                      QPoint(widget_rect.width(), widget_rect.height())) /
+                     2;
 }
 int PhotoTuneWidget::getPhotoId() const { return id_; }
-Photo PhotoTuneWidget::getPhoto() const { return photo_; }
+Core::PhotoData PhotoTuneWidget::getPhoto() const { return photo_; }
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   if (photo_.image.isNull())
     return;
 
+  QTransform tr;
+  tr.translate(-internal_offset_.x(), -internal_offset_.y());
+  tr.scale(internal_scale_, internal_scale_);
   // Draw background
   QRectF dirty_rect = rect().toRectF();
   QRectF image_rect = photo_.image.rect();
-  image_rect.setWidth(dirty_rect.width() * photo_.scale);
-  image_rect.setHeight(dirty_rect.height() * photo_.scale);
-  image_rect.moveTo(photo_.offset);
 
-  QTransform tr;
+  tr.translate(photo_.offset.x(), -photo_.offset.y());
+
   QPointF dp = dirty_rect.center();
   tr.translate(dp.x(), dp.y());
   tr.rotate(photo_.angle, Qt::ZAxis);
+  tr.scale(photo_.scale, photo_.scale);
   tr.translate(-dp.x(), -dp.y());
   painter.setTransform(tr);
 
-  painter.drawPixmap(dirty_rect, photo_.image, image_rect);
+  painter.drawPixmap(0, 0, photo_.image);
 }
 
 void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {

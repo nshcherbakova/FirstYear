@@ -2,10 +2,10 @@
 #ifndef FIRSTYEAR_UI_PHOTO_WIDGET_H
 #define FIRSTYEAR_UI_PHOTO_WIDGET_H
 #include "ImageButton.h"
+#include <Core/Project/Project.h>
 #include <QLabel>
 #include <QPixmap>
 #include <QWidget>
-#include <UI/FrameWidgets/Photo.h>
 
 namespace FirstYear::UI {
 
@@ -17,13 +17,13 @@ public:
 
 public:
   void setText(QString text);
-  void setPhoto(const Photo &photo);
-  Photo getPhoto();
+  void setPhoto(const Core::PhotoData &photo);
+  Core::PhotoData getPhoto();
 signals:
   void SignalImagePressed();
 
 private:
-  Photo photo_;
+  Core::PhotoData photo_;
   ImageButton image_widget_;
   QLabel text_widget_;
 };

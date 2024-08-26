@@ -1,9 +1,9 @@
 #pragma once
 #ifndef FIRSTYEAR_UI_IMAGE_BUTTON_H
 #define FIRSTYEAR_UI_IMAGE_BUTTON_H
+#include <Core/Project/Project.h>
 #include <QPixmap>
 #include <QPushButton>
-#include <UI/FrameWidgets/Photo.h>
 
 namespace FirstYear::UI {
 
@@ -14,11 +14,13 @@ public:
   ImageButton &operator=(const ImageButton &) = delete;
 
 public:
-  void setPhoto(const Photo &photo);
+  void setPhoto(const Core::PhotoData &photo);
   void paintEvent(QPaintEvent *);
 
 private:
-  Photo photo_;
+  Core::PhotoData photo_;
+  double internal_scale_ = 0;
+  QPoint internal_offset_;
 };
 
 } // namespace FirstYear::UI

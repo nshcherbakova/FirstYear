@@ -1,10 +1,10 @@
 #pragma once
 #ifndef FIRSTYEAR_UI_PHOTO_TUNE_WIDGET_H
 #define FIRSTYEAR_UI_PHOTO_TUNE_WIDGET_H
+#include <Core/Project/Project.h>
 #include <QLabel>
 #include <QPixmap>
 #include <QWidget>
-#include <UI/FrameWidgets/Photo.h>
 
 namespace FirstYear::UI {
 
@@ -18,8 +18,8 @@ signals:
   void SignalImageTuned();
 
 public:
-  void setPhoto(int id, const Photo &photo);
-  Photo getPhoto() const;
+  void setPhoto(int id, const Core::PhotoData &photo);
+  Core::PhotoData getPhoto() const;
   int getPhotoId() const;
 
   void paintEvent(QPaintEvent *);
@@ -27,7 +27,9 @@ public:
 
 private:
   int id_ = 0;
-  Photo photo_;
+  Core::PhotoData photo_;
+  double internal_scale_ = 0;
+  QPoint internal_offset_;
 };
 
 } // namespace FirstYear::UI

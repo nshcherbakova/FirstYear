@@ -68,14 +68,14 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   UNI_ASSERT(month >= 0 && month < 12);
 
   QJsonObject month_metadata;
-  month_metadata.insert("angle", project->monthes_[month].angle);
-  month_metadata.insert("scale", project->monthes_[month].scale);
+  month_metadata.insert("angle", project->monthes_[month].photo_data.angle);
+  month_metadata.insert("scale", project->monthes_[month].photo_data.scale);
 
   QJsonObject point;
-  point.insert("x", project->monthes_[month].center_coordinates.x());
-  point.insert("y", project->monthes_[month].center_coordinates.y());
+  point.insert("x", project->monthes_[month].photo_data.offset.x());
+  point.insert("y", project->monthes_[month].photo_data.offset.y());
 
-  month_metadata.insert("center_coordinates", point);
+  month_metadata.insert("offset", point);
 
   if (project->monthes_[month].text) {
     month_metadata.insert("text", *project->monthes_[month].text);
@@ -93,8 +93,8 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   month_metadata_file.write(month_metadata_document.toJson());
   month_metadata_file.close();
 
-  if (project->monthes_[month].photo) {
-    if (!project->monthes_[month].photo->save(
+  if (!project->monthes_[month].photo_data.image.isNull()) {
+    if (!project->monthes_[month].photo_data.image.save(
             month_photo_path_template_.arg(month), IMAGE_FORMAT)) {
       spdlog::info("Error, image was not saved {0}",
                    month_photo_path_template_.arg(month).toStdString());

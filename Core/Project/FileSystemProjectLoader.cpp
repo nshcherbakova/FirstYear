@@ -122,13 +122,13 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
 
   auto month_json = month_json_document.object();
 
-  if (!ReadInt(month_json, "angle", month.angle)) {
+  if (!ReadDouble(month_json, "angle", month.photo_data.angle)) {
     spdlog::error("Error while reading a {0} month photo angle from json {1}.",
                   month_number, month_metadata.toStdString());
     return false;
   }
 
-  if (!ReadDouble(month_json, "scale", month.scale)) {
+  if (!ReadDouble(month_json, "scale", month.photo_data.scale)) {
     spdlog::error("Error while reading a {0} month photo scale from json {1}.",
                   month_number, month_metadata.toStdString());
     return false;
@@ -151,29 +151,28 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     month.text = text;
   }
 
-  if (const auto coordinates_value = month_json["center_coordinates"];
-      coordinates_value.isObject()) {
-    const auto coordinates_object = coordinates_value.toObject();
+  if (const auto offset = month_json["offset"]; offset.isObject()) {
+    const auto offset_object = offset.toObject();
     int x = 0, y = 0;
 
-    if (!ReadInt(coordinates_object, "x", x)) {
+    if (!ReadInt(offset_object, "x", x)) {
       spdlog::error(
           "Error while reading a {0} month photo coordinate x from json {1}.",
           month_number, month_metadata.toStdString());
       return false;
     }
-    if (!ReadInt(coordinates_object, "y", y)) {
+    if (!ReadInt(offset_object, "y", y)) {
       spdlog::error(
           "Error while reading a {0} month photo coordinate x from json {1}.",
           month_number, month_metadata.toStdString());
       return false;
     }
-    month.center_coordinates = {x, y};
+    month.photo_data.offset = {x, y};
   }
 
   QPixmap photo(month_photo_path_template_.arg(month_number));
   if (!photo.isNull()) {
-    month.photo = photo;
+    month.photo_data.image = photo;
   }
   return true;
 }
