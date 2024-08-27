@@ -167,7 +167,7 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
           month_number, month_metadata.toStdString());
       return false;
     }
-    month.photo_data.offset = {x, y};
+    month.photo_data.offset = {double(x), double(y)};
   }
 
   QPixmap photo(month_photo_path_template_.arg(month_number));

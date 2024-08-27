@@ -6,7 +6,9 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
-
+#ifdef Q_OS_ANDROID
+#include <spdlog/sinks/android_sink.h>
+#endif
 #include <uniassert/uniassert.h>
 
 #include <QApplication>

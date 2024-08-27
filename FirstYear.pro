@@ -1,7 +1,9 @@
 QT       += core gui
 # QT = core gui widgets openglwidgets opengl network svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+android {
+   QT += core-private
+}
 CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -50,6 +52,8 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+
 
 RESOURCES += \
     resource.qrc

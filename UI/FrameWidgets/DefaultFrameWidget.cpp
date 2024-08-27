@@ -56,21 +56,28 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
     else
       photo_widget->setText(QString("%1 month").arg(i));
 
-    auto photo_data = month.photo_data;
-    if (photo_data.image.isNull())
-      photo_data.image = GetStubPhoto(i);
+    if (month.photo_data.image.isNull()) {
+      month.photo_data.is_stub_image = true;
+      month.photo_data.image = GetStubPhoto(i);
+    }
 
-    photo_widget->setPhoto(photo_data);
+    photo_widget->setPhoto(month.photo_data);
 
     connect(photo_widget, &PhotoWidget::SignalImagePressed, this,
-            [&, i, month, photo_data] {
-              /*     auto file = this->OpenFile();
-                         QPixmap picture(file);
-                         photo_widget->setPhoto({picture, scale, offset});
-                         month.photo = picture;
-                         control.SaveProjectMonth(i);*/
-              photo_tune_widget_->setPhoto(i, photo_data);
-              photo_tune_widget_->show();
+            [&, i, project] {
+              auto &month = project->monthes_[i];
+              if (month.photo_data.is_stub_image) {
+                auto file = this->OpenFile();
+
+                month.photo_data.image = QPixmap(file);
+                month.photo_data.is_stub_image = false;
+
+                control.SaveProjectMonth(i);
+                photo_widget->setPhoto(month.photo_data);
+              } else {
+                photo_tune_widget_->setPhoto(i, month.photo_data);
+                photo_tune_widget_->show();
+              }
             });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
@@ -80,6 +87,17 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                 photo_widget->setPhoto(new_photo_data);
                 project->monthes_[i].photo_data = new_photo_data;
                 control.SaveProjectMonth(i);
+              }
+            });
+
+    connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
+            [&, i, project] {
+              if (photo_tune_widget_->getPhotoId() == i) {
+                auto &month = project->monthes_[i];
+                auto file = this->OpenFile();
+
+                month.photo_data = {QPixmap(file), false, 0, 1, QPoint()};
+                photo_tune_widget_->setPhoto(i, month.photo_data);
               }
             });
 

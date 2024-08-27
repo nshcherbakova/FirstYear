@@ -10,9 +10,10 @@
 namespace FirstYear::Core {
 struct PhotoData {
   QPixmap image;
+  bool is_stub_image = false;
   double angle = 0;
   double scale = 1;
-  QPoint offset;
+  QPointF offset;
 };
 
 struct MonthItem {
