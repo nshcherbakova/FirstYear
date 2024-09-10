@@ -10,7 +10,10 @@ QT_BEGIN_NAMESPACE
 class QGestureEvent;
 class QPanGesture;
 class QPinchGesture;
-class QSwipeGesture;
+// class QSwipeGesture;
+class QTapGesture;
+class QTouchEvent;
+
 QT_END_NAMESPACE
 
 namespace FirstYear::UI {
@@ -39,6 +42,8 @@ private:
   bool gestureEvent(QGestureEvent *event);
   void panTriggered(QPanGesture *);
   void pinchTriggered(QPinchGesture *);
+  void tapTriggered(QTapGesture *);
+  bool toucheEvent(QTouchEvent *touch);
 
 private:
   int id_ = 0;
@@ -46,6 +51,10 @@ private:
   double internal_scale_ = 0;
   QPoint internal_offset_;
   qreal currentStepScaleFactor = 1;
+
+  bool is_gesture_moving_ = false;
+  bool is_zooming_ = false;
+  bool is_touch_movng_ = false;
 };
 
 } // namespace FirstYear::UI

@@ -74,10 +74,9 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
                 control.SaveProjectMonth(i);
                 photo_widget->setPhoto(month.photo_data);
-              } else {
-                photo_tune_widget_->setPhoto(i, month.photo_data);
-                photo_tune_widget_->show();
               }
+              photo_tune_widget_->setPhoto(i, month.photo_data);
+              photo_tune_widget_->show();
             });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,

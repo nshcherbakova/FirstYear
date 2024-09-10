@@ -1,14 +1,20 @@
 #include "PhotoTuneWidget.h"
 #include <QGestureEvent>
+#include <QTouchEvent>
 #include <stdafx.h>
 namespace FirstYear::UI {
 
 PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
 
+  setAttribute(Qt::WA_AcceptTouchEvents);
+
+  // setAttribute(Qt::WA_TransparentForMouseEvents);
+
   QList<Qt::GestureType> gestures;
 
   gestures << Qt::PanGesture;
   gestures << Qt::PinchGesture;
+  // gestures << Qt::TapGesture;
   grabGestures(gestures);
 
   auto palette = QWidget::palette();
@@ -24,7 +30,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
 
   double move_step = 10;
 
-  double rotate_step = 0.1;
+  double rotate_step = 0.5;
 
   int button_with = 40;
   int button_margin = 20;
@@ -53,73 +59,71 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
     }
   });
 
-  auto left = new QPushButton(this);
-  left->setGeometry(
-      geometry().width() - button_margin - 3 * button_with - 2 * button_space,
-      button_space + button_margin + button_with, button_with, button_with);
-  left->setText("<");
-  left->setContentsMargins(0, 0, 0, 0);
-  connect(left, &QPushButton::clicked, this, [&, move_step]() {
-    //  if(this->photo_.image.width()*this->photo_.scale +
-    //  this->>photo_.offset.x() > FRAME_RIGHT)
-    {
-      this->photo_.offset -= {move_step, 0.0};
-      this->update();
-    }
-  });
+  /* auto left = new QPushButton(this);
+   left->setGeometry(
+       geometry().width() - button_margin - 3 * button_with - 2 * button_space,
+       button_space + button_margin + button_with, button_with, button_with);
+   left->setText("<");
+   left->setContentsMargins(0, 0, 0, 0);
+   connect(left, &QPushButton::clicked, this, [&, move_step]() {
+     //  if(this->photo_.image.width()*this->photo_.scale +
+     //  this->>photo_.offset.x() > FRAME_RIGHT)
+     {
+       this->photo_.offset -= {move_step, 0.0};
+       this->update();
+     }
+   });
 
-  auto right = new QPushButton(this);
-  right->setGeometry(geometry().width() - button_margin - button_with,
-                     button_space + button_margin + button_with, button_with,
-                     button_with);
-  right->setText(">");
-  right->setContentsMargins(0, 0, 0, 0);
-  connect(right, &QPushButton::clicked, this, [&, move_step]() {
-    //  if(this->photo_.image.width()*this->photo_.scale +
-    //  this->>photo_.offset.x() > FRAME_RIGHT)
-    {
-      this->photo_.offset += {move_step, 0};
-      this->update();
-    }
-  });
+   auto right = new QPushButton(this);
+   right->setGeometry(geometry().width() - button_margin - button_with,
+                      button_space + button_margin + button_with, button_with,
+                      button_with);
+   right->setText(">");
+   right->setContentsMargins(0, 0, 0, 0);
+   connect(right, &QPushButton::clicked, this, [&, move_step]() {
+     //  if(this->photo_.image.width()*this->photo_.scale +
+     //  this->>photo_.offset.x() > FRAME_RIGHT)
+     {
+       this->photo_.offset += {move_step, 0};
+       this->update();
+     }
+   });
 
-  auto top = new QPushButton(this);
-  top->setGeometry(geometry().width() - button_margin - 2 * button_with -
-                       button_space,
-                   button_margin, button_with, button_with);
-  top->setText("^");
-  top->setContentsMargins(0, 0, 0, 0);
-  connect(top, &QPushButton::clicked, this, [&, move_step]() {
-    //  if(this->photo_.image.width()*this->photo_.scale +
-    //  this->>photo_.offset.x() > FRAME_RIGHT)
-    {
-      this->photo_.offset += {0, move_step};
-      this->update();
-    }
-  });
+   auto top = new QPushButton(this);
+   top->setGeometry(geometry().width() - button_margin - 2 * button_with -
+                        button_space,
+                    button_margin, button_with, button_with);
+   top->setText("^");
+   top->setContentsMargins(0, 0, 0, 0);
+   connect(top, &QPushButton::clicked, this, [&, move_step]() {
+     //  if(this->photo_.image.width()*this->photo_.scale +
+     //  this->>photo_.offset.x() > FRAME_RIGHT)
+     {
+       this->photo_.offset += {0, move_step};
+       this->update();
+     }
+   });
 
-  auto bottom = new QPushButton(this);
-  bottom->setGeometry(geometry().width() - button_margin - 2 * button_with -
-                          button_space,
-                      2 * button_space + button_margin + 2 * button_with,
-                      button_with, button_with);
-  bottom->setText("v");
-  bottom->setContentsMargins(0, 0, 0, 0);
+   auto bottom = new QPushButton(this);
+   bottom->setGeometry(geometry().width() - button_margin - 2 * button_with -
+                           button_space,
+                       2 * button_space + button_margin + 2 * button_with,
+                       button_with, button_with);
+   bottom->setText("v");
+   bottom->setContentsMargins(0, 0, 0, 0);
 
-  connect(bottom, &QPushButton::clicked, this, [&, move_step]() {
-    //  if(this->photo_.image.width()*this->photo_.scale +
-    //  this->>photo_.offset.x() > FRAME_RIGHT)
-    {
-      this->photo_.offset -= {0, move_step};
-      this->update();
-    }
-  });
+   connect(bottom, &QPushButton::clicked, this, [&, move_step]() {
+     //  if(this->photo_.image.width()*this->photo_.scale +
+     //  this->>photo_.offset.x() > FRAME_RIGHT)
+     {
+       this->photo_.offset -= {0, move_step};
+       this->update();
+     }
+   });*/
 
   auto rotate = new QPushButton(this);
-  rotate->setGeometry(geometry().width() - button_margin - 2 * button_with -
-                          button_space,
-                      2 * button_space + button_margin + 4 * button_with,
-                      button_with, button_with);
+  rotate->setGeometry(geometry().width() - button_margin - button_with,
+                      button_margin, button_with, button_with);
   rotate->setText("r");
   rotate->setContentsMargins(0, 0, 0, 0);
   connect(rotate, &QPushButton::clicked, this, [&, rotate_step]() {
@@ -140,6 +144,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
           &PhotoTuneWidget::SignalPhotoChanged);
 
   auto close = new QPushButton(this);
+  close->setAttribute(Qt::WA_AcceptTouchEvents, true);
   close->setGeometry(geometry().width() - 3 * button_with,
                      geometry().height() - 2 * button_with, 2 * button_with,
                      button_with);
@@ -154,13 +159,14 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
 void PhotoTuneWidget::setPhoto(int id, const Core::PhotoData &photo) {
   id_ = id;
   photo_ = photo;
+
   QRectF photo_rect = photo.image.rect();
   QRectF widget_rect = rect();
   double k1 = photo_rect.width() / photo_rect.height();
   double k2 = widget_rect.width() / widget_rect.height();
 
   internal_scale_ = 1;
-  internal_offset_ = QPoint();
+  //  internal_offset_ = QPoint();
 
   if (k1 < k2) {
     internal_scale_ = (double)widget_rect.height() / photo_rect.height();
@@ -168,14 +174,21 @@ void PhotoTuneWidget::setPhoto(int id, const Core::PhotoData &photo) {
     internal_scale_ = (double)widget_rect.width() / photo_rect.width();
   }
 
-  internal_offset_ = (QPoint(photo_rect.width() * internal_scale_,
-                             photo_rect.height() * internal_scale_) -
-                      QPoint(widget_rect.width(), widget_rect.height())) /
-                     2;
+  /* internal_offset_ = (QPoint(photo_rect.width() * internal_scale_,
+                              photo_rect.height() * internal_scale_) -
+                       QPoint(widget_rect.width(), widget_rect.height())) /
+                      2;*/
+
+  photo_.offset *= internal_scale_;
   update();
 }
 int PhotoTuneWidget::getPhotoId() const { return id_; }
-Core::PhotoData PhotoTuneWidget::getPhoto() const { return photo_; }
+Core::PhotoData PhotoTuneWidget::getPhoto() const {
+  auto photo = photo_;
+  photo.offset = photo.offset / internal_scale_;
+  // photo.scale = photo.scale/internal_scale_ ;
+  return photo;
+}
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
@@ -186,7 +199,7 @@ void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   //   painter.translate(-internal_offset_.x(), -internal_offset_.y());
   //  painter.scale(internal_scale_, internal_scale_);
   //  Draw background
-  /* QRectF dirty_rect = rect().toRectF();
+  /* QRectF di     rty_rect = rect().toRectF();
    QRectF image_rect = photo_.image.rect();
 
    tr.translate(photo_.offset.x(), -photo_.offset.y());
@@ -230,10 +243,65 @@ void PhotoTuneWidget::grabGestures(const QList<Qt::GestureType> &gestures) {
 
 //! [event handler]
 bool PhotoTuneWidget::event(QEvent *event) {
-  if (event->type() == QEvent::Gesture)
+
+  switch (event->type()) {
+  case QEvent::Gesture: {
+    // event->accept();
     return gestureEvent(static_cast<QGestureEvent *>(event));
-  return QWidget::event(event);
+  }
+  case QEvent::TouchBegin:
+  case QEvent::TouchUpdate:
+  case QEvent::TouchEnd: {
+
+    bool result = toucheEvent(static_cast<QTouchEvent *>(event));
+
+    if (!result)
+      return QWidget::event(event);
+    // for(auto& child: children())
+    {
+      //  if( qobject_cast<QAbstractButton *>(child))
+      //      if( child->event(event) && event->isAccepted())
+      //          return true;
+    }
+    return true;
+  }
+  default:
+    return QWidget::event(event);
+  }
 }
+bool PhotoTuneWidget::toucheEvent(QTouchEvent *touch) {
+
+  if (is_zooming_ || is_gesture_moving_) {
+    return false;
+  }
+  touch->accept();
+  spdlog::info("QTouchEvent {}", (long)touch);
+  const auto touchPoints = touch->points();
+  QPointF delta;
+  int count = 0;
+
+  for (const QTouchEvent::TouchPoint &touchPoint : touchPoints) {
+    switch (touchPoint.state()) {
+    case QEventPoint::Stationary:
+    case QEventPoint::Released:
+      // don't do anything if this touch point hasn't moved or has been released
+      continue;
+    default: {
+
+      delta += touchPoint.position() - touchPoint.lastPosition();
+    }
+    }
+    count += 1;
+  }
+  if (count > 0) {
+    delta /= count;
+    photo_.offset += delta;
+    update();
+    return true;
+  }
+  return false;
+}
+
 //! [event handler]
 //!
 //! [gesture event handler]
@@ -243,6 +311,8 @@ bool PhotoTuneWidget::gestureEvent(QGestureEvent *event) {
     panTriggered(static_cast<QPanGesture *>(pan));
   if (QGesture *pinch = event->gesture(Qt::PinchGesture))
     pinchTriggered(static_cast<QPinchGesture *>(pinch));
+  // if (QGesture *tap_and_hold = event->gesture(Qt::TapAndHoldGesture))
+  //    tapTriggered(static_cast<QTapGesture *>(tap_and_hold));
   return true;
 }
 //! [gesture event handler]
@@ -253,14 +323,44 @@ void PhotoTuneWidget::panTriggered(QPanGesture *gesture) {
   case Qt::GestureStarted:
   case Qt::GestureUpdated:
     setCursor(Qt::SizeAllCursor);
+    is_gesture_moving_ = true;
+    break;
+  case Qt::GestureFinished:
+  case Qt::GestureCanceled:
+    is_gesture_moving_ = false;
     break;
   default:
     setCursor(Qt::ArrowCursor);
+    is_gesture_moving_ = false;
   }
 #endif
   QPointF delta = gesture->delta();
   qCDebug(lcExample) << "panTriggered():" << gesture;
   photo_.offset += delta;
+
+  update();
+}
+
+void PhotoTuneWidget::tapTriggered(QTapGesture *gesture) {
+#ifndef QT_NO_CURSOR
+  switch (gesture->state()) {
+  case Qt::GestureStarted:
+  case Qt::GestureUpdated:
+    setCursor(Qt::SizeAllCursor);
+    is_zooming_ = true;
+    break;
+  case Qt::GestureFinished:
+  case Qt::GestureCanceled:
+    is_zooming_ = false;
+    break;
+  default:
+    setCursor(Qt::ArrowCursor);
+    is_zooming_ = false;
+  }
+#endif
+  QPointF position = gesture->position();
+  qCDebug(lcExample) << "tapAndHoldTriggered():" << gesture;
+  photo_.offset += position;
 
   update();
 }
@@ -286,4 +386,5 @@ void PhotoTuneWidget::pinchTriggered(QPinchGesture *gesture) {
   }
   update();
 }
+
 } // namespace FirstYear::UI

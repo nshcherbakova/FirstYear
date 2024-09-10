@@ -93,6 +93,8 @@ ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
       return nullptr;
     }
   }
+
+  spdlog::info("Project loaded {0}.", project_path_.toStdString());
   return project;
 }
 /*
@@ -153,15 +155,15 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
 
   if (const auto offset = month_json["offset"]; offset.isObject()) {
     const auto offset_object = offset.toObject();
-    int x = 0, y = 0;
+    double x = 0, y = 0;
 
-    if (!ReadInt(offset_object, "x", x)) {
+    if (!ReadDouble(offset_object, "x", x)) {
       spdlog::error(
           "Error while reading a {0} month photo coordinate x from json {1}.",
           month_number, month_metadata.toStdString());
       return false;
     }
-    if (!ReadInt(offset_object, "y", y)) {
+    if (!ReadDouble(offset_object, "y", y)) {
       spdlog::error(
           "Error while reading a {0} month photo coordinate x from json {1}.",
           month_number, month_metadata.toStdString());
