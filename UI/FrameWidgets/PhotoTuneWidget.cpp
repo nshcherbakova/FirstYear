@@ -59,68 +59,6 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
     }
   });
 
-  /* auto left = new QPushButton(this);
-   left->setGeometry(
-       geometry().width() - button_margin - 3 * button_with - 2 * button_space,
-       button_space + button_margin + button_with, button_with, button_with);
-   left->setText("<");
-   left->setContentsMargins(0, 0, 0, 0);
-   connect(left, &QPushButton::clicked, this, [&, move_step]() {
-     //  if(this->photo_.image.width()*this->photo_.scale +
-     //  this->>photo_.offset.x() > FRAME_RIGHT)
-     {
-       this->photo_.offset -= {move_step, 0.0};
-       this->update();
-     }
-   });
-
-   auto right = new QPushButton(this);
-   right->setGeometry(geometry().width() - button_margin - button_with,
-                      button_space + button_margin + button_with, button_with,
-                      button_with);
-   right->setText(">");
-   right->setContentsMargins(0, 0, 0, 0);
-   connect(right, &QPushButton::clicked, this, [&, move_step]() {
-     //  if(this->photo_.image.width()*this->photo_.scale +
-     //  this->>photo_.offset.x() > FRAME_RIGHT)
-     {
-       this->photo_.offset += {move_step, 0};
-       this->update();
-     }
-   });
-
-   auto top = new QPushButton(this);
-   top->setGeometry(geometry().width() - button_margin - 2 * button_with -
-                        button_space,
-                    button_margin, button_with, button_with);
-   top->setText("^");
-   top->setContentsMargins(0, 0, 0, 0);
-   connect(top, &QPushButton::clicked, this, [&, move_step]() {
-     //  if(this->photo_.image.width()*this->photo_.scale +
-     //  this->>photo_.offset.x() > FRAME_RIGHT)
-     {
-       this->photo_.offset += {0, move_step};
-       this->update();
-     }
-   });
-
-   auto bottom = new QPushButton(this);
-   bottom->setGeometry(geometry().width() - button_margin - 2 * button_with -
-                           button_space,
-                       2 * button_space + button_margin + 2 * button_with,
-                       button_with, button_with);
-   bottom->setText("v");
-   bottom->setContentsMargins(0, 0, 0, 0);
-
-   connect(bottom, &QPushButton::clicked, this, [&, move_step]() {
-     //  if(this->photo_.image.width()*this->photo_.scale +
-     //  this->>photo_.offset.x() > FRAME_RIGHT)
-     {
-       this->photo_.offset -= {0, move_step};
-       this->update();
-     }
-   });*/
-
   auto rotate = new QPushButton(this);
   rotate->setGeometry(geometry().width() - button_margin - button_with,
                       button_margin, button_with, button_with);
@@ -166,7 +104,6 @@ void PhotoTuneWidget::setPhoto(int id, const Core::PhotoData &photo) {
   double k2 = widget_rect.width() / widget_rect.height();
 
   internal_scale_ = 1;
-  //  internal_offset_ = QPoint();
 
   if (k1 < k2) {
     internal_scale_ = (double)widget_rect.height() / photo_rect.height();
@@ -174,41 +111,15 @@ void PhotoTuneWidget::setPhoto(int id, const Core::PhotoData &photo) {
     internal_scale_ = (double)widget_rect.width() / photo_rect.width();
   }
 
-  /* internal_offset_ = (QPoint(photo_rect.width() * internal_scale_,
-                              photo_rect.height() * internal_scale_) -
-                       QPoint(widget_rect.width(), widget_rect.height())) /
-                      2;*/
-
-  photo_.offset *= internal_scale_;
   update();
 }
 int PhotoTuneWidget::getPhotoId() const { return id_; }
-Core::PhotoData PhotoTuneWidget::getPhoto() const {
-  auto photo = photo_;
-  photo.offset = photo.offset / internal_scale_;
-  // photo.scale = photo.scale/internal_scale_ ;
-  return photo;
-}
+Core::PhotoData PhotoTuneWidget::getPhoto() const { return photo_; }
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   if (photo_.image.isNull())
     return;
-
-  // QTransform tr;
-  //   painter.translate(-internal_offset_.x(), -internal_offset_.y());
-  //  painter.scale(internal_scale_, internal_scale_);
-  //  Draw background
-  /* QRectF di     rty_rect = rect().toRectF();
-   QRectF image_rect = photo_.image.rect();
-
-   tr.translate(photo_.offset.x(), -photo_.offset.y());
-
-   QPointF dp = dirty_rect.center();
-   tr.translate(dp.x(), dp.y());
-   tr.rotate(photo_.angle, Qt::ZAxis);
-   tr.scale(photo_.scale, photo_.scale);
-   tr.translate(-dp.x(), -dp.y());*/
 
   const qreal iw = photo_.image.width();
   const qreal ih = photo_.image.height();
@@ -216,9 +127,9 @@ void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   const qreal ww = width();
 
   painter.translate(ww / 2, wh / 2);
-  painter.translate(photo_.offset.x(), photo_.offset.y());
   painter.rotate(photo_.angle);
   painter.scale(internal_scale_, internal_scale_);
+  painter.translate(photo_.offset.x(), photo_.offset.y());
   painter.scale(currentStepScaleFactor * photo_.scale,
                 currentStepScaleFactor * photo_.scale);
   painter.translate(-iw / 2, -ih / 2);
@@ -295,7 +206,7 @@ bool PhotoTuneWidget::toucheEvent(QTouchEvent *touch) {
   }
   if (count > 0) {
     delta /= count;
-    photo_.offset += delta;
+    photo_.offset += delta / internal_scale_;
     update();
     return true;
   }
@@ -336,7 +247,7 @@ void PhotoTuneWidget::panTriggered(QPanGesture *gesture) {
 #endif
   QPointF delta = gesture->delta();
   qCDebug(lcExample) << "panTriggered():" << gesture;
-  photo_.offset += delta;
+  photo_.offset += delta / internal_scale_;
 
   update();
 }
@@ -360,7 +271,7 @@ void PhotoTuneWidget::tapTriggered(QTapGesture *gesture) {
 #endif
   QPointF position = gesture->position();
   qCDebug(lcExample) << "tapAndHoldTriggered():" << gesture;
-  photo_.offset += position;
+  photo_.offset += position / internal_scale_;
 
   update();
 }

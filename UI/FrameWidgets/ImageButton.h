@@ -20,7 +20,6 @@ public:
 private:
   Core::PhotoData photo_;
   double internal_scale_ = 0;
-  QPoint internal_offset_;
 };
 
 } // namespace FirstYear::UI

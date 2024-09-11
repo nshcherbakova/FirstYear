@@ -49,7 +49,6 @@ private:
   int id_ = 0;
   Core::PhotoData photo_;
   double internal_scale_ = 0;
-  QPoint internal_offset_;
   qreal currentStepScaleFactor = 1;
 
   bool is_gesture_moving_ = false;
