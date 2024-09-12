@@ -3,16 +3,170 @@
 #include <stdafx.h>
 namespace FirstYear::UI {
 
-PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
-
-  setAttribute(Qt::WA_AcceptTouchEvents);
-
+void GestureProcessor::Initialise() {
   QList<Qt::GestureType> gestures;
 
   gestures << Qt::PanGesture;
   gestures << Qt::PinchGesture;
   gestures << Qt::TapAndHoldGesture;
   grabGestures(gestures);
+}
+
+void GestureProcessor::grabGestures(const QList<Qt::GestureType> &gestures) {
+  for (Qt::GestureType gesture : gestures)
+    grabWidgetGesture(gesture);
+}
+
+bool GestureProcessor::event(QEvent *event) {
+
+  switch (event->type()) {
+  case QEvent::Gesture: {
+    // event->accept();
+    return gestureEvent(static_cast<QGestureEvent *>(event));
+  }
+  case QEvent::TouchBegin:
+  case QEvent::TouchUpdate:
+  case QEvent::TouchEnd: {
+
+    toucheEvent(static_cast<QTouchEvent *>(event));
+
+    // if (!result)
+    //     return QWidget::event(event);
+    // for(auto& child: children())
+    {
+      //  if( qobject_cast<QAbstractButton *>(child))
+      //      if( child->event(event) && event->isAccepted())
+      //          return true;
+    }
+    return true;
+  }
+  default:
+    return false;
+  }
+}
+
+bool GestureProcessor::gestureEvent(QGestureEvent *event) {
+  spdlog::info("gestureEvent {}", (long)event);
+  if (QGesture *tap_and_hold = event->gesture(Qt::TapAndHoldGesture))
+    longTapTriggered(static_cast<QTapAndHoldGesture *>(tap_and_hold));
+  if (QGesture *pan = event->gesture(Qt::PanGesture))
+    panTriggered(static_cast<QPanGesture *>(pan));
+  if (QGesture *pinch = event->gesture(Qt::PinchGesture))
+    pinchTriggered(static_cast<QPinchGesture *>(pinch));
+
+  return true;
+}
+
+bool GestureProcessor::toucheEvent(QTouchEvent *touch) {
+
+  if (is_zooming_ || is_gesture_moving_) {
+    return false;
+  }
+  touch->accept();
+  spdlog::info("QTouchEvent {}", (long)touch);
+  const auto touchPoints = touch->points();
+
+  return processToucheEvent(touchPoints);
+}
+
+void GestureProcessor::panTriggered(QPanGesture *gesture) {
+#ifndef QT_NO_CURSOR
+  switch (gesture->state()) {
+  case Qt::GestureStarted:
+  case Qt::GestureUpdated:
+    // setCursor(Qt::SizeAllCursor);
+    is_gesture_moving_ = true;
+    break;
+  case Qt::GestureFinished:
+  case Qt::GestureCanceled:
+    is_gesture_moving_ = false;
+    break;
+  default:
+    // setCursor(Qt::ArrowCursor);
+    is_gesture_moving_ = false;
+  }
+#endif
+
+  QPointF delta = gesture->delta();
+  processPan(delta);
+}
+
+void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
+  QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
+  if (changeFlags & QPinchGesture::RotationAngleChanged) {
+    qreal rotation_delta =
+        gesture->rotationAngle() - gesture->lastRotationAngle();
+
+    processAngleChanged(rotation_delta);
+  }
+  if (changeFlags & QPinchGesture::ScaleFactorChanged) {
+    currentStepScaleFactor = gesture->totalScaleFactor();
+  }
+  if (gesture->state() == Qt::GestureFinished) {
+
+    processScaleChanged(currentStepScaleFactor);
+
+    currentStepScaleFactor = 1;
+  }
+}
+
+void GestureProcessor::longTapTriggered(QTapAndHoldGesture *gesture) {
+
+  processLongTap(gesture);
+}
+
+bool PhotoTuneWidget::processToucheEvent(const QList<QEventPoint> &points) {
+  QPointF delta;
+  int count = 0;
+
+  for (const QTouchEvent::TouchPoint &touchPoint : points) {
+    switch (touchPoint.state()) {
+    case QEventPoint::Stationary:
+    case QEventPoint::Released:
+      // don't do anything if this touch point hasn't moved or has been released
+      continue;
+    default: {
+
+      delta += touchPoint.position() - touchPoint.lastPosition();
+    }
+    }
+    count += 1;
+  }
+  if (count > 0) {
+    delta /= count;
+    updatePhotoPosition(delta, 1, 0);
+
+    return true;
+  }
+  return false;
+}
+
+void PhotoTuneWidget::processPan(QPointF delta) {
+  spdlog::info("panTriggered ");
+  updatePhotoPosition(delta, 1, 0);
+}
+
+void PhotoTuneWidget::processAngleChanged(qreal rotation_delta) {
+  updatePhotoPosition(QPointF(), 1, rotation_delta);
+}
+
+void PhotoTuneWidget::processScaleChanged(qreal scale) {
+  updatePhotoPosition(QPointF(), scale, 0);
+}
+
+void PhotoTuneWidget::processLongTap(QTapAndHoldGesture *) {
+
+  hide();
+  emit SignalImageTuned();
+}
+
+void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
+  QWidget::grabGesture(gesture);
+}
+
+PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
+  GestureProcessor::Initialise();
+  setAttribute(Qt::WA_AcceptTouchEvents);
 
   auto palette = QWidget::palette();
   //  palette.setColor(QPalette::Window, Qt::red);
@@ -24,8 +178,6 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   double zoom_step = 1.3;
   double ZOOM_MIN = 0.1;
   double ZOOM_MAX = 10.0;
-
-  double move_step = 10;
 
   double rotate_step = 0.5;
 
@@ -78,7 +230,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
           &PhotoTuneWidget::SignalPhotoChanged);
 
   auto close = new QPushButton(this);
-  close->setAttribute(Qt::WA_AcceptTouchEvents, true);
+  // close->setAttribute(Qt::WA_AcceptTouchEvents, true);
   close->setGeometry(geometry().width() - 3 * button_with,
                      geometry().height() - 2 * button_with, 2 * button_with,
                      button_with);
@@ -88,6 +240,14 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
     hide();
     emit SignalImageTuned();
   });
+}
+
+bool PhotoTuneWidget::event(QEvent *event) {
+
+  if (GestureProcessor::event(event)) {
+    return true;
+  }
+  return QWidget::event(event);
 }
 
 void PhotoTuneWidget::setPhoto(int id, const Core::PhotoData &photo) {
@@ -112,22 +272,12 @@ void PhotoTuneWidget::setPhoto(int id, const Core::PhotoData &photo) {
 
 bool PhotoTuneWidget::checkBoundares(QPointF offset, double scale,
                                      double angle) {
+
+  QTransform transform =
+      getTransformForWidget(offset, scale * currentStepScaleFactor, angle);
+
   QRectF image_rect = photo_.image.rect();
   QRectF frame_rect = rect();
-
-  const qreal iw = photo_.image.width();
-  const qreal ih = photo_.image.height();
-  const qreal wh = height();
-  const qreal ww = width();
-
-  QTransform transform;
-  transform.translate(ww / 2, wh / 2);
-  transform.scale(internal_scale_, internal_scale_);
-  transform.translate(offset.x(), offset.y());
-  transform.rotate(angle);
-  transform.scale(scale * currentStepScaleFactor,
-                  scale * currentStepScaleFactor);
-  transform.translate(-iw / 2, -ih / 2);
 
   auto translated_image_polygon = transform.mapToPolygon(image_rect.toRect());
   QPolygon frame_polygon(frame_rect.toRect());
@@ -144,42 +294,43 @@ QPointF PhotoTuneWidget::toImageCoordinates(QPointF point) {
   return point / internal_scale_;
 }
 
-/*QRectF PhotoTuneWidget::toInternalCoordinates(QRectF rect)
-{
-    return rect. * internal_scale_;
-}*/
-
 int PhotoTuneWidget::getPhotoId() const { return id_; }
 Core::PhotoData PhotoTuneWidget::getPhoto() const { return photo_; }
+
+QTransform PhotoTuneWidget::getTransform(QPointF offset, double scale,
+                                         double angle, QRectF image_rect,
+                                         QRectF frame_rect,
+                                         double internal_scale) const {
+  const qreal iw = image_rect.width();
+  const qreal ih = image_rect.height();
+  const qreal wh = frame_rect.height();
+  const qreal ww = frame_rect.width();
+
+  QTransform transform;
+  transform.translate(frame_rect.left() + ww / 2, frame_rect.top() + wh / 2);
+  transform.scale(internal_scale, internal_scale);
+  transform.translate(offset.x(), offset.y());
+  transform.rotate(angle);
+  transform.scale(scale, scale);
+  transform.translate(-iw / 2, -ih / 2);
+
+  return transform;
+}
+
+QTransform PhotoTuneWidget::getTransformForWidget(QPointF point, double scale,
+                                                  double angle) const {
+  return getTransform(point, scale, angle, photo_.image.rect(), rect(),
+                      internal_scale_);
+}
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   if (photo_.image.isNull())
     return;
 
-  const qreal iw = photo_.image.width();
-  const qreal ih = photo_.image.height();
-  const qreal wh = height();
-  const qreal ww = width();
+  QTransform transform = getTransformForWidget(
+      photo_.offset, currentStepScaleFactor * photo_.scale, photo_.angle);
 
-  QTransform transform;
-  transform.translate(ww / 2, wh / 2);
-  transform.scale(internal_scale_, internal_scale_);
-  transform.translate(photo_.offset.x(), photo_.offset.y());
-  transform.rotate(photo_.angle);
-  transform.scale(currentStepScaleFactor * photo_.scale,
-                  currentStepScaleFactor * photo_.scale);
-  transform.translate(-iw / 2, -ih / 2);
-
-  /*
-    painter.translate(ww / 2, wh / 2);
-    painter.scale(internal_scale_, internal_scale_);
-    painter.translate(photo_.offset.x(), photo_.offset.y());
-  painter.rotate(photo_.angle);
-    painter.scale(currentStepScaleFactor * photo_.scale,
-                  currentStepScaleFactor * photo_.scale);
-    painter.translate(-iw / 2, -ih / 2);
-  */
   painter.setTransform(transform);
   painter.drawPixmap(0, 0, photo_.image);
 }
@@ -192,74 +343,6 @@ void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
 
 Q_LOGGING_CATEGORY(lcExample, "qt.examples.imagegestures")
 
-void PhotoTuneWidget::grabGestures(const QList<Qt::GestureType> &gestures) {
-  //! [enable gestures]
-  for (Qt::GestureType gesture : gestures)
-    grabGesture(gesture);
-  //! [enable gestures]
-}
-
-//! [event handler]
-bool PhotoTuneWidget::event(QEvent *event) {
-
-  switch (event->type()) {
-  case QEvent::Gesture: {
-    // event->accept();
-    return gestureEvent(static_cast<QGestureEvent *>(event));
-  }
-  case QEvent::TouchBegin:
-  case QEvent::TouchUpdate:
-  case QEvent::TouchEnd: {
-
-    bool result = toucheEvent(static_cast<QTouchEvent *>(event));
-
-    if (!result)
-      return QWidget::event(event);
-    // for(auto& child: children())
-    {
-      //  if( qobject_cast<QAbstractButton *>(child))
-      //      if( child->event(event) && event->isAccepted())
-      //          return true;
-    }
-    return true;
-  }
-  default:
-    return QWidget::event(event);
-  }
-}
-bool PhotoTuneWidget::toucheEvent(QTouchEvent *touch) {
-
-  if (is_zooming_ || is_gesture_moving_) {
-    return false;
-  }
-  touch->accept();
-  spdlog::info("QTouchEvent {}", (long)touch);
-  const auto touchPoints = touch->points();
-  QPointF delta;
-  int count = 0;
-
-  for (const QTouchEvent::TouchPoint &touchPoint : touchPoints) {
-    switch (touchPoint.state()) {
-    case QEventPoint::Stationary:
-    case QEventPoint::Released:
-      // don't do anything if this touch point hasn't moved or has been released
-      continue;
-    default: {
-
-      delta += touchPoint.position() - touchPoint.lastPosition();
-    }
-    }
-    count += 1;
-  }
-  if (count > 0) {
-    delta /= count;
-    updatePhotoPosition(delta, 1, 0);
-
-    return true;
-  }
-  return false;
-}
-
 void PhotoTuneWidget::updatePhotoPosition(QPointF pos_delta,
                                           double scale_factor,
                                           double angle_delta) {
@@ -270,95 +353,6 @@ void PhotoTuneWidget::updatePhotoPosition(QPointF pos_delta,
     photo_.angle += angle_delta;
     update();
   }
-}
-//! [event handler]
-//!
-//! [gesture event handler]
-bool PhotoTuneWidget::gestureEvent(QGestureEvent *event) {
-  spdlog::info("gestureEvent {}", (long)event);
-  if (QGesture *tap_and_hold = event->gesture(Qt::TapAndHoldGesture))
-    tapTriggered(static_cast<QTapAndHoldGesture *>(tap_and_hold));
-  if (QGesture *pan = event->gesture(Qt::PanGesture))
-    panTriggered(static_cast<QPanGesture *>(pan));
-  if (QGesture *pinch = event->gesture(Qt::PinchGesture))
-    pinchTriggered(static_cast<QPinchGesture *>(pinch));
-
-  return true;
-}
-//! [gesture event handler]
-
-void PhotoTuneWidget::panTriggered(QPanGesture *gesture) {
-#ifndef QT_NO_CURSOR
-  switch (gesture->state()) {
-  case Qt::GestureStarted:
-  case Qt::GestureUpdated:
-    setCursor(Qt::SizeAllCursor);
-    is_gesture_moving_ = true;
-    break;
-  case Qt::GestureFinished:
-  case Qt::GestureCanceled:
-    is_gesture_moving_ = false;
-    break;
-  default:
-    setCursor(Qt::ArrowCursor);
-    is_gesture_moving_ = false;
-  }
-#endif
-  QPointF delta = gesture->delta();
-  spdlog::info("panTriggered ");
-  updatePhotoPosition(delta, 1, 0);
-
-  // update();
-}
-
-void PhotoTuneWidget::tapTriggered(QTapAndHoldGesture *gesture) {
-  /*
-#ifndef QT_NO_CURSOR
-switch (gesture->state()) {
-case Qt::GestureStarted:
-case Qt::GestureUpdated:
-  setCursor(Qt::SizeAllCursor);
-  is_zooming_ = true;
-  break;
-case Qt::GestureFinished:
-case Qt::GestureCanceled:
-  is_zooming_ = false;
-  break;
-default:
-  setCursor(Qt::ArrowCursor);
-  is_zooming_ = false;
-}
-#endif
-QPointF position = gesture->position();
-spdlog::info("tapTriggered ");
-updatePhotoPosition(position, 1,0);*/
-  hide();
-  emit SignalImageTuned();
-  // update();
-}
-
-//! [pinch function]
-void PhotoTuneWidget::pinchTriggered(QPinchGesture *gesture) {
-  QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
-  if (changeFlags & QPinchGesture::RotationAngleChanged) {
-    qreal rotationDelta =
-        gesture->rotationAngle() - gesture->lastRotationAngle();
-
-    updatePhotoPosition(QPointF(), 1, rotationDelta);
-    qCDebug(lcExample) << "pinchTriggered(): rotate by" << rotationDelta << "->"
-                       << photo_.angle;
-  }
-  if (changeFlags & QPinchGesture::ScaleFactorChanged) {
-    currentStepScaleFactor = gesture->totalScaleFactor();
-    qCDebug(lcExample) << "pinchTriggered(): zoom by" << gesture->scaleFactor()
-                       << "->" << currentStepScaleFactor;
-  }
-  if (gesture->state() == Qt::GestureFinished) {
-
-    updatePhotoPosition(QPointF(), currentStepScaleFactor, 0);
-    currentStepScaleFactor = 1;
-  }
-  // update();
 }
 
 } // namespace FirstYear::UI
