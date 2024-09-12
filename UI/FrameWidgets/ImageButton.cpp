@@ -33,9 +33,9 @@ void ImageButton::paintEvent(QPaintEvent *) {
   const qreal ww = width();
 
   painter.translate(ww / 2, wh / 2);
-  painter.rotate(photo_.angle);
   painter.scale(internal_scale_, internal_scale_);
   painter.translate(photo_.offset.x(), photo_.offset.y());
+  painter.rotate(photo_.angle);
   painter.scale(photo_.scale, photo_.scale);
   painter.translate(-iw / 2, -ih / 2);
 

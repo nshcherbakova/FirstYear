@@ -18,6 +18,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGestureEvent>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QIcon>
@@ -27,11 +28,13 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QPixmap>
+#include <QPolygon>
 #include <QPushButton>
 // #include <QRandomGenerator>
 #include <QSettings>
 #include <QSplashScreen>
 #include <QStandardPaths>
+#include <QTouchEvent>
 #include <QVariant>
 #include <QWidget>
 #include <QtWidgets/QApplication>

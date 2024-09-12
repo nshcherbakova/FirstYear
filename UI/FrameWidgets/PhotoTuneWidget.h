@@ -11,7 +11,7 @@ class QGestureEvent;
 class QPanGesture;
 class QPinchGesture;
 // class QSwipeGesture;
-class QTapGesture;
+class QTapAndHoldGesture;
 class QTouchEvent;
 
 QT_END_NAMESPACE
@@ -42,8 +42,13 @@ private:
   bool gestureEvent(QGestureEvent *event);
   void panTriggered(QPanGesture *);
   void pinchTriggered(QPinchGesture *);
-  void tapTriggered(QTapGesture *);
+  void tapTriggered(QTapAndHoldGesture *);
   bool toucheEvent(QTouchEvent *touch);
+  bool checkBoundares(QPointF delta, double scale, double angle);
+  void updatePhotoPosition(QPointF pos_delta, double scale_factor,
+                           double angle_delta);
+  QPointF toImageCoordinates(QPointF point);
+  //  QRectF toInternalCoordinates(QRectF rect);
 
 private:
   int id_ = 0;
