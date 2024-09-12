@@ -27,7 +27,7 @@ protected:
   void grabGestures(const QList<Qt::GestureType> &gestures);
 
 protected:
-  bool event(QEvent *event);
+  bool processEvent(QEvent *event);
   virtual void processPan(QPointF delta) = 0;
   virtual void processAngleChanged(qreal rotation_delta) = 0;
   virtual void processScaleChanged(qreal scale) = 0;
@@ -43,7 +43,7 @@ private:
   bool toucheEvent(QTouchEvent *touch);
 
 protected:
-  qreal currentStepScaleFactor = 1;
+  qreal currentStepScaleFactor_ = 1;
 
 private:
   bool is_gesture_moving_ = false;
@@ -51,12 +51,44 @@ private:
   bool is_touch_movng_ = false;
 };
 
-class PhotoTuneWidget final : public QWidget, public GestureProcessor {
+class PhotoProcessor {
+public:
+  PhotoProcessor &operator=(const PhotoProcessor &) = delete;
+
+protected:
+  virtual double currentStepScaleFactor() = 0;
+
+protected:
+  void init(const Core::PhotoData &photo, QRectF boundary_rect);
+  void drawPhoto(QPainter &);
+  void updatePhotoPosition(QPointF pos_delta, double scale_factor,
+                           double angle_delta);
+
+private:
+  bool checkBoundares(QPointF delta, double scale, double angle);
+  QPointF toImageCoordinates(QPointF point);
+  QTransform getTransformForWidget(QPointF point, double scale,
+                                   double angle) const;
+  QTransform getTransform(QPointF offset, double scale, double angle,
+                          QRectF image_rect, QRectF frame_rect,
+                          double internal_scale) const;
+
+protected:
+  Core::PhotoData photo_;
+
+private:
+  double internal_scale_ = 0;
+  QRectF boundary_rect_;
+};
+
+class PhotoTuneWidget final : public QWidget,
+                              public GestureProcessor,
+                              public PhotoProcessor {
   Q_OBJECT
 public:
   explicit PhotoTuneWidget(QWidget &parent);
   PhotoTuneWidget &operator=(const PhotoTuneWidget &) = delete;
-  void grabGestures(const QList<Qt::GestureType> &gestures);
+
 signals:
   void SignalImageTuned();
   void SignalPhotoChanged();
@@ -65,11 +97,6 @@ public:
   void setPhoto(int id, const Core::PhotoData &photo);
   Core::PhotoData getPhoto() const;
   int getPhotoId() const;
-
-protected:
-  bool event(QEvent *event) override;
-  void paintEvent(QPaintEvent *) override;
-  void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private:
   // GestureProcessor
@@ -81,20 +108,21 @@ private:
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
 
 private:
-  bool checkBoundares(QPointF delta, double scale, double angle);
-  void updatePhotoPosition(QPointF pos_delta, double scale_factor,
-                           double angle_delta);
-  QPointF toImageCoordinates(QPointF point);
-  QTransform getTransformForWidget(QPointF point, double scale,
-                                   double angle) const;
-  QTransform getTransform(QPointF offset, double scale, double angle,
-                          QRectF image_rect, QRectF frame_rect,
-                          double internal_scale) const;
+  // PhotoProcessor
+  virtual double currentStepScaleFactor() override;
+
+protected:
+  // QWidget
+  bool event(QEvent *event) override;
+  void paintEvent(QPaintEvent *) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
+
+private:
+  void grabGestures(const QList<Qt::GestureType> &gestures);
+  void updatePhoto(QPointF pos_delta, double scale_factor, double angle_delta);
 
 private:
   int id_ = 0;
-  Core::PhotoData photo_;
-  double internal_scale_ = 0;
 };
 
 } // namespace FirstYear::UI
