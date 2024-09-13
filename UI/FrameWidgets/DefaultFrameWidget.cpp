@@ -48,8 +48,8 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
   for (int i = 0; i < (int)photos_.size(); i++) {
     auto &month = project->monthes_[i];
 
+    photos_[i] = new PhotoWidget(*this);
     auto &photo_widget = photos_[i];
-    photo_widget = new PhotoWidget(*this);
 
     if (month.text)
       photo_widget->setText(*month.text);
@@ -62,8 +62,19 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
     }
 
     photo_widget->setPhoto(month.photo_data);
+    photo_widget->show();
+    layout_->addWidget(photo_widget, row, column);
 
-    connect(photo_widget, &PhotoWidget::SignalImagePressed, this,
+    if (column == 3) {
+      column = 0;
+      row++;
+    } else {
+      column++;
+    }
+  }
+
+  for (int i = 0; i < (int)photos_.size(); i++) {
+    connect(photos_[i], &PhotoWidget::SignalImagePressed, this,
             [&, i, project] {
               auto &month = project->monthes_[i];
               if (month.photo_data.is_stub_image) {
@@ -73,17 +84,19 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                 month.photo_data.is_stub_image = false;
 
                 control.SaveProjectMonth(i);
-                photo_widget->setPhoto(month.photo_data);
+                photos_[i]->setPhoto(month.photo_data);
               }
-              photo_tune_widget_->setPhoto(i, month.photo_data);
+
+              photo_tune_widget_->setPhoto(i, photos_[i]->rect().size() * 2,
+                                           month.photo_data);
               photo_tune_widget_->show();
             });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
-            [&, i, project, photo_widget] {
+            [&, i, project] {
               if (photo_tune_widget_->getPhotoId() == i) {
                 const auto new_photo_data = photo_tune_widget_->getPhoto();
-                photo_widget->setPhoto(new_photo_data);
+                photos_[i]->setPhoto(new_photo_data);
                 project->monthes_[i].photo_data = new_photo_data;
                 control.SaveProjectMonth(i);
               }
@@ -95,24 +108,15 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                 auto &month = project->monthes_[i];
                 auto file = this->OpenFile();
 
-                month.photo_data = {QPixmap(file), false, 0, 1, QPoint()};
-                photo_tune_widget_->setPhoto(i, month.photo_data);
+                month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
+                photo_tune_widget_->setPhoto(i, photos_[i]->rect().size() * 2,
+                                             month.photo_data);
               }
             });
-
-    photo_widget->show();
-
-    layout_->addWidget(photo_widget, row, column);
-
-    if (column == 3) {
-      column = 0;
-      row++;
-    } else {
-      column++;
-    }
   }
 
   setLayout(layout_);
+  update();
 }
 
 QString DefaultFrameWidget::OpenFile() {

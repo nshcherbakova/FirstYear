@@ -138,7 +138,7 @@ void PhotoProcessor::init(const Core::PhotoData &photo, QRectF boundary_rect) {
 }
 
 bool PhotoProcessor::checkBoundares(QPointF offset, double scale,
-                                    double angle) {
+                                    double angle) const {
 
   QTransform transform =
       getTransformForWidget(offset, scale * currentStepScaleFactor(), angle);
@@ -157,34 +157,27 @@ bool PhotoProcessor::checkBoundares(QPointF offset, double scale,
   return true;
 }
 
-QPointF PhotoProcessor::toImageCoordinates(QPointF point) {
+QPointF PhotoProcessor::toImageCoordinates(QPointF point) const {
   return point / internal_scale_;
 }
 
-QTransform PhotoProcessor::getTransform(QPointF offset, double scale,
-                                        double angle, QRectF image_rect,
-                                        QRectF frame_rect,
-                                        double internal_scale) const {
-  const qreal iw = image_rect.width();
-  const qreal ih = image_rect.height();
-  const qreal wh = frame_rect.height();
-  const qreal ww = frame_rect.width();
+QTransform PhotoProcessor::getTransformForWidget(QPointF offset, double scale,
+                                                 double angle) const {
+  const qreal iw = photo_.image.width();
+  const qreal ih = photo_.image.height();
+  const qreal wh = widgetRect().height();
+  const qreal ww = widgetRect().width();
 
   QTransform transform;
-  transform.translate(frame_rect.left() + ww / 2, frame_rect.top() + wh / 2);
-  transform.scale(internal_scale, internal_scale);
+  transform.translate(widgetRect().left() + ww / 2,
+                      widgetRect().top() + wh / 2);
+  transform.scale(internal_scale_, internal_scale_);
   transform.translate(offset.x(), offset.y());
   transform.rotate(angle);
   transform.scale(scale, scale);
   transform.translate(-iw / 2, -ih / 2);
 
   return transform;
-}
-
-QTransform PhotoProcessor::getTransformForWidget(QPointF point, double scale,
-                                                 double angle) const {
-  return getTransform(point, scale, angle, photo_.image.rect(), boundary_rect_,
-                      internal_scale_);
 }
 
 void PhotoProcessor::drawPhoto(QPainter &painter) {
@@ -208,6 +201,26 @@ void PhotoProcessor::updatePhotoPosition(QPointF pos_delta, double scale_factor,
     photo_.angle += angle_delta;
   }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+///
+
+void Frame::init(QSizeF frame_size, QRectF widget_rect) {
+
+  frame_.setTopLeft(QPoint(0, 0));
+  frame_.setSize(frame_size);
+  const auto half_diff = (widget_rect.size() - frame_size) / 2.0;
+  QPoint upper_left_corner(half_diff.width(), half_diff.height());
+  frame_.translate(upper_left_corner);
+}
+
+void Frame::drawFrame(QPainter &painter) {
+  painter.setPen(Qt::white);
+  painter.drawRoundedRect(frame_, 10, 10);
+}
+
+QRectF Frame::frameRect() { return frame_; }
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -292,9 +305,13 @@ bool PhotoTuneWidget::event(QEvent *event) {
   return QWidget::event(event);
 }
 
-void PhotoTuneWidget::setPhoto(int id, const Core::PhotoData &photo) {
-  PhotoProcessor::init(photo, rect());
+void PhotoTuneWidget::setPhoto(int id, QSizeF frame_size,
+                               const Core::PhotoData &photo) {
+
   id_ = id;
+
+  Frame::init(frame_size, rect());
+  PhotoProcessor::init(photo, frameRect());
   update();
 }
 
@@ -361,12 +378,15 @@ void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
   QWidget::grabGesture(gesture);
 }
 
-double PhotoTuneWidget::currentStepScaleFactor() {
+double PhotoTuneWidget::currentStepScaleFactor() const {
   return currentStepScaleFactor_;
 }
+
+QRectF PhotoTuneWidget::widgetRect() const { return rect(); }
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   PhotoProcessor::drawPhoto(painter);
+  Frame::drawFrame(painter);
 }
 } // namespace FirstYear::UI

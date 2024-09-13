@@ -2,7 +2,6 @@
 #ifndef FIRSTYEAR_UI_PHOTO_TUNE_WIDGET_H
 #define FIRSTYEAR_UI_PHOTO_TUNE_WIDGET_H
 #include <Core/Project/Project.h>
-#include <QLabel>
 #include <QPixmap>
 #include <QWidget>
 
@@ -51,12 +50,17 @@ private:
   bool is_touch_movng_ = false;
 };
 
+/////////////////////////////////////////////////////////////////////////////
+/// \brief The PhotoProcessor class
+///
+
 class PhotoProcessor {
 public:
   PhotoProcessor &operator=(const PhotoProcessor &) = delete;
 
 protected:
-  virtual double currentStepScaleFactor() = 0;
+  virtual double currentStepScaleFactor() const = 0;
+  virtual QRectF widgetRect() const = 0;
 
 protected:
   void init(const Core::PhotoData &photo, QRectF boundary_rect);
@@ -65,13 +69,10 @@ protected:
                            double angle_delta);
 
 private:
-  bool checkBoundares(QPointF delta, double scale, double angle);
-  QPointF toImageCoordinates(QPointF point);
+  bool checkBoundares(QPointF delta, double scale, double angle) const;
+  QPointF toImageCoordinates(QPointF point) const;
   QTransform getTransformForWidget(QPointF point, double scale,
                                    double angle) const;
-  QTransform getTransform(QPointF offset, double scale, double angle,
-                          QRectF image_rect, QRectF frame_rect,
-                          double internal_scale) const;
 
 protected:
   Core::PhotoData photo_;
@@ -81,9 +82,31 @@ private:
   QRectF boundary_rect_;
 };
 
+/////////////////////////////////////////////////////////////////////////////
+/// \brief The Frame class
+///
+
+class Frame {
+public:
+  Frame &operator=(const Frame &) = delete;
+
+protected:
+  void init(QSizeF frame_size, QRectF widget_rect);
+  void drawFrame(QPainter &);
+  QRectF frameRect();
+
+private:
+  QRectF frame_;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+/// \brief The PhotoTuneWidget class
+///
+
 class PhotoTuneWidget final : public QWidget,
                               public GestureProcessor,
-                              public PhotoProcessor {
+                              public PhotoProcessor,
+                              public Frame {
   Q_OBJECT
 public:
   explicit PhotoTuneWidget(QWidget &parent);
@@ -94,7 +117,7 @@ signals:
   void SignalPhotoChanged();
 
 public:
-  void setPhoto(int id, const Core::PhotoData &photo);
+  void setPhoto(int id, QSizeF frame_size, const Core::PhotoData &photo);
   Core::PhotoData getPhoto() const;
   int getPhotoId() const;
 
@@ -109,7 +132,8 @@ private:
 
 private:
   // PhotoProcessor
-  virtual double currentStepScaleFactor() override;
+  virtual double currentStepScaleFactor() const override;
+  virtual QRectF widgetRect() const override;
 
 protected:
   // QWidget
