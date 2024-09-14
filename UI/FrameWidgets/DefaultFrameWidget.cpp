@@ -59,6 +59,9 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
     if (month.photo_data.image.isNull()) {
       month.photo_data.is_stub_image = true;
       month.photo_data.image = GetStubPhoto(i);
+      month.photo_data.angle = 0;
+      month.photo_data.scale = 1;
+      month.photo_data.offset = QPointF();
     }
 
     photo_widget->setPhoto(month.photo_data);
@@ -82,6 +85,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
                 month.photo_data.image = QPixmap(file);
                 month.photo_data.is_stub_image = false;
+                month.photo_data.scale = 2.5;
 
                 control.SaveProjectMonth(i);
                 photos_[i]->setPhoto(month.photo_data);

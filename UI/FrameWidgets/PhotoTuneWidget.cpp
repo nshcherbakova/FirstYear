@@ -144,17 +144,13 @@ bool PhotoProcessor::checkBoundares(QPointF offset, double scale,
       getTransformForWidget(offset, scale * currentStepScaleFactor(), angle);
 
   QRectF image_rect = photo_.image.rect();
-  QRectF frame_rect = boundary_rect_;
 
-  auto translated_image_polygon = transform.mapToPolygon(image_rect.toRect());
-  QPolygon frame_polygon(frame_rect.toRect());
-  for (int i = 0; i < frame_polygon.size(); i++) {
-    if (!translated_image_polygon.containsPoint(frame_polygon.point(i),
-                                                Qt::OddEvenFill))
-      return false;
-  }
+  auto translated_image_rect = transform.mapRect(image_rect);
 
-  return true;
+  if (translated_image_rect.intersects(boundary_rect_))
+    return true;
+
+  return false;
 }
 
 QPointF PhotoProcessor::toImageCoordinates(QPointF point) const {
@@ -190,6 +186,8 @@ void PhotoProcessor::drawPhoto(QPainter &painter) {
   painter.setTransform(transform);
   painter.drawPixmap(0, 0, photo_.image);
   painter.setTransform(QTransform());
+
+  spdlog::info("drawPhoto ");
 }
 
 void PhotoProcessor::updatePhotoPosition(QPointF pos_delta, double scale_factor,
@@ -199,6 +197,8 @@ void PhotoProcessor::updatePhotoPosition(QPointF pos_delta, double scale_factor,
     photo_.offset += toImageCoordinates(pos_delta);
     photo_.scale *= scale_factor;
     photo_.angle += angle_delta;
+
+    spdlog::info("updatee position ");
   }
 }
 
