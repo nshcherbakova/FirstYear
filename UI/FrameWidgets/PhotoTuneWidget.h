@@ -140,6 +140,7 @@ protected:
   bool event(QEvent *event) override;
   void paintEvent(QPaintEvent *) override;
   void mouseDoubleClickEvent(QMouseEvent *event) override;
+  void wheelEvent(QWheelEvent *event) override;
 
 private:
   void grabGestures(const QList<Qt::GestureType> &gestures);

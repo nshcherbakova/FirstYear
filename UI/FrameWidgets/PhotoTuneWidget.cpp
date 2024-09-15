@@ -2,6 +2,10 @@
 
 #include <stdafx.h>
 namespace FirstYear::UI {
+const double ZOOM_MIN = 0.1;
+const double ZOOM_MAX = 10.0;
+const double ZOOM_STEP = 1.10;
+const double ROTATE_STEP = 0.5;
 
 void GestureProcessor::Initialise() {
   QList<Qt::GestureType> gestures;
@@ -196,9 +200,11 @@ void PhotoProcessor::updatePhotoPosition(QPointF pos_delta, double scale_factor,
                      photo_.scale * scale_factor, photo_.angle + angle_delta)) {
     photo_.offset += toImageCoordinates(pos_delta);
     photo_.scale *= scale_factor;
+    if (photo_.scale < ZOOM_MIN)
+      photo_.scale = ZOOM_MIN;
     photo_.angle += angle_delta;
 
-    spdlog::info("updatee position ");
+    spdlog::info("updatee position {}", photo_.scale);
   }
 }
 
@@ -236,45 +242,8 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   setGeometry(parent.geometry());
   setAutoFillBackground(true);
 
-  double zoom_step = 1.3;
-  double ZOOM_MIN = 0.1;
-  double ZOOM_MAX = 10.0;
-
-  double rotate_step = 0.5;
-
   int button_with = 40;
   int button_margin = 20;
-  int button_space = 10;
-  auto zoom_in = new QPushButton(this);
-  zoom_in->setGeometry(button_margin, button_margin, button_with, button_with);
-  zoom_in->setText("+");
-  zoom_in->setContentsMargins(0, 0, 0, 0);
-  connect(zoom_in, &QPushButton::clicked, this, [&, zoom_step, ZOOM_MAX]() {
-    if (this->photo_.scale < ZOOM_MAX) {
-      updatePhoto(QPointF(), zoom_step, 0);
-    }
-  });
-
-  auto zoom_out = new QPushButton(this);
-  zoom_out->setGeometry(button_margin,
-                        button_margin + button_with + button_space, button_with,
-                        button_with);
-  zoom_out->setText("-");
-  zoom_out->setContentsMargins(0, 0, 0, 0);
-  connect(zoom_out, &QPushButton::clicked, this, [&, zoom_step, ZOOM_MIN]() {
-    if (this->photo_.scale >= ZOOM_MIN) {
-      this->updatePhoto(QPointF(), 1.0 / zoom_step, 0);
-    }
-  });
-
-  auto rotate = new QPushButton(this);
-  rotate->setGeometry(geometry().width() - button_margin - button_with,
-                      button_margin, button_with, button_with);
-  rotate->setText("r");
-  rotate->setContentsMargins(0, 0, 0, 0);
-  connect(rotate, &QPushButton::clicked, this, [&, rotate_step]() {
-    { this->updatePhoto(QPointF(), 1, rotate_step); }
-  });
 
   auto open_file = new QPushButton(this);
   open_file->setGeometry(button_margin, geometry().height() - 2 * button_with,
@@ -328,6 +297,21 @@ void PhotoTuneWidget::updatePhoto(QPointF pos_delta, double scale_factor,
                                   double angle_delta) {
   PhotoProcessor::updatePhotoPosition(pos_delta, scale_factor, angle_delta);
   update();
+}
+
+void PhotoTuneWidget::wheelEvent(QWheelEvent *event) {
+  if (event->modifiers().testFlag(Qt::ControlModifier)) {
+
+    if (event->angleDelta().y() < 0) {
+      updatePhoto(QPointF(), 1, ROTATE_STEP);
+    } else if (event->angleDelta().y() > 0) {
+      this->updatePhoto(QPointF(), 1, -ROTATE_STEP);
+    }
+  } else if (event->angleDelta().y() < 0 && this->photo_.scale < ZOOM_MAX) {
+    updatePhoto(QPointF(), ZOOM_STEP, 0);
+  } else if (event->angleDelta().y() > 0 && this->photo_.scale >= ZOOM_MIN) {
+    this->updatePhoto(QPointF(), 1.0 / ZOOM_STEP, 0);
+  }
 }
 
 bool PhotoTuneWidget::processToucheEvent(const QList<QEventPoint> &points) {
