@@ -6,6 +6,7 @@ const double ZOOM_MIN = 0.1;
 const double ZOOM_MAX = 10.0;
 const double ZOOM_STEP = 1.10;
 const double ROTATE_STEP = 0.5;
+static const char *c_background_str = ":/images/tune_photo/background";
 
 void GestureProcessor::Initialise() {
   QList<Qt::GestureType> gestures;
@@ -122,7 +123,6 @@ void GestureProcessor::longTapTriggered(QTapAndHoldGesture *gesture) {
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 ///
-
 void PhotoProcessor::init(const Core::PhotoData &photo, QRectF boundary_rect) {
   photo_ = photo;
   boundary_rect_ = boundary_rect;
@@ -231,7 +231,8 @@ QRectF Frame::frameRect() { return frame_; }
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 ///
-PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
+PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
+    : QWidget(&parent), background_(c_background_str) {
   GestureProcessor::Initialise();
   setAttribute(Qt::WA_AcceptTouchEvents);
 
@@ -370,6 +371,7 @@ QRectF PhotoTuneWidget::widgetRect() const { return rect(); }
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
+  painter.drawPixmap(rect(), background_, rect());
   PhotoProcessor::drawPhoto(painter);
   Frame::drawFrame(painter);
 }

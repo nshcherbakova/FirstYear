@@ -13,4 +13,7 @@
         <file alias="month_stub_10">resources/Images/month_image_stub.jpg</file>
         <file alias="month_stub_11">resources/Images/month_image_stub.jpg</file>
     </qresource>
+    <qresource prefix="/images/tune_photo">
+        <file alias="background">resources/Images/tune_photo_background.jpg</file>
+        </qresource>
 </RCC>

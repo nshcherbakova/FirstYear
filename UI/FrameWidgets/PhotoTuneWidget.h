@@ -148,6 +148,7 @@ private:
 
 private:
   int id_ = 0;
+  QPixmap background_;
 };
 
 } // namespace FirstYear::UI
