@@ -10,8 +10,9 @@ static const char *c_file_types_str = "Image Files (*.png *.jpg *.jpeg *.bmp)";
 static const QStringList c_mime_type_filters({"image/jpeg", "image/pjpeg",
                                               "image/png", "image/bmp"});
 static const char *c_stub_month_photo_template_str =
-    ":images/frame/month_stub_%1";
+    ":images/frame_%1/month_stub_%2";
 static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
+static const char *c_foreground_str = ":images/frame_%1/foreground";
 
 ClickableLabel::ClickableLabel(QWidget *parent, Qt::WindowFlags)
     : QLabel(parent) {}
@@ -19,9 +20,11 @@ ClickableLabel::ClickableLabel(QWidget *parent, Qt::WindowFlags)
 ClickableLabel::~ClickableLabel() {}
 
 void ClickableLabel::mousePressEvent(QMouseEvent *) { emit clicked(); }
+
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                                        Core::FrameControl &control)
-    : QWidget(&parent), layout_(new QGridLayout()) {
+    : QWidget(&parent), layout_(new QGridLayout()), id_("1"),
+      foreground_(QString(c_foreground_str).arg(id_)) {
 
   setContentsMargins(0, 0, 0, 0);
   setGeometry(parent.geometry());
@@ -39,7 +42,7 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
 }
 
 QPixmap DefaultFrameWidget::GetStubPhoto(int month) {
-  return QPixmap(QString(c_stub_month_photo_template_str).arg(month));
+  return QPixmap(QString(c_stub_month_photo_template_str).arg(id_).arg(month));
 }
 
 void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
@@ -144,6 +147,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
     myLabel_->show();
   });
+
   layout_->addWidget(open_file, 4, 0);
   setLayout(layout_);
   update();
@@ -177,11 +181,13 @@ QString DefaultFrameWidget::OpenFile() {
 
   return image_file_name;
 }
-/*
-void DefaultFrameWidget::paintEvent(QPaintEvent *) {
+
+void DefaultFrameWidget::paintEvent(QPaintEvent *e) {
+  QWidget::paintEvent(e);
   QPainter painter(this);
+  painter.drawPixmap(rect(), foreground_, rect());
 
   // Draw background
-}*/
+}
 
 } // namespace FirstYear::UI

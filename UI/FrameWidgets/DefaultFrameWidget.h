@@ -27,8 +27,9 @@ public:
   explicit DefaultFrameWidget(QWidget &parent, Core::FrameControl &control);
   DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
 
-public: // IWidget
+public: // QWidget
         // virtual void onShow(const bool visible) override final;
+  virtual void paintEvent(QPaintEvent *e) override final;
 signals:
 
 public slots:
@@ -40,6 +41,9 @@ private:
 
 private:
   QGridLayout *layout_ = nullptr;
+  QString id_;
+  QPixmap foreground_;
+
   std::vector<PhotoWidget *> photos_;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
   ClickableLabel *myLabel_ = nullptr;
