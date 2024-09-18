@@ -13,6 +13,12 @@ static const char *c_stub_month_photo_template_str =
     ":images/frame/month_stub_%1";
 static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
 
+ClickableLabel::ClickableLabel(QWidget *parent, Qt::WindowFlags)
+    : QLabel(parent) {}
+
+ClickableLabel::~ClickableLabel() {}
+
+void ClickableLabel::mousePressEvent(QMouseEvent *) { emit clicked(); }
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                                        Core::FrameControl &control)
     : QWidget(&parent), layout_(new QGridLayout()) {
@@ -119,6 +125,26 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
             });
   }
 
+  myLabel_ = new ClickableLabel(this->parentWidget());
+  myLabel_->setGeometry(geometry());
+  myLabel_->hide();
+  connect(myLabel_, &ClickableLabel::clicked, this, [&] { myLabel_->hide(); });
+
+  auto open_file = new QPushButton(this);
+  open_file->setGeometry(20, geometry().height() - 2 * 40, 2 * 40, 40);
+  open_file->setText("Render");
+  open_file->setContentsMargins(0, 0, 0, 0);
+  connect(open_file, &QPushButton::clicked, this, [&, project] {
+    QPixmap pixmap(this->sizeHint());
+    QPainter painter(&pixmap);
+    this->render(&painter);
+    // pixmap.save("/Users/nshcherbakova/Desktop/FirstYear/test.png");
+
+    myLabel_->setPixmap(pixmap);
+
+    myLabel_->show();
+  });
+  layout_->addWidget(open_file, 4, 0);
   setLayout(layout_);
   update();
 }
