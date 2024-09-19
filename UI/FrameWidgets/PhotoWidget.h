@@ -17,8 +17,11 @@ public:
 
 public:
   void setText(QString text);
-  void setPhoto(const Core::PhotoData &photo);
+  void setPhoto(const Core::PhotoData &photo, QRect boundary_rect);
   Core::PhotoData getPhoto();
+
+public:
+  virtual void resizeEvent(QResizeEvent *event) override final;
 signals:
   void SignalImagePressed();
 

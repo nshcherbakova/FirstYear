@@ -40,13 +40,15 @@ private:
   QPixmap GetStubPhoto(int month);
 
 private:
-  QGridLayout *layout_ = nullptr;
+  //  QGridLayout *layout_ = nullptr;
   QString id_;
   QPixmap foreground_;
 
-  std::vector<PhotoWidget *> photos_;
+  std::vector<PhotoWidget *> photo_widgets_;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
   ClickableLabel *myLabel_ = nullptr;
+  QWidget *foreground_widget_ = nullptr;
+  std::vector<QRect> photo_slots_;
 };
 
 } // namespace FirstYear::UI

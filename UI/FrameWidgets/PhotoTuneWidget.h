@@ -78,7 +78,7 @@ protected:
   Core::PhotoData photo_;
 
 private:
-  double internal_scale_ = 0;
+  double internal_scale_ = 1;
   QRectF boundary_rect_;
 };
 

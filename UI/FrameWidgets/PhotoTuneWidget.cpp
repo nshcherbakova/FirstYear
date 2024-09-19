@@ -131,14 +131,13 @@ void PhotoProcessor::init(const Core::PhotoData &photo, QRectF boundary_rect) {
   QRectF widget_rect = boundary_rect_;
   double k1 = photo_rect.width() / photo_rect.height();
   double k2 = widget_rect.width() / widget_rect.height();
-
-  internal_scale_ = 1;
-
+  spdlog::info("k1 = {}; k2 = {}", k1, k2);
   if (k1 < k2) {
     internal_scale_ = (double)widget_rect.height() / photo_rect.height();
   } else {
     internal_scale_ = (double)widget_rect.width() / photo_rect.width();
   }
+  spdlog::info("internal_scale_ = {}", internal_scale_);
 }
 
 bool PhotoProcessor::checkBoundares(QPointF offset, double scale,
@@ -222,8 +221,12 @@ void Frame::init(QSizeF frame_size, QRectF widget_rect) {
 }
 
 void Frame::drawFrame(QPainter &painter) {
-  painter.setPen(Qt::white);
+  painter.setPen(Qt::gray);
   painter.drawRoundedRect(frame_, 10, 10);
+  QRectF new_rect(frame_);
+  painter.setPen(Qt::white);
+  new_rect.moveTopLeft(frame_.topLeft() + QPoint{1, 1});
+  painter.drawRoundedRect(new_rect, 10, 10);
 }
 
 QRectF Frame::frameRect() { return frame_; }

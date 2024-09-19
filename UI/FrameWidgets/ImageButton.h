@@ -14,12 +14,12 @@ public:
   ImageButton &operator=(const ImageButton &) = delete;
 
 public:
-  void setPhoto(const Core::PhotoData &photo);
+  void setPhoto(const Core::PhotoData &photo, QRect boundary_rect);
   void paintEvent(QPaintEvent *);
 
 private:
   Core::PhotoData photo_;
-  double internal_scale_ = 0;
+  double internal_scale_ = 1;
 };
 
 } // namespace FirstYear::UI

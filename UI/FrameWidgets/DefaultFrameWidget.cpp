@@ -21,10 +21,39 @@ ClickableLabel::~ClickableLabel() {}
 
 void ClickableLabel::mousePressEvent(QMouseEvent *) { emit clicked(); }
 
+class ForegroundWidget final : public QWidget {
+public:
+  ForegroundWidget(QWidget *parent, QPixmap image)
+      : QWidget(parent), image_(image) {
+    update();
+  }
+
+public:
+  virtual void paintEvent(QPaintEvent *) override final {
+    QPainter painter(this);
+    image_ = image_.scaledToWidth(width());
+    painter.drawPixmap(rect(), image_, rect());
+  }
+
+private:
+  QPixmap image_;
+};
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                                        Core::FrameControl &control)
-    : QWidget(&parent), layout_(new QGridLayout()), id_("1"),
-      foreground_(QString(c_foreground_str).arg(id_)) {
+    : QWidget(&parent) /*, layout_(new QGridLayout())*/, id_("1"),
+      foreground_(QString(c_foreground_str).arg(id_)),
+      photo_slots_({{35, 35, 125, 125},
+                    {184, 35, 125, 125},
+                    {328, 35, 125, 125},
+                    {476, 35, 125, 125},
+                    {35, 185, 125, 125},
+                    {184, 185, 125, 125},
+                    {328, 185, 125, 125},
+                    {476, 185, 125, 125},
+                    {35, 330, 125, 125},
+                    {184, 330, 125, 125},
+                    {328, 330, 125, 125},
+                    {476, 330, 125, 125}}) {
 
   setContentsMargins(0, 0, 0, 0);
   setGeometry(parent.geometry());
@@ -38,6 +67,11 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
 
   InitPhotos(control);
 
+  foreground_widget_ = new ForegroundWidget(this, foreground_);
+  foreground_widget_->setGeometry(geometry());
+  foreground_widget_->raise();
+  foreground_widget_->show();
+  foreground_widget_->setAttribute(Qt::WA_TransparentForMouseEvents);
   spdlog::info("DefaultFrameWidget UI created");
 }
 
@@ -48,45 +82,40 @@ QPixmap DefaultFrameWidget::GetStubPhoto(int month) {
 void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
   auto project = control.CurrentProject();
-  layout_->setGeometry(rect());
-  layout_->setSizeConstraint(QLayout::SetFixedSize);
-  photos_.resize(12);
+  //  layout_->setGeometry(rect());
+  //  layout_->setSizeConstraint(QLayout::SetFixedSize);
+  photo_widgets_.resize(12);
 
-  int row = 0;
-  int column = 0;
-  for (int i = 0; i < (int)photos_.size(); i++) {
+  for (int i = 0; i < (int)project->monthes_.size(); i++) {
     auto &month = project->monthes_[i];
-
-    photos_[i] = new PhotoWidget(*this);
-    auto &photo_widget = photos_[i];
-
-    if (month.text)
-      photo_widget->setText(*month.text);
-    else
-      photo_widget->setText(QString("%1 month").arg(i));
 
     if (month.photo_data.image.isNull()) {
       month.photo_data.is_stub_image = true;
       month.photo_data.image = GetStubPhoto(i);
       month.photo_data.angle = 0;
       month.photo_data.scale = 1;
-      month.photo_data.offset = QPointF();
-    }
-
-    photo_widget->setPhoto(month.photo_data);
-    photo_widget->show();
-    layout_->addWidget(photo_widget, row, column);
-
-    if (column == 3) {
-      column = 0;
-      row++;
-    } else {
-      column++;
+      month.photo_data.offset = QPoint();
     }
   }
 
-  for (int i = 0; i < (int)photos_.size(); i++) {
-    connect(photos_[i], &PhotoWidget::SignalImagePressed, this,
+  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    auto &month = project->monthes_[i];
+
+    photo_widgets_[i] = new PhotoWidget(*this);
+    auto &photo_widget = photo_widgets_[i];
+    photo_widget->setGeometry(photo_slots_[i]);
+
+    if (month.text)
+      photo_widget->setText(*month.text);
+    else
+      photo_widget->setText(QString("%1 month").arg(i));
+
+    photo_widget->setPhoto(month.photo_data, photo_slots_[i]);
+    photo_widget->show();
+  }
+
+  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this,
             [&, i, project] {
               auto &month = project->monthes_[i];
               if (month.photo_data.is_stub_image) {
@@ -97,10 +126,10 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                 month.photo_data.scale = 2.5;
 
                 control.SaveProjectMonth(i);
-                photos_[i]->setPhoto(month.photo_data);
+                photo_widgets_[i]->setPhoto(month.photo_data, photo_slots_[i]);
               }
 
-              photo_tune_widget_->setPhoto(i, photos_[i]->rect().size() * 2,
+              photo_tune_widget_->setPhoto(i, photo_slots_[i].size() * 2,
                                            month.photo_data);
               photo_tune_widget_->show();
             });
@@ -109,7 +138,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
             [&, i, project] {
               if (photo_tune_widget_->getPhotoId() == i) {
                 const auto new_photo_data = photo_tune_widget_->getPhoto();
-                photos_[i]->setPhoto(new_photo_data);
+                photo_widgets_[i]->setPhoto(new_photo_data, photo_slots_[i]);
                 project->monthes_[i].photo_data = new_photo_data;
                 control.SaveProjectMonth(i);
               }
@@ -122,7 +151,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                 auto file = this->OpenFile();
 
                 month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
-                photo_tune_widget_->setPhoto(i, photos_[i]->rect().size() * 2,
+                photo_tune_widget_->setPhoto(i, photo_slots_[i].size() * 2,
                                              month.photo_data);
               }
             });
@@ -148,8 +177,8 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
     myLabel_->show();
   });
 
-  layout_->addWidget(open_file, 4, 0);
-  setLayout(layout_);
+  // layout_->addWidget(open_file, 4, 0);
+  // setLayout(layout_);
   update();
 }
 
@@ -185,7 +214,10 @@ QString DefaultFrameWidget::OpenFile() {
 void DefaultFrameWidget::paintEvent(QPaintEvent *e) {
   QWidget::paintEvent(e);
   QPainter painter(this);
-  painter.drawPixmap(rect(), foreground_, rect());
+  for (auto rect : photo_slots_) {
+    painter.setBrush(Qt::red);
+    painter.drawRect(rect);
+  }
 
   // Draw background
 }
