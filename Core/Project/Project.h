@@ -2,6 +2,7 @@
 #ifndef FIRSTYEAR_CORE_PROJECT_H
 #define FIRSTYEAR_CORE_PROJECT_H
 #include <QPixmap>
+#include <QRectF>
 #include <QString>
 #include <Types.h>
 #include <optional>
@@ -14,6 +15,7 @@ struct PhotoData {
   double angle = 0;
   double scale = 1;
   QPointF offset;
+  //  QRectF dest_rect;
 };
 
 struct MonthItem {

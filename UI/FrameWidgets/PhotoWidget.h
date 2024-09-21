@@ -9,7 +9,7 @@
 
 namespace FirstYear::UI {
 
-class PhotoWidget final : public QWidget {
+class PhotoWidget final : public ImageButton {
   Q_OBJECT
 public:
   explicit PhotoWidget(QWidget &parent);
@@ -17,17 +17,16 @@ public:
 
 public:
   void setText(QString text);
-  void setPhoto(const Core::PhotoData &photo, QRect boundary_rect);
+  void setPhoto(const Core::PhotoData &photo);
   Core::PhotoData getPhoto();
 
 public:
   virtual void resizeEvent(QResizeEvent *event) override final;
+
 signals:
   void SignalImagePressed();
 
 private:
-  Core::PhotoData photo_;
-  ImageButton image_widget_;
   QLabel text_widget_;
 };
 

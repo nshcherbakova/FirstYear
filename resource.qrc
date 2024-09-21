@@ -13,6 +13,7 @@
         <file alias="month_stub_10">resources/Images/frame_1/month_image_stub.jpg</file>
         <file alias="month_stub_11">resources/Images/frame_1/month_image_stub.jpg</file>
         <file alias="foreground">resources/Images/frame_1/foreground.png</file>
+        <file alias="foreground_to_render">resources/Images/frame_1/foreground_to_render.png</file>
     </qresource>
     <qresource prefix="/images/tune_photo">
         <file alias="background">resources/Images/tune_photo_background.jpg</file>

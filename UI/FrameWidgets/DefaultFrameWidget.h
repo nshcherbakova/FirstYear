@@ -38,17 +38,20 @@ private:
   void InitPhotos(Core::FrameControl &control);
   QString OpenFile();
   QPixmap GetStubPhoto(int month);
+  QPixmap renderFrame(FirstYear::Core::ProjectPtr);
 
 private:
   //  QGridLayout *layout_ = nullptr;
   QString id_;
   QPixmap foreground_;
+  QPixmap foreground_to_render_;
 
   std::vector<PhotoWidget *> photo_widgets_;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
   ClickableLabel *myLabel_ = nullptr;
   QWidget *foreground_widget_ = nullptr;
-  std::vector<QRect> photo_slots_;
+  std::vector<QRectF> photo_slots_;
+  std::vector<QRectF> photo_slots_real_;
 };
 
 } // namespace FirstYear::UI

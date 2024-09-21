@@ -4,22 +4,19 @@
 #include <Core/Project/Project.h>
 #include <QPixmap>
 #include <QPushButton>
+#include <UI/FrameWidgets/PhotoTuneWidget.h>
 
 namespace FirstYear::UI {
 
-class ImageButton final : public QPushButton {
+class ImageButton : public QPushButton, public PhotoPainter {
   Q_OBJECT
 public:
   explicit ImageButton(QWidget &parent);
   ImageButton &operator=(const ImageButton &) = delete;
 
 public:
-  void setPhoto(const Core::PhotoData &photo, QRect boundary_rect);
+  void setPhoto(const Core::PhotoData &photo);
   void paintEvent(QPaintEvent *);
-
-private:
-  Core::PhotoData photo_;
-  double internal_scale_ = 1;
 };
 
 } // namespace FirstYear::UI

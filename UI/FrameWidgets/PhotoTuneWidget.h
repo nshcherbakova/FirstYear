@@ -51,35 +51,46 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
+/// \brief The PhotoPainter class
+///
+
+class PhotoPainter {
+public:
+  PhotoPainter &operator=(const PhotoPainter &) = delete;
+
+public:
+  void init(const Core::PhotoData &photo, QRectF destanation_rect,
+            QRectF boundary_rect);
+  void drawPhoto(QPainter &);
+
+protected:
+  QTransform getTransformForWidget(QPointF point, double scale,
+                                   double angle) const;
+
+protected:
+  virtual double currentStepScaleFactor() const { return 1; };
+
+protected:
+  Core::PhotoData photo_;
+  double internal_scale_ = 1;
+  QRectF boundary_rect_;
+  QRectF destanation_rect_;
+};
+/////////////////////////////////////////////////////////////////////////////
 /// \brief The PhotoProcessor class
 ///
 
-class PhotoProcessor {
+class PhotoProcessor : protected PhotoPainter {
 public:
   PhotoProcessor &operator=(const PhotoProcessor &) = delete;
 
 protected:
-  virtual double currentStepScaleFactor() const = 0;
-  virtual QRectF widgetRect() const = 0;
-
-protected:
-  void init(const Core::PhotoData &photo, QRectF boundary_rect);
-  void drawPhoto(QPainter &);
   void updatePhotoPosition(QPointF pos_delta, double scale_factor,
                            double angle_delta);
 
 private:
   bool checkBoundares(QPointF delta, double scale, double angle) const;
   QPointF toImageCoordinates(QPointF point) const;
-  QTransform getTransformForWidget(QPointF point, double scale,
-                                   double angle) const;
-
-protected:
-  Core::PhotoData photo_;
-
-private:
-  double internal_scale_ = 1;
-  QRectF boundary_rect_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -133,7 +144,6 @@ private:
 private:
   // PhotoProcessor
   virtual double currentStepScaleFactor() const override;
-  virtual QRectF widgetRect() const override;
 
 protected:
   // QWidget
