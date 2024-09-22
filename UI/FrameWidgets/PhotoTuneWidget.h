@@ -96,18 +96,28 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 /// \brief The Frame class
 ///
+class FrameParameters {
+public:
+  enum class TYPE {
+    ROUND,
+    RECT,
+  };
+  TYPE type;
+  QVariant data;
+};
 
 class Frame {
 public:
   Frame &operator=(const Frame &) = delete;
 
 protected:
-  void init(QSizeF frame_size, QRectF widget_rect);
+  void init(const FrameParameters &frame_data, QRectF widget_rect);
   void drawFrame(QPainter &);
   QRectF frameRect();
 
 private:
-  QRectF frame_;
+  FrameParameters frame_data_;
+  QRectF frame_boundary_rect_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -128,7 +138,8 @@ signals:
   void SignalPhotoChanged();
 
 public:
-  void setPhoto(int id, QSizeF frame_size, const Core::PhotoData &photo);
+  void setPhoto(int id, const FrameParameters &frame_data,
+                const Core::PhotoData &photo);
   Core::PhotoData getPhoto() const;
   int getPhotoId() const;
 

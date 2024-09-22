@@ -212,25 +212,43 @@ void PhotoProcessor::updatePhotoPosition(QPointF pos_delta, double scale_factor,
 //////////////////////////////////////////////////////////////////////////////////////
 ///
 
-void Frame::init(QSizeF frame_size, QRectF widget_rect) {
+void Frame::init(const FrameParameters &frame_data, QRectF widget_rect) {
 
-  frame_.setTopLeft(QPoint(0, 0));
-  frame_.setSize(frame_size);
-  const auto half_diff = (widget_rect.size() - frame_size) / 2.0;
-  QPoint upper_left_corner(half_diff.width(), half_diff.height());
-  frame_.translate(upper_left_corner);
+  frame_data_ = frame_data;
+
+  if (frame_data_.type == FrameParameters::TYPE::RECT ||
+      frame_data_.type == FrameParameters::TYPE::ROUND) {
+    auto frame_size = frame_data_.data.toSizeF();
+
+    frame_boundary_rect_.setTopLeft(QPoint(0, 0));
+    frame_boundary_rect_.setSize(frame_size);
+    const auto half_diff = (widget_rect.size() - frame_size) / 2.0;
+    QPoint upper_left_corner(half_diff.width(), half_diff.height());
+    frame_boundary_rect_.translate(upper_left_corner);
+  }
 }
 
 void Frame::drawFrame(QPainter &painter) {
-  painter.setPen(Qt::gray);
-  painter.drawRoundedRect(frame_, 10, 10);
-  QRectF new_rect(frame_);
-  painter.setPen(Qt::white);
-  new_rect.moveTopLeft(frame_.topLeft() + QPoint{1, 1});
-  painter.drawRoundedRect(new_rect, 10, 10);
+  if (frame_data_.type == FrameParameters::TYPE::RECT) {
+    painter.setPen(Qt::gray);
+    painter.drawRoundedRect(frame_boundary_rect_, 10, 10);
+    QRectF new_rect(frame_boundary_rect_);
+    painter.setPen(Qt::white);
+    new_rect.moveTopLeft(frame_boundary_rect_.topLeft() + QPoint{1, 1});
+    painter.drawRoundedRect(new_rect, 10, 10);
+  } else
+
+      if (frame_data_.type == FrameParameters::TYPE::ROUND) {
+    painter.setPen(Qt::gray);
+    painter.drawEllipse(frame_boundary_rect_);
+    QRectF new_rect(frame_boundary_rect_);
+    painter.setPen(Qt::white);
+    new_rect.moveTopLeft(frame_boundary_rect_.topLeft() + QPoint{1, 1});
+    painter.drawEllipse(new_rect);
+  }
 }
 
-QRectF Frame::frameRect() { return frame_; }
+QRectF Frame::frameRect() { return frame_boundary_rect_; }
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -279,12 +297,11 @@ bool PhotoTuneWidget::event(QEvent *event) {
   return QWidget::event(event);
 }
 
-void PhotoTuneWidget::setPhoto(int id, QSizeF frame_size,
+void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
                                const Core::PhotoData &photo) {
 
   id_ = id;
-
-  Frame::init(frame_size, rect());
+  Frame::init(frame_data, rect());
   PhotoProcessor::init(photo, rect(), frameRect());
   update();
 }

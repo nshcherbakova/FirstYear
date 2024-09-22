@@ -27,7 +27,7 @@ class ForegroundWidget final : public QWidget {
 public:
   ForegroundWidget(QWidget *parent, QPixmap image,
                    std::vector<QRectF> photo_slots)
-      : QWidget(parent), image_(image), photo_slots_(photo_slots) {
+      : QWidget(parent), photo_slots_(photo_slots), image_(image) {
     update();
   }
 
@@ -35,7 +35,7 @@ public:
   virtual void paintEvent(QPaintEvent *) override final {
     QPainter painter(this);
     image_ = image_.scaledToWidth(width());
-    spdlog::info("ForegroundWidget image_.w = {}", image_.width());
+
     painter.drawPixmap(rect(), image_, rect());
 
     for (int i = 0; i < (int)photo_slots_.size(); i++) {
@@ -141,8 +141,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     auto frame_rect_size = photo_slots_[i].size().scaled(
         rect().width() / 2, rect().height(), Qt::KeepAspectRatio);
-    spdlog::info("frame_rect_size {} {}", frame_rect_size.width(),
-                 frame_rect_size.height());
+
     connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this,
             [&, i, project, frame_rect_size] {
               auto &month = project->monthes_[i];
@@ -157,8 +156,9 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                 photo_widgets_[i]->setPhoto(month.photo_data);
               }
 
-              photo_tune_widget_->setPhoto(i, frame_rect_size,
-                                           month.photo_data);
+              photo_tune_widget_->setPhoto(
+                  i, {FrameParameters::TYPE::ROUND, frame_rect_size},
+                  month.photo_data);
               photo_tune_widget_->show();
             });
 
@@ -179,8 +179,9 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                 auto file = this->OpenFile();
 
                 month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
-                photo_tune_widget_->setPhoto(i, frame_rect_size,
-                                             month.photo_data);
+                photo_tune_widget_->setPhoto(
+                    i, {FrameParameters::TYPE::ROUND, frame_rect_size},
+                    month.photo_data);
               }
             });
   }
