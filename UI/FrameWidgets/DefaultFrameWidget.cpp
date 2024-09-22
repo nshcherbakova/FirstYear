@@ -68,16 +68,13 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                          {476, 330, 125, 125}}) {
 
   double k = (double)parent.geometry().width() / foreground_.width();
-  spdlog::info("parent.geometry().width()  = {}", parent.geometry().width());
-  spdlog::info("foreground_ = {}", foreground_.width());
-  spdlog::info("DefaultFrameWidget k = {}", k);
+
   photo_slots_.resize(photo_slots_real_.size());
   for (int i = 0; i < (int)photo_slots_real_.size(); i++) {
     auto new_rect = photo_slots_real_[i];
     new_rect.setTopLeft(photo_slots_real_[i].topLeft() * k);
     new_rect.setSize(photo_slots_real_[i].size() * k);
 
-    spdlog::info("new_rect width = {}", new_rect.size().width());
     photo_slots_[i] = new_rect;
   }
 
@@ -99,10 +96,6 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
   foreground_widget_->show();
   foreground_widget_->setContentsMargins(0, 0, 0, 0);
   foreground_widget_->setAttribute(Qt::WA_TransparentForMouseEvents);
-  spdlog::info("DefaultFrameWidget foreground_widget_ {}, {}, {}, {}",
-               geometry().topLeft().x(), geometry().topLeft().y(),
-               geometry().width(), geometry().height());
-  spdlog::info("DefaultFrameWidget UI created");
 }
 
 QPixmap DefaultFrameWidget::GetStubPhoto(int month) {
@@ -112,8 +105,6 @@ QPixmap DefaultFrameWidget::GetStubPhoto(int month) {
 void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
 
   auto project = control.CurrentProject();
-  //  layout_->setGeometry(rect());
-  //  layout_->setSizeConstraint(QLayout::SetFixedSize);
   photo_widgets_.resize(12);
 
   for (int i = 0; i < (int)project->monthes_.size(); i++) {
@@ -148,8 +139,12 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
   }
 
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    auto frame_rect_size = photo_slots_[i].size().scaled(
+        rect().width() / 2, rect().height(), Qt::KeepAspectRatio);
+    spdlog::info("frame_rect_size {} {}", frame_rect_size.width(),
+                 frame_rect_size.height());
     connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this,
-            [&, i, project] {
+            [&, i, project, frame_rect_size] {
               auto &month = project->monthes_[i];
               if (month.photo_data.is_stub_image) {
                 auto file = this->OpenFile();
@@ -162,7 +157,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
                 photo_widgets_[i]->setPhoto(month.photo_data);
               }
 
-              photo_tune_widget_->setPhoto(i, photo_slots_[i].size() * 2,
+              photo_tune_widget_->setPhoto(i, frame_rect_size,
                                            month.photo_data);
               photo_tune_widget_->show();
             });
@@ -178,13 +173,13 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
             });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
-            [&, i, project] {
+            [&, i, project, frame_rect_size] {
               if (photo_tune_widget_->getPhotoId() == i) {
                 auto &month = project->monthes_[i];
                 auto file = this->OpenFile();
 
                 month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
-                photo_tune_widget_->setPhoto(i, photo_slots_[i].size() * 2,
+                photo_tune_widget_->setPhoto(i, frame_rect_size,
                                              month.photo_data);
               }
             });
@@ -208,8 +203,6 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
     myLabel_->show();
   });
 
-  // layout_->addWidget(open_file, 4, 0);
-  // setLayout(layout_);
   update();
 }
 

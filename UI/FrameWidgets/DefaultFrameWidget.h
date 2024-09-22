@@ -41,7 +41,6 @@ private:
   QPixmap renderFrame(FirstYear::Core::ProjectPtr);
 
 private:
-  //  QGridLayout *layout_ = nullptr;
   QString id_;
   QPixmap foreground_;
   QPixmap foreground_to_render_;

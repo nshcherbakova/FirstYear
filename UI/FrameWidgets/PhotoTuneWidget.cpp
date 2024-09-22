@@ -165,9 +165,6 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
 
   QTransform transform = getTransformForWidget(
       photo_.offset, currentStepScaleFactor() * photo_.scale, photo_.angle);
-  spdlog::info("PhotoPainter destanation_rect_ {}, {}, {}, {}",
-               destanation_rect_.topLeft().x(), destanation_rect_.topLeft().y(),
-               destanation_rect_.width(), destanation_rect_.height());
   painter.setTransform(transform);
   painter.drawPixmap(0, 0, photo_.image);
   painter.setTransform(QTransform());
