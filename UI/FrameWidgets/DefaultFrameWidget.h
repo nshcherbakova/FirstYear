@@ -21,18 +21,17 @@ signals:
 protected:
   void mousePressEvent(QMouseEvent *event);
 };
-class DefaultFrameWidget final : public QWidget {
+
+class FrameWidgetBase : public QWidget {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget(QWidget &parent, Core::FrameControl &control);
-  DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
+  explicit FrameWidgetBase(QString id, const std::vector<QRectF> &photo_slots,
+                           const std::vector<QVariant> &frame_data,
+                           QWidget &parent, Core::FrameControl &control);
+  FrameWidgetBase &operator=(const FrameWidgetBase &) = delete;
 
 public: // QWidget
-        // virtual void onShow(const bool visible) override final;
   virtual void paintEvent(QPaintEvent *e) override final;
-signals:
-
-public slots:
 
 private:
   void InitPhotos(Core::FrameControl &control);
@@ -40,17 +39,27 @@ private:
   QPixmap GetStubPhoto(int month);
   QPixmap renderFrame(FirstYear::Core::ProjectPtr);
 
-private:
+protected:
   QString id_;
   QPixmap foreground_;
   QPixmap foreground_to_render_;
+  QString stub_month_photo_template_str_;
+  std::vector<QRectF> photo_slots_real_;
+  std::vector<QVariant> frame_data_;
 
+private:
   std::vector<PhotoWidget *> photo_widgets_;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
   ClickableLabel *myLabel_ = nullptr;
   QWidget *foreground_widget_ = nullptr;
   std::vector<QRectF> photo_slots_;
-  std::vector<QRectF> photo_slots_real_;
+};
+
+class DefaultFrameWidget final : public FrameWidgetBase {
+  Q_OBJECT
+public:
+  explicit DefaultFrameWidget(QWidget &parent, Core::FrameControl &control);
+  DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
 };
 
 } // namespace FirstYear::UI

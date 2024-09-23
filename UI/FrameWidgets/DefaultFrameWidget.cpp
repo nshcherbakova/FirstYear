@@ -9,9 +9,11 @@ static const char *c_open_image_str = "Open Image";
 static const char *c_file_types_str = "Image Files (*.png *.jpg *.jpeg *.bmp)";
 static const QStringList c_mime_type_filters({"image/jpeg", "image/pjpeg",
                                               "image/png", "image/bmp"});
+
+static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
+
 static const char *c_stub_month_photo_template_str =
     ":images/frame_%1/month_stub_%2";
-static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
 static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
@@ -49,23 +51,40 @@ private:
   std::vector<QRectF> photo_slots_;
   QPixmap image_;
 };
+
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                                        Core::FrameControl &control)
-    : QWidget(&parent) /*, layout_(new QGridLayout())*/, id_("1"),
+
+    : FrameWidgetBase("1",
+                      {{35, 35, 125, 125},
+                       {184, 35, 125, 125},
+                       {328, 35, 125, 125},
+                       {476, 35, 125, 125},
+                       {35, 185, 125, 125},
+                       {184, 185, 125, 125},
+                       {328, 185, 125, 125},
+                       {476, 185, 125, 125},
+                       {35, 330, 125, 125},
+                       {184, 330, 125, 125},
+                       {328, 330, 125, 125},
+                       {476, 330, 125, 125}},
+                      {QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125}},
+                      parent, control) {}
+
+FrameWidgetBase::FrameWidgetBase(QString id,
+                                 const std::vector<QRectF> &photo_slots,
+                                 const std::vector<QVariant> &frame_data,
+                                 QWidget &parent, Core::FrameControl &control)
+    : QWidget(&parent), id_(id),
       foreground_(QString(c_foreground_str).arg(id_)),
       foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
-      photo_slots_real_({{35, 35, 125, 125},
-                         {184, 35, 125, 125},
-                         {328, 35, 125, 125},
-                         {476, 35, 125, 125},
-                         {35, 185, 125, 125},
-                         {184, 185, 125, 125},
-                         {328, 185, 125, 125},
-                         {476, 185, 125, 125},
-                         {35, 330, 125, 125},
-                         {184, 330, 125, 125},
-                         {328, 330, 125, 125},
-                         {476, 330, 125, 125}}) {
+      stub_month_photo_template_str_(
+          QString(c_stub_month_photo_template_str).arg(id_)),
+      photo_slots_real_(std::move(photo_slots)),
+      frame_data_(std::move(frame_data)) {
 
   double k = (double)parent.geometry().width() / foreground_.width();
 
@@ -98,11 +117,11 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
   foreground_widget_->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
-QPixmap DefaultFrameWidget::GetStubPhoto(int month) {
-  return QPixmap(QString(c_stub_month_photo_template_str).arg(id_).arg(month));
+QPixmap FrameWidgetBase::GetStubPhoto(int month) {
+  return QPixmap(stub_month_photo_template_str_.arg(month));
 }
 
-void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
+void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
 
   auto project = control.CurrentProject();
   photo_widgets_.resize(12);
@@ -139,11 +158,9 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
   }
 
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    auto frame_rect_size = photo_slots_[i].size().scaled(
-        rect().width() / 2, rect().height(), Qt::KeepAspectRatio);
 
     connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this,
-            [&, i, project, frame_rect_size] {
+            [&, i, project] {
               auto &month = project->monthes_[i];
               if (month.photo_data.is_stub_image) {
                 auto file = this->OpenFile();
@@ -157,7 +174,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
               }
 
               photo_tune_widget_->setPhoto(
-                  i, {FrameParameters::TYPE::ROUND, frame_rect_size},
+                  i, {FrameParameters::TYPE::ROUND, frame_data_[i]},
                   month.photo_data);
               photo_tune_widget_->show();
             });
@@ -173,14 +190,14 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
             });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
-            [&, i, project, frame_rect_size] {
+            [&, i, project] {
               if (photo_tune_widget_->getPhotoId() == i) {
                 auto &month = project->monthes_[i];
                 auto file = this->OpenFile();
 
                 month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
                 photo_tune_widget_->setPhoto(
-                    i, {FrameParameters::TYPE::ROUND, frame_rect_size},
+                    i, {FrameParameters::TYPE::ROUND, frame_data_[i]},
                     month.photo_data);
               }
             });
@@ -207,7 +224,7 @@ void DefaultFrameWidget::InitPhotos(Core::FrameControl &control) {
   update();
 }
 
-QString DefaultFrameWidget::OpenFile() {
+QString FrameWidgetBase::OpenFile() {
   QString image_file_name;
   QString path;
   if (path.isEmpty()) {
@@ -236,7 +253,7 @@ QString DefaultFrameWidget::OpenFile() {
   return image_file_name;
 }
 
-void DefaultFrameWidget::paintEvent(QPaintEvent *e) {
+void FrameWidgetBase::paintEvent(QPaintEvent *e) {
   QWidget::paintEvent(e);
   QPainter painter(this);
   for (auto rect : photo_slots_) {
@@ -247,7 +264,7 @@ void DefaultFrameWidget::paintEvent(QPaintEvent *e) {
   // Draw background
 }
 
-QPixmap DefaultFrameWidget::renderFrame(FirstYear::Core::ProjectPtr project) {
+QPixmap FrameWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) {
   QPixmap pixmap(foreground_to_render_.size());
   //
 

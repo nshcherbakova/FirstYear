@@ -218,7 +218,9 @@ void Frame::init(const FrameParameters &frame_data, QRectF widget_rect) {
 
   if (frame_data_.type == FrameParameters::TYPE::RECT ||
       frame_data_.type == FrameParameters::TYPE::ROUND) {
-    auto frame_size = frame_data_.data.toSizeF();
+
+    auto frame_size = frame_data_.data.toSizeF().scaled(
+        widget_rect.width() / 2, widget_rect.height(), Qt::KeepAspectRatio);
 
     frame_boundary_rect_.setTopLeft(QPoint(0, 0));
     frame_boundary_rect_.setSize(frame_size);
