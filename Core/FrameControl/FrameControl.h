@@ -15,11 +15,11 @@ public:
   void SaveProjectMonth(int month);
   ProjectPtr CurrentProject();
 
-public: // IWidget
-        // virtual void onShow(const bool visible) override final;
-  // signals:
-
-  // public slots:
+public:
+  void previousFrame();
+  void nextFrame();
+  bool isPreviousFrame();
+  bool isNextFrame();
 
 private:
   void LoadProject(QString name);

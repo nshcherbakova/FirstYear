@@ -6,6 +6,9 @@
 #include <stdafx.h>
 
 constexpr const char *DEF_PROGECT_NAME = "Frame";
+constexpr const char *c_stub_month_photo_template_str =
+    ":images/month_stubs/month_stub_%1";
+
 namespace FirstYear::Core {
 
 FrameControl::FrameControl() {}
@@ -40,6 +43,26 @@ QString FrameControl::LastProjectName() const { return DEF_PROGECT_NAME; }
 void FrameControl::CreateNewProject() {
   current_project_ = std::make_shared<Project>();
   current_project_->monthes_.resize(12);
+  for (int i = 0; i < (int)current_project_->monthes_.size(); i++) {
+    auto &month = current_project_->monthes_[i];
+
+    if (month.photo_data.image.isNull()) {
+      month.photo_data.is_stub_image = true;
+      month.photo_data.image =
+          QPixmap(QString(c_stub_month_photo_template_str).arg(i));
+      month.photo_data.angle = 0;
+      month.photo_data.scale = 1;
+      month.photo_data.offset = QPoint();
+    }
+    // month.photo_data.dest_rect = photo_slots_[i];
+    // spdlog::info("DefaultFrameWidget dest_rect width = {}",
+    // month.photo_data.dest_rect.size().width());
+  }
 }
+
+void FrameControl::previousFrame() {}
+void FrameControl::nextFrame() {}
+bool FrameControl::isPreviousFrame() { return true; }
+bool FrameControl::isNextFrame() { return true; }
 
 } // namespace FirstYear::Core

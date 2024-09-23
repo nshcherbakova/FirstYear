@@ -25,25 +25,31 @@ protected:
 class FrameWidgetBase : public QWidget {
   Q_OBJECT
 public:
-  explicit FrameWidgetBase(QString id, const std::vector<QRectF> &photo_slots,
-                           const std::vector<QVariant> &frame_data,
-                           QWidget &parent, Core::FrameControl &control);
+  explicit FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
+                           QString id);
   FrameWidgetBase &operator=(const FrameWidgetBase &) = delete;
+
+public:
+  void reload(std::vector<QRectF> photo_slots, std::vector<QVariant> frame_data,
+              Core::FrameControl &control);
 
 public: // QWidget
   virtual void paintEvent(QPaintEvent *e) override final;
 
 private:
+  void initMonthPhotoWidgets(Core::FrameControl &control);
+  void initPhotoTuneWidget(Core::FrameControl &control);
+  void createButtons(Core::FrameControl &control);
+  void createForegroundWidget();
   void InitPhotos(Core::FrameControl &control);
+
   QString OpenFile();
-  QPixmap GetStubPhoto(int month);
   QPixmap renderFrame(FirstYear::Core::ProjectPtr);
 
 protected:
   QString id_;
   QPixmap foreground_;
   QPixmap foreground_to_render_;
-  QString stub_month_photo_template_str_;
   std::vector<QRectF> photo_slots_real_;
   std::vector<QVariant> frame_data_;
 
@@ -59,6 +65,9 @@ class DefaultFrameWidget final : public FrameWidgetBase {
   Q_OBJECT
 public:
   explicit DefaultFrameWidget(QWidget &parent, Core::FrameControl &control);
+
+public:
+  void InitPhotos(Core::FrameControl &control);
   DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
 };
 

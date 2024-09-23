@@ -12,8 +12,6 @@ static const QStringList c_mime_type_filters({"image/jpeg", "image/pjpeg",
 
 static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
 
-static const char *c_stub_month_photo_template_str =
-    ":images/frame_%1/month_stub_%2";
 static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
@@ -55,132 +53,61 @@ private:
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                                        Core::FrameControl &control)
 
-    : FrameWidgetBase("1",
-                      {{35, 35, 125, 125},
-                       {184, 35, 125, 125},
-                       {328, 35, 125, 125},
-                       {476, 35, 125, 125},
-                       {35, 185, 125, 125},
-                       {184, 185, 125, 125},
-                       {328, 185, 125, 125},
-                       {476, 185, 125, 125},
-                       {35, 330, 125, 125},
-                       {184, 330, 125, 125},
-                       {328, 330, 125, 125},
-                       {476, 330, 125, 125}},
-                      {QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125}},
-                      parent, control) {}
+    : FrameWidgetBase(parent, control, "1") {
 
-FrameWidgetBase::FrameWidgetBase(QString id,
-                                 const std::vector<QRectF> &photo_slots,
-                                 const std::vector<QVariant> &frame_data,
-                                 QWidget &parent, Core::FrameControl &control)
+  reload({{35, 35, 125, 125},
+          {184, 35, 125, 125},
+          {328, 35, 125, 125},
+          {476, 35, 125, 125},
+          {35, 185, 125, 125},
+          {184, 185, 125, 125},
+          {328, 185, 125, 125},
+          {476, 185, 125, 125},
+          {35, 330, 125, 125},
+          {184, 330, 125, 125},
+          {328, 330, 125, 125},
+          {476, 330, 125, 125}},
+
+         {QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+          QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+          QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+          QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125}},
+         control);
+}
+
+FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
+                                 QString id)
     : QWidget(&parent), id_(id),
       foreground_(QString(c_foreground_str).arg(id_)),
-      foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
-      stub_month_photo_template_str_(
-          QString(c_stub_month_photo_template_str).arg(id_)),
-      photo_slots_real_(std::move(photo_slots)),
-      frame_data_(std::move(frame_data)) {
-
-  double k = (double)parent.geometry().width() / foreground_.width();
-
-  photo_slots_.resize(photo_slots_real_.size());
-  for (int i = 0; i < (int)photo_slots_real_.size(); i++) {
-    auto new_rect = photo_slots_real_[i];
-    new_rect.setTopLeft(photo_slots_real_[i].topLeft() * k);
-    new_rect.setSize(photo_slots_real_[i].size() * k);
-
-    photo_slots_[i] = new_rect;
-  }
-
+      foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)) {
   setContentsMargins(0, 0, 0, 0);
   setGeometry(parent.geometry());
   setAutoFillBackground(true);
-  auto palette = QWidget::palette();
-  // palette.setColor(QPalette::Window, Qt::red);
-  setPalette(palette);
 
+  photo_slots_.resize(12);
   photo_tune_widget_ = new PhotoTuneWidget(*this->parentWidget());
+  photo_widgets_.resize(12);
+  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    photo_widgets_[i] = new PhotoWidget(*this);
+  }
+
+  initPhotoTuneWidget(control);
+  initMonthPhotoWidgets(control);
+
+  createButtons(control);
+  createForegroundWidget();
+}
+
+void FrameWidgetBase::initPhotoTuneWidget(Core::FrameControl &control) {
+
   photo_tune_widget_->hide();
 
-  InitPhotos(control);
-
-  foreground_widget_ = new ForegroundWidget(this, foreground_, photo_slots_);
-  foreground_widget_->setGeometry(geometry());
-  foreground_widget_->raise();
-  foreground_widget_->show();
-  foreground_widget_->setContentsMargins(0, 0, 0, 0);
-  foreground_widget_->setAttribute(Qt::WA_TransparentForMouseEvents);
-}
-
-QPixmap FrameWidgetBase::GetStubPhoto(int month) {
-  return QPixmap(stub_month_photo_template_str_.arg(month));
-}
-
-void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
-
-  auto project = control.CurrentProject();
-  photo_widgets_.resize(12);
-
-  for (int i = 0; i < (int)project->monthes_.size(); i++) {
-    auto &month = project->monthes_[i];
-
-    if (month.photo_data.image.isNull()) {
-      month.photo_data.is_stub_image = true;
-      month.photo_data.image = GetStubPhoto(i);
-      month.photo_data.angle = 0;
-      month.photo_data.scale = 1;
-      month.photo_data.offset = QPoint();
-    }
-    // month.photo_data.dest_rect = photo_slots_[i];
-    // spdlog::info("DefaultFrameWidget dest_rect width = {}",
-    // month.photo_data.dest_rect.size().width());
-  }
-
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    auto &month = project->monthes_[i];
-
-    photo_widgets_[i] = new PhotoWidget(*this);
-    auto &photo_widget = photo_widgets_[i];
-    photo_widget->setGeometry(photo_slots_[i].toRect());
-
-    if (month.text)
-      photo_widget->setText(*month.text);
-    else
-      photo_widget->setText(QString("%1 month").arg(i));
-
-    photo_widget->setPhoto(month.photo_data);
-    photo_widget->show();
-  }
-
-  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-
-    connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this,
-            [&, i, project] {
-              auto &month = project->monthes_[i];
-              if (month.photo_data.is_stub_image) {
-                auto file = this->OpenFile();
-
-                month.photo_data.image = QPixmap(file);
-                month.photo_data.is_stub_image = false;
-                month.photo_data.scale = 2.5;
-
-                control.SaveProjectMonth(i);
-                photo_widgets_[i]->setPhoto(month.photo_data);
-              }
-
-              photo_tune_widget_->setPhoto(
-                  i, {FrameParameters::TYPE::ROUND, frame_data_[i]},
-                  month.photo_data);
-              photo_tune_widget_->show();
-            });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
-            [&, i, project] {
+            [&, i] {
+              auto project = control.CurrentProject();
+
               if (photo_tune_widget_->getPhotoId() == i) {
                 const auto new_photo_data = photo_tune_widget_->getPhoto();
                 photo_widgets_[i]->setPhoto(new_photo_data);
@@ -190,7 +117,9 @@ void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
             });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
-            [&, i, project] {
+            [&, i] {
+              auto project = control.CurrentProject();
+
               if (photo_tune_widget_->getPhotoId() == i) {
                 auto &month = project->monthes_[i];
                 auto file = this->OpenFile();
@@ -202,6 +131,43 @@ void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
               }
             });
   }
+}
+
+void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
+  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+
+    connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this, [&, i] {
+      auto project = control.CurrentProject();
+      auto &month = project->monthes_[i];
+
+      if (month.photo_data.is_stub_image) {
+        auto file = this->OpenFile();
+
+        month.photo_data.image = QPixmap(file);
+        month.photo_data.is_stub_image = false;
+        month.photo_data.scale = 2.5;
+
+        control.SaveProjectMonth(i);
+        photo_widgets_[i]->setPhoto(month.photo_data);
+      }
+
+      photo_tune_widget_->setPhoto(
+          i, {FrameParameters::TYPE::ROUND, frame_data_[i]}, month.photo_data);
+      photo_tune_widget_->show();
+    });
+  }
+}
+
+void FrameWidgetBase::createForegroundWidget() {
+  foreground_widget_ = new ForegroundWidget(this, foreground_, photo_slots_);
+  foreground_widget_->setGeometry(geometry());
+  foreground_widget_->raise();
+  foreground_widget_->show();
+  foreground_widget_->setContentsMargins(0, 0, 0, 0);
+  foreground_widget_->setAttribute(Qt::WA_TransparentForMouseEvents);
+}
+
+void FrameWidgetBase::createButtons(Core::FrameControl &control) {
 
   myLabel_ = new ClickableLabel(this->parentWidget());
   myLabel_->setGeometry(geometry());
@@ -212,14 +178,64 @@ void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
   open_file->setGeometry(20, geometry().height() - 2 * 40, 2 * 40, 40);
   open_file->setText("Render");
   open_file->setContentsMargins(0, 0, 0, 0);
-  connect(open_file, &QPushButton::clicked, this, [&, project] {
-    auto pixmap = this->renderFrame(project);
+  connect(open_file, &QPushButton::clicked, this, [&] {
+    auto pixmap = this->renderFrame(control.CurrentProject());
     pixmap.save("/Users/nshcherbakova/Desktop/FirstYear/test1.png");
 
     myLabel_->setPixmap(pixmap);
-
     myLabel_->show();
   });
+
+  auto back = new QPushButton(this);
+  back->setGeometry(20, geometry().height() - 4 * 40, 2 * 40, 40);
+  back->setText("<");
+  back->setContentsMargins(0, 0, 0, 0);
+  connect(back, &QPushButton::clicked, this, [&] { control.previousFrame(); });
+
+  auto next = new QPushButton(this);
+  next->setGeometry(geometry().width() - 100, geometry().height() - 4 * 40,
+                    2 * 40, 40);
+  next->setText(">");
+  next->setContentsMargins(0, 0, 0, 0);
+  connect(next, &QPushButton::clicked, this, [&] { control.nextFrame(); });
+}
+
+void FrameWidgetBase::reload(std::vector<QRectF> photo_slots,
+                             std::vector<QVariant> frame_data,
+                             Core::FrameControl &control) {
+
+  photo_slots_real_ = (std::move(photo_slots));
+  frame_data_ = (std::move(frame_data));
+
+  double k = (double)parentWidget()->geometry().width() / foreground_.width();
+
+  for (int i = 0; i < (int)photo_slots_real_.size(); i++) {
+    auto new_rect = photo_slots_real_[i];
+    new_rect.setTopLeft(photo_slots_real_[i].topLeft() * k);
+    new_rect.setSize(photo_slots_real_[i].size() * k);
+
+    photo_slots_[i] = new_rect;
+  }
+
+  InitPhotos(control);
+}
+
+void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
+
+  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    auto &month = control.CurrentProject()->monthes_[i];
+    auto &photo_widget = photo_widgets_[i];
+
+    photo_widget->setGeometry(photo_slots_[i].toRect());
+
+    if (month.text)
+      photo_widget->setText(*month.text);
+    else
+      photo_widget->setText(QString("%1 month").arg(i));
+
+    photo_widget->setPhoto(month.photo_data);
+    photo_widget->show();
+  }
 
   update();
 }
