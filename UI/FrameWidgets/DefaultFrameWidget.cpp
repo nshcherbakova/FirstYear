@@ -53,33 +53,36 @@ private:
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                                        Core::FrameControl &control)
 
-    : FrameWidgetBase(parent, control, "1") {
+    : FrameWidgetBase(parent, control, "1",
+                      {{35, 35, 125, 125},
+                       {184, 35, 125, 125},
+                       {328, 35, 125, 125},
+                       {476, 35, 125, 125},
+                       {35, 185, 125, 125},
+                       {184, 185, 125, 125},
+                       {328, 185, 125, 125},
+                       {476, 185, 125, 125},
+                       {35, 330, 125, 125},
+                       {184, 330, 125, 125},
+                       {328, 330, 125, 125},
+                       {476, 330, 125, 125}},
 
-  reload({{35, 35, 125, 125},
-          {184, 35, 125, 125},
-          {328, 35, 125, 125},
-          {476, 35, 125, 125},
-          {35, 185, 125, 125},
-          {184, 185, 125, 125},
-          {328, 185, 125, 125},
-          {476, 185, 125, 125},
-          {35, 330, 125, 125},
-          {184, 330, 125, 125},
-          {328, 330, 125, 125},
-          {476, 330, 125, 125}},
+                      {QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
+                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125}}) {
 
-         {QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-          QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-          QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-          QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125}},
-         control);
+  reload(control);
 }
 
 FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
-                                 QString id)
+                                 QString id, std::vector<QRectF> photo_slots,
+                                 std::vector<QVariant> frame_data)
     : QWidget(&parent), id_(id),
       foreground_(QString(c_foreground_str).arg(id_)),
-      foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)) {
+      foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
+      photo_slots_real_(std::move(photo_slots)),
+      frame_data_(std::move(frame_data)) {
   setContentsMargins(0, 0, 0, 0);
   setGeometry(parent.geometry());
   setAutoFillBackground(true);
@@ -200,12 +203,7 @@ void FrameWidgetBase::createButtons(Core::FrameControl &control) {
   connect(next, &QPushButton::clicked, this, [&] { control.nextFrame(); });
 }
 
-void FrameWidgetBase::reload(std::vector<QRectF> photo_slots,
-                             std::vector<QVariant> frame_data,
-                             Core::FrameControl &control) {
-
-  photo_slots_real_ = (std::move(photo_slots));
-  frame_data_ = (std::move(frame_data));
+void FrameWidgetBase::reload(Core::FrameControl &control) {
 
   double k = (double)parentWidget()->geometry().width() / foreground_.width();
 

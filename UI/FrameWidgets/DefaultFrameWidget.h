@@ -26,12 +26,12 @@ class FrameWidgetBase : public QWidget {
   Q_OBJECT
 public:
   explicit FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
-                           QString id);
+                           QString id, std::vector<QRectF> photo_slots,
+                           std::vector<QVariant> frame_data);
   FrameWidgetBase &operator=(const FrameWidgetBase &) = delete;
 
 public:
-  void reload(std::vector<QRectF> photo_slots, std::vector<QVariant> frame_data,
-              Core::FrameControl &control);
+  void reload(Core::FrameControl &control);
 
 public: // QWidget
   virtual void paintEvent(QPaintEvent *e) override final;
