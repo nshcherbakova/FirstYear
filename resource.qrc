@@ -17,6 +17,10 @@
         <file alias="foreground">resources/Images/frame_1/foreground.png</file>
         <file alias="foreground_to_render">resources/Images/frame_1/foreground_to_render.png</file>
     </qresource>
+    <qresource prefix="/images/frame_2">
+        <file alias="foreground">resources/Images/frame_2/foreground.png</file>
+        <file alias="foreground_to_render">resources/Images/frame_2/foreground_to_render.png</file>
+    </qresource>
     <qresource prefix="/images/tune_photo">
         <file alias="background">resources/Images/tune_photo_background.jpg</file>
         </qresource>

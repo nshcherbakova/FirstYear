@@ -66,18 +66,58 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                        {184, 330, 125, 125},
                        {328, 330, 125, 125},
                        {476, 330, 125, 125}},
+                      {{FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}) {
 
-                      {QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125},
-                       QSizeF{125, 125}, QSizeF{125, 125}, QSizeF{125, 125}}) {
+  // reload(control);
+}
 
-  reload(control);
+DefaultFrameWidget2::DefaultFrameWidget2(QWidget &parent,
+                                         Core::FrameControl &control)
+
+    : FrameWidgetBase(parent, control, "2",
+                      {{35, 35, 125, 125},
+                       {184, 35, 125, 125},
+                       {328, 35, 125, 125},
+                       {476, 35, 125, 125},
+                       {35, 185, 125, 125},
+                       {184, 185, 125, 125},
+                       {328, 185, 125, 125},
+                       {476, 185, 125, 125},
+                       {35, 330, 125, 125},
+                       {184, 330, 125, 125},
+                       {328, 330, 125, 125},
+                       {476, 330, 125, 125}},
+
+                      {{FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}}}) {
+
+  // reload(control);
 }
 
 FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
                                  QString id, std::vector<QRectF> photo_slots,
-                                 std::vector<QVariant> frame_data)
+                                 std::vector<FrameParameters> frame_data)
     : QWidget(&parent), id_(id),
       foreground_(QString(c_foreground_str).arg(id_)),
       foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
@@ -101,6 +141,7 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
   createForegroundWidget();
 }
 
+QString FrameWidgetBase::id() const { return id_; }
 void FrameWidgetBase::initPhotoTuneWidget(Core::FrameControl &control) {
 
   photo_tune_widget_->hide();
@@ -119,20 +160,18 @@ void FrameWidgetBase::initPhotoTuneWidget(Core::FrameControl &control) {
               }
             });
 
-    connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
-            [&, i] {
-              auto project = control.CurrentProject();
+    connect(
+        photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this, [&, i] {
+          auto project = control.CurrentProject();
 
-              if (photo_tune_widget_->getPhotoId() == i) {
-                auto &month = project->monthes_[i];
-                auto file = this->OpenFile();
+          if (photo_tune_widget_->getPhotoId() == i) {
+            auto &month = project->monthes_[i];
+            auto file = this->OpenFile();
 
-                month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
-                photo_tune_widget_->setPhoto(
-                    i, {FrameParameters::TYPE::ROUND, frame_data_[i]},
-                    month.photo_data);
-              }
-            });
+            month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
+            photo_tune_widget_->setPhoto(i, frame_data_[i], month.photo_data);
+          }
+        });
   }
 }
 
@@ -154,8 +193,7 @@ void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
         photo_widgets_[i]->setPhoto(month.photo_data);
       }
 
-      photo_tune_widget_->setPhoto(
-          i, {FrameParameters::TYPE::ROUND, frame_data_[i]}, month.photo_data);
+      photo_tune_widget_->setPhoto(i, frame_data_[i], month.photo_data);
       photo_tune_widget_->show();
     });
   }
@@ -276,6 +314,11 @@ void FrameWidgetBase::paintEvent(QPaintEvent *e) {
   }
 
   // Draw background
+}
+
+void FrameWidgetBase::setVisible(bool visible) {
+  QWidget::setVisible(visible);
+  foreground_widget_->setVisible(visible);
 }
 
 QPixmap FrameWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) {

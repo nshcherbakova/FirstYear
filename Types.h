@@ -12,6 +12,8 @@ class FrameControl;
 
 namespace FirstYear::UI {
 class PhotoWidget;
-}
+class FrameWidgetBase;
+using FrameWidgetBasePtr = std::shared_ptr<FrameWidgetBase>;
+} // namespace FirstYear::UI
 
 #endif // FIRSTYEAR_CORE_TYPES_H

@@ -3,6 +3,7 @@
 #include <Core/Project/FileSystemProjectLoader.h>
 #include <Core/Project/FileSystemProjectWriter.h>
 #include <Core/Project/Project.h>
+#include <UI/FrameWidgets/DefaultFrameWidget.h>
 #include <stdafx.h>
 
 constexpr const char *DEF_PROGECT_NAME = "Frame";
@@ -43,6 +44,7 @@ QString FrameControl::LastProjectName() const { return DEF_PROGECT_NAME; }
 void FrameControl::CreateNewProject() {
   current_project_ = std::make_shared<Project>();
   current_project_->monthes_.resize(12);
+
   for (int i = 0; i < (int)current_project_->monthes_.size(); i++) {
     auto &month = current_project_->monthes_[i];
 
@@ -60,9 +62,60 @@ void FrameControl::CreateNewProject() {
   }
 }
 
-void FrameControl::previousFrame() {}
-void FrameControl::nextFrame() {}
-bool FrameControl::isPreviousFrame() { return true; }
-bool FrameControl::isNextFrame() { return true; }
+void FrameControl::CreateFrames(QWidget &parent) {
+  std::vector<UI::FrameWidgetBasePtr> frames(
+      {std::make_shared<UI::DefaultFrameWidget>(parent, *this),
+       std::make_shared<UI::DefaultFrameWidget2>(parent, *this)});
+  for (auto &frame : frames) {
 
+    frames_[frame->id()] = frame;
+
+    frame->reload(*this);
+    frame->hide();
+  }
+}
+
+void FrameControl::ShowCurrentFrame() {
+  if (current_project_->frame_id_.isEmpty()) {
+    current_project_->frame_id_ = frames_.begin()->first;
+  }
+  frames_[current_project_->frame_id_]->show();
+}
+
+void FrameControl::previousFrame() {
+  if (isPreviousFrame()) {
+    frames_[current_project_->frame_id_]->hide();
+    auto it = frames_.find(current_project_->frame_id_);
+
+    auto frame_to_show = std::prev(it)->second;
+    current_project_->frame_id_ = frame_to_show->id();
+    frame_to_show->show();
+  }
+}
+void FrameControl::nextFrame() {
+  if (isNextFrame()) {
+    frames_[current_project_->frame_id_]->hide();
+    auto it = frames_.find(current_project_->frame_id_);
+
+    auto frame_to_show = std::next(it)->second;
+    current_project_->frame_id_ = frame_to_show->id();
+    frame_to_show->show();
+  }
+}
+
+bool FrameControl::isPreviousFrame() {
+  auto it = frames_.find(current_project_->frame_id_);
+  if (it == frames_.begin())
+    return false;
+  else
+    return true;
+}
+
+bool FrameControl::isNextFrame() {
+  auto it = frames_.find(current_project_->frame_id_);
+  if (std::next(it) == frames_.end())
+    return false;
+  else
+    return true;
+}
 } // namespace FirstYear::Core

@@ -2,7 +2,9 @@
 #ifndef FIRSTYEAR_FRAME_CONTROL_H
 #define FIRSTYEAR_FRAME_CONTROL_H
 #include <QString>
+#include <QWidget>
 #include <Types.h>
+#include <map>
 
 namespace FirstYear::Core {
 class FrameControl final {
@@ -14,6 +16,10 @@ public:
   void SaveProject();
   void SaveProjectMonth(int month);
   ProjectPtr CurrentProject();
+
+public:
+  void CreateFrames(QWidget &parent);
+  void ShowCurrentFrame();
 
 public:
   void previousFrame();
@@ -28,6 +34,7 @@ private:
 
 private:
   ProjectPtr current_project_;
+  std::map<QString, UI::FrameWidgetBasePtr> frames_;
 };
 
 } // namespace FirstYear::Core

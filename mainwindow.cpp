@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <stdafx.h>
 
-MainWindow::MainWindow(FirstYear::Core::FrameControl &control)
+MainWindow::MainWindow()
     : QMainWindow()
 //, ui(new Ui::MainWindow)
 {
@@ -22,13 +22,6 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &control)
   setMinimumSize(window_size);
   setFixedSize(window_size);
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
-
-  // todo list of farmes and registration system
-  auto frame_widget = (new FirstYear::UI::DefaultFrameWidget(*this, control));
-  frame_widget->setEnabled(true);
-  frame_widget->setVisible(true);
-  frame_widget->show();
-  // ui->setupUi(this);
 }
 
 MainWindow::~MainWindow() {

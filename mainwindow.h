@@ -2,13 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <Types.h>
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  MainWindow(FirstYear::Core::FrameControl &control);
+  MainWindow();
   ~MainWindow();
 
 private:

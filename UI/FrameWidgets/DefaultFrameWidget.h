@@ -27,14 +27,17 @@ class FrameWidgetBase : public QWidget {
 public:
   explicit FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
                            QString id, std::vector<QRectF> photo_slots,
-                           std::vector<QVariant> frame_data);
+                           std::vector<FrameParameters> frame_data);
   FrameWidgetBase &operator=(const FrameWidgetBase &) = delete;
+  virtual ~FrameWidgetBase(){};
 
 public:
   void reload(Core::FrameControl &control);
+  QString id() const;
 
 public: // QWidget
   virtual void paintEvent(QPaintEvent *e) override final;
+  virtual void setVisible(bool visible) override final;
 
 private:
   void initMonthPhotoWidgets(Core::FrameControl &control);
@@ -51,7 +54,7 @@ protected:
   QPixmap foreground_;
   QPixmap foreground_to_render_;
   std::vector<QRectF> photo_slots_real_;
-  std::vector<QVariant> frame_data_;
+  std::vector<FrameParameters> frame_data_;
 
 private:
   std::vector<PhotoWidget *> photo_widgets_;
@@ -65,10 +68,19 @@ class DefaultFrameWidget final : public FrameWidgetBase {
   Q_OBJECT
 public:
   explicit DefaultFrameWidget(QWidget &parent, Core::FrameControl &control);
+  virtual ~DefaultFrameWidget(){};
 
 public:
-  void InitPhotos(Core::FrameControl &control);
   DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
+};
+class DefaultFrameWidget2 final : public FrameWidgetBase {
+  Q_OBJECT
+public:
+  explicit DefaultFrameWidget2(QWidget &parent, Core::FrameControl &control);
+  virtual ~DefaultFrameWidget2(){};
+
+public:
+  DefaultFrameWidget2 &operator=(const DefaultFrameWidget2 &) = delete;
 };
 
 } // namespace FirstYear::UI
