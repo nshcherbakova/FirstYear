@@ -37,7 +37,6 @@ public:
 
 public: // QWidget
   virtual void paintEvent(QPaintEvent *e) override final;
-  virtual void setVisible(bool visible) override final;
 
 private:
   void initMonthPhotoWidgets(Core::FrameControl &control);

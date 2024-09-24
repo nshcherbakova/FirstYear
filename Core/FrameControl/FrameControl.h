@@ -34,7 +34,7 @@ private:
 
 private:
   ProjectPtr current_project_;
-  std::map<QString, UI::FrameWidgetBasePtr> frames_;
+  std::map<QString, UI::FrameWidgetBase *> frames_;
 };
 
 } // namespace FirstYear::Core

@@ -316,11 +316,6 @@ void FrameWidgetBase::paintEvent(QPaintEvent *e) {
   // Draw background
 }
 
-void FrameWidgetBase::setVisible(bool visible) {
-  QWidget::setVisible(visible);
-  foreground_widget_->setVisible(visible);
-}
-
 QPixmap FrameWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) {
   QPixmap pixmap(foreground_to_render_.size());
   //
