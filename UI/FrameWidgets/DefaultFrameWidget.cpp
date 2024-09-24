@@ -214,16 +214,25 @@ void FrameWidgetBase::createButtons(Core::FrameControl &control) {
   myLabel_->hide();
   connect(myLabel_, &ClickableLabel::clicked, this, [&] { myLabel_->hide(); });
 
-  auto open_file = new QPushButton(this);
-  open_file->setGeometry(20, geometry().height() - 2 * 40, 2 * 40, 40);
-  open_file->setText("Render");
-  open_file->setContentsMargins(0, 0, 0, 0);
-  connect(open_file, &QPushButton::clicked, this, [&] {
+  auto render = new QPushButton(this);
+  render->setGeometry(20, geometry().height() - 2 * 40, 2 * 40, 40);
+  render->setText("Render");
+  render->setContentsMargins(0, 0, 0, 0);
+  connect(render, &QPushButton::clicked, this, [&] {
     auto pixmap = this->renderFrame(control.CurrentProject());
     pixmap.save("/Users/nshcherbakova/Desktop/FirstYear/test1.png");
 
     myLabel_->setPixmap(pixmap);
     myLabel_->show();
+  });
+
+  auto share = new QPushButton(this);
+  share->setGeometry(geometry().width() - 100, geometry().height() - 2 * 40,
+                     2 * 40, 40);
+  share->setText("Share");
+  share->setContentsMargins(0, 0, 0, 0);
+  connect(share, &QPushButton::clicked, this, [&] {
+
   });
 
   auto back = new QPushButton(this);
