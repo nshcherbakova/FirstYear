@@ -99,18 +99,7 @@ DefaultFrameWidget2::DefaultFrameWidget2(QWidget &parent,
                        {328, 330, 125, 125},
                        {476, 330, 125, 125}},
 
-                      {{FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}}}) {
+                      {{FrameParameters::TYPE::RECT, QSizeF{125, 125}}}) {
 
   // reload(control);
 }
@@ -123,9 +112,18 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
       foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
       photo_slots_real_(std::move(photo_slots)),
       frame_data_(std::move(frame_data)) {
+
+  UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
+  UNI_ASSERT(photo_slots_real_.size() == 12);
+  UNI_ASSERT(!id.isEmpty());
+
   setContentsMargins(0, 0, 0, 0);
   setGeometry(parent.geometry());
   setAutoFillBackground(true);
+
+  if (frame_data_.size() == 1) {
+    frame_data_.resize(12, frame_data_[0]);
+  }
 
   photo_slots_.resize(12);
   photo_tune_widget_ = new PhotoTuneWidget(*this->parentWidget());
@@ -142,6 +140,7 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
 }
 
 QString FrameWidgetBase::id() const { return id_; }
+
 void FrameWidgetBase::initPhotoTuneWidget(Core::FrameControl &control) {
 
   photo_tune_widget_->hide();
@@ -241,7 +240,7 @@ void FrameWidgetBase::createButtons(Core::FrameControl &control) {
   connect(next, &QPushButton::clicked, this, [&] { control.nextFrame(); });
 }
 
-void FrameWidgetBase::reload(Core::FrameControl &control) {
+void FrameWidgetBase::load(Core::FrameControl &control) {
 
   double k = (double)parentWidget()->geometry().width() / foreground_.width();
 
@@ -254,7 +253,11 @@ void FrameWidgetBase::reload(Core::FrameControl &control) {
   }
 
   InitPhotos(control);
+
+  QWidget::show();
 }
+
+void FrameWidgetBase::hide() { QWidget::hide(); }
 
 void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
 

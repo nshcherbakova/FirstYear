@@ -7,6 +7,17 @@
 #include <map>
 
 namespace FirstYear::Core {
+
+class IFrame {
+public:
+  virtual ~IFrame() = default;
+
+public:
+  virtual void load(Core::FrameControl &control) = 0;
+  virtual void hide() = 0;
+  virtual QString id() const = 0;
+};
+
 class FrameControl final {
 public:
   explicit FrameControl();
@@ -34,7 +45,7 @@ private:
 
 private:
   ProjectPtr current_project_;
-  std::map<QString, UI::FrameWidgetBase *> frames_;
+  std::map<QString, IFrame *> frames_;
 };
 
 } // namespace FirstYear::Core

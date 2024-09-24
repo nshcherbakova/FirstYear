@@ -1,6 +1,7 @@
 #pragma once
 #ifndef FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
 #define FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
+#include <Core/FrameControl/FrameControl.h>
 #include <QLabel>
 #include <QWidget>
 #include <Types.h>
@@ -22,7 +23,7 @@ protected:
   void mousePressEvent(QMouseEvent *event);
 };
 
-class FrameWidgetBase : public QWidget {
+class FrameWidgetBase : public QWidget, public Core::IFrame {
   Q_OBJECT
 public:
   explicit FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
@@ -32,8 +33,9 @@ public:
   virtual ~FrameWidgetBase(){};
 
 public:
-  void reload(Core::FrameControl &control);
-  QString id() const;
+  virtual void load(Core::FrameControl &control) override final;
+  virtual void hide() override final;
+  virtual QString id() const override final;
 
 public: // QWidget
   virtual void paintEvent(QPaintEvent *e) override final;

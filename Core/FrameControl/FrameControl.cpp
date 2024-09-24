@@ -78,8 +78,7 @@ void FrameControl::ShowCurrentFrame() {
   if (current_project_->frame_id_.isEmpty()) {
     current_project_->frame_id_ = frames_.begin()->first;
   }
-  frames_[current_project_->frame_id_]->reload(*this);
-  frames_[current_project_->frame_id_]->show();
+  frames_[current_project_->frame_id_]->load(*this);
 }
 
 void FrameControl::previousFrame() {
@@ -89,8 +88,7 @@ void FrameControl::previousFrame() {
 
     auto frame_to_show = std::prev(it)->second;
     current_project_->frame_id_ = frame_to_show->id();
-    frame_to_show->reload(*this);
-    frame_to_show->show();
+    frame_to_show->load(*this);
   }
 }
 void FrameControl::nextFrame() {
@@ -100,8 +98,7 @@ void FrameControl::nextFrame() {
 
     auto frame_to_show = std::next(it)->second;
     current_project_->frame_id_ = frame_to_show->id();
-    frame_to_show->reload(*this);
-    frame_to_show->show();
+    frame_to_show->load(*this);
   }
 }
 
