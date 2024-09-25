@@ -3,7 +3,6 @@
 #include <Core/Project/FileSystemProjectLoader.h>
 #include <Core/Project/FileSystemProjectWriter.h>
 #include <Core/Project/Project.h>
-#include <UI/FrameWidgets/DefaultFrameWidget.h>
 #include <stdafx.h>
 
 constexpr const char *DEF_PROGECT_NAME = "Frame";
@@ -62,6 +61,7 @@ void FrameControl::CreateNewProject() {
   }
 }
 
+/*
 void FrameControl::CreateFrames(QWidget &parent) {
   std::vector<UI::FrameWidgetBase *> frames(
       {new UI::DefaultFrameWidget(parent, *this),
@@ -72,6 +72,9 @@ void FrameControl::CreateFrames(QWidget &parent) {
     frames_[frame->id()] = frame;
     frame->hide();
   }
+
+
+
 }
 
 void FrameControl::ShowCurrentFrame() {
@@ -103,6 +106,7 @@ void FrameControl::nextFrame() {
 }
 
 bool FrameControl::isPreviousFrame() {
+    return false;
   auto it = frames_.find(current_project_->frame_id_);
   if (it == frames_.begin())
     return false;
@@ -111,10 +115,11 @@ bool FrameControl::isPreviousFrame() {
 }
 
 bool FrameControl::isNextFrame() {
+    return false;
   auto it = frames_.find(current_project_->frame_id_);
   if (std::next(it) == frames_.end())
     return false;
   else
     return true;
-}
+}*/
 } // namespace FirstYear::Core

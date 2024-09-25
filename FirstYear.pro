@@ -14,6 +14,7 @@ PROJECT_PATH = $$PWD
 PROJECT_THIRDPARTY = /Users/nshcherbakova/Documents/dev/Thirdparty
 
 INCLUDEPATH +=$$PROJECT_PATH/Core/Gears/StdAfx/ \
+$$PROJECT_PATH/UI/QSwipeView/ \
     #$$PROJECT_PATH \
     $$PROJECT_THIRDPARTY/uniassert/include/ \
     $$PROJECT_THIRDPARTY/spdlog/include/
@@ -47,6 +48,24 @@ HEADERS += \
     UI/FrameWidgets/PhotoTuneWidget.h \
     UI/FrameWidgets/PhotoWidget.h \
     mainwindow.h
+
+HEADERS += \
+        UI/QSwipeView/QSwipeView \
+        UI/QSwipeView/qswipeview.hpp \
+        UI/QSwipeView/QCompositeSwipeView \
+        UI/QSwipeView/qcompositeswipeview.hpp \
+        UI/QSwipeView/qcompositeswipeview_priv.hpp \
+        UI/QSwipeView/QPageIndicator \
+        UI/QSwipeView/qpageindicator.hpp
+SOURCES += \
+        UI/QSwipeView/qswipeview.cpp \
+        UI/QSwipeView/qcompositeswipeview.cpp \
+        UI/QSwipeView/qcompositeswipeview_priv.cpp \
+        UI/QSwipeView/qpageindicator.cpp
+
+
+
+QSwipeView/qpageindicator.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

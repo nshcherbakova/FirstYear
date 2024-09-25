@@ -111,7 +111,7 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
       foreground_(QString(c_foreground_str).arg(id_)),
       foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
       photo_slots_real_(std::move(photo_slots)),
-      frame_data_(std::move(frame_data)) {
+      frame_data_(std::move(frame_data)), control_(control) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
@@ -235,18 +235,19 @@ void FrameWidgetBase::createButtons(Core::FrameControl &control) {
 
   });
 
-  auto back = new QPushButton(this);
-  back->setGeometry(20, geometry().height() - 4 * 40, 2 * 40, 40);
-  back->setText("<");
-  back->setContentsMargins(0, 0, 0, 0);
-  connect(back, &QPushButton::clicked, this, [&] { control.previousFrame(); });
+  /*  auto back = new QPushButton(this);
+    back->setGeometry(20, geometry().height() - 4 * 40, 2 * 40, 40);
+    back->setText("<");
+    back->setContentsMargins(0, 0, 0, 0);
+    connect(back, &QPushButton::clicked, this, [&] { control.previousFrame();
+    });
 
-  auto next = new QPushButton(this);
-  next->setGeometry(geometry().width() - 100, geometry().height() - 4 * 40,
-                    2 * 40, 40);
-  next->setText(">");
-  next->setContentsMargins(0, 0, 0, 0);
-  connect(next, &QPushButton::clicked, this, [&] { control.nextFrame(); });
+    auto next = new QPushButton(this);
+    next->setGeometry(geometry().width() - 100, geometry().height() - 4 * 40,
+                      2 * 40, 40);
+    next->setText(">");
+    next->setContentsMargins(0, 0, 0, 0);
+    connect(next, &QPushButton::clicked, this, [&] { control.nextFrame(); });*/
 }
 
 void FrameWidgetBase::load(Core::FrameControl &control) {
@@ -263,10 +264,10 @@ void FrameWidgetBase::load(Core::FrameControl &control) {
 
   InitPhotos(control);
 
-  QWidget::show();
+  // QWidget::show();
 }
 
-void FrameWidgetBase::hide() { QWidget::hide(); }
+// void FrameWidgetBase::hide() { QWidget::hide(); }
 
 void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
 
@@ -316,7 +317,12 @@ QString FrameWidgetBase::OpenFile() {
 
   return image_file_name;
 }
-
+void FrameWidgetBase::setVisible(bool visible) {
+  if (visible) {
+    load(control_);
+  }
+  QWidget::setVisible(visible);
+}
 void FrameWidgetBase::paintEvent(QPaintEvent *e) {
   QWidget::paintEvent(e);
   QPainter painter(this);

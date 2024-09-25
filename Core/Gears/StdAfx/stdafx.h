@@ -46,6 +46,8 @@
 #include <jni.h>
 #endif
 
+#include <QSwipeView>
+
 #include <Core/FrameControl/FrameControl.h>
 #include <Core/Project/Project.h>
 #include <Types.h>

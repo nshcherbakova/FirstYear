@@ -8,16 +8,6 @@
 
 namespace FirstYear::Core {
 
-class IFrame {
-public:
-  virtual ~IFrame() = default;
-
-public:
-  virtual void load(Core::FrameControl &control) = 0;
-  virtual void hide() = 0;
-  virtual QString id() const = 0;
-};
-
 class FrameControl final {
 public:
   explicit FrameControl();
@@ -28,6 +18,7 @@ public:
   void SaveProjectMonth(int month);
   ProjectPtr CurrentProject();
 
+  /*
 public:
   void CreateFrames(QWidget &parent);
   void ShowCurrentFrame();
@@ -36,7 +27,7 @@ public:
   void previousFrame();
   void nextFrame();
   bool isPreviousFrame();
-  bool isNextFrame();
+  bool isNextFrame();*/
 
 private:
   void LoadProject(QString name);
@@ -45,7 +36,7 @@ private:
 
 private:
   ProjectPtr current_project_;
-  std::map<QString, IFrame *> frames_;
+  /* std::map<QString, IFrame *> frames_;*/
 };
 
 } // namespace FirstYear::Core

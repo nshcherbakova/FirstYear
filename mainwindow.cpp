@@ -1,7 +1,8 @@
 #include "mainwindow.h"
+#include <UI/FrameWidgets/DefaultFrameWidget.h>
 #include <stdafx.h>
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
     : QMainWindow()
 //, ui(new Ui::MainWindow)
 {
@@ -22,6 +23,14 @@ MainWindow::MainWindow()
   setMinimumSize(window_size);
   setFixedSize(window_size);
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
+
+  QSwipeView *swipeView = new QSwipeView(this);
+  swipeView->setGeometry(geometry());
+  swipeView->addWidget(
+      new FirstYear::UI::DefaultFrameWidget(*this, frame_control));
+  swipeView->addWidget(
+      new FirstYear::UI::DefaultFrameWidget2(*this, frame_control));
+  swipeView->show();
 }
 
 MainWindow::~MainWindow() {

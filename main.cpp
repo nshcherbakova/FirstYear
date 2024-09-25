@@ -52,10 +52,8 @@ int main(int argc, char *argv[]) {
   FirstYear::Core::FrameControl frame_control;
   auto project = frame_control.LoadProject();
 
-  MainWindow w;
+  MainWindow w(frame_control);
   // todo list of farmes and registration system
-  frame_control.CreateFrames(w);
-  frame_control.ShowCurrentFrame();
 
   w.show();
 

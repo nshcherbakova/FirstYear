@@ -23,7 +23,7 @@ protected:
   void mousePressEvent(QMouseEvent *event);
 };
 
-class FrameWidgetBase : public QWidget, public Core::IFrame {
+class FrameWidgetBase : public QWidget {
   Q_OBJECT
 public:
   explicit FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
@@ -33,14 +33,14 @@ public:
   virtual ~FrameWidgetBase(){};
 
 public:
-  virtual void load(Core::FrameControl &control) override final;
-  virtual void hide() override final;
-  virtual QString id() const override final;
+  QString id() const;
 
 public: // QWidget
   virtual void paintEvent(QPaintEvent *e) override final;
+  virtual void setVisible(bool visible) override final;
 
 private:
+  void load(Core::FrameControl &control);
   void initMonthPhotoWidgets(Core::FrameControl &control);
   void initPhotoTuneWidget(Core::FrameControl &control);
   void createButtons(Core::FrameControl &control);
@@ -58,6 +58,7 @@ protected:
   std::vector<FrameParameters> frame_data_;
 
 private:
+  Core::FrameControl &control_;
   std::vector<PhotoWidget *> photo_widgets_;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
   ClickableLabel *myLabel_ = nullptr;
