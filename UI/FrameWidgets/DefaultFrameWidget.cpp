@@ -27,9 +27,7 @@ class ForegroundWidget final : public QWidget {
 public:
   ForegroundWidget(QWidget *parent, QPixmap image,
                    std::vector<QRectF> photo_slots)
-      : QWidget(parent), photo_slots_(photo_slots), image_(image) {
-    update();
-  }
+      : QWidget(parent), photo_slots_(photo_slots), image_(image) {}
 
 public:
   virtual void paintEvent(QPaintEvent *) override final {
@@ -50,10 +48,23 @@ private:
   QPixmap image_;
 };
 
+class ForegroundWidget2 final : public QWidget {
+public:
+  ForegroundWidget2(QWidget *parent) : QWidget(parent) {
+    static const char *c_image_widget_button_style_str =
+        "ForegroundWidget2{ background-color: rgba(255, 255, 255, 0);}";
+    setStyleSheet(c_image_widget_button_style_str);
+  }
+
+public:
+private:
+};
+
 DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
+                                       QWidget *tune_widget_parent,
                                        Core::FrameControl &control)
 
-    : FrameWidgetBase(parent, control, "1",
+    : FrameWidgetBase(parent, tune_widget_parent, control, "1",
                       {{35, 35, 125, 125},
                        {184, 35, 125, 125},
                        {328, 35, 125, 125},
@@ -66,13 +77,36 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
                        {184, 330, 125, 125},
                        {328, 330, 125, 125},
                        {476, 330, 125, 125}},
-                      {{FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                      {{FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}) {
+
+  // reload(control);
+}
+
+DefaultFrameWidget2::DefaultFrameWidget2(QWidget &parent,
+                                         QWidget *tune_widget_parent,
+                                         Core::FrameControl &control)
+
+    : FrameWidgetBase(parent, tune_widget_parent, control, "2",
+                      {{35, 35, 125, 125},
+                       {184, 35, 125, 125},
+                       {328, 35, 125, 125},
+                       {476, 35, 125, 125},
+                       {35, 185, 125, 125},
+                       {184, 185, 125, 125},
+                       {328, 185, 125, 125},
+                       {476, 185, 125, 125},
+                       {35, 330, 125, 125},
+                       {184, 330, 125, 125},
+                       {328, 330, 125, 125},
+                       {476, 330, 125, 125}},
+
+                      {{FrameParameters::TYPE::RECT, QSizeF{125, 125}},
                        {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
                        {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
                        {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
                        {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
                        {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
                        {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
                        {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
                        {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
@@ -82,30 +116,9 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
   // reload(control);
 }
 
-DefaultFrameWidget2::DefaultFrameWidget2(QWidget &parent,
-                                         Core::FrameControl &control)
-
-    : FrameWidgetBase(parent, control, "2",
-                      {{35, 35, 125, 125},
-                       {184, 35, 125, 125},
-                       {328, 35, 125, 125},
-                       {476, 35, 125, 125},
-                       {35, 185, 125, 125},
-                       {184, 185, 125, 125},
-                       {328, 185, 125, 125},
-                       {476, 185, 125, 125},
-                       {35, 330, 125, 125},
-                       {184, 330, 125, 125},
-                       {328, 330, 125, 125},
-                       {476, 330, 125, 125}},
-
-                      {{FrameParameters::TYPE::RECT, QSizeF{125, 125}}}) {
-
-  // reload(control);
-}
-
-FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
-                                 QString id, std::vector<QRectF> photo_slots,
+FrameWidgetBase::FrameWidgetBase(QWidget &parent, QWidget *tune_widget_parent,
+                                 Core::FrameControl &control, QString id,
+                                 std::vector<QRectF> photo_slots,
                                  std::vector<FrameParameters> frame_data)
     : QWidget(&parent), id_(id),
       foreground_(QString(c_foreground_str).arg(id_)),
@@ -118,7 +131,7 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
   UNI_ASSERT(!id.isEmpty());
 
   setContentsMargins(0, 0, 0, 0);
-  setGeometry(parent.geometry());
+  setGeometry(tune_widget_parent->geometry());
   setAutoFillBackground(true);
 
   if (frame_data_.size() == 1) {
@@ -126,7 +139,7 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
   }
 
   photo_slots_.resize(12);
-  photo_tune_widget_ = new PhotoTuneWidget(*this->parentWidget());
+  photo_tune_widget_ = new PhotoTuneWidget(*tune_widget_parent);
   photo_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_widgets_[i] = new PhotoWidget(*this);
@@ -137,6 +150,12 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
 
   createButtons(control);
   createForegroundWidget();
+
+  /* ForegroundWidget2* foreground_widget= new ForegroundWidget2(this);
+   foreground_widget->setGeometry(geometry());
+   foreground_widget->raise();
+   foreground_widget->show();*/
+  // foreground_widget->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
 QString FrameWidgetBase::id() const { return id_; }
@@ -153,24 +172,35 @@ void FrameWidgetBase::initPhotoTuneWidget(Core::FrameControl &control) {
 
               if (photo_tune_widget_->getPhotoId() == i) {
                 const auto new_photo_data = photo_tune_widget_->getPhoto();
-                photo_widgets_[i]->setPhoto(new_photo_data);
+
+                // photo_widgets_[i]->setPhoto(new_photo_data);
                 project->monthes_[i].photo_data = new_photo_data;
+
+                // OnSignalUpdate();
                 control.SaveProjectMonth(i);
               }
             });
 
-    connect(
-        photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this, [&, i] {
-          auto project = control.CurrentProject();
+    connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
+            [&, i] {
+              auto project = control.CurrentProject();
 
-          if (photo_tune_widget_->getPhotoId() == i) {
-            auto &month = project->monthes_[i];
-            auto file = this->OpenFile();
+              if (photo_tune_widget_->getPhotoId() == i) {
+                auto &month = project->monthes_[i];
+                auto file = this->OpenFile();
 
-            month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
-            photo_tune_widget_->setPhoto(i, frame_data_[i], month.photo_data);
-          }
-        });
+                month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
+
+                // OnSignalUpdate();
+                // photo_tune_widget_->setPhoto(i, frame_data_[i],
+                // month.photo_data);
+              }
+            });
+
+    connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
+            &FrameWidgetBase::SignalUpdate);
+    connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
+            &FrameWidgetBase::SignalUpdate);
   }
 }
 
@@ -250,9 +280,11 @@ void FrameWidgetBase::createButtons(Core::FrameControl &control) {
     connect(next, &QPushButton::clicked, this, [&] { control.nextFrame(); });*/
 }
 
+void FrameWidgetBase::Update() { load(control_); }
+
 void FrameWidgetBase::load(Core::FrameControl &control) {
 
-  double k = (double)parentWidget()->geometry().width() / foreground_.width();
+  double k = (double)geometry().width() / foreground_.width();
 
   for (int i = 0; i < (int)photo_slots_real_.size(); i++) {
     auto new_rect = photo_slots_real_[i];

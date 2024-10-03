@@ -26,14 +26,20 @@ protected:
 class FrameWidgetBase : public QWidget {
   Q_OBJECT
 public:
-  explicit FrameWidgetBase(QWidget &parent, Core::FrameControl &control,
-                           QString id, std::vector<QRectF> photo_slots,
+  explicit FrameWidgetBase(QWidget &parent, QWidget *tune_widget_parent,
+                           Core::FrameControl &control, QString id,
+                           std::vector<QRectF> photo_slots,
                            std::vector<FrameParameters> frame_data);
   FrameWidgetBase &operator=(const FrameWidgetBase &) = delete;
   virtual ~FrameWidgetBase(){};
 
 public:
   QString id() const;
+
+public slots:
+  void Update();
+signals:
+  void SignalUpdate();
 
 public: // QWidget
   virtual void paintEvent(QPaintEvent *e) override final;
@@ -69,7 +75,8 @@ private:
 class DefaultFrameWidget final : public FrameWidgetBase {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget(QWidget &parent, Core::FrameControl &control);
+  explicit DefaultFrameWidget(QWidget &parent, QWidget *tune_widget_parent,
+                              Core::FrameControl &control);
   virtual ~DefaultFrameWidget(){};
 
 public:
@@ -78,7 +85,8 @@ public:
 class DefaultFrameWidget2 final : public FrameWidgetBase {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget2(QWidget &parent, Core::FrameControl &control);
+  explicit DefaultFrameWidget2(QWidget &parent, QWidget *tune_widget_parent,
+                               Core::FrameControl &control);
   virtual ~DefaultFrameWidget2(){};
 
 public:
