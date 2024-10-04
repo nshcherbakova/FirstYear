@@ -24,14 +24,14 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
   setFixedSize(window_size);
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
-  /*QSwipeView *swipeView = new QSwipeView(this);
-  swipeView->setGeometry(geometry());
-  swipeView->stacked_widget_->addWidget(
-      new FirstYear::UI::DefaultFrameWidget(*this, this, frame_control));
-  swipeView->stacked_widget_->addWidget(
-      new FirstYear::UI::DefaultFrameWidget2(*this,this,frame_control));*/
+  /* QSwipeView *swipeView = new QSwipeView(this);
+   swipeView->setGeometry(geometry());
+   swipeView->addWidget(
+       new FirstYear::UI::DefaultFrameWidget(*this, this, frame_control));
+   swipeView->addWidget(
+       new FirstYear::UI::DefaultFrameWidget2(*this,this,frame_control));*/
 
-  FiltersScrollWidget *swipeView = new FiltersScrollWidget(this, frame_control);
+  SwipeWidgetsList *swipeView = new SwipeWidgetsList(this, frame_control);
   swipeView->setGeometry(geometry());
 
   swipeView->show();

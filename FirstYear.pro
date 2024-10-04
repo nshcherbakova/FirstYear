@@ -50,18 +50,9 @@ HEADERS += \
     mainwindow.h
 
 HEADERS += \
-        UI/QSwipeView/QSwipeView \
-        UI/QSwipeView/qswipeview.hpp \
-        UI/QSwipeView/QCompositeSwipeView \
-        UI/QSwipeView/qcompositeswipeview.hpp \
-        UI/QSwipeView/qcompositeswipeview_priv.hpp \
-        UI/QSwipeView/QPageIndicator \
-        UI/QSwipeView/qpageindicator.hpp
+        UI/QSwipeView/SwipeWidgetsList.hpp
 SOURCES += \
-        UI/QSwipeView/qswipeview.cpp \
-        UI/QSwipeView/qcompositeswipeview.cpp \
-        UI/QSwipeView/qcompositeswipeview_priv.cpp \
-        UI/QSwipeView/qpageindicator.cpp
+        UI/QSwipeView/SwipeWidgetsList.cpp
 
 
 

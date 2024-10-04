@@ -4,69 +4,61 @@
 QCompositeSwipeView::QCompositeSwipeView(QWidget *parent) : QWidget(parent) {
   ui = new QCompositeSwipeView_Priv(this);
   ui->pageIndicator->setEnabled(false);
-  connect(ui->swipeView->stacked_widget_, &QStackedWidget::currentChanged,
-          [this] {
-            ui->pageIndicator->setPageCount(
-                ui->swipeView->stacked_widget_->count());
-            ui->pageIndicator->setCurrentPage(
-                ui->swipeView->stacked_widget_->currentIndex());
-            emit currentChanged(ui->swipeView->stacked_widget_->currentIndex());
-          });
-  connect(ui->swipeView->stacked_widget_, &QStackedWidget::widgetRemoved,
-          [this](int index) {
-            ui->pageIndicator->setPageCount(
-                ui->swipeView->stacked_widget_->count());
-            ui->pageIndicator->setCurrentPage(
-                ui->swipeView->stacked_widget_->currentIndex());
-            emit widgetRemoved(index);
-          });
+  connect(ui->swipeView, &QStackedWidget::currentChanged, [this] {
+    ui->pageIndicator->setPageCount(ui->swipeView->count());
+    ui->pageIndicator->setCurrentPage(ui->swipeView->currentIndex());
+    emit currentChanged(ui->swipeView->currentIndex());
+  });
+  connect(ui->swipeView, &QStackedWidget::widgetRemoved, [this](int index) {
+    ui->pageIndicator->setPageCount(ui->swipeView->count());
+    ui->pageIndicator->setCurrentPage(ui->swipeView->currentIndex());
+    emit widgetRemoved(index);
+  });
 }
 
 QCompositeSwipeView::~QCompositeSwipeView() { delete ui; }
 
 int QCompositeSwipeView::addWidget(QWidget *child) {
-  const int rval = ui->swipeView->stacked_widget_->addWidget(child);
-  ui->pageIndicator->setPageCount(ui->swipeView->stacked_widget_->count());
+  const int rval = ui->swipeView->addWidget(child);
+  ui->pageIndicator->setPageCount(ui->swipeView->count());
   return rval;
 }
 
 int QCompositeSwipeView::insertWidget(int index, QWidget *w) {
-  const int rval = ui->swipeView->stacked_widget_->insertWidget(index, w);
-  ui->pageIndicator->setPageCount(ui->swipeView->stacked_widget_->count());
+  const int rval = ui->swipeView->insertWidget(index, w);
+  ui->pageIndicator->setPageCount(ui->swipeView->count());
   return rval;
 }
 
 void QCompositeSwipeView::removeWidget(QWidget *w) {
-  ui->swipeView->stacked_widget_->removeWidget(w);
-  ui->pageIndicator->setPageCount(ui->swipeView->stacked_widget_->count());
+  ui->swipeView->removeWidget(w);
+  ui->pageIndicator->setPageCount(ui->swipeView->count());
 }
 
 QWidget *QCompositeSwipeView::currentWidget() const {
-  return ui->swipeView->stacked_widget_->currentWidget();
+  return ui->swipeView->currentWidget();
 }
 
 int QCompositeSwipeView::currentIndex() const {
-  return ui->swipeView->stacked_widget_->currentIndex();
+  return ui->swipeView->currentIndex();
 }
 
 int QCompositeSwipeView::indexOf(const QWidget *w) const {
-  return ui->swipeView->stacked_widget_->indexOf(w);
+  return ui->swipeView->indexOf(w);
 }
 
 QWidget *QCompositeSwipeView::widget(int index) const {
-  return ui->swipeView->stacked_widget_->widget(index);
+  return ui->swipeView->widget(index);
 }
 
-int QCompositeSwipeView::count() const {
-  return ui->swipeView->stacked_widget_->count();
-}
+int QCompositeSwipeView::count() const { return ui->swipeView->count(); }
 
 void QCompositeSwipeView::setCurrentIndex(int index) {
-  ui->swipeView->stacked_widget_->setCurrentIndex(index);
+  ui->swipeView->setCurrentIndex(index);
 }
 
 void QCompositeSwipeView::setCurrentWidget(QWidget *w) {
-  ui->swipeView->stacked_widget_->setCurrentWidget(w);
+  ui->swipeView->setCurrentWidget(w);
 }
 
 int QCompositeSwipeView::animationSpeed() const {
