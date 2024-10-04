@@ -13,8 +13,7 @@ public:
   SwipeWidgetsList &operator=(const SwipeWidgetsList &) = delete;
 
 protected:
-  virtual void mouseReleaseEvent(QMouseEvent *event) override;
-  virtual bool event(QEvent *event) override;
+  // virtual bool event(QEvent *event) override;
 
 public:
   void AddWidget(FirstYear::UI::FrameWidgetBase *widget);

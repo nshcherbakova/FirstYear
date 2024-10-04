@@ -42,6 +42,7 @@ SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
   properties.setScrollMetric(QScrollerProperties::MousePressEventDelay, 0.5);
 
   QScroller::scroller(this)->setScrollerProperties(properties);
+  QScroller::scroller(this)->setSnapPositionsX(0, parentWidget()->width());
 
   grabbed_gesture_ =
       QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
@@ -83,28 +84,23 @@ void SwipeWidgetsList::CreateInnerWidget(
   ensureWidgetVisible(widget);
 
   this->horizontalScrollBar()->setValue(0);
-}
 
-void SwipeWidgetsList::mouseReleaseEvent(QMouseEvent *event) {
+  /*
+  connect(QScroller::scroller(this), &QScroller::stateChanged, this,
+  [&](QScroller::State newState){ if(newState == QScroller::Inactive)
+      {
+          auto current_value = this->horizontalScrollBar()->value();
+          int end_val = 0;
+          if (current_value % width() > width() / 2) {
+              end_val = (current_value / width() + 1) * width();
 
-  auto current_value = this->horizontalScrollBar()->value();
-  int end_val = 0;
-  if (current_value % width() > width() / 2) {
-    end_val = (current_value / width() + 1) * width();
+          } else {
+              end_val = (current_value / width()) * width();
+          }
 
-  } else {
-    end_val = (current_value / width()) * width();
-  }
-  auto anim = new QPropertyAnimation(this->horizontalScrollBar(), "value");
-  anim->setDuration(300);
-  anim->setEasingCurve(QEasingCurve::OutQuart);
-  anim->setStartValue(this->horizontalScrollBar()->value());
-  anim->setEndValue(end_val);
-
-  //  QObject::connect(animgroup, &QParallelAnimationGroup::finished, this,
-  //             &QSwipeView::onAnimationFinished);
-  anim->start(QAbstractAnimation::DeleteWhenStopped);
-  QScrollArea::mouseReleaseEvent(event);
+          QScroller::scroller(this)->scrollTo(QPoint(end_val, 0));
+      }
+  });*/
 }
 
 void SwipeWidgetsList::AddWidget(FirstYear::UI::FrameWidgetBase *widget) {
@@ -129,9 +125,9 @@ void SwipeWidgetsList::AddWidget(FirstYear::UI::FrameWidgetBase *widget) {
   // update();
 }
 
-bool SwipeWidgetsList::event(QEvent *event) {
+/*bool SwipeWidgetsList::event(QEvent *event) {
 
-  if (event->type() == QEvent::Gesture) {
+  if (false&&event->type() == QEvent::Gesture) {
     if (QGesture *gesture =
             static_cast<QGestureEvent *>(event)->gesture(grabbed_gesture_)) {
       switch (gesture->state()) {
@@ -157,4 +153,4 @@ bool SwipeWidgetsList::event(QEvent *event) {
     }
   }
   return QScrollArea::event(event);
-}
+}*/
