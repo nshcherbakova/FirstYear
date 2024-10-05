@@ -9,7 +9,8 @@ class SwipeWidgetsList final : public QScrollArea {
   Q_OBJECT
 public:
   explicit SwipeWidgetsList(
-      QWidget *parent, std::vector<FirstYear::UI::FrameWidgetBase *> widgets);
+      QWidget *parent,
+      const std::vector<FirstYear::UI::FrameWidgetBase *> &widgets);
   SwipeWidgetsList &operator=(const SwipeWidgetsList &) = delete;
 
 public:
@@ -25,7 +26,8 @@ public:
 
 private:
   void InitialaizeScroller(int item_with);
-  void CreateInnerWidget(std::vector<FirstYear::UI::FrameWidgetBase *> widgets);
+  void CreateInnerWidget(
+      const std::vector<FirstYear::UI::FrameWidgetBase *> &widgets);
 
 private:
   QHBoxLayout *layout_ = nullptr;

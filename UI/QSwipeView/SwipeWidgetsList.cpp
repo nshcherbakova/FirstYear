@@ -13,7 +13,8 @@ static const char *c_filter_widget_style_str = "QWidget{"
                                                "}";
 
 SwipeWidgetsList::SwipeWidgetsList(
-    QWidget *parent, std::vector<FirstYear::UI::FrameWidgetBase *> widgets)
+    QWidget *parent,
+    const std::vector<FirstYear::UI::FrameWidgetBase *> &widgets)
     : QScrollArea(parent) {
 
   UNI_ASSERT(widgets.size() > 0);
@@ -21,7 +22,7 @@ SwipeWidgetsList::SwipeWidgetsList(
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   setContentsMargins(0, 0, 0, 0);
   InitialaizeScroller(widgets[0]->minimumWidth());
-  CreateInnerWidget(std::move(widgets));
+  CreateInnerWidget(widgets);
   spdlog::info("FiltersScrollWidget UI created");
 }
 
@@ -55,7 +56,7 @@ void SwipeWidgetsList::InitialaizeScroller(int item_with) {
       QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
 
   connect(QScroller::scroller(this), &QScroller::stateChanged, this,
-          [&](QScroller::State newState) {
+          [&, item_with](QScroller::State newState) {
             if (newState == QScroller::Inactive) {
               const auto currant_scroll_pos =
                   QScroller::scroller(this)->finalPosition();
@@ -65,15 +66,14 @@ void SwipeWidgetsList::InitialaizeScroller(int item_with) {
 }
 
 void SwipeWidgetsList::CreateInnerWidget(
-    std::vector<FirstYear::UI::FrameWidgetBase *> widgets) {
+    const std::vector<FirstYear::UI::FrameWidgetBase *> &widgets) {
 
   // buttons widget
   QWidget *filter_buttons_widget = new QWidget();
   filter_buttons_widget->setContentsMargins(0, 0, 0, 0);
   filter_buttons_widget->setStyleSheet(c_filter_widget_style_str);
-  //  filter_buttons_widget->setMinimumHeight(parentWidget()->geometry().height());
 
-  // buttons layput
+  // buttons layout
   layout_ = new QHBoxLayout(filter_buttons_widget);
   layout_->setContentsMargins(0, 0, 0, 0);
   layout_->setSpacing(0);
@@ -83,51 +83,16 @@ void SwipeWidgetsList::CreateInnerWidget(
     AddWidget(widget);
   }
   setWidget(filter_buttons_widget);
-
-  // ensureWidgetVisible(widget);
 }
 
 void SwipeWidgetsList::SetCurrentItem(int index) {
   UNI_ASSERT(layout_->count() > index);
-  this->horizontalScrollBar()->setValue(layout_->itemAt(0)->geometry().width() *
-                                        index);
+  horizontalScrollBar()->setValue(layout_->itemAt(0)->widget()->width() *
+                                  index);
 }
 
 void SwipeWidgetsList::AddWidget(FirstYear::UI::FrameWidgetBase *widget) {
 
   widget->show();
-  //   widget->setFlat(true);
   layout_->addWidget(widget);
-
-  // update();
 }
-
-/*bool SwipeWidgetsList::event(QEvent *event) {
-
-  if (false&&event->type() == QEvent::Gesture) {
-    if (QGesture *gesture =
-            static_cast<QGestureEvent *>(event)->gesture(grabbed_gesture_)) {
-      switch (gesture->state()) {
-      case Qt::GestureFinished:
-      case Qt::GestureCanceled: {
-        auto animation = [&] {
-          auto current_value = this->horizontalScrollBar()->value();
-          int end_val = 0;
-          if (current_value % width() > width() / 2) {
-            end_val = (current_value / width() + 1) * width();
-
-          } else {
-            end_val = (current_value / width()) * width();
-          }
-
-          QScroller::scroller(this)->scrollTo(QPoint(end_val, 0));
-        };
-        QTimer::singleShot(400, this, animation);
-      } break;
-      default:
-        return QScrollArea::event(event);
-      }
-    }
-  }
-  return QScrollArea::event(event);
-}*/

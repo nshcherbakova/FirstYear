@@ -3,6 +3,7 @@
 
 #include <Core/FrameControl/FrameControl.h>
 #include <QMainWindow>
+#include <UI/FrameWidgets/DefaultFrameWidget.h>
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -12,6 +13,6 @@ public:
   ~MainWindow();
 
 private:
-  // Ui::MainWindow *ui;
+  std::vector<FirstYear::UI::FrameWidgetBase *> widgets_;
 };
 #endif // MAINWINDOW_H

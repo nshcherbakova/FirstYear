@@ -29,28 +29,43 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
   using namespace FirstYear::UI;
 
   PhotoTuneWidget *photo_tune_widget = new PhotoTuneWidget(*this);
-  std::vector<FrameWidgetBase *> widgets{
+  widgets_ = std::vector<FrameWidgetBase *>{
       new DefaultFrameWidget(nullptr, photo_tune_widget, frame_control),
       new DefaultFrameWidget2(nullptr, photo_tune_widget, frame_control)};
-  for (auto &widget : widgets) {
+
+  for (auto &widget : widgets_) {
+
     widget->setGeometry(geometry());
     widget->setMinimumWidth(geometry().width());
     widget->setMinimumHeight(geometry().height());
     widget->setMaximumWidth(geometry().width());
     widget->setMaximumHeight(geometry().height());
 
-    connect(widget, &FrameWidgetBase::SignalUpdate, this, [widgets] {
-      for (auto w : widgets) {
+    connect(widget, &FrameWidgetBase::SignalUpdate, this, [&] {
+      for (auto w : widgets_) {
 
         w->Update();
       }
     });
   }
-  SwipeWidgetsList *swipeView = new SwipeWidgetsList(this, std::move(widgets));
+
+  int current_fame_index = 0;
+  for (int i = 0; i < (int)widgets_.size(); i++) {
+
+    if (widgets_[i]->id() == frame_control.CurrentProject()->frame_id_) {
+      current_fame_index = i;
+    }
+  }
+
+  SwipeWidgetsList *swipeView = new SwipeWidgetsList(this, widgets_);
   swipeView->setGeometry(geometry());
   swipeView->show();
-  swipeView->SetCurrentItem(1);
-
+  swipeView->SetCurrentItem(current_fame_index);
+  connect(swipeView, &SwipeWidgetsList::SignalItemChanged, this,
+          [&](int index) {
+            frame_control.CurrentProject()->frame_id_ = widgets_[index]->id();
+            frame_control.SaveProject();
+          });
   photo_tune_widget->raise();
 }
 
