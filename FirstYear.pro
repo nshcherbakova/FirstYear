@@ -31,6 +31,8 @@ SOURCES += \
     UI/FrameWidgets/ImageButton.cpp \
     UI/FrameWidgets/PhotoTuneWidget.cpp \
     UI/FrameWidgets/PhotoWidget.cpp \
+    UI/SwipeView/SwipeWidgetsList.cpp \
+    UI/Utility.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -47,12 +49,9 @@ HEADERS += \
     UI/FrameWidgets/Photo.h \
     UI/FrameWidgets/PhotoTuneWidget.h \
     UI/FrameWidgets/PhotoWidget.h \
+    UI/SwipeView/SwipeWidgetsList.hpp \
+    UI/Utility.h \
     mainwindow.h
-
-HEADERS += \
-        UI/QSwipeView/SwipeWidgetsList.hpp
-SOURCES += \
-        UI/QSwipeView/SwipeWidgetsList.cpp
 
 
 

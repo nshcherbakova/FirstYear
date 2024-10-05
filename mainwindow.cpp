@@ -29,6 +29,30 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
   using namespace FirstYear::UI;
 
   PhotoTuneWidget *photo_tune_widget = new PhotoTuneWidget(*this);
+  photo_tune_widget->hide();
+
+  connect(photo_tune_widget, &PhotoTuneWidget::SignalImageTuned, this,
+          [photo_tune_widget, &frame_control] {
+            int month = photo_tune_widget->getPhotoId();
+            const auto new_photo_data = photo_tune_widget->getPhoto();
+            frame_control.CurrentProject()->monthes_[month].photo_data =
+                new_photo_data;
+            frame_control.SaveProjectMonth(month);
+          });
+
+  connect(photo_tune_widget, &PhotoTuneWidget::SignalOpenFile, this,
+          [photo_tune_widget, &frame_control] {
+            auto project = frame_control.CurrentProject();
+
+            int month = photo_tune_widget->getPhotoId()
+
+                ;
+            auto &month_data = project->monthes_[month];
+            auto file = Utility::OpenFile(photo_tune_widget);
+            month_data.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
+            photo_tune_widget->updatePhoto(month_data.photo_data);
+          });
+
   widgets_ = std::vector<FrameWidgetBase *>{
       new DefaultFrameWidget(nullptr, photo_tune_widget, frame_control),
       new DefaultFrameWidget2(nullptr, photo_tune_widget, frame_control)};
@@ -41,12 +65,8 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
     widget->setMaximumWidth(geometry().width());
     widget->setMaximumHeight(geometry().height());
 
-    connect(widget, &FrameWidgetBase::SignalUpdate, this, [&] {
-      for (auto w : widgets_) {
-
-        w->Update();
-      }
-    });
+    connect(photo_tune_widget, &PhotoTuneWidget::SignalImageTuned, widget,
+            &FrameWidgetBase::Update);
   }
 
   int current_fame_index = 0;

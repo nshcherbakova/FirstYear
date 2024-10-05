@@ -53,3 +53,4 @@
 #include <Types.h>
 #include <UI/FrameWidgets/DefaultFrameWidget.h>
 #include <UI/FrameWidgets/Photo.h>
+#include <UI/Utility.h>

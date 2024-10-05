@@ -5,13 +5,6 @@
 
 namespace FirstYear::UI {
 
-static const char *c_open_image_str = "Open Image";
-static const char *c_file_types_str = "Image Files (*.png *.jpg *.jpeg *.bmp)";
-static const QStringList c_mime_type_filters({"image/jpeg", "image/pjpeg",
-                                              "image/png", "image/bmp"});
-
-static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
-
 static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
@@ -114,11 +107,11 @@ FrameWidgetBase::FrameWidgetBase(QWidget *parent,
                                  Core::FrameControl &control, QString id,
                                  std::vector<QRectF> photo_slots,
                                  std::vector<FrameParameters> frame_data)
-    : QWidget(parent), photo_tune_widget_(photo_tune_widget), id_(id),
-      foreground_(QString(c_foreground_str).arg(id_)),
+    : QWidget(parent), id_(id), foreground_(QString(c_foreground_str).arg(id_)),
       foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
       photo_slots_real_(std::move(photo_slots)),
-      frame_data_(std::move(frame_data)), control_(control) {
+      frame_data_(std::move(frame_data)), control_(control),
+      photo_tune_widget_(photo_tune_widget) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
@@ -138,7 +131,6 @@ FrameWidgetBase::FrameWidgetBase(QWidget *parent,
     photo_widgets_[i] = new PhotoWidget(*this);
   }
 
-  initPhotoTuneWidget(control);
   initMonthPhotoWidgets(control);
 
   createButtons(control);
@@ -146,49 +138,6 @@ FrameWidgetBase::FrameWidgetBase(QWidget *parent,
 }
 
 QString FrameWidgetBase::id() const { return id_; }
-
-void FrameWidgetBase::initPhotoTuneWidget(Core::FrameControl &control) {
-
-  photo_tune_widget_->hide();
-
-  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-
-    connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
-            [&, i] {
-              auto project = control.CurrentProject();
-
-              if (photo_tune_widget_->getPhotoId() == std::pair{id_, i}) {
-                const auto new_photo_data = photo_tune_widget_->getPhoto();
-
-                // photo_widgets_[i]->setPhoto(new_photo_data);
-                project->monthes_[i].photo_data = new_photo_data;
-
-                // OnSignalUpdate();
-                control.SaveProjectMonth(i);
-              }
-            });
-
-    connect(photo_tune_widget_, &PhotoTuneWidget::SignalOpenFile, this, [&, i] {
-      auto project = control.CurrentProject();
-
-      if (photo_tune_widget_->getPhotoId() == std::pair{id_, i}) {
-        auto &month = project->monthes_[i];
-        auto file = this->OpenFile();
-
-        month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
-
-        // OnSignalUpdate();
-        photo_tune_widget_->setPhoto(std::pair<QString, int>(id_, i),
-                                     frame_data_[i], month.photo_data);
-      }
-    });
-
-    connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
-            &FrameWidgetBase::SignalUpdate);
-    connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
-            &FrameWidgetBase::SignalUpdate);
-  }
-}
 
 void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
@@ -198,7 +147,7 @@ void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
       auto &month = project->monthes_[i];
 
       if (month.photo_data.is_stub_image) {
-        auto file = this->OpenFile();
+        auto file = Utility::OpenFile(this);
 
         month.photo_data.image = QPixmap(file);
         month.photo_data.is_stub_image = false;
@@ -208,8 +157,7 @@ void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
         photo_widgets_[i]->setPhoto(month.photo_data);
       }
 
-      photo_tune_widget_->setPhoto(std::pair{id_, i}, frame_data_[i],
-                                   month.photo_data);
+      photo_tune_widget_->setPhoto(i, frame_data_[i], month.photo_data);
       photo_tune_widget_->show();
     });
   }
@@ -312,34 +260,6 @@ void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
   update();
 }
 
-QString FrameWidgetBase::OpenFile() {
-  QString image_file_name;
-  QString path;
-  if (path.isEmpty()) {
-    const QSettings settings(QSettings::Scope::UserScope);
-    path = settings.value(c_last_opend_dir).toString();
-  }
-
-  QFileDialog dialog(this, c_open_image_str, path, c_file_types_str);
-
-  dialog.setMimeTypeFilters(c_mime_type_filters);
-  dialog.setFileMode(QFileDialog::ExistingFile);
-
-  QStringList file_names;
-  if (dialog.exec()) {
-    file_names = dialog.selectedFiles();
-  }
-
-  if (!file_names.isEmpty()) {
-    image_file_name = file_names.front();
-
-    QSettings settings(QSettings::Scope::UserScope);
-    settings.setValue(c_last_opend_dir,
-                      QFileInfo(image_file_name).dir().path());
-  }
-
-  return image_file_name;
-}
 void FrameWidgetBase::setVisible(bool visible) {
   if (visible) {
     load(control_);

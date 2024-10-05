@@ -26,8 +26,6 @@ public:
 
 public slots:
   void Update();
-signals:
-  void SignalUpdate();
 
 public: // QWidget
   virtual void setVisible(bool visible) override final;
