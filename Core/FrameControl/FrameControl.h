@@ -4,7 +4,6 @@
 #include <QString>
 #include <QWidget>
 #include <Types.h>
-#include <map>
 
 namespace FirstYear::Core {
 
@@ -18,17 +17,6 @@ public:
   void SaveProjectMonth(int month);
   ProjectPtr CurrentProject();
 
-  /*
-public:
-  void CreateFrames(QWidget &parent);
-  void ShowCurrentFrame();
-
-public:
-  void previousFrame();
-  void nextFrame();
-  bool isPreviousFrame();
-  bool isNextFrame();*/
-
 private:
   void LoadProject(QString name);
   QString LastProjectName() const;
@@ -36,7 +24,6 @@ private:
 
 private:
   ProjectPtr current_project_;
-  /* std::map<QString, IFrame *> frames_;*/
 };
 
 } // namespace FirstYear::Core

@@ -194,20 +194,6 @@ void FrameWidgetBase::createButtons(Core::FrameControl &control) {
   connect(share_button_, &QPushButton::clicked, this, [&] {
 
   });
-
-  /*  auto back = new QPushButton(this);
-    back->setGeometry(20, geometry().height() - 4 * 40, 2 * 40, 40);
-    back->setText("<");
-    back->setContentsMargins(0, 0, 0, 0);
-    connect(back, &QPushButton::clicked, this, [&] { control.previousFrame();
-    });
-
-    auto next = new QPushButton(this);
-    next->setGeometry(geometry().width() - 100, geometry().height() - 4 * 40,
-                      2 * 40, 40);
-    next->setText(">");
-    next->setContentsMargins(0, 0, 0, 0);
-    connect(next, &QPushButton::clicked, this, [&] { control.nextFrame(); });*/
 }
 
 void FrameWidgetBase::Update() {
@@ -234,11 +220,7 @@ void FrameWidgetBase::load(Core::FrameControl &control) {
   }
 
   InitPhotos(control);
-
-  // QWidget::show();
 }
-
-// void FrameWidgetBase::hide() { QWidget::hide(); }
 
 void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
 
