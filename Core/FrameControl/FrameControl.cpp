@@ -21,6 +21,19 @@ ProjectPtr FrameControl::LoadProject() {
     CreateNewProject();
   }
 
+  for (int i = 0; i < (int)current_project_->monthes_.size(); i++) {
+    auto &month = current_project_->monthes_[i];
+
+    if (month.photo_data.image.isNull()) {
+      month.photo_data.is_stub_image = true;
+      month.photo_data.image =
+          QPixmap(QString(c_stub_month_photo_template_str).arg(i));
+      month.photo_data.angle = 0;
+      month.photo_data.scale = 1;
+      month.photo_data.offset = QPoint();
+    }
+  }
+
   return current_project_;
 }
 
@@ -34,19 +47,6 @@ void FrameControl::SaveProjectMonth(int month) {
 
 void FrameControl::LoadProject(QString name) {
   current_project_ = FileSystemProjectLoader().Load(name);
-
-  for (int i = 0; i < (int)current_project_->monthes_.size(); i++) {
-    auto &month = current_project_->monthes_[i];
-
-    if (month.photo_data.image.isNull()) {
-      month.photo_data.is_stub_image = true;
-      month.photo_data.image =
-          QPixmap(QString(c_stub_month_photo_template_str).arg(i));
-      month.photo_data.angle = 0;
-      month.photo_data.scale = 1;
-      month.photo_data.offset = QPoint();
-    }
-  }
 }
 
 ProjectPtr FrameControl::CurrentProject() { return current_project_; }
@@ -56,16 +56,5 @@ QString FrameControl::LastProjectName() const { return DEF_PROGECT_NAME; }
 void FrameControl::CreateNewProject() {
   current_project_ = std::make_shared<Project>();
   current_project_->monthes_.resize(12);
-
-  for (int i = 0; i < (int)current_project_->monthes_.size(); i++) {
-    auto &month = current_project_->monthes_[i];
-
-    month.photo_data.is_stub_image = true;
-    month.photo_data.image =
-        QPixmap(QString(c_stub_month_photo_template_str).arg(i));
-    month.photo_data.angle = 0;
-    month.photo_data.scale = 1;
-    month.photo_data.offset = QPoint();
-  }
 }
 } // namespace FirstYear::Core
