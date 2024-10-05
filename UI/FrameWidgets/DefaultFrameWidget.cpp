@@ -1,5 +1,4 @@
 #include "DefaultFrameWidget.h"
-#include "PhotoTuneWidget.h"
 #include "PhotoWidget.h"
 #include <stdafx.h>
 
@@ -47,10 +46,9 @@ private:
 };
 
 DefaultFrameWidget::DefaultFrameWidget(QWidget *parent,
-                                       PhotoTuneWidget *photo_tune_widget,
                                        Core::FrameControl &control)
 
-    : FrameWidgetBase(parent, photo_tune_widget, control, "1",
+    : FrameWidgetBase(parent, control, "1",
                       {{35, 35, 125, 125},
                        {184, 35, 125, 125},
                        {328, 35, 125, 125},
@@ -69,10 +67,9 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget *parent,
 }
 
 DefaultFrameWidget2::DefaultFrameWidget2(QWidget *parent,
-                                         PhotoTuneWidget *photo_tune_widget,
                                          Core::FrameControl &control)
 
-    : FrameWidgetBase(parent, photo_tune_widget, control, "2",
+    : FrameWidgetBase(parent, control, "2",
                       {{35, 35, 125, 125},
                        {184, 35, 125, 125},
                        {328, 35, 125, 125},
@@ -102,16 +99,13 @@ DefaultFrameWidget2::DefaultFrameWidget2(QWidget *parent,
   // reload(control);
 }
 
-FrameWidgetBase::FrameWidgetBase(QWidget *parent,
-                                 PhotoTuneWidget *photo_tune_widget,
-                                 Core::FrameControl &control, QString id,
-                                 std::vector<QRectF> photo_slots,
+FrameWidgetBase::FrameWidgetBase(QWidget *parent, Core::FrameControl &control,
+                                 QString id, std::vector<QRectF> photo_slots,
                                  std::vector<FrameParameters> frame_data)
     : QWidget(parent), id_(id), foreground_(QString(c_foreground_str).arg(id_)),
       foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
       photo_slots_real_(std::move(photo_slots)),
-      frame_data_(std::move(frame_data)), control_(control),
-      photo_tune_widget_(photo_tune_widget) {
+      frame_data_(std::move(frame_data)), control_(control) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
@@ -156,9 +150,7 @@ void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
         control.SaveProjectMonth(i);
         photo_widgets_[i]->setPhoto(month.photo_data);
       }
-
-      photo_tune_widget_->setPhoto(i, frame_data_[i], month.photo_data);
-      photo_tune_widget_->show();
+      emit SignalTunePhoto(i, frame_data_[i], month.photo_data);
     });
   }
 }

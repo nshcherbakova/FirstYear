@@ -35,4 +35,5 @@ public:
 };
 
 } // namespace FirstYear::Core
+Q_DECLARE_METATYPE(FirstYear::Core::PhotoData);
 #endif // FIRSTYEAR_CORE_PROJECT_H

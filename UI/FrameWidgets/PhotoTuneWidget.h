@@ -4,6 +4,7 @@
 #include <Core/Project/Project.h>
 #include <QPixmap>
 #include <QWidget>
+#include <UI/Utility.h>
 
 QT_BEGIN_NAMESPACE
 class QGestureEvent;
@@ -17,7 +18,6 @@ class QEventPoint;
 QT_END_NAMESPACE
 
 namespace FirstYear::UI {
-
 class GestureProcessor {
 
 protected:
@@ -91,19 +91,6 @@ protected:
 private:
   bool checkBoundares(QPointF delta, double scale, double angle) const;
   QPointF toImageCoordinates(QPointF point) const;
-};
-
-/////////////////////////////////////////////////////////////////////////////
-/// \brief The Frame class
-///
-class FrameParameters {
-public:
-  enum class TYPE {
-    ROUND,
-    RECT,
-  };
-  TYPE type;
-  QVariant data;
 };
 
 class Frame {
