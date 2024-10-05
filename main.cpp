@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
   FirstYear::Core::FrameControl frame_control;
   auto project = frame_control.LoadProject();
 
-  MainWindow w(frame_control);
+  FirstYear::UI::MainWindow w(frame_control);
   // todo list of farmes and registration system
 
   w.show();

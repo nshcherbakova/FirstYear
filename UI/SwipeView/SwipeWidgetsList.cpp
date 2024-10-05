@@ -3,6 +3,7 @@
 #include <QParallelAnimationGroup>
 #include <QPropertyAnimation>
 
+namespace FirstYear::UI {
 static const char *c_scroll_style_str = "QScrollArea{"
                                         "background: transparent;"
                                         "border: none;"
@@ -13,8 +14,7 @@ static const char *c_filter_widget_style_str = "QWidget{"
                                                "}";
 
 SwipeWidgetsList::SwipeWidgetsList(
-    QWidget *parent,
-    const std::vector<FirstYear::UI::FrameWidgetBase *> &widgets)
+    QWidget *parent, const std::vector<FrameWidgetBase *> &widgets)
     : QScrollArea(parent) {
 
   UNI_ASSERT(widgets.size() > 0);
@@ -66,7 +66,7 @@ void SwipeWidgetsList::InitialaizeScroller(int item_with) {
 }
 
 void SwipeWidgetsList::CreateInnerWidget(
-    const std::vector<FirstYear::UI::FrameWidgetBase *> &widgets) {
+    const std::vector<FrameWidgetBase *> &widgets) {
 
   // buttons widget
   QWidget *filter_buttons_widget = new QWidget();
@@ -91,8 +91,9 @@ void SwipeWidgetsList::SetCurrentItem(int index) {
                                   index);
 }
 
-void SwipeWidgetsList::AddWidget(FirstYear::UI::FrameWidgetBase *widget) {
+void SwipeWidgetsList::AddWidget(FrameWidgetBase *widget) {
 
   widget->show();
   layout_->addWidget(widget);
 }
+} // namespace FirstYear::UI

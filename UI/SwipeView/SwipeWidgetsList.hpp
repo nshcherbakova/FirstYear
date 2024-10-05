@@ -1,16 +1,15 @@
 #pragma once
 
-#include <QtWidgets>
-
 #include <Core/FrameControl/FrameControl.h>
+#include <QtWidgets>
 #include <UI/FrameWidgets/DefaultFrameWidget.h>
 
+namespace FirstYear::UI {
 class SwipeWidgetsList final : public QScrollArea {
   Q_OBJECT
 public:
-  explicit SwipeWidgetsList(
-      QWidget *parent,
-      const std::vector<FirstYear::UI::FrameWidgetBase *> &widgets);
+  explicit SwipeWidgetsList(QWidget *parent,
+                            const std::vector<FrameWidgetBase *> &widgets);
   SwipeWidgetsList &operator=(const SwipeWidgetsList &) = delete;
 
 public:
@@ -22,14 +21,14 @@ protected:
   // virtual bool event(QEvent *event) override;
 
 public:
-  void AddWidget(FirstYear::UI::FrameWidgetBase *widget);
+  void AddWidget(FrameWidgetBase *widget);
 
 private:
   void InitialaizeScroller(int item_with);
-  void CreateInnerWidget(
-      const std::vector<FirstYear::UI::FrameWidgetBase *> &widgets);
+  void CreateInnerWidget(const std::vector<FrameWidgetBase *> &widgets);
 
 private:
   QHBoxLayout *layout_ = nullptr;
   Qt::GestureType grabbed_gesture_;
 };
+} // namespace FirstYear::UI

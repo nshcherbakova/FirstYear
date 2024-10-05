@@ -1,10 +1,12 @@
 #include "mainwindow.h"
 #include <UI/FrameWidgets/DefaultFrameWidget.h>
 #include <UI/FrameWidgets/PhotoTuneWidget.h>
-
+#include <UI/SwipeView/SwipeWidgetsList.hpp>
 #include <stdafx.h>
 
-MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
+using namespace FirstYear::Core;
+namespace FirstYear::UI {
+MainWindow::MainWindow(FrameControl &frame_control)
     : QMainWindow()
 //, ui(new Ui::MainWindow)
 {
@@ -26,9 +28,32 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
   setFixedSize(window_size);
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
-  using namespace FirstYear::UI;
-  using namespace FirstYear::Core;
+  auto *photo_tune_widget = CreatePhotoTuneWidget(frame_control);
 
+  CreateFrames(photo_tune_widget, frame_control);
+
+  int current_fame_index = 0;
+  const auto last_frame = frame_control.CurrentProject()->frame_id_;
+  for (int i = 0; i < (int)widgets_.size(); i++) {
+
+    if (widgets_[i]->id() == last_frame) {
+      current_fame_index = i;
+    }
+  }
+
+  SwipeWidgetsList *swipe_view = CreateSwipeWidget();
+
+  swipe_view->SetCurrentItem(current_fame_index);
+  connect(swipe_view, &SwipeWidgetsList::SignalItemChanged, this,
+          [&](int index) {
+            frame_control.CurrentProject()->frame_id_ = widgets_[index]->id();
+            frame_control.SaveProject();
+          });
+  photo_tune_widget->raise();
+}
+
+PhotoTuneWidget *MainWindow::CreatePhotoTuneWidget(
+    FirstYear::Core::FrameControl &frame_control) {
   PhotoTuneWidget *photo_tune_widget = new PhotoTuneWidget(*this);
   photo_tune_widget->hide();
 
@@ -54,6 +79,11 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
             photo_tune_widget->updatePhoto(month_data.photo_data);
           });
 
+  return photo_tune_widget;
+}
+void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
+                              FirstYear::Core::FrameControl &frame_control) {
+
   widgets_ = std::vector<FrameWidgetBase *>{
       new DefaultFrameWidget(nullptr, frame_control),
       new DefaultFrameWidget2(nullptr, frame_control)};
@@ -76,27 +106,16 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
               photo_tune_widget->show();
             });
   }
+}
 
-  int current_fame_index = 0;
-  for (int i = 0; i < (int)widgets_.size(); i++) {
-
-    if (widgets_[i]->id() == frame_control.CurrentProject()->frame_id_) {
-      current_fame_index = i;
-    }
-  }
-
-  SwipeWidgetsList *swipeView = new SwipeWidgetsList(this, widgets_);
-  swipeView->setGeometry(geometry());
-  swipeView->show();
-  swipeView->SetCurrentItem(current_fame_index);
-  connect(swipeView, &SwipeWidgetsList::SignalItemChanged, this,
-          [&](int index) {
-            frame_control.CurrentProject()->frame_id_ = widgets_[index]->id();
-            frame_control.SaveProject();
-          });
-  photo_tune_widget->raise();
+SwipeWidgetsList *MainWindow::CreateSwipeWidget() {
+  SwipeWidgetsList *swipe_view = new SwipeWidgetsList(this, widgets_);
+  swipe_view->setGeometry(geometry());
+  swipe_view->show();
+  return swipe_view;
 }
 
 MainWindow::~MainWindow() {
   // delete ui;
 }
+} // namespace FirstYear::UI
