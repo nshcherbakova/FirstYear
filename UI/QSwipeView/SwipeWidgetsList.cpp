@@ -12,15 +12,20 @@ static const char *c_filter_widget_style_str = "QWidget{"
                                                "border: none;"
                                                "}";
 
-SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
-                                   FirstYear::Core::FrameControl &frame_control)
+SwipeWidgetsList::SwipeWidgetsList(
+    QWidget *parent, std::vector<FirstYear::UI::FrameWidgetBase *> widgets)
     : QScrollArea(parent) {
 
+  UNI_ASSERT(widgets.size() > 0);
   setStyleSheet(c_scroll_style_str);
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   setContentsMargins(0, 0, 0, 0);
-  // setGeometry({QPoint(), parentWidget()->geometry().size()});
+  InitialaizeScroller(widgets[0]->minimumWidth());
+  CreateInnerWidget(std::move(widgets));
+  spdlog::info("FiltersScrollWidget UI created");
+}
 
+void SwipeWidgetsList::InitialaizeScroller(int item_with) {
   QScrollerProperties properties =
       QScroller::scroller(this)->scrollerProperties();
   properties.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy,
@@ -42,18 +47,25 @@ SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
   properties.setScrollMetric(QScrollerProperties::MousePressEventDelay, 0.5);
 
   QScroller::scroller(this)->setScrollerProperties(properties);
-  QScroller::scroller(this)->setSnapPositionsX(0, parentWidget()->width());
+  QScroller::scroller(this)->setSnapPositionsX(0, item_with);
+  QScroller::scroller(this)->scrollTo(QPoint());
+  // this->horizontalScrollBar()->setValue(0);
 
   grabbed_gesture_ =
       QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
 
-  CreateInnerWidget(frame_control);
-
-  spdlog::info("FiltersScrollWidget UI created");
+  connect(QScroller::scroller(this), &QScroller::stateChanged, this,
+          [&](QScroller::State newState) {
+            if (newState == QScroller::Inactive) {
+              const auto currant_scroll_pos =
+                  QScroller::scroller(this)->finalPosition();
+              emit SignalItemChanged(currant_scroll_pos.x() / item_with);
+            }
+          });
 }
 
 void SwipeWidgetsList::CreateInnerWidget(
-    FirstYear::Core::FrameControl &frame_control) {
+    std::vector<FirstYear::UI::FrameWidgetBase *> widgets) {
 
   // buttons widget
   QWidget *filter_buttons_widget = new QWidget();
@@ -66,62 +78,27 @@ void SwipeWidgetsList::CreateInnerWidget(
   layout_->setContentsMargins(0, 0, 0, 0);
   layout_->setSpacing(0);
 
-  FirstYear::UI::DefaultFrameWidget2 *widget =
-      new FirstYear::UI::DefaultFrameWidget2(*filter_buttons_widget,
-                                             parentWidget(), frame_control);
-
-  AddWidget(new FirstYear::UI::DefaultFrameWidget(
-      *filter_buttons_widget, parentWidget(), frame_control));
-  AddWidget(widget);
-  AddWidget(new FirstYear::UI::DefaultFrameWidget(
-      *filter_buttons_widget, parentWidget(), frame_control));
-
-  AddWidget(new FirstYear::UI::DefaultFrameWidget(
-      *filter_buttons_widget, parentWidget(), frame_control));
-
+  for (auto &widget : widgets) {
+    widget->setParent(filter_buttons_widget);
+    AddWidget(widget);
+  }
   setWidget(filter_buttons_widget);
 
-  ensureWidgetVisible(widget);
+  // ensureWidgetVisible(widget);
+}
 
-  this->horizontalScrollBar()->setValue(0);
-
-  /*
-  connect(QScroller::scroller(this), &QScroller::stateChanged, this,
-  [&](QScroller::State newState){ if(newState == QScroller::Inactive)
-      {
-          auto current_value = this->horizontalScrollBar()->value();
-          int end_val = 0;
-          if (current_value % width() > width() / 2) {
-              end_val = (current_value / width() + 1) * width();
-
-          } else {
-              end_val = (current_value / width()) * width();
-          }
-
-          QScroller::scroller(this)->scrollTo(QPoint(end_val, 0));
-      }
-  });*/
+void SwipeWidgetsList::SetCurrentItem(int index) {
+  UNI_ASSERT(layout_->count() > index);
+  this->horizontalScrollBar()->setValue(layout_->itemAt(0)->geometry().width() *
+                                        index);
 }
 
 void SwipeWidgetsList::AddWidget(FirstYear::UI::FrameWidgetBase *widget) {
 
-  QRect rect = QRect(0, 0, parentWidget()->geometry().width(),
-                     parentWidget()->geometry().height());
-  widget->setGeometry(rect);
-  widget->setMinimumWidth(rect.width());
-  widget->setMinimumHeight(rect.width());
-  widget->setMaximumHeight(rect.width());
-  widget->setMaximumWidth(rect.width());
   widget->show();
   //   widget->setFlat(true);
   layout_->addWidget(widget);
-  widgets_.push_back(widget);
-  connect(widget, &FirstYear::UI::FrameWidgetBase::SignalUpdate, this, [&] {
-    for (auto w : widgets_) {
 
-      w->Update();
-    }
-  });
   // update();
 }
 

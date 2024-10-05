@@ -7,26 +7,14 @@
 #include <Types.h>
 #include <UI/FrameWidgets/PhotoTuneWidget.h>
 
+class QPushButton;
+
 namespace FirstYear::UI {
-class ClickableLabel : public QLabel {
-  Q_OBJECT
-
-public:
-  explicit ClickableLabel(QWidget *parent = Q_NULLPTR,
-                          Qt::WindowFlags f = Qt::WindowFlags());
-  ~ClickableLabel();
-
-signals:
-  void clicked();
-
-protected:
-  void mousePressEvent(QMouseEvent *event);
-};
 
 class FrameWidgetBase : public QWidget {
   Q_OBJECT
 public:
-  explicit FrameWidgetBase(QWidget &parent, QWidget *tune_widget_parent,
+  explicit FrameWidgetBase(QWidget *parent, PhotoTuneWidget *photo_tune_widget,
                            Core::FrameControl &control, QString id,
                            std::vector<QRectF> photo_slots,
                            std::vector<FrameParameters> frame_data);
@@ -42,8 +30,11 @@ signals:
   void SignalUpdate();
 
 public: // QWidget
-  virtual void paintEvent(QPaintEvent *e) override final;
   virtual void setVisible(bool visible) override final;
+
+protected:
+  virtual void paintEvent(QPaintEvent *e) override final;
+  virtual void resizeEvent(QResizeEvent *event) override final;
 
 private:
   void load(Core::FrameControl &control);
@@ -66,16 +57,20 @@ protected:
 private:
   Core::FrameControl &control_;
   std::vector<PhotoWidget *> photo_widgets_;
+
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
-  ClickableLabel *myLabel_ = nullptr;
   QWidget *foreground_widget_ = nullptr;
   std::vector<QRectF> photo_slots_;
+
+  QPushButton *render_button_ = nullptr;
+  QPushButton *share_button_ = nullptr;
 };
 
 class DefaultFrameWidget final : public FrameWidgetBase {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget(QWidget &parent, QWidget *tune_widget_parent,
+  explicit DefaultFrameWidget(QWidget *parent,
+                              PhotoTuneWidget *photo_tune_widget,
                               Core::FrameControl &control);
   virtual ~DefaultFrameWidget(){};
 
@@ -85,7 +80,8 @@ public:
 class DefaultFrameWidget2 final : public FrameWidgetBase {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget2(QWidget &parent, QWidget *tune_widget_parent,
+  explicit DefaultFrameWidget2(QWidget *parent,
+                               PhotoTuneWidget *photo_tune_widget,
                                Core::FrameControl &control);
   virtual ~DefaultFrameWidget2(){};
 

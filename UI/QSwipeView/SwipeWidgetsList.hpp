@@ -8,9 +8,14 @@
 class SwipeWidgetsList final : public QScrollArea {
   Q_OBJECT
 public:
-  explicit SwipeWidgetsList(QWidget *parent,
-                            FirstYear::Core::FrameControl &frame_control);
+  explicit SwipeWidgetsList(
+      QWidget *parent, std::vector<FirstYear::UI::FrameWidgetBase *> widgets);
   SwipeWidgetsList &operator=(const SwipeWidgetsList &) = delete;
+
+public:
+  void SetCurrentItem(int index);
+signals:
+  void SignalItemChanged(int index);
 
 protected:
   // virtual bool event(QEvent *event) override;
@@ -19,10 +24,10 @@ public:
   void AddWidget(FirstYear::UI::FrameWidgetBase *widget);
 
 private:
-  void CreateInnerWidget(FirstYear::Core::FrameControl &frame_control);
+  void InitialaizeScroller(int item_with);
+  void CreateInnerWidget(std::vector<FirstYear::UI::FrameWidgetBase *> widgets);
 
 private:
   QHBoxLayout *layout_ = nullptr;
-  std::vector<FirstYear::UI::FrameWidgetBase *> widgets_;
   Qt::GestureType grabbed_gesture_;
 };

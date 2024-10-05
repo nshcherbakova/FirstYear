@@ -136,12 +136,13 @@ public:
 signals:
   void SignalImageTuned();
   void SignalPhotoChanged();
+  void SignalOpenFile();
 
 public:
-  void setPhoto(int id, const FrameParameters &frame_data,
+  void setPhoto(std::pair<QString, int> id, const FrameParameters &frame_data,
                 const Core::PhotoData &photo);
   Core::PhotoData getPhoto() const;
-  int getPhotoId() const;
+  std::pair<QString, int> getPhotoId() const;
 
 private:
   // GestureProcessor
@@ -168,7 +169,7 @@ private:
   void updatePhoto(QPointF pos_delta, double scale_factor, double angle_delta);
 
 private:
-  int id_ = 0;
+  std::pair<QString, int> id_;
   QPixmap background_;
 };
 

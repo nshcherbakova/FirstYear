@@ -16,13 +16,6 @@ static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
 
-ClickableLabel::ClickableLabel(QWidget *parent, Qt::WindowFlags)
-    : QLabel(parent) {}
-
-ClickableLabel::~ClickableLabel() {}
-
-void ClickableLabel::mousePressEvent(QMouseEvent *) { emit clicked(); }
-
 class ForegroundWidget final : public QWidget {
 public:
   ForegroundWidget(QWidget *parent, QPixmap image,
@@ -60,11 +53,11 @@ public:
 private:
 };
 
-DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
-                                       QWidget *tune_widget_parent,
+DefaultFrameWidget::DefaultFrameWidget(QWidget *parent,
+                                       PhotoTuneWidget *photo_tune_widget,
                                        Core::FrameControl &control)
 
-    : FrameWidgetBase(parent, tune_widget_parent, control, "1",
+    : FrameWidgetBase(parent, photo_tune_widget, control, "1",
                       {{35, 35, 125, 125},
                        {184, 35, 125, 125},
                        {328, 35, 125, 125},
@@ -82,11 +75,11 @@ DefaultFrameWidget::DefaultFrameWidget(QWidget &parent,
   // reload(control);
 }
 
-DefaultFrameWidget2::DefaultFrameWidget2(QWidget &parent,
-                                         QWidget *tune_widget_parent,
+DefaultFrameWidget2::DefaultFrameWidget2(QWidget *parent,
+                                         PhotoTuneWidget *photo_tune_widget,
                                          Core::FrameControl &control)
 
-    : FrameWidgetBase(parent, tune_widget_parent, control, "2",
+    : FrameWidgetBase(parent, photo_tune_widget, control, "2",
                       {{35, 35, 125, 125},
                        {184, 35, 125, 125},
                        {328, 35, 125, 125},
@@ -116,11 +109,12 @@ DefaultFrameWidget2::DefaultFrameWidget2(QWidget &parent,
   // reload(control);
 }
 
-FrameWidgetBase::FrameWidgetBase(QWidget &parent, QWidget *tune_widget_parent,
+FrameWidgetBase::FrameWidgetBase(QWidget *parent,
+                                 PhotoTuneWidget *photo_tune_widget,
                                  Core::FrameControl &control, QString id,
                                  std::vector<QRectF> photo_slots,
                                  std::vector<FrameParameters> frame_data)
-    : QWidget(&parent), id_(id),
+    : QWidget(parent), photo_tune_widget_(photo_tune_widget), id_(id),
       foreground_(QString(c_foreground_str).arg(id_)),
       foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
       photo_slots_real_(std::move(photo_slots)),
@@ -131,7 +125,6 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, QWidget *tune_widget_parent,
   UNI_ASSERT(!id.isEmpty());
 
   setContentsMargins(0, 0, 0, 0);
-  setGeometry(tune_widget_parent->geometry());
   setAutoFillBackground(true);
 
   if (frame_data_.size() == 1) {
@@ -139,7 +132,7 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, QWidget *tune_widget_parent,
   }
 
   photo_slots_.resize(12);
-  photo_tune_widget_ = new PhotoTuneWidget(*tune_widget_parent);
+
   photo_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_widgets_[i] = new PhotoWidget(*this);
@@ -150,12 +143,6 @@ FrameWidgetBase::FrameWidgetBase(QWidget &parent, QWidget *tune_widget_parent,
 
   createButtons(control);
   createForegroundWidget();
-
-  /* ForegroundWidget2* foreground_widget= new ForegroundWidget2(this);
-   foreground_widget->setGeometry(geometry());
-   foreground_widget->raise();
-   foreground_widget->show();*/
-  // foreground_widget->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
 QString FrameWidgetBase::id() const { return id_; }
@@ -170,7 +157,7 @@ void FrameWidgetBase::initPhotoTuneWidget(Core::FrameControl &control) {
             [&, i] {
               auto project = control.CurrentProject();
 
-              if (photo_tune_widget_->getPhotoId() == i) {
+              if (photo_tune_widget_->getPhotoId() == std::pair{id_, i}) {
                 const auto new_photo_data = photo_tune_widget_->getPhoto();
 
                 // photo_widgets_[i]->setPhoto(new_photo_data);
@@ -181,21 +168,20 @@ void FrameWidgetBase::initPhotoTuneWidget(Core::FrameControl &control) {
               }
             });
 
-    connect(photo_tune_widget_, &PhotoTuneWidget::SignalPhotoChanged, this,
-            [&, i] {
-              auto project = control.CurrentProject();
+    connect(photo_tune_widget_, &PhotoTuneWidget::SignalOpenFile, this, [&, i] {
+      auto project = control.CurrentProject();
 
-              if (photo_tune_widget_->getPhotoId() == i) {
-                auto &month = project->monthes_[i];
-                auto file = this->OpenFile();
+      if (photo_tune_widget_->getPhotoId() == std::pair{id_, i}) {
+        auto &month = project->monthes_[i];
+        auto file = this->OpenFile();
 
-                month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
+        month.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
 
-                // OnSignalUpdate();
-                // photo_tune_widget_->setPhoto(i, frame_data_[i],
-                // month.photo_data);
-              }
-            });
+        // OnSignalUpdate();
+        photo_tune_widget_->setPhoto(std::pair<QString, int>(id_, i),
+                                     frame_data_[i], month.photo_data);
+      }
+    });
 
     connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this,
             &FrameWidgetBase::SignalUpdate);
@@ -222,7 +208,8 @@ void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
         photo_widgets_[i]->setPhoto(month.photo_data);
       }
 
-      photo_tune_widget_->setPhoto(i, frame_data_[i], month.photo_data);
+      photo_tune_widget_->setPhoto(std::pair{id_, i}, frame_data_[i],
+                                   month.photo_data);
       photo_tune_widget_->show();
     });
   }
@@ -239,29 +226,24 @@ void FrameWidgetBase::createForegroundWidget() {
 
 void FrameWidgetBase::createButtons(Core::FrameControl &control) {
 
-  myLabel_ = new ClickableLabel(this->parentWidget());
-  myLabel_->setGeometry(geometry());
-  myLabel_->hide();
-  connect(myLabel_, &ClickableLabel::clicked, this, [&] { myLabel_->hide(); });
-
-  auto render = new QPushButton(this);
-  render->setGeometry(20, geometry().height() - 2 * 40, 2 * 40, 40);
-  render->setText("Render");
-  render->setContentsMargins(0, 0, 0, 0);
-  connect(render, &QPushButton::clicked, this, [&] {
+  render_button_ = new QPushButton(this);
+  render_button_->setGeometry(20, geometry().height() - 2 * 40, 2 * 40, 40);
+  render_button_->setText("Render");
+  render_button_->setContentsMargins(0, 0, 0, 0);
+  connect(render_button_, &QPushButton::clicked, this, [&] {
     auto pixmap = this->renderFrame(control.CurrentProject());
     pixmap.save("/Users/nshcherbakova/Desktop/FirstYear/test1.png");
-
-    myLabel_->setPixmap(pixmap);
-    myLabel_->show();
+    QLabel *l = new QLabel("test", this);
+    l->setPixmap(pixmap);
+    l->show();
   });
 
-  auto share = new QPushButton(this);
-  share->setGeometry(geometry().width() - 100, geometry().height() - 2 * 40,
-                     2 * 40, 40);
-  share->setText("Share");
-  share->setContentsMargins(0, 0, 0, 0);
-  connect(share, &QPushButton::clicked, this, [&] {
+  share_button_ = new QPushButton(this);
+  share_button_->setGeometry(geometry().width() - 100,
+                             geometry().height() - 2 * 40, 2 * 40, 40);
+  share_button_->setText("Share");
+  share_button_->setContentsMargins(0, 0, 0, 0);
+  connect(share_button_, &QPushButton::clicked, this, [&] {
 
   });
 
@@ -280,7 +262,16 @@ void FrameWidgetBase::createButtons(Core::FrameControl &control) {
     connect(next, &QPushButton::clicked, this, [&] { control.nextFrame(); });*/
 }
 
-void FrameWidgetBase::Update() { load(control_); }
+void FrameWidgetBase::Update() {
+  QRect rect = {QPoint(0, 0), QWidget::size()};
+  foreground_widget_->setGeometry(rect);
+  render_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
+  share_button_->setGeometry(rect.width() - 100, rect.height() - 2 * 40, 2 * 40,
+                             40);
+  load(control_);
+}
+
+void FrameWidgetBase::resizeEvent(QResizeEvent *) { Update(); }
 
 void FrameWidgetBase::load(Core::FrameControl &control) {
 

@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include <UI/FrameWidgets/DefaultFrameWidget.h>
+#include <UI/FrameWidgets/PhotoTuneWidget.h>
+
 #include <stdafx.h>
 
 MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
@@ -24,21 +26,32 @@ MainWindow::MainWindow(FirstYear::Core::FrameControl &frame_control)
   setFixedSize(window_size);
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
-  /* QSwipeView *swipeView = new QSwipeView(this);
-   swipeView->setGeometry(geometry());
-   swipeView->addWidget(
-       new FirstYear::UI::DefaultFrameWidget(*this, this, frame_control));
-   swipeView->addWidget(
-       new FirstYear::UI::DefaultFrameWidget2(*this,this,frame_control));*/
+  using namespace FirstYear::UI;
 
-  SwipeWidgetsList *swipeView = new SwipeWidgetsList(this, frame_control);
+  PhotoTuneWidget *photo_tune_widget = new PhotoTuneWidget(*this);
+  std::vector<FrameWidgetBase *> widgets{
+      new DefaultFrameWidget(nullptr, photo_tune_widget, frame_control),
+      new DefaultFrameWidget2(nullptr, photo_tune_widget, frame_control)};
+  for (auto &widget : widgets) {
+    widget->setGeometry(geometry());
+    widget->setMinimumWidth(geometry().width());
+    widget->setMinimumHeight(geometry().height());
+    widget->setMaximumWidth(geometry().width());
+    widget->setMaximumHeight(geometry().height());
+
+    connect(widget, &FrameWidgetBase::SignalUpdate, this, [widgets] {
+      for (auto w : widgets) {
+
+        w->Update();
+      }
+    });
+  }
+  SwipeWidgetsList *swipeView = new SwipeWidgetsList(this, std::move(widgets));
   swipeView->setGeometry(geometry());
-
   swipeView->show();
+  swipeView->SetCurrentItem(1);
 
-  // QVBoxLayout *layout = new QVBoxLayout;
-  // layout->addWidget(swipeView);
-  // setLayout(layout);
+  photo_tune_widget->raise();
 }
 
 MainWindow::~MainWindow() {

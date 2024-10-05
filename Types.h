@@ -12,6 +12,7 @@ class FrameControl;
 
 namespace FirstYear::UI {
 class PhotoWidget;
+class PhotoTuneWidget;
 } // namespace FirstYear::UI
 
 #endif // FIRSTYEAR_CORE_TYPES_H

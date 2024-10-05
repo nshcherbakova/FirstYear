@@ -276,7 +276,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   open_file->setText("Open");
   open_file->setContentsMargins(0, 0, 0, 0);
   connect(open_file, &QPushButton::clicked, this,
-          &PhotoTuneWidget::SignalPhotoChanged);
+          &PhotoTuneWidget::SignalOpenFile);
 
   auto close = new QPushButton(this);
   // close->setAttribute(Qt::WA_AcceptTouchEvents, true);
@@ -299,7 +299,8 @@ bool PhotoTuneWidget::event(QEvent *event) {
   return QWidget::event(event);
 }
 
-void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
+void PhotoTuneWidget::setPhoto(std::pair<QString, int> id,
+                               const FrameParameters &frame_data,
                                const Core::PhotoData &photo) {
 
   id_ = id;
@@ -308,7 +309,7 @@ void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
   update();
 }
 
-int PhotoTuneWidget::getPhotoId() const { return id_; }
+std::pair<QString, int> PhotoTuneWidget::getPhotoId() const { return id_; }
 Core::PhotoData PhotoTuneWidget::getPhoto() const { return photo_; }
 
 void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
