@@ -141,16 +141,20 @@ void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
       auto &month = project->monthes_[i];
 
       if (month.photo_data.is_stub_image) {
-        auto file = Utility::OpenFile(this);
+        const auto file = Utility::OpenFile(this);
+        if (!file.isNull()) {
+          month.photo_data.is_stub_image = false;
+          month.photo_data.image = QPixmap(file);
+          month.photo_data.scale = 2.5;
 
-        month.photo_data.image = QPixmap(file);
-        month.photo_data.is_stub_image = false;
-        month.photo_data.scale = 2.5;
-
-        control.SaveProjectMonth(i);
-        photo_widgets_[i]->setPhoto(month.photo_data);
+          control.SaveProjectMonth(i);
+          photo_widgets_[i]->setPhoto(month.photo_data);
+        }
       }
-      emit SignalTunePhoto(i, frame_data_[i], month.photo_data);
+
+      if (!month.photo_data.is_stub_image) {
+        emit SignalTunePhoto(i, frame_data_[i], month.photo_data);
+      }
     });
   }
 }

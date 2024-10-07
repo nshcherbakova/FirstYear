@@ -74,9 +74,11 @@ PhotoTuneWidget *MainWindow::CreatePhotoTuneWidget(
 
                 ;
             auto &month_data = project->monthes_[month];
-            auto file = Utility::OpenFile(photo_tune_widget);
-            month_data.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
-            photo_tune_widget->updatePhoto(month_data.photo_data);
+            const auto file = Utility::OpenFile(photo_tune_widget);
+            if (!file.isNull()) {
+              month_data.photo_data = {QPixmap(file), false, 0, 2.5, QPoint()};
+              photo_tune_widget->updatePhoto(month_data.photo_data);
+            }
           });
 
   return photo_tune_widget;

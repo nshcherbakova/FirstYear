@@ -46,7 +46,6 @@ private:
   void createForegroundWidget();
   void InitPhotos(Core::FrameControl &control);
 
-  QString OpenFile();
   QPixmap renderFrame(FirstYear::Core::ProjectPtr);
 
 protected:
