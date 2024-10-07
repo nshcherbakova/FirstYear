@@ -67,20 +67,22 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   UNI_ASSERT(project);
   UNI_ASSERT(month >= 0 && month < 12);
 
+  const auto &month_data = project->monthes_[month];
+
   QJsonObject month_metadata;
-  month_metadata.insert("angle", project->monthes_[month].photo_data.angle);
-  month_metadata.insert("scale", project->monthes_[month].photo_data.scale);
+  month_metadata.insert("angle", month_data.photo_data.angle);
+  month_metadata.insert("scale", month_data.photo_data.scale);
 
   QJsonObject point;
-  point.insert("x", project->monthes_[month].photo_data.offset.x());
-  point.insert("y", project->monthes_[month].photo_data.offset.y());
+  point.insert("x", month_data.photo_data.offset.x());
+  point.insert("y", month_data.photo_data.offset.y());
 
   month_metadata.insert("offset", point);
 
-  if (project->monthes_[month].text) {
-    month_metadata.insert("text", *project->monthes_[month].text);
+  if (month_data.text) {
+    month_metadata.insert("text", *month_data.text);
   }
-  month_metadata.insert("filter_id", project->monthes_[month].filter_id);
+  month_metadata.insert("filter_id", month_data.filter_id);
 
   QJsonDocument month_metadata_document(month_metadata);
 
@@ -93,11 +95,13 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   month_metadata_file.write(month_metadata_document.toJson());
   month_metadata_file.close();
 
-  if (!project->monthes_[month].photo_data.image.isNull()) {
-    if (!project->monthes_[month].photo_data.image.save(
-            month_photo_path_template_.arg(month), IMAGE_FORMAT)) {
-      spdlog::info("Error, image was not saved {0}",
-                   month_photo_path_template_.arg(month).toStdString());
+  if (!month_data.photo_data.is_stub_image) {
+    if (!month_data.photo_data.image.isNull()) {
+      if (!month_data.photo_data.image.save(
+              month_photo_path_template_.arg(month), IMAGE_FORMAT)) {
+        spdlog::info("Error, image was not saved {0}",
+                     month_photo_path_template_.arg(month).toStdString());
+      }
     }
   }
 }
