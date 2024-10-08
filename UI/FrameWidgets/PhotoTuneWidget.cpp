@@ -255,6 +255,15 @@ QRectF Frame::frameRect() { return frame_boundary_rect_; }
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 ///
+///
+class TouchButton : public QPushButton {
+public:
+  TouchButton(QWidget *parent) : QPushButton(parent) {
+    setAttribute(Qt::WA_AcceptTouchEvents);
+  }
+  bool event(QEvent *event);
+};
+
 PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
     : QWidget(&parent), background_(c_background_str) {
   GestureProcessor::Initialise();
@@ -263,37 +272,64 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   auto palette = QWidget::palette();
   //  palette.setColor(QPalette::Window, Qt::red);
   setPalette(palette);
-  // setContentsMargins(10, 10, 10, 10);
   setGeometry(parent.geometry());
   setAutoFillBackground(true);
 
   int button_with = 40;
   int button_margin = 20;
 
-  auto open_file = new QPushButton(this);
-  open_file->setGeometry(button_margin, geometry().height() - 2 * button_with,
-                         2 * button_with, button_with);
-  open_file->setText("Open");
-  open_file->setContentsMargins(0, 0, 0, 0);
-  connect(open_file, &QPushButton::clicked, this,
+  open_file_ = new TouchButton(this);
+  open_file_->setAttribute(Qt::WA_AcceptTouchEvents);
+  open_file_->raise();
+  open_file_->setEnabled(true);
+  open_file_->setGeometry(button_margin, geometry().height() - 2 * button_with,
+                          2 * button_with, button_with);
+  open_file_->setText("Open");
+  open_file_->setContentsMargins(0, 0, 0, 0);
+  connect(open_file_, &QPushButton::clicked, this,
           &PhotoTuneWidget::SignalOpenFile);
 
-  auto close = new QPushButton(this);
-  // close->setAttribute(Qt::WA_AcceptTouchEvents, true);
-  close->setGeometry(geometry().width() - 3 * button_with,
-                     geometry().height() - 2 * button_with, 2 * button_with,
-                     button_with);
-  close->setText("Close");
-  close->setContentsMargins(0, 0, 0, 0);
-  connect(close, &QPushButton::clicked, this, [&]() {
+  close_ = new TouchButton(this);
+  close_->setGeometry(geometry().width() - 3 * button_with,
+                      geometry().height() - 2 * button_with, 2 * button_with,
+                      button_with);
+  close_->setText("Close");
+  close_->setContentsMargins(0, 0, 0, 0);
+  connect(close_, &QPushButton::clicked, this, [&]() {
     hide();
     emit SignalImageTuned();
   });
 }
 
-bool PhotoTuneWidget::event(QEvent *event) {
+bool TouchButton::event(QEvent *event) {
+  switch (event->type()) {
+  case QEvent::TouchBegin:
+  case QEvent::TouchUpdate:
+  case QEvent::TouchEnd: {
+    auto points = static_cast<QTouchEvent *>(event)->points();
+    QPointF center;
 
+    for (const QTouchEvent::TouchPoint &touchPoint : points) {
+      center += touchPoint.position();
+    }
+    if (!points.empty()) {
+      center /= points.size();
+      if (geometry().contains(center.toPoint())) {
+        return QPushButton::event(event);
+      }
+    }
+    return false;
+  }
+  default:
+    return QPushButton::event(event);
+  }
+  return QPushButton::event(event);
+}
+
+bool PhotoTuneWidget::event(QEvent *event) {
   if (GestureProcessor::processEvent(event)) {
+    close_->event(event);
+    open_file_->event(event);
     return true;
   }
   return QWidget::event(event);

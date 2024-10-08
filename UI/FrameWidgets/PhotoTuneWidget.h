@@ -3,6 +3,7 @@
 #define FIRSTYEAR_UI_PHOTO_TUNE_WIDGET_H
 #include <Core/Project/Project.h>
 #include <QPixmap>
+#include <QPushButton>
 #include <QWidget>
 #include <UI/Utility.h>
 
@@ -110,7 +111,7 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 /// \brief The PhotoTuneWidget class
 ///
-
+class TouchButton;
 class PhotoTuneWidget final : public QWidget,
                               public GestureProcessor,
                               public PhotoProcessor,
@@ -159,6 +160,8 @@ private:
 private:
   int id_;
   QPixmap background_;
+  TouchButton *close_ = nullptr;
+  TouchButton *open_file_ = nullptr;
 };
 
 } // namespace FirstYear::UI
