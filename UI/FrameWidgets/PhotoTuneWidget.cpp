@@ -26,7 +26,6 @@ bool GestureProcessor::processEvent(QEvent *event) {
 
   switch (event->type()) {
   case QEvent::Gesture: {
-    // event->accept();
     return gestureEvent(static_cast<QGestureEvent *>(event));
   }
   case QEvent::TouchBegin:
@@ -34,15 +33,6 @@ bool GestureProcessor::processEvent(QEvent *event) {
   case QEvent::TouchEnd: {
 
     toucheEvent(static_cast<QTouchEvent *>(event));
-
-    // if (!result)
-    //     return QWidget::event(event);
-    // for(auto& child: children())
-    {
-      //  if( qobject_cast<QAbstractButton *>(child))
-      //      if( child->event(event) && event->isAccepted())
-      //          return true;
-    }
     return true;
   }
   default:
@@ -51,7 +41,6 @@ bool GestureProcessor::processEvent(QEvent *event) {
 }
 
 bool GestureProcessor::gestureEvent(QGestureEvent *event) {
-  spdlog::info("gestureEvent {}", (long)event);
   if (QGesture *tap_and_hold = event->gesture(Qt::TapAndHoldGesture))
     longTapTriggered(static_cast<QTapAndHoldGesture *>(tap_and_hold));
   if (QGesture *pan = event->gesture(Qt::PanGesture))
@@ -68,7 +57,6 @@ bool GestureProcessor::toucheEvent(QTouchEvent *touch) {
     return false;
   }
   touch->accept();
-  spdlog::info("QTouchEvent {}", (long)touch);
   const auto touchPoints = touch->points();
 
   return processToucheEvent(touchPoints);
@@ -79,7 +67,6 @@ void GestureProcessor::panTriggered(QPanGesture *gesture) {
   switch (gesture->state()) {
   case Qt::GestureStarted:
   case Qt::GestureUpdated:
-    // setCursor(Qt::SizeAllCursor);
     is_gesture_moving_ = true;
     break;
   case Qt::GestureFinished:
@@ -87,7 +74,6 @@ void GestureProcessor::panTriggered(QPanGesture *gesture) {
     is_gesture_moving_ = false;
     break;
   default:
-    // setCursor(Qt::ArrowCursor);
     is_gesture_moving_ = false;
   }
 #endif
@@ -101,17 +87,15 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
   if (changeFlags & QPinchGesture::RotationAngleChanged) {
     qreal rotation_delta =
         gesture->rotationAngle() - gesture->lastRotationAngle();
-
-    processAngleChanged(rotation_delta);
+    processAngleChanged(rotation_delta, gesture->centerPoint());
   }
   if (changeFlags & QPinchGesture::ScaleFactorChanged) {
-    currentStepScaleFactor_ = gesture->totalScaleFactor();
+    processScaleChanged(gesture->scaleFactor(), gesture->centerPoint());
   }
   if (gesture->state() == Qt::GestureFinished) {
 
-    processScaleChanged(currentStepScaleFactor_);
-
-    currentStepScaleFactor_ = 1;
+    processScaleChanged(gesture->scaleFactor() / gesture->lastScaleFactor(),
+                        gesture->centerPoint());
   }
 }
 
@@ -125,34 +109,45 @@ void GestureProcessor::longTapTriggered(QTapAndHoldGesture *gesture) {
 ///
 void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
                         QRectF boundary_rect) {
-  photo_ = photo;
+  photo_data_ = photo;
   boundary_rect_ = boundary_rect;
   destanation_rect_ = destanation_rect;
+
+  photo_position_.reset();
 
   QRectF photo_rect = photo.image.rect();
   double k1 = photo_rect.width() / photo_rect.height();
   double k2 = boundary_rect_.width() / boundary_rect_.height();
 
   if (k1 < k2) {
-    internal_scale_ = (double)boundary_rect_.height() / photo_rect.height();
+    internal_scale_ =
+        ((double)boundary_rect_.height() / photo_rect.height()) * 2.5;
   } else {
-    internal_scale_ = (double)boundary_rect_.width() / photo_rect.width();
+    internal_scale_ =
+        ((double)boundary_rect_.width() / photo_rect.width()) * 2.5;
   }
 }
 
 QTransform PhotoPainter::getTransformForWidget(QPointF offset, double scale,
-                                               double angle) const {
-  const qreal iw = photo_.image.width();
-  const qreal ih = photo_.image.height();
+                                               double angle,
+                                               QPointF center) const {
+  const qreal iw = photo_data_.image.width();
+  const qreal ih = photo_data_.image.height();
   const qreal wh = destanation_rect_.height();
   const qreal ww = destanation_rect_.width();
 
+  QPointF d = {destanation_rect_.left() + ww / 2,
+               destanation_rect_.top() + wh / 2};
+
   QTransform transform;
-  transform.translate(destanation_rect_.left() + ww / 2,
-                      destanation_rect_.top() + wh / 2);
+  transform.translate(d.x(), d.y());
+
   transform.scale(internal_scale_, internal_scale_);
+
   transform.translate(offset.x(), offset.y());
+
   transform.rotate(angle);
+
   transform.scale(scale, scale);
   transform.translate(-iw / 2, -ih / 2);
 
@@ -160,14 +155,14 @@ QTransform PhotoPainter::getTransformForWidget(QPointF offset, double scale,
 }
 
 void PhotoPainter::drawPhoto(QPainter &painter) {
-  if (photo_.image.isNull())
-    return;
+  /* if (photo_data_.image.isNull())
+     return;
 
-  QTransform transform = getTransformForWidget(
-      photo_.offset, currentStepScaleFactor() * photo_.scale, photo_.angle);
-  painter.setTransform(transform);
-  painter.drawPixmap(0, 0, photo_.image);
-  painter.setTransform(QTransform());
+   QTransform transform = getTransformForWidget(
+       photo_position_.offset,  photo_position_.scale, photo_position_.angle,
+   photo_position_.center); painter.setTransform(transform);
+   painter.drawPixmap(0, 0, photo_position_.image);
+   painter.setTransform(QTransform());*/
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -177,10 +172,9 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
 bool PhotoProcessor::checkBoundares(QPointF offset, double scale,
                                     double angle) const {
 
-  QTransform transform =
-      getTransformForWidget(offset, scale * currentStepScaleFactor(), angle);
+  QTransform transform = getTransformForWidget(offset, scale, angle);
 
-  QRectF image_rect = photo_.image.rect();
+  QRectF image_rect = photo_data_.image.rect();
 
   auto translated_image_rect = transform.mapRect(image_rect);
 
@@ -191,20 +185,47 @@ bool PhotoProcessor::checkBoundares(QPointF offset, double scale,
 }
 
 QPointF PhotoProcessor::toImageCoordinates(QPointF point) const {
-  return point / internal_scale_;
+  return point;
 }
 
-void PhotoProcessor::updatePhotoPosition(QPointF pos_delta, double scale_factor,
-                                         double angle_delta) {
-  if (checkBoundares(photo_.offset + toImageCoordinates(pos_delta),
-                     photo_.scale * scale_factor, photo_.angle + angle_delta)) {
-    photo_.offset += toImageCoordinates(pos_delta);
-    photo_.scale *= scale_factor;
-    if (photo_.scale < ZOOM_MIN)
-      photo_.scale = ZOOM_MIN;
-    photo_.angle += angle_delta;
+void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
+                                         std::optional<double> scale_factor,
+                                         std::optional<double> angle_delta,
+                                         std::optional<QPointF> center) {
+  if (true /*checkBoundares(photo_.offset + toImageCoordinates(pos_delta),
 
-    spdlog::info("updatee position {}", photo_.scale);
+              photo_.scale * scale_factor, photo_.angle + angle_delta)*/) {
+
+    if (pos_delta) {
+      const auto coord_delta = toImageCoordinates(*pos_delta);
+      if (photo_position_.offset) {
+        *photo_position_.offset += coord_delta;
+      } else {
+        photo_position_.offset = coord_delta;
+      }
+    }
+
+    if (scale_factor) {
+      if (photo_position_.scale) {
+        *photo_position_.scale *= *scale_factor;
+      } else {
+        photo_position_.scale = *scale_factor;
+      }
+    }
+
+    //  if (photo_.scale < ZOOM_MIN)
+    //    photo_.scale = ZOOM_MIN;
+
+    if (angle_delta) {
+      if (photo_position_.angle) {
+        *photo_position_.angle += *angle_delta;
+      } else {
+        photo_position_.angle = *angle_delta;
+      }
+    }
+    if (center) {
+      photo_position_.center = center;
+    }
   }
 }
 
@@ -338,6 +359,11 @@ bool PhotoTuneWidget::event(QEvent *event) {
 void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
                                const Core::PhotoData &photo) {
 
+  //  angle_ = 0;
+  //  scale_ = 1;//photo.scale;
+  transform_.reset();
+  transform2_.reset();
+  //   offset_ = QPoint();
   id_ = id;
   Frame::init(frame_data, rect());
   PhotoProcessor::init(photo, rect(), frameRect());
@@ -350,7 +376,7 @@ void PhotoTuneWidget::updatePhoto(const Core::PhotoData &photo) {
 }
 
 int PhotoTuneWidget::getPhotoId() const { return id_; }
-Core::PhotoData PhotoTuneWidget::getPhoto() const { return photo_; }
+Core::PhotoData PhotoTuneWidget::getPhoto() const { return photo_data_; }
 
 void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   QWidget::mouseReleaseEvent(event);
@@ -358,25 +384,28 @@ void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   emit SignalImageTuned();
 }
 
-void PhotoTuneWidget::updatePhoto(QPointF pos_delta, double scale_factor,
-                                  double angle_delta) {
-  PhotoProcessor::updatePhotoPosition(pos_delta, scale_factor, angle_delta);
+void PhotoTuneWidget::updatePhoto(std::optional<QPointF> pos_delta,
+                                  std::optional<double> scale_factor,
+                                  std::optional<double> angle_delta,
+                                  std::optional<QPointF> center) {
+  PhotoProcessor::updatePhotoPosition(pos_delta, scale_factor, angle_delta,
+                                      center);
   update();
 }
 
 void PhotoTuneWidget::wheelEvent(QWheelEvent *event) {
-  if (event->modifiers().testFlag(Qt::ControlModifier)) {
+  /*  if (event->modifiers().testFlag(Qt::ControlModifier)) {
 
-    if (event->angleDelta().y() < 0) {
-      updatePhoto(QPointF(), 1, ROTATE_STEP);
-    } else if (event->angleDelta().y() > 0) {
-      this->updatePhoto(QPointF(), 1, -ROTATE_STEP);
-    }
-  } else if (event->angleDelta().y() < 0 && this->photo_.scale < ZOOM_MAX) {
-    updatePhoto(QPointF(), ZOOM_STEP, 0);
-  } else if (event->angleDelta().y() > 0 && this->photo_.scale >= ZOOM_MIN) {
-    this->updatePhoto(QPointF(), 1.0 / ZOOM_STEP, 0);
-  }
+      if (event->angleDelta().y() < 0) {
+            updatePhoto(QPointF(), 1, ROTATE_STEP,event->position());
+      } else if (event->angleDelta().y() > 0) {
+        this->updatePhoto(QPointF(), 1, -ROTATE_STEP, event->position());
+      }
+    } else if (event->angleDelta().y() < 0 && this->photo_.scale < ZOOM_MAX) {
+      updatePhoto(QPointF(), ZOOM_STEP, 0, event->position());
+    } else if (event->angleDelta().y() > 0 && this->photo_.scale >= ZOOM_MIN) {
+      this->updatePhoto(QPointF(), 1.0 / ZOOM_STEP, 0, event->position());
+    }*/
 }
 
 bool PhotoTuneWidget::processToucheEvent(const QList<QEventPoint> &points) {
@@ -398,43 +427,79 @@ bool PhotoTuneWidget::processToucheEvent(const QList<QEventPoint> &points) {
   }
   if (count > 0) {
     delta /= count;
-    updatePhoto(delta, 1, 0);
+    updatePhoto(delta, std::optional<double>(), std::optional<double>(),
+                std::optional<QPointF>());
     return true;
   }
   return false;
 }
 
 void PhotoTuneWidget::processPan(QPointF delta) {
-  spdlog::info("panTriggered ");
-  updatePhoto(delta, 1, 0);
+  updatePhoto(delta, std::optional<double>(), std::optional<double>(),
+              std::optional<QPointF>());
 }
 
-void PhotoTuneWidget::processAngleChanged(qreal rotation_delta) {
-  updatePhoto(QPointF(), 1, rotation_delta);
+void PhotoTuneWidget::processAngleChanged(qreal rotation_delta,
+                                          QPointF center) {
+  updatePhoto(std::optional<QPointF>(), std::optional<double>(), rotation_delta,
+              center);
 }
 
-void PhotoTuneWidget::processScaleChanged(qreal scale) {
-  updatePhoto(QPointF(), scale, 0);
+void PhotoTuneWidget::processScaleChanged(qreal scale, QPointF center) {
+  updatePhoto(std::optional<QPointF>(), scale, std::optional<double>(), center);
 }
 
 void PhotoTuneWidget::processLongTap(QTapAndHoldGesture *) {
 
-  hide();
-  emit SignalImageTuned();
+  // hide();
+  // emit SignalImageTuned();
 }
 
 void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
   QWidget::grabGesture(gesture);
 }
 
-double PhotoTuneWidget::currentStepScaleFactor() const {
-  return currentStepScaleFactor_;
-}
-
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   painter.drawPixmap(rect(), background_, rect());
-  PhotoProcessor::drawPhoto(painter);
+
+  // spdlog::info("a {}, s {},  ", photo_position_.angle, photo_.scale);
+  const auto angle_diff = photo_position_.angle.value_or(0);
+  const auto scale_diff = photo_position_.scale.value_or(1);
+  const auto offset_diff =
+      photo_position_.offset.value_or(QPointF(0, 0)) / internal_scale_;
+  const auto center = photo_position_.center.value_or(QPointF(0, 0));
+
+  photo_position_.reset_exept_center();
+
+  const qreal iw = photo_data_.image.width();
+  const qreal ih = photo_data_.image.height();
+  const qreal wh = destanation_rect_.height();
+  const qreal ww = destanation_rect_.width();
+
+  QPointF d = {destanation_rect_.left() + ww / 2,
+               destanation_rect_.top() + wh / 2};
+  QTransform transform1;
+  transform1.translate(d.x(), d.y());
+  transform1.scale(internal_scale_, internal_scale_);
+
+  transform2_.translate(offset_diff.x(), offset_diff.y());
+
+  QPointF c = (transform_ * transform2_ * transform1).inverted().map(center);
+
+  transform_.translate(c.x(), c.y());
+  transform_.rotate(angle_diff);
+  transform_.scale(scale_diff, scale_diff);
+  transform_.translate(-c.x(), -c.y());
+
+  QTransform transform3;
+  transform3.translate(-iw / 2, -ih / 2);
+
+  painter.setTransform(transform3 * transform_ * transform2_ * transform1);
+  painter.drawPixmap(0, 0, photo_data_.image);
+  painter.setTransform(QTransform());
+
+  // PhotoProcessor::drawPhoto(painter);
   Frame::drawFrame(painter);
 }
 } // namespace FirstYear::UI

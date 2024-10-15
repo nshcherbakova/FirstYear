@@ -15,6 +15,7 @@ struct PhotoData {
   double angle = 0;
   double scale = 1;
   QPointF offset;
+  QPointF center;
   //  QRectF dest_rect;
 };
 

@@ -29,8 +29,8 @@ protected:
 protected:
   bool processEvent(QEvent *event);
   virtual void processPan(QPointF delta) = 0;
-  virtual void processAngleChanged(qreal rotation_delta) = 0;
-  virtual void processScaleChanged(qreal scale) = 0;
+  virtual void processAngleChanged(qreal rotation_delta, QPointF center) = 0;
+  virtual void processScaleChanged(qreal scale, QPointF center) = 0;
   virtual void processLongTap(QTapAndHoldGesture *) = 0;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) = 0;
   virtual void grabWidgetGesture(Qt::GestureType gesture) = 0;
@@ -41,9 +41,6 @@ private:
   void pinchTriggered(QPinchGesture *);
   void longTapTriggered(QTapAndHoldGesture *);
   bool toucheEvent(QTouchEvent *touch);
-
-protected:
-  qreal currentStepScaleFactor_ = 1;
 
 private:
   bool is_gesture_moving_ = false;
@@ -65,14 +62,34 @@ public:
   void drawPhoto(QPainter &);
 
 protected:
-  QTransform getTransformForWidget(QPointF point, double scale,
-                                   double angle) const;
+  QTransform getTransformForWidget(QPointF point, double scale, double angle,
+                                   QPointF center = QPointF()) const;
 
 protected:
-  virtual double currentStepScaleFactor() const { return 1; };
+  struct PhotoPosition {
+    std::optional<double> angle;
+    std::optional<double> scale;
+    std::optional<QPointF> offset;
+    std::optional<QPointF> center;
+    //  QRectF dest_rect;
 
-protected:
-  Core::PhotoData photo_;
+    void reset() {
+      offset.reset();
+      scale.reset();
+      angle.reset();
+      center.reset();
+    }
+
+    void reset_exept_center() {
+      offset.reset();
+      scale.reset();
+      angle.reset();
+    }
+  };
+
+  PhotoPosition photo_position_;
+  Core::PhotoData photo_data_;
+
   double internal_scale_ = 1;
   QRectF boundary_rect_;
   QRectF destanation_rect_;
@@ -86,8 +103,10 @@ public:
   PhotoProcessor &operator=(const PhotoProcessor &) = delete;
 
 protected:
-  void updatePhotoPosition(QPointF pos_delta, double scale_factor,
-                           double angle_delta);
+  void updatePhotoPosition(std::optional<QPointF> pos_delta,
+                           std::optional<double> scale_factor,
+                           std::optional<double> angle_delta,
+                           std::optional<QPointF> center);
 
 private:
   bool checkBoundares(QPointF delta, double scale, double angle) const;
@@ -136,15 +155,12 @@ public:
 private:
   // GestureProcessor
   virtual void processPan(QPointF delta) override;
-  virtual void processAngleChanged(qreal rotation_delta) override;
-  virtual void processScaleChanged(qreal scale) override;
+  virtual void processAngleChanged(qreal rotation_delta,
+                                   QPointF center) override;
+  virtual void processScaleChanged(qreal scale, QPointF center) override;
   virtual void processLongTap(QTapAndHoldGesture *) override;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) override;
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
-
-private:
-  // PhotoProcessor
-  virtual double currentStepScaleFactor() const override;
 
 protected:
   // QWidget
@@ -155,13 +171,18 @@ protected:
 
 private:
   void grabGestures(const QList<Qt::GestureType> &gestures);
-  void updatePhoto(QPointF pos_delta, double scale_factor, double angle_delta);
+  void updatePhoto(std::optional<QPointF> pos_delta,
+                   std::optional<double> scale_factor,
+                   std::optional<double> angle_delta,
+                   std::optional<QPointF> center);
 
 private:
   int id_;
   QPixmap background_;
   TouchButton *close_ = nullptr;
   TouchButton *open_file_ = nullptr;
+  QTransform transform_;
+  QTransform transform2_;
 };
 
 } // namespace FirstYear::UI

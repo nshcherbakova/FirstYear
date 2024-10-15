@@ -88,10 +88,13 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
   const QString month_path = month_path_template_.arg(QString::number(month));
 
-  QFile month_metadata_file(
-      month_metadata_path_template_.arg(QString::number(month)));
-  month_metadata_file.open(QIODevice::WriteOnly);
-
+  const QString month_metadata_path =
+      month_metadata_path_template_.arg(QString::number(month));
+  QFile month_metadata_file(month_metadata_path);
+  if (!month_metadata_file.open(QIODevice::WriteOnly)) {
+    spdlog::error("Can't open {} to save metadata.",
+                  month_metadata_path.toStdString());
+  }
   month_metadata_file.write(month_metadata_document.toJson());
   month_metadata_file.close();
 
