@@ -62,11 +62,12 @@ public:
   void drawPhoto(QPainter &);
 
 protected:
-  QTransform getTransformForWidget(QPointF point, double scale, double angle,
-                                   QPointF center = QPointF()) const;
+  virtual double scaleFactor() const;
 
 protected:
   struct PhotoPosition {
+    //   PhotoPosition()
+    //    {};
     std::optional<double> angle;
     std::optional<double> scale;
     std::optional<QPointF> offset;
@@ -86,7 +87,10 @@ protected:
       angle.reset();
     }
   };
+  QTransform getTransformForWidget(const PhotoPosition &photo_position);
+  // QTransform getTransformForWidget() const ;
 
+protected:
   PhotoPosition photo_position_;
   Core::PhotoData photo_data_;
 
@@ -103,6 +107,9 @@ public:
   PhotoProcessor &operator=(const PhotoProcessor &) = delete;
 
 protected:
+  virtual double scaleFactor() const override final;
+
+protected:
   void updatePhotoPosition(std::optional<QPointF> pos_delta,
                            std::optional<double> scale_factor,
                            std::optional<double> angle_delta,
@@ -110,7 +117,6 @@ protected:
 
 private:
   bool checkBoundares(QPointF delta, double scale, double angle) const;
-  QPointF toImageCoordinates(QPointF point) const;
 };
 
 class Frame {
@@ -181,8 +187,6 @@ private:
   QPixmap background_;
   TouchButton *close_ = nullptr;
   TouchButton *open_file_ = nullptr;
-  QTransform transform_;
-  QTransform transform2_;
 };
 
 } // namespace FirstYear::UI

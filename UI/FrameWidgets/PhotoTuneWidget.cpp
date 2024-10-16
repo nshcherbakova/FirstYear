@@ -109,11 +109,13 @@ void GestureProcessor::longTapTriggered(QTapAndHoldGesture *gesture) {
 ///
 void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
                         QRectF boundary_rect) {
+  photo_position_.reset();
+
   photo_data_ = photo;
   boundary_rect_ = boundary_rect;
   destanation_rect_ = destanation_rect;
 
-  photo_position_.reset();
+  // photo_position_.reset();
 
   QRectF photo_rect = photo.image.rect();
   double k1 = photo_rect.width() / photo_rect.height();
@@ -121,16 +123,23 @@ void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
 
   if (k1 < k2) {
     internal_scale_ =
-        ((double)boundary_rect_.height() / photo_rect.height()) * 2.5;
+        ((double)boundary_rect_.height() / photo_rect.height()) * scaleFactor();
   } else {
     internal_scale_ =
-        ((double)boundary_rect_.width() / photo_rect.width()) * 2.5;
+        ((double)boundary_rect_.width() / photo_rect.width()) * scaleFactor();
   }
 }
 
-QTransform PhotoPainter::getTransformForWidget(QPointF offset, double scale,
-                                               double angle,
-                                               QPointF center) const {
+double PhotoPainter::scaleFactor() const { return 2.5; }
+
+QTransform
+PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position) {
+  // spdlog::info("a {}, s {},  ", photo_position_.angle, photo_.scale);
+  const auto angle_diff = photo_position.angle.value_or(0);
+  const auto scale_diff = photo_position.scale.value_or(1);
+  const auto offset_diff = photo_position.offset.value_or(QPointF(0, 0));
+  const auto center = photo_position.center.value_or(QPointF(0, 0));
+
   const qreal iw = photo_data_.image.width();
   const qreal ih = photo_data_.image.height();
   const qreal wh = destanation_rect_.height();
@@ -139,30 +148,43 @@ QTransform PhotoPainter::getTransformForWidget(QPointF offset, double scale,
   QPointF d = {destanation_rect_.left() + ww / 2,
                destanation_rect_.top() + wh / 2};
 
-  QTransform transform;
-  transform.translate(d.x(), d.y());
+  QTransform transform_internal1;
+  transform_internal1.translate(d.x(), d.y());
+  transform_internal1.scale(internal_scale_, internal_scale_);
 
-  transform.scale(internal_scale_, internal_scale_);
+  photo_data_.transform_offset.translate(offset_diff.x() / internal_scale_,
+                                         offset_diff.y() / internal_scale_);
 
-  transform.translate(offset.x(), offset.y());
+  QPointF c = (photo_data_.transform_scale_rotate *
+               photo_data_.transform_offset * transform_internal1)
+                  .inverted()
+                  .map(center);
 
-  transform.rotate(angle);
+  photo_data_.transform_scale_rotate.translate(c.x(), c.y());
+  photo_data_.transform_scale_rotate.rotate(angle_diff);
+  photo_data_.transform_scale_rotate.scale(scale_diff, scale_diff);
+  photo_data_.transform_scale_rotate.translate(-c.x(), -c.y());
 
-  transform.scale(scale, scale);
-  transform.translate(-iw / 2, -ih / 2);
+  // transform_.translate(offset_diff.x(), offset_diff.y());
 
-  return transform;
+  QTransform transform_internal2;
+  transform_internal2.translate(-iw / 2, -ih / 2);
+
+  // photo_position_.reset();//_exept_center();
+
+  return transform_internal2 * photo_data_.transform_scale_rotate *
+         photo_data_.transform_offset * transform_internal1;
 }
 
 void PhotoPainter::drawPhoto(QPainter &painter) {
-  /* if (photo_data_.image.isNull())
-     return;
+  if (photo_data_.image.isNull())
+    return;
 
-   QTransform transform = getTransformForWidget(
-       photo_position_.offset,  photo_position_.scale, photo_position_.angle,
-   photo_position_.center); painter.setTransform(transform);
-   painter.drawPixmap(0, 0, photo_position_.image);
-   painter.setTransform(QTransform());*/
+  const QTransform transform = getTransformForWidget(photo_position_);
+  photo_position_.reset_exept_center();
+  painter.setTransform(transform);
+  painter.drawPixmap(0, 0, photo_data_.image);
+  painter.setTransform(QTransform());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -172,20 +194,16 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
 bool PhotoProcessor::checkBoundares(QPointF offset, double scale,
                                     double angle) const {
 
-  QTransform transform = getTransformForWidget(offset, scale, angle);
+  /* QTransform transform = getTransformForWidget(offset, scale, angle);
 
-  QRectF image_rect = photo_data_.image.rect();
+   QRectF image_rect = photo_data_.image.rect();
 
-  auto translated_image_rect = transform.mapRect(image_rect);
+   auto translated_image_rect = transform.mapRect(image_rect);
 
-  if (translated_image_rect.intersects(boundary_rect_))
-    return true;
-
+   if (translated_image_rect.intersects(boundary_rect_))
+     return true;
+ */
   return false;
-}
-
-QPointF PhotoProcessor::toImageCoordinates(QPointF point) const {
-  return point;
 }
 
 void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
@@ -197,7 +215,7 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
               photo_.scale * scale_factor, photo_.angle + angle_delta)*/) {
 
     if (pos_delta) {
-      const auto coord_delta = toImageCoordinates(*pos_delta);
+      const auto coord_delta = *pos_delta;
       if (photo_position_.offset) {
         *photo_position_.offset += coord_delta;
       } else {
@@ -226,9 +244,12 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
     if (center) {
       photo_position_.center = center;
     }
+
+    // photo_position_.offset = coord_delta;
   }
 }
 
+double PhotoProcessor::scaleFactor() const { return 2.5; }
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -359,23 +380,20 @@ bool PhotoTuneWidget::event(QEvent *event) {
 void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
                                const Core::PhotoData &photo) {
 
-  //  angle_ = 0;
-  //  scale_ = 1;//photo.scale;
-  transform_.reset();
-  transform2_.reset();
-  //   offset_ = QPoint();
   id_ = id;
   Frame::init(frame_data, rect());
-  PhotoProcessor::init(photo, rect(), frameRect());
-  update();
+  updatePhoto(photo);
 }
 
 void PhotoTuneWidget::updatePhoto(const Core::PhotoData &photo) {
   PhotoProcessor::init(photo, rect(), frameRect());
+  updatePhoto(std::optional<QPointF>(), std::optional<double>(),
+              std::optional<double>(), std::optional<QPointF>());
   update();
 }
 
 int PhotoTuneWidget::getPhotoId() const { return id_; }
+
 Core::PhotoData PhotoTuneWidget::getPhoto() const { return photo_data_; }
 
 void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
@@ -394,18 +412,23 @@ void PhotoTuneWidget::updatePhoto(std::optional<QPointF> pos_delta,
 }
 
 void PhotoTuneWidget::wheelEvent(QWheelEvent *event) {
-  /*  if (event->modifiers().testFlag(Qt::ControlModifier)) {
+  if (event->modifiers().testFlag(Qt::ControlModifier)) {
 
-      if (event->angleDelta().y() < 0) {
-            updatePhoto(QPointF(), 1, ROTATE_STEP,event->position());
-      } else if (event->angleDelta().y() > 0) {
-        this->updatePhoto(QPointF(), 1, -ROTATE_STEP, event->position());
-      }
-    } else if (event->angleDelta().y() < 0 && this->photo_.scale < ZOOM_MAX) {
-      updatePhoto(QPointF(), ZOOM_STEP, 0, event->position());
-    } else if (event->angleDelta().y() > 0 && this->photo_.scale >= ZOOM_MIN) {
-      this->updatePhoto(QPointF(), 1.0 / ZOOM_STEP, 0, event->position());
-    }*/
+    if (event->angleDelta().y() < 0) {
+      updatePhoto(std::optional<QPointF>(), std::optional<double>(),
+                  ROTATE_STEP, event->position());
+    } else if (event->angleDelta().y() > 0) {
+      updatePhoto(std::optional<QPointF>(), std::optional<double>(),
+                  -ROTATE_STEP, event->position());
+    }
+  } else if (event->angleDelta().y() < 0 /*&& this->photo_.scale < ZOOM_MAX*/) {
+    updatePhoto(std::optional<QPointF>(), ZOOM_STEP, std::optional<double>(),
+                event->position());
+  } else if (event->angleDelta().y() >
+             0 /*&& this->photo_.scale >= ZOOM_MIN*/) {
+    updatePhoto(std::optional<QPointF>(), 1.0 / ZOOM_STEP,
+                std::optional<double>(), event->position());
+  }
 }
 
 bool PhotoTuneWidget::processToucheEvent(const QList<QEventPoint> &points) {
@@ -462,44 +485,7 @@ void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   painter.drawPixmap(rect(), background_, rect());
-
-  // spdlog::info("a {}, s {},  ", photo_position_.angle, photo_.scale);
-  const auto angle_diff = photo_position_.angle.value_or(0);
-  const auto scale_diff = photo_position_.scale.value_or(1);
-  const auto offset_diff =
-      photo_position_.offset.value_or(QPointF(0, 0)) / internal_scale_;
-  const auto center = photo_position_.center.value_or(QPointF(0, 0));
-
-  photo_position_.reset_exept_center();
-
-  const qreal iw = photo_data_.image.width();
-  const qreal ih = photo_data_.image.height();
-  const qreal wh = destanation_rect_.height();
-  const qreal ww = destanation_rect_.width();
-
-  QPointF d = {destanation_rect_.left() + ww / 2,
-               destanation_rect_.top() + wh / 2};
-  QTransform transform1;
-  transform1.translate(d.x(), d.y());
-  transform1.scale(internal_scale_, internal_scale_);
-
-  transform2_.translate(offset_diff.x(), offset_diff.y());
-
-  QPointF c = (transform_ * transform2_ * transform1).inverted().map(center);
-
-  transform_.translate(c.x(), c.y());
-  transform_.rotate(angle_diff);
-  transform_.scale(scale_diff, scale_diff);
-  transform_.translate(-c.x(), -c.y());
-
-  QTransform transform3;
-  transform3.translate(-iw / 2, -ih / 2);
-
-  painter.setTransform(transform3 * transform_ * transform2_ * transform1);
-  painter.drawPixmap(0, 0, photo_data_.image);
-  painter.setTransform(QTransform());
-
-  // PhotoProcessor::drawPhoto(painter);
+  PhotoProcessor::drawPhoto(painter);
   Frame::drawFrame(painter);
 }
 } // namespace FirstYear::UI

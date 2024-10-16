@@ -272,6 +272,7 @@ QPixmap FrameWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) {
   for (int i = 0; i < (int)project->monthes_.size(); i++) {
     QPainter painter_for_photo(&pixmap);
     QRectF slot_rect = photo_slots_for_render[i];
+
     painter_for_photo.setClipRect(slot_rect);
 
     PhotoPainter photo_painter;

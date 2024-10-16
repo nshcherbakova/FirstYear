@@ -2,7 +2,6 @@
 #ifndef FIRSTYEAR_UI_IMAGE_BUTTON_H
 #define FIRSTYEAR_UI_IMAGE_BUTTON_H
 #include <Core/Project/Project.h>
-#include <QPixmap>
 #include <QPushButton>
 #include <UI/FrameWidgets/PhotoTuneWidget.h>
 
@@ -17,6 +16,9 @@ public:
 public:
   void setPhoto(const Core::PhotoData &photo);
   void paintEvent(QPaintEvent *);
+
+private:
+  Core::PhotoData photo_data_;
 };
 
 } // namespace FirstYear::UI
