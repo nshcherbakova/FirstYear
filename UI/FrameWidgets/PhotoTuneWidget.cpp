@@ -165,12 +165,8 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position) {
   photo_data_.transform_scale_rotate.scale(scale_diff, scale_diff);
   photo_data_.transform_scale_rotate.translate(-c.x(), -c.y());
 
-  // transform_.translate(offset_diff.x(), offset_diff.y());
-
   QTransform transform_internal2;
   transform_internal2.translate(-iw / 2, -ih / 2);
-
-  // photo_position_.reset();//_exept_center();
 
   return transform_internal2 * photo_data_.transform_scale_rotate *
          photo_data_.transform_offset * transform_internal1;
@@ -244,12 +240,9 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
     if (center) {
       photo_position_.center = center;
     }
-
-    // photo_position_.offset = coord_delta;
   }
 }
 
-double PhotoProcessor::scaleFactor() const { return 2.5; }
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 ///

@@ -145,7 +145,7 @@ void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
         if (!file.isNull()) {
           month.photo_data.is_stub_image = false;
           month.photo_data.image = QPixmap(file);
-          month.photo_data.scale = 2.5;
+          //  month.photo_data.scale = 2.5;
 
           control.SaveProjectMonth(i);
           photo_widgets_[i]->setPhoto(month.photo_data);

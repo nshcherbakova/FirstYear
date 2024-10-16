@@ -107,9 +107,6 @@ public:
   PhotoProcessor &operator=(const PhotoProcessor &) = delete;
 
 protected:
-  virtual double scaleFactor() const override final;
-
-protected:
   void updatePhotoPosition(std::optional<QPointF> pos_delta,
                            std::optional<double> scale_factor,
                            std::optional<double> angle_delta,

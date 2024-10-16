@@ -63,6 +63,24 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project) {
   }
 }
 
+QJsonObject
+FileSystemProjectWriter::TransformJson(const QTransform &transform) {
+  QJsonObject transform_data;
+  transform_data.insert("m11", transform.m11());
+  transform_data.insert("m12", transform.m12());
+  transform_data.insert("m13", transform.m13());
+
+  transform_data.insert("m21", transform.m21());
+  transform_data.insert("m22", transform.m22());
+  transform_data.insert("m23", transform.m23());
+
+  transform_data.insert("m31", transform.m31());
+  transform_data.insert("m32", transform.m32());
+  transform_data.insert("m33", transform.m33());
+
+  return transform_data;
+}
+
 void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   UNI_ASSERT(project);
   UNI_ASSERT(month >= 0 && month < 12);
@@ -70,14 +88,20 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   const auto &month_data = project->monthes_[month];
 
   QJsonObject month_metadata;
-  month_metadata.insert("angle", month_data.photo_data.angle);
-  month_metadata.insert("scale", month_data.photo_data.scale);
+  /* month_metadata.insert("angle", month_data.photo_data.angle);
+   month_metadata.insert("scale", month_data.photo_data.scale);
 
-  QJsonObject point;
-  point.insert("x", month_data.photo_data.offset.x());
-  point.insert("y", month_data.photo_data.offset.y());
+   QJsonObject point;
+   point.insert("x", month_data.photo_data.offset.x());
+   point.insert("y", month_data.photo_data.offset.y());
 
-  month_metadata.insert("offset", point);
+   month_metadata.insert("offset", point);*/
+
+  month_metadata.insert("transform_offset",
+                        TransformJson(month_data.photo_data.transform_offset));
+  month_metadata.insert(
+      "transform_scale_rotate",
+      TransformJson(month_data.photo_data.transform_scale_rotate));
 
   if (month_data.text) {
     month_metadata.insert("text", *month_data.text);

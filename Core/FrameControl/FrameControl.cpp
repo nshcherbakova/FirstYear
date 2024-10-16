@@ -28,9 +28,9 @@ ProjectPtr FrameControl::LoadProject() {
       month.photo_data.is_stub_image = true;
       month.photo_data.image =
           QPixmap(QString(c_stub_month_photo_template_str).arg(i));
-      month.photo_data.angle = 0;
-      month.photo_data.scale = 1;
-      month.photo_data.offset = QPoint();
+      // month.photo_data.angle = 0;
+      // month.photo_data.scale = 1;
+      // month.photo_data.offset = QPoint();
     }
   }
 

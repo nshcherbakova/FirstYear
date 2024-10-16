@@ -2,6 +2,8 @@
 #ifndef FIRSTYEAR_CORE_FS_PROJECT_WRITER_H
 #define FIRSTYEAR_CORE_FS_PROJECT_WRITER_H
 #include "Constants.h"
+#include <QJsonObject>
+#include <QTransform>
 #include <Types.h>
 
 namespace FirstYear::Core {
@@ -14,6 +16,8 @@ public:
 private:
   bool CheckExistingProject();
   bool CreateProjectFiles();
+
+  QJsonObject TransformJson(const QTransform &transform);
 };
 
 } // namespace FirstYear::Core

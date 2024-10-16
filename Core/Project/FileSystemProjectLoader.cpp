@@ -105,6 +105,41 @@ QPoint center_coordinates = {0, 0};
 std::optional<QString> text;
 QString filter_id;
 */
+
+bool FileSystemProjectLoader::LoadTransform(const QJsonObject &json,
+                                            QString name,
+                                            QTransform &transform) {
+  if (const auto data = json[name]; data.isObject()) {
+    const auto object = data.toObject();
+
+    bool result = true;
+    double m11 = 0;
+    result = result && ReadDouble(object, "m11", m11);
+    double m12 = 0;
+    result = result && ReadDouble(object, "m12", m12);
+    double m13 = 0;
+    result = result && ReadDouble(object, "m13", m13);
+
+    double m21 = 0;
+    result = result && ReadDouble(object, "m21", m21);
+    double m22 = 0;
+    result = result && ReadDouble(object, "m22", m22);
+    double m23 = 0;
+    result = result && ReadDouble(object, "m23", m23);
+
+    double m31 = 0;
+    result = result && ReadDouble(object, "m31", m31);
+    double m32 = 0;
+    result = result && ReadDouble(object, "m32", m32);
+    double m33 = 0;
+    result = result && ReadDouble(object, "m33", m33);
+
+    transform.setMatrix(m11, m12, m13, m21, m22, m23, m31, m32, m33);
+    return result;
+  }
+  return false;
+}
+
 bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
 
   MonthItem &month = project->monthes_[month_number];
@@ -124,14 +159,27 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
 
   auto month_json = month_json_document.object();
 
-  if (!ReadDouble(month_json, "angle", month.photo_data.angle)) {
-    spdlog::error("Error while reading a {0} month photo angle from json {1}.",
+  /*  if (!ReadDouble(month_json, "angle", month.photo_data.angle)) {
+      spdlog::error("Error while reading a {0} month photo angle from json
+    {1}.", month_number, month_metadata.toStdString()); return false;
+    }
+
+    if (!ReadDouble(month_json, "scale", month.photo_data.scale)) {
+      spdlog::error("Error while reading a {0} month photo scale from json
+    {1}.", month_number, month_metadata.toStdString()); return false;
+    }*/
+
+  if (!LoadTransform(month_json, "transform_scale_rotate",
+                     month.photo_data.transform_scale_rotate)) {
+    spdlog::error("Error while reading  transform_scale_rotate in a {0} month "
+                  "photo scale from json {1}.",
                   month_number, month_metadata.toStdString());
     return false;
   }
-
-  if (!ReadDouble(month_json, "scale", month.photo_data.scale)) {
-    spdlog::error("Error while reading a {0} month photo scale from json {1}.",
+  if (!LoadTransform(month_json, "transform_offset",
+                     month.photo_data.transform_offset)) {
+    spdlog::error("Error while reading transform_offset in a {0} month photo "
+                  "scale from json {1}.",
                   month_number, month_metadata.toStdString());
     return false;
   }
@@ -153,24 +201,24 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     month.text = text;
   }
 
-  if (const auto offset = month_json["offset"]; offset.isObject()) {
-    const auto offset_object = offset.toObject();
-    double x = 0, y = 0;
+  /* if (const auto offset = month_json["offset"]; offset.isObject()) {
+     const auto offset_object = offset.toObject();
+     double x = 0, y = 0;
 
-    if (!ReadDouble(offset_object, "x", x)) {
-      spdlog::error(
-          "Error while reading a {0} month photo coordinate x from json {1}.",
-          month_number, month_metadata.toStdString());
-      return false;
-    }
-    if (!ReadDouble(offset_object, "y", y)) {
-      spdlog::error(
-          "Error while reading a {0} month photo coordinate x from json {1}.",
-          month_number, month_metadata.toStdString());
-      return false;
-    }
-    month.photo_data.offset = {double(x), double(y)};
-  }
+     if (!ReadDouble(offset_object, "x", x)) {
+       spdlog::error(
+           "Error while reading a {0} month photo coordinate x from json {1}.",
+           month_number, month_metadata.toStdString());
+       return false;
+     }
+     if (!ReadDouble(offset_object, "y", y)) {
+       spdlog::error(
+           "Error while reading a {0} month photo coordinate x from json {1}.",
+           month_number, month_metadata.toStdString());
+       return false;
+     }
+     month.photo_data.offset = {double(x), double(y)};
+   }*/
 
   QPixmap photo(month_photo_path_template_.arg(month_number));
   if (!photo.isNull()) {
