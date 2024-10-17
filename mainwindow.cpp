@@ -70,9 +70,7 @@ PhotoTuneWidget *MainWindow::CreatePhotoTuneWidget(
           [photo_tune_widget, &frame_control] {
             auto project = frame_control.CurrentProject();
 
-            int month = photo_tune_widget->getPhotoId()
-
-                ;
+            int month = photo_tune_widget->getPhotoId();
             auto &month_data = project->monthes_[month];
             const auto file = Utility::OpenFile(photo_tune_widget);
             if (!file.isNull()) {

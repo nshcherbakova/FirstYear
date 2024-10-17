@@ -15,10 +15,14 @@ public:
 
 public:
   void setPhoto(const Core::PhotoData &photo);
+  void UpdateButton();
+
   void paintEvent(QPaintEvent *);
+  void resizeEvent(QResizeEvent *);
 
 private:
   Core::PhotoData photo_data_;
+  QPixmap buffer_;
 };
 
 } // namespace FirstYear::UI

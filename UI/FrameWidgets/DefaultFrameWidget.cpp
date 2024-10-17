@@ -17,7 +17,7 @@ public:
 public:
   virtual void paintEvent(QPaintEvent *) override final {
     QPainter painter(this);
-    image_ = image_.scaledToWidth(width());
+    image_ = image_.scaledToWidth(width(), Qt::SmoothTransformation);
 
     painter.drawPixmap(rect(), image_, rect());
 
@@ -256,7 +256,8 @@ void FrameWidgetBase::paintEvent(QPaintEvent *e) {
 }
 
 QPixmap FrameWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) {
-  QPixmap pixmap(foreground_to_render_.size());
+  QPixmap pixmap(foreground_to_render_.size() * devicePixelRatio());
+  pixmap.setDevicePixelRatio(devicePixelRatio());
   //
 
   std::vector<QRectF> photo_slots_for_render;
