@@ -12,13 +12,8 @@ namespace FirstYear::Core {
 struct PhotoData {
   QPixmap image;
   bool is_stub_image = false;
-  /*double angle = 0;
-  double scale = 1;
-  QPointF offset;
-  QPointF center;*/
   QTransform transform_scale_rotate;
   QTransform transform_offset;
-  //  QRectF dest_rect;
 };
 
 struct MonthItem {

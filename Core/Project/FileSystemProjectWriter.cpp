@@ -88,14 +88,6 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   const auto &month_data = project->monthes_[month];
 
   QJsonObject month_metadata;
-  /* month_metadata.insert("angle", month_data.photo_data.angle);
-   month_metadata.insert("scale", month_data.photo_data.scale);
-
-   QJsonObject point;
-   point.insert("x", month_data.photo_data.offset.x());
-   point.insert("y", month_data.photo_data.offset.y());
-
-   month_metadata.insert("offset", point);*/
 
   month_metadata.insert("transform_offset",
                         TransformJson(month_data.photo_data.transform_offset));

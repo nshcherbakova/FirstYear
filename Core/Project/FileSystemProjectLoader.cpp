@@ -97,14 +97,6 @@ ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
   spdlog::info("Project loaded {0}.", project_path_.toStdString());
   return project;
 }
-/*
-std::optional<QPixmap> photo;
-int angle = 0;
-int scale = 1;
-QPoint center_coordinates = {0, 0};
-std::optional<QString> text;
-QString filter_id;
-*/
 
 bool FileSystemProjectLoader::LoadTransform(const QJsonObject &json,
                                             QString name,
@@ -159,16 +151,6 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
 
   auto month_json = month_json_document.object();
 
-  /*  if (!ReadDouble(month_json, "angle", month.photo_data.angle)) {
-      spdlog::error("Error while reading a {0} month photo angle from json
-    {1}.", month_number, month_metadata.toStdString()); return false;
-    }
-
-    if (!ReadDouble(month_json, "scale", month.photo_data.scale)) {
-      spdlog::error("Error while reading a {0} month photo scale from json
-    {1}.", month_number, month_metadata.toStdString()); return false;
-    }*/
-
   if (!LoadTransform(month_json, "transform_scale_rotate",
                      month.photo_data.transform_scale_rotate)) {
     spdlog::error("Error while reading  transform_scale_rotate in a {0} month "
@@ -200,25 +182,6 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     }
     month.text = text;
   }
-
-  /* if (const auto offset = month_json["offset"]; offset.isObject()) {
-     const auto offset_object = offset.toObject();
-     double x = 0, y = 0;
-
-     if (!ReadDouble(offset_object, "x", x)) {
-       spdlog::error(
-           "Error while reading a {0} month photo coordinate x from json {1}.",
-           month_number, month_metadata.toStdString());
-       return false;
-     }
-     if (!ReadDouble(offset_object, "y", y)) {
-       spdlog::error(
-           "Error while reading a {0} month photo coordinate x from json {1}.",
-           month_number, month_metadata.toStdString());
-       return false;
-     }
-     month.photo_data.offset = {double(x), double(y)};
-   }*/
 
   QPixmap photo(month_photo_path_template_.arg(month_number));
   if (!photo.isNull()) {

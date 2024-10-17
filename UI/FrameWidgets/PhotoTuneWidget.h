@@ -62,9 +62,6 @@ public:
   void drawPhoto(QPainter &);
 
 protected:
-  virtual double scaleFactor() const;
-
-protected:
   struct PhotoPosition {
     //   PhotoPosition()
     //    {};
@@ -87,11 +84,13 @@ protected:
       angle.reset();
     }
   };
-  QTransform getTransformForWidget(const PhotoPosition &photo_position);
+  QTransform getTransformForWidget(const PhotoPosition &photo_position,
+                                   QTransform &transform_offset,
+                                   QTransform &transform_scale_rotate);
   // QTransform getTransformForWidget() const ;
 
 protected:
-  PhotoPosition photo_position_;
+  QTransform transform_;
   Core::PhotoData photo_data_;
 
   double internal_scale_ = 1;
@@ -113,7 +112,7 @@ protected:
                            std::optional<QPointF> center);
 
 private:
-  bool checkBoundares(QPointF delta, double scale, double angle) const;
+  bool checkBoundares(const QTransform &transform) const;
 };
 
 class Frame {
