@@ -39,7 +39,92 @@ void initLogger() {
   }
 }
 
+#ifdef Q_OS_ANDROID
+bool requestStoragePermission() {
+  const QVector<QString> permissions(
+      {"android.permission.WRITE_EXTERNAL_STORAGE",
+       "android.permission.READ_EXTERNAL_STORAGE",
+       "android.permission.MANAGE_EXTERNAL_STORAGE"});
+
+  for (const QString &permission : permissions) {
+    auto result = QtAndroidPrivate::checkPermission(permission);
+    if (result.result() == QtAndroidPrivate::PermissionResult::Denied) {
+      QFuture<QtAndroidPrivate::PermissionResult> resultHash =
+          QtAndroidPrivate::requestPermission(permission);
+      if (resultHash.result() == QtAndroidPrivate::PermissionResult::Denied)
+        return false;
+    }
+  }
+
+  return true;
+}
+
+void accessAllFiles() {
+  if (QOperatingSystemVersion::current() <
+      QOperatingSystemVersion(QOperatingSystemVersion::Android, 11)) {
+    qDebug()
+        << "it is less then Android 11 - ALL FILES permission isn't possible!";
+    return;
+  }
+  // Here you have to set your PackageName
+
+  jboolean value = QJniObject::callStaticMethod<jboolean>(
+      "android/os/Environment", "isExternalStorageManager");
+  if (value == false) {
+    qDebug() << "requesting ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION";
+
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
+    QJniObject packageManager = activity.callObjectMethod(
+        "getPackageManager", "()Landroid/content/pm/PackageManager;");
+    QJniObject packageName =
+        activity.callObjectMethod("getPackageName", "()Ljava/lang/String;");
+
+    QJniObject ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION =
+        QJniObject::getStaticObjectField(
+            "android/provider/Settings",
+            "ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION",
+            "Ljava/lang/String;");
+    QJniObject intent("android/content/Intent", "(Ljava/lang/String;)V",
+                      ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION.object());
+    QJniObject jniPath =
+        QJniObject::fromString("package:" + packageName.toString());
+    QJniObject jniUri = QJniObject::callStaticObjectMethod(
+        "android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;",
+        jniPath.object<jstring>());
+    QJniObject jniResult = intent.callObjectMethod(
+        "setData", "(Landroid/net/Uri;)Landroid/content/Intent;",
+        jniUri.object<jobject>());
+    QtAndroidPrivate::startActivity(intent, 0);
+  } else {
+    qDebug() << "SUCCESS ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION";
+  }
+}
+void setScreenOrientation() {
+  QJniObject activity = QNativeInterface::QAndroidApplication::context();
+  if (activity.isValid()) {
+    int orientation = QJniObject::getStaticField<int>(
+        "android.content.pm.ActivityInfo", "SCREEN_ORIENTATION_SENSOR");
+    activity.callMethod<void>("setRequestedOrientation" // method name
+                              ,
+                              "(I)V" // signature
+                              ,
+                              orientation);
+  }
+}
+
+#endif
+
 int main(int argc, char *argv[]) {
+
+#ifdef Q_OS_ANDROID
+
+  //  requestStoragePermission();
+
+  //  accessAllFiles();
+
+  //   setScreenOrientation();
+#endif
+
   initLogger();
   spdlog::info("Initialize First Year application");
 

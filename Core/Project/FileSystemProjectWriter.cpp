@@ -4,15 +4,16 @@
 namespace FirstYear::Core {
 
 bool FileSystemProjectWriter::CheckExistingProject() {
-  return QDir().exists(project_path_);
+  return QDir().exists(project_data_path_);
 }
 
 bool FileSystemProjectWriter::CreateProjectFiles() {
-  QDir project_dir(project_path_);
+
+  QDir project_dir(project_data_path_);
   UNI_ENSURE_RETURN(!project_dir.exists(), false);
-  if (!QDir().mkpath(project_path_)) {
+  if (!QDir().mkpath(project_data_path_)) {
     spdlog::error("Error while creating directory {0}",
-                  project_path_.toStdString());
+                  project_data_path_.toStdString());
     return false;
   }
 
@@ -38,8 +39,9 @@ bool FileSystemProjectWriter::CreateProjectFiles() {
 }
 
 void FileSystemProjectWriter::Write(const ProjectPtr &project) {
-  spdlog::debug("Save project to {0}", project_path_.toStdString());
+  spdlog::debug("Save project to {0}", project_data_path_.toStdString());
   UNI_ASSERT(project);
+
   if (!CheckExistingProject()) {
     auto status = CreateProjectFiles();
     UNI_ENSURE_RETURN(status);

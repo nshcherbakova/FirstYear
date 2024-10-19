@@ -20,7 +20,7 @@ void ImageButton::UpdateButton() {
 
   QPainter painter(&buffer_);
   const auto rect = QRect(0, 0, buffer_.width(), buffer_.height());
-  spdlog::info("update rect {} {}", rect.width(), rect.height());
+
   painter.setBrush(Qt::white);
   painter.drawPolygon(rect);
   PhotoPainter::drawPhoto(painter);
@@ -32,8 +32,7 @@ void ImageButton::resizeEvent(QResizeEvent *) { UpdateButton(); }
 void ImageButton::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   const auto rect = QRect(0, 0, buffer_.width(), buffer_.height());
-  spdlog::info("paint rect {} {}", rect.width(), rect.height());
-  spdlog::info("paint rect {} {}", rect.width(), rect.height());
+
   painter.drawPixmap(0, 0, buffer_);
 }
 } // namespace FirstYear::UI

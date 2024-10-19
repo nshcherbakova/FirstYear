@@ -94,7 +94,7 @@ ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
     }
   }
 
-  spdlog::info("Project loaded {0}.", project_path_.toStdString());
+  spdlog::info("Project loaded {0}.", project_data_path_.toStdString());
   return project;
 }
 
