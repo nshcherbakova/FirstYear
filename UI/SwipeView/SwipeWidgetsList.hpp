@@ -19,6 +19,7 @@ signals:
 
 protected:
   // virtual bool event(QEvent *event) override;
+  virtual void resizeEvent(QResizeEvent *event) override final;
 
 public:
   void AddWidget(FrameWidgetBase *widget);
@@ -30,5 +31,6 @@ private:
 private:
   QHBoxLayout *layout_ = nullptr;
   Qt::GestureType grabbed_gesture_;
+  int current_item_index_ = 0;
 };
 } // namespace FirstYear::UI

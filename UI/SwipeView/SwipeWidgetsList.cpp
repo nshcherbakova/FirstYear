@@ -21,6 +21,7 @@ SwipeWidgetsList::SwipeWidgetsList(
   setStyleSheet(c_scroll_style_str);
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   setContentsMargins(0, 0, 0, 0);
+  setWidgetResizable(true);
   InitialaizeScroller(widgets[0]->minimumWidth());
   CreateInnerWidget(widgets);
   spdlog::info("FiltersScrollWidget UI created");
@@ -60,7 +61,8 @@ void SwipeWidgetsList::InitialaizeScroller(int item_with) {
             if (newState == QScroller::Inactive) {
               const auto currant_scroll_pos =
                   QScroller::scroller(this)->finalPosition();
-              emit SignalItemChanged(currant_scroll_pos.x() / item_with);
+              current_item_index_ = currant_scroll_pos.x() / item_with;
+              emit SignalItemChanged(current_item_index_);
             }
           });
 }
@@ -85,10 +87,19 @@ void SwipeWidgetsList::CreateInnerWidget(
   setWidget(filter_buttons_widget);
 }
 
+void SwipeWidgetsList::resizeEvent(QResizeEvent *) {
+  QScroller::scroller(this)->setSnapPositionsX(0, width());
+  //  layout_->setGeometry({{0,0}, geometry().size()});
+  layout_->update();
+
+  SetCurrentItem(current_item_index_);
+}
+
 void SwipeWidgetsList::SetCurrentItem(int index) {
+  //  spdlog::error("index {}", index);
+  current_item_index_ = index;
   UNI_ASSERT(layout_->count() > index);
-  horizontalScrollBar()->setValue(layout_->itemAt(0)->widget()->width() *
-                                  index);
+  horizontalScrollBar()->setValue(width() * index);
 }
 
 void SwipeWidgetsList::AddWidget(FrameWidgetBase *widget) {

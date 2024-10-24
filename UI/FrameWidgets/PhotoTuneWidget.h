@@ -124,8 +124,10 @@ protected:
   void drawFrame(QPainter &);
   QRectF frameRect();
 
-private:
+protected:
   FrameParameters frame_data_;
+
+private:
   QRectF frame_boundary_rect_;
 };
 
@@ -166,10 +168,11 @@ private:
 
 protected:
   // QWidget
-  bool event(QEvent *event) override;
-  void paintEvent(QPaintEvent *) override;
-  void mouseDoubleClickEvent(QMouseEvent *event) override;
-  void wheelEvent(QWheelEvent *event) override;
+  virtual bool event(QEvent *event) override;
+  virtual void paintEvent(QPaintEvent *) override;
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+  virtual void wheelEvent(QWheelEvent *event) override;
+  virtual void resizeEvent(QResizeEvent *event) override;
 
 private:
   void grabGestures(const QList<Qt::GestureType> &gestures);

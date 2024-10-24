@@ -17,9 +17,8 @@ public:
 public:
   virtual void paintEvent(QPaintEvent *) override final {
     QPainter painter(this);
-    image_ = image_.scaledToWidth(width(), Qt::SmoothTransformation);
 
-    painter.drawPixmap(rect(), image_, rect());
+    painter.drawPixmap(rect(), image_to_paint_, rect());
 
     for (int i = 0; i < (int)photo_slots_.size(); i++) {
       auto new_rect = photo_slots_[i];
@@ -28,9 +27,14 @@ public:
     }
   }
 
+  virtual void resizeEvent(QResizeEvent *) override final {
+    image_to_paint_ = image_.scaledToWidth(width(), Qt::SmoothTransformation);
+  }
+
 private:
   std::vector<QRectF> photo_slots_;
   QPixmap image_;
+  QPixmap image_to_paint_;
 };
 
 class ForegroundWidget2 final : public QWidget {

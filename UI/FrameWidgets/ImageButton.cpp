@@ -31,7 +31,6 @@ void ImageButton::resizeEvent(QResizeEvent *) { UpdateButton(); }
 
 void ImageButton::paintEvent(QPaintEvent *) {
   QPainter painter(this);
-  const auto rect = QRect(0, 0, buffer_.width(), buffer_.height());
 
   painter.drawPixmap(0, 0, buffer_);
 }

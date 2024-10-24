@@ -18,19 +18,19 @@ MainWindow::MainWindow(FrameControl &frame_control)
   QSize window_size(640, 900);
   // QSize window_size(640, 1136);
 #elif defined Q_OS_MACOS
-  QSize window_size(640, 900);
+  QSize window_size(640, 640);
 #elif defined Q_OS_IOS
   const auto screen_size = QApplication::primaryScreen()->geometry().size();
   QSize window_size(screen_size);
 #endif
-  setMaximumSize(window_size);
+  // setMaximumSize(window_size);
   setMinimumSize(window_size);
-  setFixedSize(window_size);
+  // setFixedSize(window_size);
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
-  auto *photo_tune_widget = CreatePhotoTuneWidget(frame_control);
+  photo_tune_widget_ = CreatePhotoTuneWidget(frame_control);
 
-  CreateFrames(photo_tune_widget, frame_control);
+  CreateFrames(photo_tune_widget_, frame_control);
 
   int current_fame_index = 0;
   const auto last_frame = frame_control.CurrentProject()->frame_id_;
@@ -41,15 +41,15 @@ MainWindow::MainWindow(FrameControl &frame_control)
     }
   }
 
-  SwipeWidgetsList *swipe_view = CreateSwipeWidget();
+  swipe_view_ = CreateSwipeWidget();
 
-  swipe_view->SetCurrentItem(current_fame_index);
-  connect(swipe_view, &SwipeWidgetsList::SignalItemChanged, this,
+  swipe_view_->SetCurrentItem(current_fame_index);
+  connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
           [&](int index) {
             frame_control.CurrentProject()->frame_id_ = widgets_[index]->id();
             frame_control.SaveProject();
           });
-  photo_tune_widget->raise();
+  photo_tune_widget_->raise();
 }
 
 PhotoTuneWidget *MainWindow::CreatePhotoTuneWidget(
@@ -91,7 +91,7 @@ void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
 
   for (auto &widget : widgets_) {
 
-    widget->setGeometry(geometry());
+    widget->setGeometry({{0, 0}, geometry().size()});
     widget->setMinimumWidth(geometry().width());
     widget->setMinimumHeight(geometry().height());
     widget->setMaximumWidth(geometry().width());
@@ -111,9 +111,27 @@ void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
 
 SwipeWidgetsList *MainWindow::CreateSwipeWidget() {
   SwipeWidgetsList *swipe_view = new SwipeWidgetsList(this, widgets_);
-  swipe_view->setGeometry(geometry());
+  swipe_view->setGeometry({{0, 0}, geometry().size()});
   swipe_view->show();
   return swipe_view;
+}
+
+void MainWindow::resizeEvent(QResizeEvent *) {
+
+  for (auto &widget : widgets_) {
+    //  break;
+    widget->setGeometry({{0, 0}, geometry().size()});
+    widget->setMinimumWidth(geometry().width());
+    widget->setMinimumHeight(geometry().height());
+    widget->setMaximumWidth(geometry().width());
+    widget->setMaximumHeight(geometry().height());
+  }
+
+  if (swipe_view_)
+    swipe_view_->setGeometry({{0, 0}, geometry().size()});
+
+  if (photo_tune_widget_)
+    photo_tune_widget_->setGeometry({{0, 0}, geometry().size()});
 }
 
 MainWindow::~MainWindow() {
