@@ -3,12 +3,12 @@
 #define FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
 #include <Core/FrameControl/FrameControl.h>
 #include <Core/Project/Project.h>
-#include <QLabel>
 #include <QWidget>
 #include <Types.h>
 #include <UI/Utility.h>
 
 class QPushButton;
+class QLineEdit;
 
 namespace FirstYear::UI {
 
@@ -27,6 +27,7 @@ public:
 signals:
   void SignalTunePhoto(int, FirstYear::UI::FrameParameters,
                        FirstYear::Core::PhotoData);
+  void SignalTextChanged();
 
 public slots:
   void Update();
@@ -64,6 +65,7 @@ private:
 
   QPushButton *render_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
+  QLineEdit *text_widget_ = nullptr;
 };
 
 class DefaultFrameWidget final : public FrameWidgetBase {

@@ -27,7 +27,7 @@ public:
   using MonthItems = std::vector<MonthItem>;
 
   QString id_; // project id
-  QString title_ = "First year";
+  QString title_ = "My First Year";
   QString frame_id_; // frame identificator
   MonthItems monthes_;
 };

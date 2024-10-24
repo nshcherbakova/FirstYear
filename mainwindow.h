@@ -21,6 +21,7 @@ private:
   void CreateFrames(PhotoTuneWidget *photo_tune_widget,
                     Core::FrameControl &frame_control);
   SwipeWidgetsList *CreateSwipeWidget();
+  void UpdateFrames(FrameWidgetBase *exept);
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;

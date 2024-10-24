@@ -7,6 +7,7 @@ namespace FirstYear::UI {
 static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
+static const int c_max_title_lengh = 20;
 
 class ForegroundWidget final : public QWidget {
 public:
@@ -133,6 +134,17 @@ FrameWidgetBase::FrameWidgetBase(QWidget *parent, Core::FrameControl &control,
 
   createButtons(control);
   createForegroundWidget();
+
+  text_widget_ = new QLineEdit(this);
+  text_widget_->raise();
+  text_widget_->setAlignment(Qt::AlignHCenter);
+  text_widget_->setMaxLength(c_max_title_lengh);
+  connect(text_widget_, &QLineEdit::textEdited, this, [&] {
+    auto project = control.CurrentProject();
+    project->title_ = text_widget_->text();
+    control.SaveProject();
+    emit SignalTextChanged();
+  });
 }
 
 QString FrameWidgetBase::id() const { return id_; }
@@ -203,13 +215,15 @@ void FrameWidgetBase::Update() {
   share_button_->setGeometry(rect.width() - 100, rect.height() - 2 * 40, 2 * 40,
                              40);
   load(control_);
+
+  text_widget_->setGeometry(width() / 4, 0, width() / 2, 50);
 }
 
 void FrameWidgetBase::resizeEvent(QResizeEvent *) { Update(); }
 
 void FrameWidgetBase::load(Core::FrameControl &control) {
 
-  double k = (double)geometry().width() / foreground_.width();
+  double k = (double)width() / foreground_.width();
 
   for (int i = 0; i < (int)photo_slots_real_.size(); i++) {
     auto new_rect = photo_slots_real_[i];
@@ -220,6 +234,9 @@ void FrameWidgetBase::load(Core::FrameControl &control) {
   }
 
   InitPhotos(control);
+
+  auto project = control.CurrentProject();
+  text_widget_->setText(project->title_);
 }
 
 void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {

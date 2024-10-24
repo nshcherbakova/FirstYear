@@ -27,6 +27,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QLineEdit>
 #include <QPixmap>
 #include <QPolygon>
 #include <QPushButton>
@@ -34,6 +35,7 @@
 #include <QSettings>
 #include <QSplashScreen>
 #include <QStandardPaths>
+// #include <QTextEdit>
 #include <QTouchEvent>
 #include <QVariant>
 #include <QWidget>

@@ -97,15 +97,27 @@ void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
     widget->setMaximumWidth(geometry().width());
     widget->setMaximumHeight(geometry().height());
 
-    connect(photo_tune_widget, &PhotoTuneWidget::SignalImageTuned, widget,
-            &FrameWidgetBase::Update);
-
     connect(widget, &FrameWidgetBase::SignalTunePhoto, this,
             [photo_tune_widget](int month, FrameParameters frame_data,
                                 PhotoData photo_data) {
               photo_tune_widget->setPhoto(month, frame_data, photo_data);
               photo_tune_widget->show();
             });
+
+    connect(widget, &FrameWidgetBase::SignalTextChanged, this,
+            [&]() { UpdateFrames(widget); });
+  }
+
+  connect(photo_tune_widget, &PhotoTuneWidget::SignalImageTuned, this,
+          [&]() { UpdateFrames(nullptr); });
+}
+
+void MainWindow::UpdateFrames(FrameWidgetBase *exept) {
+
+  for (auto &widget : widgets_) {
+    if (exept != widget) {
+      widget->Update();
+    }
   }
 }
 
