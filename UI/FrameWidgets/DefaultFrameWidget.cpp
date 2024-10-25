@@ -50,71 +50,83 @@ public:
 private:
 };
 
-DefaultFrameWidget::DefaultFrameWidget(QWidget *parent,
-                                       Core::FrameControl &control)
+DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
+                                             Core::FrameControl &control)
 
-    : FrameWidgetBase(parent, control, "1",
-                      {{35, 35, 125, 125},
-                       {184, 35, 125, 125},
-                       {328, 35, 125, 125},
-                       {476, 35, 125, 125},
-                       {35, 185, 125, 125},
-                       {184, 185, 125, 125},
-                       {328, 185, 125, 125},
-                       {476, 185, 125, 125},
-                       {35, 330, 125, 125},
-                       {184, 330, 125, 125},
-                       {328, 330, 125, 125},
-                       {476, 330, 125, 125}},
-                      {{FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}) {
-
-  // reload(control);
-}
-
-DefaultFrameWidget2::DefaultFrameWidget2(QWidget *parent,
-                                         Core::FrameControl &control)
-
-    : FrameWidgetBase(parent, control, "2",
-                      {{35, 35, 125, 125},
-                       {184, 35, 125, 125},
-                       {328, 35, 125, 125},
-                       {476, 35, 125, 125},
-                       {35, 185, 125, 125},
-                       {184, 185, 125, 125},
-                       {328, 185, 125, 125},
-                       {476, 185, 125, 125},
-                       {35, 330, 125, 125},
-                       {184, 330, 125, 125},
-                       {328, 330, 125, 125},
-                       {476, 330, 125, 125}},
-
-                      {{FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                       {FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}) {
+    : TemplateWidgetBase(parent,
+                         {control,
+                          "1",
+                          {{40, 5, 600, 15}, Qt::AlignCenter},
+                          {{35, 35, 125, 125},
+                           {184, 35, 125, 125},
+                           {328, 35, 125, 125},
+                           {476, 35, 125, 125},
+                           {35, 185, 125, 125},
+                           {184, 185, 125, 125},
+                           {328, 185, 125, 125},
+                           {476, 185, 125, 125},
+                           {35, 330, 125, 125},
+                           {184, 330, 125, 125},
+                           {328, 330, 125, 125},
+                           {476, 330, 125, 125}},
+                          {{FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}}) {
 
   // reload(control);
 }
 
-FrameWidgetBase::FrameWidgetBase(QWidget *parent, Core::FrameControl &control,
-                                 QString id, std::vector<QRectF> photo_slots,
-                                 std::vector<FrameParameters> frame_data)
-    : QWidget(parent), id_(id), foreground_(QString(c_foreground_str).arg(id_)),
-      foreground_to_render_(QString(c_foreground_to_render_str).arg(id_)),
-      photo_slots_real_(std::move(photo_slots)),
-      frame_data_(std::move(frame_data)), control_(control) {
+DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
+                                               Core::FrameControl &control)
+
+    : TemplateWidgetBase(parent,
+                         {control,
+                          "2",
+                          {{40, 5, 600, 15}, Qt::AlignCenter},
+
+                          {{35, 35, 125, 125},
+                           {184, 35, 125, 125},
+                           {328, 35, 125, 125},
+                           {476, 35, 125, 125},
+                           {35, 185, 125, 125},
+                           {184, 185, 125, 125},
+                           {328, 185, 125, 125},
+                           {476, 185, 125, 125},
+                           {35, 330, 125, 125},
+                           {184, 330, 125, 125},
+                           {328, 330, 125, 125},
+                           {476, 330, 125, 125}},
+
+                          {{FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}}) {
+
+  // reload(control);
+}
+
+TemplateWidgetBase::TemplateWidgetBase(
+    QWidget *parent, const TemplateWidgetParameters &parameters)
+    : QWidget(parent), id_(parameters.id),
+      foreground_(QString(c_foreground_str).arg(parameters.id)),
+      foreground_to_render_(
+          QString(c_foreground_to_render_str).arg(parameters.id)),
+      // photo_text_slots_real_(std::move(parameters.photo_text_slots)),
+      title_slot_real_(std::move(parameters.title_parameters.title_rect)),
+      photo_slots_real_(std::move(parameters.photo_slots)),
+      frame_data_(std::move(parameters.frame_data)),
+      control_(parameters.control) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
-  UNI_ASSERT(!id.isEmpty());
+  //  UNI_ASSERT(photo_text_slots_real_.size() == 12);
+  UNI_ASSERT(!id_.isEmpty());
 
   setContentsMargins(0, 0, 0, 0);
   setAutoFillBackground(true);
@@ -130,26 +142,26 @@ FrameWidgetBase::FrameWidgetBase(QWidget *parent, Core::FrameControl &control,
     photo_widgets_[i] = new PhotoWidget(*this);
   }
 
-  initMonthPhotoWidgets(control);
+  initMonthPhotoWidgets(control_);
 
-  createButtons(control);
+  createButtons(control_);
   createForegroundWidget();
 
   text_widget_ = new QLineEdit(this);
   text_widget_->raise();
-  text_widget_->setAlignment(Qt::AlignHCenter);
+  text_widget_->setAlignment(parameters.title_parameters.aligment);
   text_widget_->setMaxLength(c_max_title_lengh);
   connect(text_widget_, &QLineEdit::textEdited, this, [&] {
-    auto project = control.CurrentProject();
+    auto project = control_.CurrentProject();
     project->title_ = text_widget_->text();
-    control.SaveProject();
+    control_.SaveProject();
     emit SignalTextChanged();
   });
 }
 
-QString FrameWidgetBase::id() const { return id_; }
+QString TemplateWidgetBase::id() const { return id_; }
 
-void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
+void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
 
     connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this, [&, i] {
@@ -175,7 +187,7 @@ void FrameWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
   }
 }
 
-void FrameWidgetBase::createForegroundWidget() {
+void TemplateWidgetBase::createForegroundWidget() {
   foreground_widget_ = new ForegroundWidget(this, foreground_, photo_slots_);
   foreground_widget_->setGeometry(geometry());
   foreground_widget_->raise();
@@ -184,7 +196,7 @@ void FrameWidgetBase::createForegroundWidget() {
   foreground_widget_->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
-void FrameWidgetBase::createButtons(Core::FrameControl &control) {
+void TemplateWidgetBase::createButtons(Core::FrameControl &control) {
 
   render_button_ = new QPushButton(this);
   render_button_->setGeometry(20, geometry().height() - 2 * 40, 2 * 40, 40);
@@ -208,7 +220,7 @@ void FrameWidgetBase::createButtons(Core::FrameControl &control) {
   });
 }
 
-void FrameWidgetBase::Update() {
+void TemplateWidgetBase::Update() {
   QRect rect = {QPoint(0, 0), QWidget::size()};
   foreground_widget_->setGeometry(rect);
   render_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
@@ -216,15 +228,18 @@ void FrameWidgetBase::Update() {
                              40);
   load(control_);
 
-  text_widget_->setGeometry(width() / 4, 0, width() / 2, 50);
+  text_widget_->setGeometry(title_slot_real_.left(), title_slot_real_.top(),
+                            title_slot_real_.width(),
+                            title_slot_real_.height());
 }
 
-void FrameWidgetBase::resizeEvent(QResizeEvent *) { Update(); }
+void TemplateWidgetBase::resizeEvent(QResizeEvent *) { Update(); }
 
-void FrameWidgetBase::load(Core::FrameControl &control) {
+void TemplateWidgetBase::load(Core::FrameControl &control) {
 
   double k = (double)width() / foreground_.width();
 
+  // adjust coordinatrs
   for (int i = 0; i < (int)photo_slots_real_.size(); i++) {
     auto new_rect = photo_slots_real_[i];
     new_rect.setTopLeft(photo_slots_real_[i].topLeft() * k);
@@ -233,13 +248,25 @@ void FrameWidgetBase::load(Core::FrameControl &control) {
     photo_slots_[i] = new_rect;
   }
 
+  for (int i = 0; i < (int)photo_text_slots_real_.size(); i++) {
+    auto new_rect = photo_text_slots_real_[i];
+    new_rect.setTopLeft(photo_text_slots_real_[i].topLeft() * k);
+    new_rect.setSize(photo_text_slots_real_[i].size() * k);
+
+    photo_text_slots_[i] = new_rect;
+  }
+  auto new_rect = title_slot_real_;
+  new_rect.setTopLeft(title_slot_real_.topLeft() * k);
+  new_rect.setSize(title_slot_real_.size() * k);
+  title_slot_ = new_rect;
+
   InitPhotos(control);
 
   auto project = control.CurrentProject();
   text_widget_->setText(project->title_);
 }
 
-void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
+void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {
 
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     auto &month = control.CurrentProject()->monthes_[i];
@@ -259,13 +286,13 @@ void FrameWidgetBase::InitPhotos(Core::FrameControl &control) {
   update();
 }
 
-void FrameWidgetBase::setVisible(bool visible) {
+void TemplateWidgetBase::setVisible(bool visible) {
   if (visible) {
     load(control_);
   }
   QWidget::setVisible(visible);
 }
-void FrameWidgetBase::paintEvent(QPaintEvent *e) {
+void TemplateWidgetBase::paintEvent(QPaintEvent *e) {
   QWidget::paintEvent(e);
   QPainter painter(this);
   for (auto rect : photo_slots_) {
@@ -276,7 +303,7 @@ void FrameWidgetBase::paintEvent(QPaintEvent *e) {
   // Draw background
 }
 
-QPixmap FrameWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) {
+QPixmap TemplateWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) {
   QPixmap pixmap(foreground_to_render_.size() * devicePixelRatio());
   pixmap.setDevicePixelRatio(devicePixelRatio());
   //

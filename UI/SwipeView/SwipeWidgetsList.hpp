@@ -9,7 +9,7 @@ class SwipeWidgetsList final : public QScrollArea {
   Q_OBJECT
 public:
   explicit SwipeWidgetsList(QWidget *parent,
-                            const std::vector<FrameWidgetBase *> &widgets);
+                            const std::vector<TemplateWidgetBase *> &widgets);
   SwipeWidgetsList &operator=(const SwipeWidgetsList &) = delete;
 
 public:
@@ -22,11 +22,11 @@ protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
 public:
-  void AddWidget(FrameWidgetBase *widget);
+  void AddWidget(TemplateWidgetBase *widget);
 
 private:
   void InitialaizeScroller(int item_with);
-  void CreateInnerWidget(const std::vector<FrameWidgetBase *> &widgets);
+  void CreateInnerWidget(const std::vector<TemplateWidgetBase *> &widgets);
 
 private:
   QHBoxLayout *layout_ = nullptr;

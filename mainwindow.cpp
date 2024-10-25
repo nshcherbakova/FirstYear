@@ -85,26 +85,26 @@ PhotoTuneWidget *MainWindow::CreatePhotoTuneWidget(
 void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
                               FirstYear::Core::FrameControl &frame_control) {
 
-  widgets_ = std::vector<FrameWidgetBase *>{
-      new DefaultFrameWidget(nullptr, frame_control),
-      new DefaultFrameWidget2(nullptr, frame_control)};
+  widgets_ = std::vector<TemplateWidgetBase *>{
+      new DefaultTemplateWidget(nullptr, frame_control),
+      new DefaultTemplateWidget2(nullptr, frame_control)};
 
   for (auto &widget : widgets_) {
 
-    widget->setGeometry({{0, 0}, geometry().size()});
-    widget->setMinimumWidth(geometry().width());
-    widget->setMinimumHeight(geometry().height());
-    widget->setMaximumWidth(geometry().width());
-    widget->setMaximumHeight(geometry().height());
+    widget->setGeometry({{0, 0}, size()});
+    widget->setMinimumWidth(width());
+    widget->setMinimumHeight(height());
+    widget->setMaximumWidth(width());
+    widget->setMaximumHeight(height());
 
-    connect(widget, &FrameWidgetBase::SignalTunePhoto, this,
+    connect(widget, &TemplateWidgetBase::SignalTunePhoto, this,
             [photo_tune_widget](int month, FrameParameters frame_data,
                                 PhotoData photo_data) {
               photo_tune_widget->setPhoto(month, frame_data, photo_data);
               photo_tune_widget->show();
             });
 
-    connect(widget, &FrameWidgetBase::SignalTextChanged, this,
+    connect(widget, &TemplateWidgetBase::SignalTextChanged, this,
             [&]() { UpdateFrames(widget); });
   }
 
@@ -112,7 +112,7 @@ void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
           [&]() { UpdateFrames(nullptr); });
 }
 
-void MainWindow::UpdateFrames(FrameWidgetBase *exept) {
+void MainWindow::UpdateFrames(TemplateWidgetBase *exept) {
 
   for (auto &widget : widgets_) {
     if (exept != widget) {

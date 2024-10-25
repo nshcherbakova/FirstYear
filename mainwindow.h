@@ -21,13 +21,13 @@ private:
   void CreateFrames(PhotoTuneWidget *photo_tune_widget,
                     Core::FrameControl &frame_control);
   SwipeWidgetsList *CreateSwipeWidget();
-  void UpdateFrames(FrameWidgetBase *exept);
+  void UpdateFrames(TemplateWidgetBase *exept);
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
 private:
-  std::vector<FrameWidgetBase *> widgets_;
+  std::vector<TemplateWidgetBase *> widgets_;
   SwipeWidgetsList *swipe_view_ = nullptr;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
 };

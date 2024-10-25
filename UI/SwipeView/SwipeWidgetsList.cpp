@@ -14,7 +14,7 @@ static const char *c_filter_widget_style_str = "QWidget{"
                                                "}";
 
 SwipeWidgetsList::SwipeWidgetsList(
-    QWidget *parent, const std::vector<FrameWidgetBase *> &widgets)
+    QWidget *parent, const std::vector<TemplateWidgetBase *> &widgets)
     : QScrollArea(parent) {
 
   UNI_ASSERT(widgets.size() > 0);
@@ -68,7 +68,7 @@ void SwipeWidgetsList::InitialaizeScroller(int item_with) {
 }
 
 void SwipeWidgetsList::CreateInnerWidget(
-    const std::vector<FrameWidgetBase *> &widgets) {
+    const std::vector<TemplateWidgetBase *> &widgets) {
 
   // buttons widget
   QWidget *filter_buttons_widget = new QWidget();
@@ -102,7 +102,7 @@ void SwipeWidgetsList::SetCurrentItem(int index) {
   horizontalScrollBar()->setValue(width() * index);
 }
 
-void SwipeWidgetsList::AddWidget(FrameWidgetBase *widget) {
+void SwipeWidgetsList::AddWidget(TemplateWidgetBase *widget) {
 
   widget->show();
   layout_->addWidget(widget);

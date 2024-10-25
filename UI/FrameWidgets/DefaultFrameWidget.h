@@ -12,14 +12,28 @@ class QLineEdit;
 
 namespace FirstYear::UI {
 
-class FrameWidgetBase : public QWidget {
+struct TitleParameters {
+  QRect title_rect;
+  Qt::Alignment aligment;
+};
+
+struct TemplateWidgetParameters {
+  Core::FrameControl &control;
+  QString id;
+  TitleParameters title_parameters;
+  std::vector<QRectF> photo_slots;
+  // std::vector<QRectF> photo_text_slots;
+  //  Qt::Alignment photo_text_aligmet;
+  std::vector<FrameParameters> frame_data;
+};
+
+class TemplateWidgetBase : public QWidget {
   Q_OBJECT
 public:
-  explicit FrameWidgetBase(QWidget *parent, Core::FrameControl &control,
-                           QString id, std::vector<QRectF> photo_slots,
-                           std::vector<FrameParameters> frame_data);
-  FrameWidgetBase &operator=(const FrameWidgetBase &) = delete;
-  virtual ~FrameWidgetBase(){};
+  explicit TemplateWidgetBase(
+      QWidget *parent, const TemplateWidgetParameters &frame_widget_data);
+  TemplateWidgetBase &operator=(const TemplateWidgetBase &) = delete;
+  virtual ~TemplateWidgetBase(){};
 
 public:
   QString id() const;
@@ -53,7 +67,9 @@ protected:
   QString id_;
   QPixmap foreground_;
   QPixmap foreground_to_render_;
+  QRectF title_slot_real_;
   std::vector<QRectF> photo_slots_real_;
+  std::vector<QRectF> photo_text_slots_real_;
   std::vector<FrameParameters> frame_data_;
 
 private:
@@ -61,30 +77,32 @@ private:
   std::vector<PhotoWidget *> photo_widgets_;
 
   QWidget *foreground_widget_ = nullptr;
+  QRectF title_slot_;
   std::vector<QRectF> photo_slots_;
+  std::vector<QRectF> photo_text_slots_;
 
   QPushButton *render_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
   QLineEdit *text_widget_ = nullptr;
 };
 
-class DefaultFrameWidget final : public FrameWidgetBase {
+class DefaultTemplateWidget final : public TemplateWidgetBase {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget(QWidget *parent, Core::FrameControl &control);
-  virtual ~DefaultFrameWidget(){};
+  explicit DefaultTemplateWidget(QWidget *parent, Core::FrameControl &control);
+  virtual ~DefaultTemplateWidget(){};
 
 public:
-  DefaultFrameWidget &operator=(const DefaultFrameWidget &) = delete;
+  DefaultTemplateWidget &operator=(const DefaultTemplateWidget &) = delete;
 };
-class DefaultFrameWidget2 final : public FrameWidgetBase {
+class DefaultTemplateWidget2 final : public TemplateWidgetBase {
   Q_OBJECT
 public:
-  explicit DefaultFrameWidget2(QWidget *parent, Core::FrameControl &control);
-  virtual ~DefaultFrameWidget2(){};
+  explicit DefaultTemplateWidget2(QWidget *parent, Core::FrameControl &control);
+  virtual ~DefaultTemplateWidget2(){};
 
 public:
-  DefaultFrameWidget2 &operator=(const DefaultFrameWidget2 &) = delete;
+  DefaultTemplateWidget2 &operator=(const DefaultTemplateWidget2 &) = delete;
 };
 
 } // namespace FirstYear::UI
