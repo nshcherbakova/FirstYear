@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include <UI/FrameWidgets/DefaultFrameWidget.h>
+#include <UI/FrameWidgets/DefaultTemplateWidget.h>
 #include <UI/FrameWidgets/PhotoTuneWidget.h>
 #include <UI/SwipeView/SwipeWidgetsList.hpp>
 #include <stdafx.h>

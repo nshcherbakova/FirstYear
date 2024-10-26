@@ -27,7 +27,7 @@ SOURCES += \
     Core/Project/FileSystemProjectLoader.cpp \
     Core/Project/FileSystemProjectWriter.cpp \
     Core/Project/Project.cpp \
-    UI/FrameWidgets/DefaultFrameWidget.cpp \
+    UI/FrameWidgets/DefaultTemplateWidget.cpp \
     UI/FrameWidgets/ImageButton.cpp \
     UI/FrameWidgets/PhotoTuneWidget.cpp \
     UI/FrameWidgets/PhotoWidget.cpp \
@@ -44,7 +44,7 @@ HEADERS += \
     Core/Project/FileSystemProjectWriter.h \
     Core/Project/IProjecLoader.h \
     Core/Project/Project.h \
-    UI/FrameWidgets/DefaultFrameWidget.h \
+    UI/FrameWidgets/DefaultTemplateWidget.h \
     UI/FrameWidgets/ImageButton.h \
     UI/FrameWidgets/Photo.h \
     UI/FrameWidgets/PhotoTuneWidget.h \

@@ -3,7 +3,7 @@
 #include <Core/FrameControl/FrameControl.h>
 #include <QMainWindow>
 #include <Types.h>
-#include <UI/FrameWidgets/DefaultFrameWidget.h>
+#include <UI/FrameWidgets/DefaultTemplateWidget.h>
 
 namespace FirstYear::UI {
 class SwipeWidgetsList;

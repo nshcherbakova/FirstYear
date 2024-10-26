@@ -2,7 +2,7 @@
 
 #include <Core/FrameControl/FrameControl.h>
 #include <QtWidgets>
-#include <UI/FrameWidgets/DefaultFrameWidget.h>
+#include <UI/FrameWidgets/DefaultTemplateWidget.h>
 
 namespace FirstYear::UI {
 class SwipeWidgetsList final : public QScrollArea {

@@ -1,4 +1,4 @@
-#include "DefaultFrameWidget.h"
+#include "DefaultTemplateWidget.h"
 #include "PhotoWidget.h"
 #include <stdafx.h>
 
@@ -57,6 +57,19 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
                          {control,
                           "1",
                           {{40, 5, 600, 15}, Qt::AlignCenter},
+                          {{{35, 160},
+                            {184, 160},
+                            {328, 160},
+                            {476, 160},
+                            {35, 310},
+                            {184, 310},
+                            {328, 310},
+                            {476, 310},
+                            {35, 455},
+                            {184, 455},
+                            {328, 455},
+                            {476, 455}},
+                           Qt::AlignLeft},
                           {{35, 35, 125, 125},
                            {184, 35, 125, 125},
                            {328, 35, 125, 125},
@@ -81,6 +94,19 @@ DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
                          {control,
                           "2",
                           {{40, 5, 600, 15}, Qt::AlignCenter},
+                          {{{97, 160},
+                            {246, 160},
+                            {390, 160},
+                            {538, 160},
+                            {97, 310},
+                            {246, 310},
+                            {390, 310},
+                            {538, 310},
+                            {97, 455},
+                            {246, 455},
+                            {390, 455},
+                            {538, 455}},
+                           Qt::AlignCenter},
 
                           {{35, 35, 125, 125},
                            {184, 35, 125, 125},
@@ -117,15 +143,17 @@ TemplateWidgetBase::TemplateWidgetBase(
       foreground_(QString(c_foreground_str).arg(parameters.id)),
       foreground_to_render_(
           QString(c_foreground_to_render_str).arg(parameters.id)),
-      // photo_text_slots_real_(std::move(parameters.photo_text_slots)),
       title_slot_real_(std::move(parameters.title_parameters.title_rect)),
       photo_slots_real_(std::move(parameters.photo_slots)),
+      photo_text_anchors_real_(
+          std::move(parameters.photo_text_parameters.photo_text_anchors)),
+      // photo_text_aligment_(parameters.photo_text_parameters.aligment),
       frame_data_(std::move(parameters.frame_data)),
       control_(parameters.control) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
-  //  UNI_ASSERT(photo_text_slots_real_.size() == 12);
+  UNI_ASSERT(photo_text_anchors_real_.size() == 12);
   UNI_ASSERT(!id_.isEmpty());
 
   setContentsMargins(0, 0, 0, 0);
@@ -157,6 +185,20 @@ TemplateWidgetBase::TemplateWidgetBase(
     control_.SaveProject();
     emit SignalTextChanged();
   });
+
+  photo_text_widgets_.resize(12);
+  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    photo_text_widgets_[i] = new QLabel(this);
+    photo_text_widgets_[i]->setAlignment(
+        parameters.photo_text_parameters.aligment);
+
+    connect(photo_text_widgets_[i], &QLabel::linkActivated, this, [&] {
+      //  auto project = control_.CurrentProject();
+      // project->title_ = text_widget_->text();
+      control_.SaveProject();
+      emit SignalTextChanged();
+    });
+  }
 }
 
 QString TemplateWidgetBase::id() const { return id_; }
@@ -231,6 +273,25 @@ void TemplateWidgetBase::Update() {
   text_widget_->setGeometry(title_slot_real_.left(), title_slot_real_.top(),
                             title_slot_real_.width(),
                             title_slot_real_.height());
+
+  for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
+
+    auto &photo_text_widget = photo_text_widgets_[i];
+
+    QRect rect;
+    if (photo_text_widget->alignment() == Qt::AlignCenter) {
+      rect =
+          QRect{photo_text_anchors_[i].x() - photo_text_widget->width() / 2,
+                photo_text_anchors_[i].y(), photo_text_widget->width(),
+                photo_text_widget->heightForWidth(photo_text_widget->width())};
+    } else if (photo_text_widget->alignment() == Qt::AlignLeft) {
+      rect =
+          QRect{photo_text_anchors_[i].x(), photo_text_anchors_[i].y(),
+                photo_text_widget->width(),
+                photo_text_widget->heightForWidth(photo_text_widget->width())};
+    }
+    photo_text_widget->setGeometry(rect);
+  }
 }
 
 void TemplateWidgetBase::resizeEvent(QResizeEvent *) { Update(); }
@@ -248,13 +309,12 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
     photo_slots_[i] = new_rect;
   }
 
-  for (int i = 0; i < (int)photo_text_slots_real_.size(); i++) {
-    auto new_rect = photo_text_slots_real_[i];
-    new_rect.setTopLeft(photo_text_slots_real_[i].topLeft() * k);
-    new_rect.setSize(photo_text_slots_real_[i].size() * k);
-
-    photo_text_slots_[i] = new_rect;
+  photo_text_anchors_.resize(photo_text_anchors_real_.size());
+  for (int i = 0; i < (int)photo_text_anchors_real_.size(); i++) {
+    auto new_point = photo_text_anchors_real_[i] * k;
+    photo_text_anchors_[i] = new_point;
   }
+
   auto new_rect = title_slot_real_;
   new_rect.setTopLeft(title_slot_real_.topLeft() * k);
   new_rect.setSize(title_slot_real_.size() * k);
@@ -274,13 +334,23 @@ void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {
 
     photo_widget->setGeometry(photo_slots_[i].toRect());
 
-    if (month.text)
-      photo_widget->setText(*month.text);
-    else
-      photo_widget->setText(QString("%1 month").arg(i));
+    /* if (month.text)
+       photo_widget->setText(*month.text);
+     else
+       photo_widget->setText(QString("%1 month").arg(i));*/
 
     photo_widget->setPhoto(month.photo_data);
     photo_widget->show();
+  }
+
+  for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
+    auto &month = control.CurrentProject()->monthes_[i];
+    auto &photo_text_widget = photo_text_widgets_[i];
+
+    if (month.text)
+      photo_text_widget->setText(*month.text);
+    else
+      photo_text_widget->setText(QString("%1 month").arg(i));
   }
 
   update();

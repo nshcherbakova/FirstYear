@@ -9,6 +9,7 @@
 
 class QPushButton;
 class QLineEdit;
+class QLabel;
 
 namespace FirstYear::UI {
 
@@ -17,13 +18,19 @@ struct TitleParameters {
   Qt::Alignment aligment;
 };
 
+struct PhotoTextParameters {
+  std::vector<QPoint> photo_text_anchors;
+  Qt::Alignment aligment;
+};
+
 struct TemplateWidgetParameters {
   Core::FrameControl &control;
   QString id;
   TitleParameters title_parameters;
+  PhotoTextParameters photo_text_parameters;
   std::vector<QRectF> photo_slots;
+
   // std::vector<QRectF> photo_text_slots;
-  //  Qt::Alignment photo_text_aligmet;
   std::vector<FrameParameters> frame_data;
 };
 
@@ -69,17 +76,21 @@ protected:
   QPixmap foreground_to_render_;
   QRectF title_slot_real_;
   std::vector<QRectF> photo_slots_real_;
-  std::vector<QRectF> photo_text_slots_real_;
+  // std::vector<QRectF> photo_text_slots_real_;
+  std::vector<QPoint> photo_text_anchors_real_;
+  //  Qt::Alignment photo_text_aligment_;
   std::vector<FrameParameters> frame_data_;
 
 private:
   Core::FrameControl &control_;
   std::vector<PhotoWidget *> photo_widgets_;
+  std::vector<QLabel *> photo_text_widgets_;
 
   QWidget *foreground_widget_ = nullptr;
   QRectF title_slot_;
   std::vector<QRectF> photo_slots_;
-  std::vector<QRectF> photo_text_slots_;
+  // std::vector<QRectF> photo_text_slots_;
+  std::vector<QPoint> photo_text_anchors_;
 
   QPushButton *render_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
