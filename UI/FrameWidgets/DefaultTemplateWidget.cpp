@@ -8,6 +8,7 @@ static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
 static const int c_max_title_lengh = 20;
+static const int c_max_month_lengh = 20;
 
 class ForegroundWidget final : public QWidget {
 public:
@@ -38,17 +39,42 @@ private:
   QPixmap image_to_paint_;
 };
 
-class ForegroundWidget2 final : public QWidget {
-public:
-  ForegroundWidget2(QWidget *parent) : QWidget(parent) {
-    static const char *c_image_widget_button_style_str =
-        "ForegroundWidget2{ background-color: rgba(255, 255, 255, 0);}";
-    setStyleSheet(c_image_widget_button_style_str);
-  }
+ClickableLabel::ClickableLabel(QWidget *parent) : QLabel(parent) {}
 
-public:
-private:
-};
+void ClickableLabel::mouseReleaseEvent(QMouseEvent *) { emit clicked(); }
+
+LineEditWidget::LineEditWidget(QWidget *parent)
+    : QWidget(parent), line_edit_(new QLineEdit(this)) {
+  line_edit_->setMaxLength(c_max_month_lengh);
+}
+
+void LineEditWidget::setVisible(bool visible) {
+  QWidget::setVisible(visible);
+  if (!visible) {
+    line_edit_->setText("");
+  }
+}
+
+void LineEditWidget::setText(QString text) { line_edit_->setText(text); }
+
+void LineEditWidget::resizeEvent(QResizeEvent *) {
+  QRect rect = {width() / 5, (int)(height() / 2.5),
+                width() - (int)(width() / 2.5), height() / 5};
+  line_edit_->setGeometry(rect);
+}
+
+void LineEditWidget::paintEvent(QPaintEvent *) {
+  QPainter painter(this);
+
+  painter.setPen(Qt::white);
+  painter.drawRect(QRect{QPoint(0, 0), size()});
+}
+
+void LineEditWidget::mouseReleaseEvent(QMouseEvent *) {
+
+  emit SignalTextChanged(line_edit_->text());
+  hide();
+}
 
 DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
                                              Core::FrameControl &control)
@@ -149,7 +175,7 @@ TemplateWidgetBase::TemplateWidgetBase(
           std::move(parameters.photo_text_parameters.photo_text_anchors)),
       // photo_text_aligment_(parameters.photo_text_parameters.aligment),
       frame_data_(std::move(parameters.frame_data)),
-      control_(parameters.control) {
+      control_(parameters.control), line_edit_(new LineEditWidget(this)) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
@@ -175,26 +201,39 @@ TemplateWidgetBase::TemplateWidgetBase(
   createButtons(control_);
   createForegroundWidget();
 
-  text_widget_ = new QLineEdit(this);
-  text_widget_->raise();
-  text_widget_->setAlignment(parameters.title_parameters.aligment);
-  text_widget_->setMaxLength(c_max_title_lengh);
-  connect(text_widget_, &QLineEdit::textEdited, this, [&] {
-    auto project = control_.CurrentProject();
-    project->title_ = text_widget_->text();
-    control_.SaveProject();
-    emit SignalTextChanged();
+  line_edit_->hide();
+  connect(line_edit_, &LineEditWidget::SignalTextChanged, this,
+          [&](QString text) {
+            auto project = control_.CurrentProject();
+            if (text == project->title_) {
+              return;
+            }
+
+            project->title_ = text;
+            control_.SaveProject();
+
+            emit SignalTextChanged();
+          });
+
+  title_text_widget_ = new ClickableLabel(this);
+  title_text_widget_->raise();
+  title_text_widget_->setAlignment(parameters.title_parameters.aligment);
+  // title_text_widget_->setMaxLength(c_max_title_lengh);
+  connect(title_text_widget_, &ClickableLabel::clicked, this, [&] {
+    line_edit_->setText(title_text_widget_->text());
+    line_edit_->show();
+    line_edit_->raise();
   });
 
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    photo_text_widgets_[i] = new QLabel(this);
+    photo_text_widgets_[i] = new ClickableLabel(this);
     photo_text_widgets_[i]->setAlignment(
         parameters.photo_text_parameters.aligment);
 
     connect(photo_text_widgets_[i], &QLabel::linkActivated, this, [&] {
       //  auto project = control_.CurrentProject();
-      // project->title_ = text_widget_->text();
+      // project->title_ = title_text_widget_->text();
       control_.SaveProject();
       emit SignalTextChanged();
     });
@@ -270,9 +309,11 @@ void TemplateWidgetBase::Update() {
                              40);
   load(control_);
 
-  text_widget_->setGeometry(title_slot_real_.left(), title_slot_real_.top(),
-                            title_slot_real_.width(),
-                            title_slot_real_.height());
+  line_edit_->setGeometry({QPoint(0, 0), size()});
+
+  title_text_widget_->setGeometry(
+      title_slot_real_.left(), title_slot_real_.top(), title_slot_real_.width(),
+      title_slot_real_.height());
 
   for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
 
@@ -323,7 +364,8 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
   InitPhotos(control);
 
   auto project = control.CurrentProject();
-  text_widget_->setText(project->title_);
+  title_text_widget_->setText(project->title_.isEmpty() ? "First Year"
+                                                        : project->title_);
 }
 
 void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {

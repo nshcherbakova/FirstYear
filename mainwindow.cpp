@@ -28,6 +28,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
   // setFixedSize(window_size);
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
+  frame_control.main_widget = this;
   photo_tune_widget_ = CreatePhotoTuneWidget(frame_control);
 
   CreateFrames(photo_tune_widget_, frame_control);
@@ -105,7 +106,7 @@ void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
             });
 
     connect(widget, &TemplateWidgetBase::SignalTextChanged, this,
-            [&]() { UpdateFrames(widget); });
+            [&]() { UpdateFrames(nullptr); });
   }
 
   connect(photo_tune_widget, &PhotoTuneWidget::SignalImageTuned, this,

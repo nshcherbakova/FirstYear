@@ -3,13 +3,15 @@
 #define FIRSTYEAR_UI_DEFAULT_FRAME_WIDGET_H
 #include <Core/FrameControl/FrameControl.h>
 #include <Core/Project/Project.h>
-#include <QWidget>
+
 #include <Types.h>
 #include <UI/Utility.h>
 
+#include <QLabel>
+#include <QWidget>
+
 class QPushButton;
 class QLineEdit;
-class QLabel;
 
 namespace FirstYear::UI {
 
@@ -32,6 +34,41 @@ struct TemplateWidgetParameters {
 
   // std::vector<QRectF> photo_text_slots;
   std::vector<FrameParameters> frame_data;
+};
+
+class ClickableLabel : public QLabel {
+  Q_OBJECT
+
+public:
+  explicit ClickableLabel(QWidget *parent = Q_NULLPTR);
+
+signals:
+  void clicked();
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
+};
+
+class LineEditWidget final : public QWidget {
+
+  Q_OBJECT
+public:
+  LineEditWidget(QWidget *parent);
+
+public:
+  virtual void setVisible(bool visible) override final;
+
+  void setText(QString text);
+signals:
+  void SignalTextChanged(QString text);
+
+protected:
+  virtual void resizeEvent(QResizeEvent *) override final;
+  virtual void paintEvent(QPaintEvent *) override final;
+  virtual void mouseReleaseEvent(QMouseEvent *) override final;
+
+private:
+  QLineEdit *line_edit_ = nullptr;
 };
 
 class TemplateWidgetBase : public QWidget {
@@ -84,7 +121,7 @@ protected:
 private:
   Core::FrameControl &control_;
   std::vector<PhotoWidget *> photo_widgets_;
-  std::vector<QLabel *> photo_text_widgets_;
+  std::vector<ClickableLabel *> photo_text_widgets_;
 
   QWidget *foreground_widget_ = nullptr;
   QRectF title_slot_;
@@ -94,7 +131,8 @@ private:
 
   QPushButton *render_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
-  QLineEdit *text_widget_ = nullptr;
+  ClickableLabel *title_text_widget_ = nullptr;
+  LineEditWidget *line_edit_ = nullptr;
 };
 
 class DefaultTemplateWidget final : public TemplateWidgetBase {
