@@ -64,7 +64,6 @@ signals:
 
 protected:
   virtual void resizeEvent(QResizeEvent *) override final;
-  virtual void paintEvent(QPaintEvent *) override final;
   virtual void mouseReleaseEvent(QMouseEvent *) override final;
 
 private:

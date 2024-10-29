@@ -32,7 +32,6 @@ private:
   SwipeWidgetsList *swipe_view_ = nullptr;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
   LineEditWidget *line_edit_ = nullptr;
-  bool is_initialised = false;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

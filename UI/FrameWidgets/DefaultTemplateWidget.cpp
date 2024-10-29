@@ -9,6 +9,7 @@ static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
 // static const int c_max_title_lengh = 20;
 static const int c_max_month_lengh = 20;
+static const QColor c_background_color = QColor(250, 250, 247, 180);
 
 class ForegroundWidget final : public QWidget {
 public:
@@ -40,13 +41,24 @@ private:
   QPixmap image_to_paint_;
 };
 
+////////////////////////////////////////////////////////////////////
+/// \brief ClickableLabel::ClickableLabel
+/// \param parent
+//////
+
 ClickableLabel::ClickableLabel(QWidget *parent) : QLabel(parent) {}
 
 void ClickableLabel::mouseReleaseEvent(QMouseEvent *) { emit clicked(); }
 
+////////////////////////////////////////////////////////////////////
+///
 LineEditWidget::LineEditWidget(QWidget *parent)
     : QWidget(parent), line_edit_(new QLineEdit(this)) {
   line_edit_->setMaxLength(c_max_month_lengh);
+  setAutoFillBackground(true);
+  auto palette = QWidget::palette();
+  palette.setColor(QPalette::Window, c_background_color);
+  setPalette(palette);
 }
 
 void LineEditWidget::setVisible(bool visible) {
@@ -70,19 +82,14 @@ void LineEditWidget::resizeEvent(QResizeEvent *e) {
   line_edit_->setGeometry(rect);
 }
 
-void LineEditWidget::paintEvent(QPaintEvent *) {
-  QPainter painter(this);
-
-  painter.setPen(Qt::white);
-  painter.drawRect(QRect{QPoint(0, 0), size()});
-}
-
 void LineEditWidget::mouseReleaseEvent(QMouseEvent *) {
 
   emit SignalTextChanged(line_edit_->text(), id_);
   hide();
 }
 
+////////////////////////////////////////////////////////////////////
+///
 DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
                                              Core::FrameControl &control)
 
@@ -120,6 +127,8 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
   // reload(control);
 }
 
+////////////////////////////////////////////////////////////////////
+///
 DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
                                                Core::FrameControl &control)
 
@@ -170,6 +179,8 @@ DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
   // reload(control);
 }
 
+////////////////////////////////////////////////////////////////////
+///
 TemplateWidgetBase::TemplateWidgetBase(
     QWidget *parent, const TemplateWidgetParameters &parameters)
     : QWidget(parent), id_(parameters.id),

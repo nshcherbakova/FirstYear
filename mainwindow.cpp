@@ -45,7 +45,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   swipe_view_->SetCurrentItem(current_fame_index);
 
-  is_initialised = true;
+  resizeEvent(nullptr);
 }
 
 void MainWindow::CreateLineEditWidget(
@@ -164,7 +164,9 @@ void MainWindow::CreateSwipeWidget(
 
 void MainWindow::resizeEvent(QResizeEvent *e) {
 
-  QMainWindow::resizeEvent(e);
+  if (e) {
+    QMainWindow::resizeEvent(e);
+  }
 
   for (auto &widget : widgets_) {
     //  break;
