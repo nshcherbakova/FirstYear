@@ -36,17 +36,25 @@ struct TemplateWidgetParameters {
   std::vector<FrameParameters> frame_data;
 };
 
-class ClickableLabel : public QLabel {
+class ClickableLabel final : public QLabel {
   Q_OBJECT
 
 public:
-  explicit ClickableLabel(QWidget *parent = Q_NULLPTR);
+  explicit ClickableLabel(QWidget *parent, QString style_str,
+                          QString font_color_str);
 
+  void setText(QString text);
+
+  QString text() const;
 signals:
   void clicked();
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);
+
+private:
+  QString styled_text_;
+  QString text_;
 };
 
 class LineEditWidget final : public QWidget {

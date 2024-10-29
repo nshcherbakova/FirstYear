@@ -45,8 +45,33 @@ private:
 /// \brief ClickableLabel::ClickableLabel
 /// \param parent
 //////
+static const char *c_title_style_str = "QLabel{"
+                                       "font-size: 20; font-family: Areal;"
+                                       "}";
+static const char *c_title_font_color_str = "#669692";
 
-ClickableLabel::ClickableLabel(QWidget *parent) : QLabel(parent) {}
+static const char *c_month_text_font_color_str = "#669692";
+
+static const char *c_month_text_style_str = "QLabel{"
+                                            "font-size: 20; font-family: Areal;"
+                                            "}";
+
+ClickableLabel::ClickableLabel(QWidget *parent, QString style_str,
+                               QString font_color_str)
+    : QLabel(parent) {
+  setStyleSheet(style_str);
+
+  styled_text_ = "<a style=text-decoration:none style=color:%1>%2</a>";
+  styled_text_ = styled_text_.arg(font_color_str);
+}
+
+void ClickableLabel::setText(QString text) {
+
+  text_ = text;
+  QLabel::setText(styled_text_.arg(text));
+}
+
+QString ClickableLabel::text() const { return text_; }
 
 void ClickableLabel::mouseReleaseEvent(QMouseEvent *) { emit clicked(); }
 
@@ -224,7 +249,8 @@ TemplateWidgetBase::TemplateWidgetBase(
 }
 
 void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
-  title_text_widget_ = new ClickableLabel(this);
+  title_text_widget_ =
+      new ClickableLabel(this, c_title_style_str, c_title_font_color_str);
   title_text_widget_->setAlignment(alignment);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
@@ -233,7 +259,8 @@ void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
 void TemplateWidgetBase::createPhotoTextWidget(Qt::Alignment alignment) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    photo_text_widgets_[i] = new ClickableLabel(this);
+    photo_text_widgets_[i] = new ClickableLabel(this, c_month_text_style_str,
+                                                c_month_text_font_color_str);
     photo_text_widgets_[i]->setAlignment(alignment);
 
     connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
