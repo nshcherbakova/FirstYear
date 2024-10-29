@@ -4,6 +4,8 @@
 #include <UI/SwipeView/SwipeWidgetsList.hpp>
 #include <stdafx.h>
 
+static const int TITLE_ID = -1;
+
 using namespace FirstYear::Core;
 namespace FirstYear::UI {
 MainWindow::MainWindow(FrameControl &frame_control)
@@ -59,13 +61,18 @@ void MainWindow::CreateLineEditWidget(
   line_edit_->hide();
 
   connect(line_edit_, &LineEditWidget::SignalTextChanged, this,
-          [&](QString text) {
+          [&](QString text, int id) {
             auto project = frame_control.CurrentProject();
             if (text == project->title_) {
               return;
             }
 
-            project->title_ = text;
+            if (id == TITLE_ID) {
+              project->title_ = text;
+            } else {
+              UNI_ASSERT(id < (int)project->monthes_.size());
+              project->monthes_[id].text = text;
+            }
             frame_control.SaveProject();
 
             UpdateFrames(nullptr);
@@ -74,7 +81,14 @@ void MainWindow::CreateLineEditWidget(
   for (auto &widget : widgets_) {
     connect(widget, &TemplateWidgetBase::SignalTitleClicked, this,
             [&](QString text) {
-              line_edit_->setText(text);
+              line_edit_->setText(text, TITLE_ID);
+              line_edit_->show();
+              line_edit_->raise();
+            });
+
+    connect(widget, &TemplateWidgetBase::SignalMonthTextClicked, this,
+            [&](QString text, int month) {
+              line_edit_->setText(text, month);
               line_edit_->show();
               line_edit_->raise();
             });
@@ -154,7 +168,7 @@ void MainWindow::CreateSwipeWidget(
           });
 }
 
-void MainWindow::resizeEvent(QResizeEvent *e) {
+void MainWindow::resizeEvent(QResizeEvent *) {
 
   if (!is_initialised) {
     return;
@@ -176,7 +190,6 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     photo_tune_widget_->setGeometry({{0, 0}, geometry().size()});
 
   line_edit_->setGeometry({QPoint(0, 0), size()});
-  spdlog::error("MainWindow::resizeEvent w {} h {}", width(), height());
 }
 
 MainWindow::~MainWindow() {

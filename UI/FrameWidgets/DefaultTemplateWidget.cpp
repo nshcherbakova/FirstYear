@@ -7,7 +7,7 @@ namespace FirstYear::UI {
 static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
-static const int c_max_title_lengh = 20;
+// static const int c_max_title_lengh = 20;
 static const int c_max_month_lengh = 20;
 
 class ForegroundWidget final : public QWidget {
@@ -51,11 +51,16 @@ LineEditWidget::LineEditWidget(QWidget *parent)
 void LineEditWidget::setVisible(bool visible) {
   QWidget::setVisible(visible);
   if (!visible) {
+    id_ = -1;
     line_edit_->setText("");
   }
 }
 
-void LineEditWidget::setText(QString text) { line_edit_->setText(text); }
+void LineEditWidget::setText(QString text, int id) {
+  id_ = id;
+  line_edit_->setText(text);
+  spdlog::error("LineEditWidget {}", text.toStdString());
+}
 
 void LineEditWidget::resizeEvent(QResizeEvent *) {
   QRect rect = {width() / 5, (int)(height() / 2.5),
@@ -72,7 +77,7 @@ void LineEditWidget::paintEvent(QPaintEvent *) {
 
 void LineEditWidget::mouseReleaseEvent(QMouseEvent *) {
 
-  emit SignalTextChanged(line_edit_->text());
+  emit SignalTextChanged(line_edit_->text(), id_);
   hide();
 }
 
@@ -202,7 +207,7 @@ TemplateWidgetBase::TemplateWidgetBase(
   createForegroundWidget();
 
   createTitleTextWidget(parameters.title_parameters.alignment);
-  createPhotoTextWidget(control_, parameters.photo_text_parameters.alignment);
+  createPhotoTextWidget(parameters.photo_text_parameters.alignment);
 }
 
 void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
@@ -214,18 +219,14 @@ void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
 }
 
-void TemplateWidgetBase::createPhotoTextWidget(Core::FrameControl &control,
-                                               Qt::Alignment alignment) {
+void TemplateWidgetBase::createPhotoTextWidget(Qt::Alignment alignment) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_text_widgets_[i] = new ClickableLabel(this);
     photo_text_widgets_[i]->setAlignment(alignment);
 
-    connect(photo_text_widgets_[i], &QLabel::linkActivated, this, [&] {
-      //  auto project = control_.CurrentProject();
-      // project->title_ = title_text_widget_->text();
-      control_.SaveProject();
-      emit SignalTextChanged();
+    connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
+      emit SignalMonthTextClicked(photo_text_widgets_[i]->text(), i);
     });
   }
 }

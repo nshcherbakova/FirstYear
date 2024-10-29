@@ -45,7 +45,7 @@ private:
 private:
   bool is_gesture_moving_ = false;
   bool is_zooming_ = false;
-  bool is_touch_movng_ = false;
+  //  bool is_touch_movng_ = false;
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -57,10 +57,10 @@ public:
 
 public:
   virtual void setVisible(bool visible) override final;
+  void setText(QString text, int id);
 
-  void setText(QString text);
 signals:
-  void SignalTextChanged(QString text);
+  void SignalTextChanged(QString text, int id);
 
 protected:
   virtual void resizeEvent(QResizeEvent *) override final;
@@ -69,6 +69,7 @@ protected:
 
 private:
   QLineEdit *line_edit_ = nullptr;
+  int id_ = -1;
 };
 
 class TemplateWidgetBase : public QWidget {
@@ -106,8 +107,7 @@ private:
   void createButtons(Core::FrameControl &control);
   void createForegroundWidget();
   void createTitleTextWidget(Qt::Alignment alignment);
-  void createPhotoTextWidget(Core::FrameControl &control,
-                             Qt::Alignment alignment);
+  void createPhotoTextWidget(Qt::Alignment alignment);
   void InitPhotos(Core::FrameControl &control);
 
   QPixmap renderFrame(FirstYear::Core::ProjectPtr);
