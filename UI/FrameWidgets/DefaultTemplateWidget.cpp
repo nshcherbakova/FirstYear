@@ -175,7 +175,7 @@ TemplateWidgetBase::TemplateWidgetBase(
           std::move(parameters.photo_text_parameters.photo_text_anchors)),
       // photo_text_aligment_(parameters.photo_text_parameters.aligment),
       frame_data_(std::move(parameters.frame_data)),
-      control_(parameters.control), line_edit_(new LineEditWidget(this)) {
+      control_(parameters.control) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
@@ -201,35 +201,25 @@ TemplateWidgetBase::TemplateWidgetBase(
   createButtons(control_);
   createForegroundWidget();
 
-  line_edit_->hide();
-  connect(line_edit_, &LineEditWidget::SignalTextChanged, this,
-          [&](QString text) {
-            auto project = control_.CurrentProject();
-            if (text == project->title_) {
-              return;
-            }
+  createTitleTextWidget(parameters.title_parameters.alignment);
+  createPhotoTextWidget(control_, parameters.photo_text_parameters.alignment);
+}
 
-            project->title_ = text;
-            control_.SaveProject();
-
-            emit SignalTextChanged();
-          });
-
+void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
   title_text_widget_ = new ClickableLabel(this);
   title_text_widget_->raise();
-  title_text_widget_->setAlignment(parameters.title_parameters.aligment);
+  title_text_widget_->setAlignment(alignment);
   // title_text_widget_->setMaxLength(c_max_title_lengh);
-  connect(title_text_widget_, &ClickableLabel::clicked, this, [&] {
-    line_edit_->setText(title_text_widget_->text());
-    line_edit_->show();
-    line_edit_->raise();
-  });
+  connect(title_text_widget_, &ClickableLabel::clicked, this,
+          [&] { emit SignalTitleClicked(title_text_widget_->text()); });
+}
 
+void TemplateWidgetBase::createPhotoTextWidget(Core::FrameControl &control,
+                                               Qt::Alignment alignment) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_text_widgets_[i] = new ClickableLabel(this);
-    photo_text_widgets_[i]->setAlignment(
-        parameters.photo_text_parameters.aligment);
+    photo_text_widgets_[i]->setAlignment(alignment);
 
     connect(photo_text_widgets_[i], &QLabel::linkActivated, this, [&] {
       //  auto project = control_.CurrentProject();
@@ -309,7 +299,7 @@ void TemplateWidgetBase::Update() {
                              40);
   load(control_);
 
-  line_edit_->setGeometry({QPoint(0, 0), size()});
+  // line_edit_->setGeometry({QPoint(0, 0), size()});
 
   title_text_widget_->setGeometry(
       title_slot_real_.left(), title_slot_real_.top(), title_slot_real_.width(),

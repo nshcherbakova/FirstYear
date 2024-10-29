@@ -17,12 +17,12 @@ namespace FirstYear::UI {
 
 struct TitleParameters {
   QRect title_rect;
-  Qt::Alignment aligment;
+  Qt::Alignment alignment;
 };
 
 struct PhotoTextParameters {
   std::vector<QPoint> photo_text_anchors;
-  Qt::Alignment aligment;
+  Qt::Alignment alignment;
 };
 
 struct TemplateWidgetParameters {
@@ -86,6 +86,8 @@ signals:
   void SignalTunePhoto(int, FirstYear::UI::FrameParameters,
                        FirstYear::Core::PhotoData);
   void SignalTextChanged();
+  void SignalTitleClicked(QString text);
+  void SignalMonthTextClicked(QString text, int month);
 
 public slots:
   void Update();
@@ -103,6 +105,9 @@ private:
   void initPhotoTuneWidget(Core::FrameControl &control);
   void createButtons(Core::FrameControl &control);
   void createForegroundWidget();
+  void createTitleTextWidget(Qt::Alignment alignment);
+  void createPhotoTextWidget(Core::FrameControl &control,
+                             Qt::Alignment alignment);
   void InitPhotos(Core::FrameControl &control);
 
   QPixmap renderFrame(FirstYear::Core::ProjectPtr);
@@ -132,7 +137,7 @@ private:
   QPushButton *render_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
   ClickableLabel *title_text_widget_ = nullptr;
-  LineEditWidget *line_edit_ = nullptr;
+  // LineEditWidget *line_edit_ = nullptr;
 };
 
 class DefaultTemplateWidget final : public TemplateWidgetBase {

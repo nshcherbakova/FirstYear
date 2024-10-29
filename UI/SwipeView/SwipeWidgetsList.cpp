@@ -22,12 +22,12 @@ SwipeWidgetsList::SwipeWidgetsList(
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   setContentsMargins(0, 0, 0, 0);
   setWidgetResizable(true);
-  InitialaizeScroller(widgets[0]->minimumWidth());
+  InitialaizeScroller();
   CreateInnerWidget(widgets);
   spdlog::info("FiltersScrollWidget UI created");
 }
 
-void SwipeWidgetsList::InitialaizeScroller(int item_with) {
+void SwipeWidgetsList::InitialaizeScroller() {
   QScrollerProperties properties =
       QScroller::scroller(this)->scrollerProperties();
   properties.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy,
@@ -49,19 +49,17 @@ void SwipeWidgetsList::InitialaizeScroller(int item_with) {
   properties.setScrollMetric(QScrollerProperties::MousePressEventDelay, 0.5);
 
   QScroller::scroller(this)->setScrollerProperties(properties);
-  QScroller::scroller(this)->setSnapPositionsX(0, item_with);
   QScroller::scroller(this)->scrollTo(QPoint());
-  // this->horizontalScrollBar()->setValue(0);
 
   grabbed_gesture_ =
       QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
 
   connect(QScroller::scroller(this), &QScroller::stateChanged, this,
-          [&, item_with](QScroller::State newState) {
+          [&](QScroller::State newState) {
             if (newState == QScroller::Inactive) {
               const auto currant_scroll_pos =
                   QScroller::scroller(this)->finalPosition();
-              current_item_index_ = currant_scroll_pos.x() / item_with;
+              current_item_index_ = currant_scroll_pos.x() / width();
               emit SignalItemChanged(current_item_index_);
             }
           });
@@ -88,15 +86,14 @@ void SwipeWidgetsList::CreateInnerWidget(
 }
 
 void SwipeWidgetsList::resizeEvent(QResizeEvent *) {
+
   QScroller::scroller(this)->setSnapPositionsX(0, width());
-  //  layout_->setGeometry({{0,0}, geometry().size()});
   layout_->update();
 
   SetCurrentItem(current_item_index_);
 }
 
 void SwipeWidgetsList::SetCurrentItem(int index) {
-  //  spdlog::error("index {}", index);
   current_item_index_ = index;
   UNI_ASSERT(layout_->count() > index);
   horizontalScrollBar()->setValue(width() * index);

@@ -16,7 +16,6 @@ public:
   void SaveProject();
   void SaveProjectMonth(int month);
   ProjectPtr CurrentProject();
-  QWidget *main_widget = nullptr;
 
 private:
   void LoadProject(QString name);

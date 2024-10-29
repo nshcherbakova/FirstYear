@@ -39,6 +39,7 @@ ProjectPtr FrameControl::LoadProject() {
 
 void FrameControl::SaveProject() {
   FileSystemProjectWriter().Write(current_project_);
+  spdlog::info("Project saved");
 }
 
 void FrameControl::SaveProjectMonth(int month) {

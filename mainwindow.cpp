@@ -10,6 +10,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
     : QMainWindow()
 //, ui(new Ui::MainWindow)
 {
+
 #ifdef Q_OS_ANDROID
   setWindowState(Qt::WindowFullScreen);
   showMaximized();
@@ -28,10 +29,14 @@ MainWindow::MainWindow(FrameControl &frame_control)
   // setFixedSize(window_size);
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
-  frame_control.main_widget = this;
-  photo_tune_widget_ = CreatePhotoTuneWidget(frame_control);
+  CreatePhotoTuneWidget(frame_control);
 
   CreateFrames(photo_tune_widget_, frame_control);
+  CreateLineEditWidget(frame_control);
+
+  CreateSwipeWidget(frame_control);
+
+  photo_tune_widget_->raise();
 
   int current_fame_index = 0;
   const auto last_frame = frame_control.CurrentProject()->frame_id_;
@@ -42,46 +47,64 @@ MainWindow::MainWindow(FrameControl &frame_control)
     }
   }
 
-  swipe_view_ = CreateSwipeWidget();
-
   swipe_view_->SetCurrentItem(current_fame_index);
-  connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
-          [&](int index) {
-            frame_control.CurrentProject()->frame_id_ = widgets_[index]->id();
-            frame_control.SaveProject();
-          });
-  photo_tune_widget_->raise();
+
+  is_initialised = true;
+  resizeEvent(nullptr);
 }
 
-PhotoTuneWidget *MainWindow::CreatePhotoTuneWidget(
+void MainWindow::CreateLineEditWidget(
     FirstYear::Core::FrameControl &frame_control) {
-  PhotoTuneWidget *photo_tune_widget = new PhotoTuneWidget(*this);
-  photo_tune_widget->hide();
+  line_edit_ = new LineEditWidget(this);
+  line_edit_->hide();
 
-  connect(photo_tune_widget, &PhotoTuneWidget::SignalImageTuned, this,
-          [photo_tune_widget, &frame_control] {
-            int month = photo_tune_widget->getPhotoId();
-            const auto new_photo_data = photo_tune_widget->getPhoto();
-            frame_control.CurrentProject()->monthes_[month].photo_data =
-                new_photo_data;
-            frame_control.SaveProjectMonth(month);
-          });
-
-  connect(photo_tune_widget, &PhotoTuneWidget::SignalOpenFile, this,
-          [photo_tune_widget, &frame_control] {
+  connect(line_edit_, &LineEditWidget::SignalTextChanged, this,
+          [&](QString text) {
             auto project = frame_control.CurrentProject();
-
-            int month = photo_tune_widget->getPhotoId();
-            auto &month_data = project->monthes_[month];
-            const auto file = Utility::OpenFile(photo_tune_widget);
-            if (!file.isNull()) {
-              month_data.photo_data = {QPixmap(file), false, QTransform(),
-                                       QTransform()};
-              photo_tune_widget->updatePhoto(month_data.photo_data);
+            if (text == project->title_) {
+              return;
             }
+
+            project->title_ = text;
+            frame_control.SaveProject();
+
+            UpdateFrames(nullptr);
           });
 
-  return photo_tune_widget;
+  for (auto &widget : widgets_) {
+    connect(widget, &TemplateWidgetBase::SignalTitleClicked, this,
+            [&](QString text) {
+              line_edit_->setText(text);
+              line_edit_->show();
+              line_edit_->raise();
+            });
+  }
+}
+
+void MainWindow::CreatePhotoTuneWidget(
+    FirstYear::Core::FrameControl &frame_control) {
+  photo_tune_widget_ = new PhotoTuneWidget(*this);
+  photo_tune_widget_->hide();
+
+  connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this, [&] {
+    int month = photo_tune_widget_->getPhotoId();
+    const auto new_photo_data = photo_tune_widget_->getPhoto();
+    frame_control.CurrentProject()->monthes_[month].photo_data = new_photo_data;
+    frame_control.SaveProjectMonth(month);
+  });
+
+  connect(photo_tune_widget_, &PhotoTuneWidget::SignalOpenFile, this, [&] {
+    auto project = frame_control.CurrentProject();
+
+    int month = photo_tune_widget_->getPhotoId();
+    auto &month_data = project->monthes_[month];
+    const auto file = Utility::OpenFile(photo_tune_widget_);
+    if (!file.isNull()) {
+      month_data.photo_data = {QPixmap(file), false, QTransform(),
+                               QTransform()};
+      photo_tune_widget_->updatePhoto(month_data.photo_data);
+    }
+  });
 }
 void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
                               FirstYear::Core::FrameControl &frame_control) {
@@ -91,7 +114,6 @@ void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
       new DefaultTemplateWidget2(nullptr, frame_control)};
 
   for (auto &widget : widgets_) {
-
     widget->setGeometry({{0, 0}, size()});
     widget->setMinimumWidth(width());
     widget->setMinimumHeight(height());
@@ -122,22 +144,29 @@ void MainWindow::UpdateFrames(TemplateWidgetBase *exept) {
   }
 }
 
-SwipeWidgetsList *MainWindow::CreateSwipeWidget() {
-  SwipeWidgetsList *swipe_view = new SwipeWidgetsList(this, widgets_);
-  swipe_view->setGeometry({{0, 0}, geometry().size()});
-  swipe_view->show();
-  return swipe_view;
+void MainWindow::CreateSwipeWidget(
+    FirstYear::Core::FrameControl &frame_control) {
+  swipe_view_ = new SwipeWidgetsList(this, widgets_);
+  connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
+          [&](int index) {
+            frame_control.CurrentProject()->frame_id_ = widgets_[index]->id();
+            frame_control.SaveProject();
+          });
 }
 
-void MainWindow::resizeEvent(QResizeEvent *) {
+void MainWindow::resizeEvent(QResizeEvent *e) {
+
+  if (!is_initialised) {
+    return;
+  }
 
   for (auto &widget : widgets_) {
     //  break;
-    widget->setGeometry({{0, 0}, geometry().size()});
-    widget->setMinimumWidth(geometry().width());
-    widget->setMinimumHeight(geometry().height());
-    widget->setMaximumWidth(geometry().width());
-    widget->setMaximumHeight(geometry().height());
+    widget->setGeometry({{0, 0}, size()});
+    widget->setMinimumWidth(width());
+    widget->setMinimumHeight(height());
+    widget->setMaximumWidth(width());
+    widget->setMaximumHeight(height());
   }
 
   if (swipe_view_)
@@ -145,6 +174,9 @@ void MainWindow::resizeEvent(QResizeEvent *) {
 
   if (photo_tune_widget_)
     photo_tune_widget_->setGeometry({{0, 0}, geometry().size()});
+
+  line_edit_->setGeometry({QPoint(0, 0), size()});
+  spdlog::error("MainWindow::resizeEvent w {} h {}", width(), height());
 }
 
 MainWindow::~MainWindow() {

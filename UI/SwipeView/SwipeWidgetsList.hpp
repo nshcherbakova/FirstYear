@@ -25,7 +25,7 @@ public:
   void AddWidget(TemplateWidgetBase *widget);
 
 private:
-  void InitialaizeScroller(int item_with);
+  void InitialaizeScroller();
   void CreateInnerWidget(const std::vector<TemplateWidgetBase *> &widgets);
 
 private:

@@ -17,10 +17,11 @@ public:
 
 protected:
 private:
-  PhotoTuneWidget *CreatePhotoTuneWidget(Core::FrameControl &frame_control);
+  void CreatePhotoTuneWidget(Core::FrameControl &frame_control);
   void CreateFrames(PhotoTuneWidget *photo_tune_widget,
                     Core::FrameControl &frame_control);
-  SwipeWidgetsList *CreateSwipeWidget();
+  void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
+  void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
   void UpdateFrames(TemplateWidgetBase *exept);
 
 protected:
@@ -30,6 +31,8 @@ private:
   std::vector<TemplateWidgetBase *> widgets_;
   SwipeWidgetsList *swipe_view_ = nullptr;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
+  LineEditWidget *line_edit_ = nullptr;
+  bool is_initialised = false;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H
