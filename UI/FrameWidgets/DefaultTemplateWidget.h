@@ -40,10 +40,11 @@ class ClickableLabel final : public QLabel {
   Q_OBJECT
 
 public:
-  explicit ClickableLabel(QWidget *parent, QString style_str,
-                          QString font_color_str);
+  explicit ClickableLabel(QWidget *parent, int font_size, QString font_color,
+                          QString font_family);
 
   void setText(QString text);
+  void setFontSize(int size);
 
   QString text() const;
 signals:
@@ -53,6 +54,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
 private:
+  QFont font_;
   QString styled_text_;
   QString text_;
 };
@@ -124,10 +126,12 @@ protected:
   QPixmap foreground_;
   QPixmap foreground_to_render_;
   QRectF title_slot_real_;
+  int title_text_font_size_real_ = 20;
   std::vector<QRectF> photo_slots_real_;
   // std::vector<QRectF> photo_text_slots_real_;
   std::vector<QPoint> photo_text_anchors_real_;
   //  Qt::Alignment photo_text_aligment_;
+  int photo_text_font_size_real_ = 20;
   std::vector<FrameParameters> frame_data_;
 
 private:
@@ -137,9 +141,11 @@ private:
 
   QWidget *foreground_widget_ = nullptr;
   QRectF title_slot_;
+  int title_text_font_size_ = 20;
   std::vector<QRectF> photo_slots_;
   // std::vector<QRectF> photo_text_slots_;
   std::vector<QPoint> photo_text_anchors_;
+  int photo_text_font_size_ = 20;
 
   QPushButton *render_button_ = nullptr;
   QPushButton *share_button_ = nullptr;

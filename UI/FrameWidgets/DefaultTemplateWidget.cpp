@@ -45,30 +45,38 @@ private:
 /// \brief ClickableLabel::ClickableLabel
 /// \param parent
 //////
-static const char *c_title_style_str = "QLabel{"
-                                       "font-size: 20; font-family: Areal;"
-                                       "}";
+
 static const char *c_title_font_color_str = "#669692";
 
-static const char *c_month_text_font_color_str = "#669692";
+static const char *c_month_text_font_color_str = "#969692";
 
-static const char *c_month_text_style_str = "QLabel{"
-                                            "font-size: 20; font-family: Areal;"
-                                            "}";
+static const char *c_title_font_family_str = "Areal";
+static const char *c_month_text_font_family_str = "Areal";
 
-ClickableLabel::ClickableLabel(QWidget *parent, QString style_str,
-                               QString font_color_str)
+static const int c_title_text_font_size = 30;
+static const int c_month_text_font_size = 20;
+
+ClickableLabel::ClickableLabel(QWidget *parent, int font_size,
+                               QString font_color, QString font_family)
     : QLabel(parent) {
-  setStyleSheet(style_str);
+
+  font_ = QFont(font_family, font_size, QFont::Normal);
+  QLabel::setFont(font_);
 
   styled_text_ = "<a style=text-decoration:none style=color:%1>%2</a>";
-  styled_text_ = styled_text_.arg(font_color_str);
+  styled_text_ = styled_text_.arg(font_color);
 }
 
 void ClickableLabel::setText(QString text) {
 
   text_ = text;
   QLabel::setText(styled_text_.arg(text));
+  QLabel::adjustSize();
+}
+
+void ClickableLabel::setFontSize(int size) {
+  font_.setPointSize(size);
+  QLabel::setFont(font_);
 }
 
 QString ClickableLabel::text() const { return text_; }
@@ -213,10 +221,12 @@ TemplateWidgetBase::TemplateWidgetBase(
       foreground_to_render_(
           QString(c_foreground_to_render_str).arg(parameters.id)),
       title_slot_real_(std::move(parameters.title_parameters.title_rect)),
+      title_text_font_size_real_(c_title_text_font_size),
       photo_slots_real_(std::move(parameters.photo_slots)),
       photo_text_anchors_real_(
           std::move(parameters.photo_text_parameters.photo_text_anchors)),
       // photo_text_aligment_(parameters.photo_text_parameters.aligment),
+      photo_text_font_size_real_(c_month_text_font_size),
       frame_data_(std::move(parameters.frame_data)),
       control_(parameters.control) {
 
@@ -250,7 +260,8 @@ TemplateWidgetBase::TemplateWidgetBase(
 
 void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
   title_text_widget_ =
-      new ClickableLabel(this, c_title_style_str, c_title_font_color_str);
+      new ClickableLabel(this, c_title_text_font_size, c_title_font_color_str,
+                         c_title_font_family_str);
   title_text_widget_->setAlignment(alignment);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
@@ -259,8 +270,9 @@ void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
 void TemplateWidgetBase::createPhotoTextWidget(Qt::Alignment alignment) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    photo_text_widgets_[i] = new ClickableLabel(this, c_month_text_style_str,
-                                                c_month_text_font_color_str);
+    photo_text_widgets_[i] = new ClickableLabel(this, c_month_text_font_size,
+                                                c_month_text_font_color_str,
+                                                c_month_text_font_family_str);
     photo_text_widgets_[i]->setAlignment(alignment);
 
     connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
@@ -341,6 +353,7 @@ void TemplateWidgetBase::Update() {
   title_text_widget_->setGeometry(
       title_slot_.left(), title_slot_.top(), title_slot_.width(),
       title_text_widget_->heightForWidth(title_text_widget_->width()));
+  title_text_widget_->setFontSize(title_text_font_size_);
 
   for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
 
@@ -359,6 +372,8 @@ void TemplateWidgetBase::Update() {
                 photo_text_widget->heightForWidth(photo_text_widget->width())};
     }
     photo_text_widget->setGeometry(rect);
+
+    photo_text_widget->setFontSize(photo_text_font_size_);
   }
 }
 
@@ -386,10 +401,14 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
     photo_text_anchors_[i] = new_point;
   }
 
+  photo_text_font_size_ = photo_text_font_size_real_ * k;
+
   auto new_rect = title_slot_real_;
   new_rect.setTopLeft(title_slot_real_.topLeft() * k);
   new_rect.setSize(title_slot_real_.size() * k);
   title_slot_ = new_rect;
+
+  title_text_font_size_ = title_text_font_size_real_ * k;
 
   InitPhotos(control);
 
