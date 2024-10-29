@@ -212,9 +212,7 @@ TemplateWidgetBase::TemplateWidgetBase(
 
 void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
   title_text_widget_ = new ClickableLabel(this);
-  title_text_widget_->raise();
   title_text_widget_->setAlignment(alignment);
-  // title_text_widget_->setMaxLength(c_max_title_lengh);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
 }
@@ -300,11 +298,9 @@ void TemplateWidgetBase::Update() {
                              40);
   load(control_);
 
-  // line_edit_->setGeometry({QPoint(0, 0), size()});
-
   title_text_widget_->setGeometry(
-      title_slot_real_.left(), title_slot_real_.top(), title_slot_real_.width(),
-      title_slot_real_.height());
+      title_slot_.left(), title_slot_.top(), title_slot_.width(),
+      title_text_widget_->heightForWidth(title_text_widget_->width()));
 
   for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
 
@@ -366,12 +362,6 @@ void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {
     auto &photo_widget = photo_widgets_[i];
 
     photo_widget->setGeometry(photo_slots_[i].toRect());
-
-    /* if (month.text)
-       photo_widget->setText(*month.text);
-     else
-       photo_widget->setText(QString("%1 month").arg(i));*/
-
     photo_widget->setPhoto(month.photo_data);
     photo_widget->show();
   }
