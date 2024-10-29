@@ -27,7 +27,10 @@ void ImageButton::UpdateButton() {
   update();
 }
 
-void ImageButton::resizeEvent(QResizeEvent *) { UpdateButton(); }
+void ImageButton::resizeEvent(QResizeEvent *e) {
+  QPushButton::resizeEvent(e);
+  UpdateButton();
+}
 
 void ImageButton::paintEvent(QPaintEvent *) {
   QPainter painter(this);

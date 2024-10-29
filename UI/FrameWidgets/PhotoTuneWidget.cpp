@@ -338,7 +338,9 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   });
 }
 
-void PhotoTuneWidget::resizeEvent(QResizeEvent *) {
+void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
+  QWidget::resizeEvent(e);
+
   if (photo_data_.image.isNull())
     return;
 

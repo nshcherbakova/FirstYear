@@ -22,8 +22,8 @@ SwipeWidgetsList::SwipeWidgetsList(
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   setContentsMargins(0, 0, 0, 0);
   setWidgetResizable(true);
-  InitialaizeScroller();
   CreateInnerWidget(widgets);
+  InitialaizeScroller();
   spdlog::info("FiltersScrollWidget UI created");
 }
 
@@ -49,6 +49,7 @@ void SwipeWidgetsList::InitialaizeScroller() {
   properties.setScrollMetric(QScrollerProperties::MousePressEventDelay, 0.5);
 
   QScroller::scroller(this)->setScrollerProperties(properties);
+  QScroller::scroller(this)->setSnapPositionsX(0, width());
   QScroller::scroller(this)->scrollTo(QPoint());
 
   grabbed_gesture_ =
@@ -85,8 +86,9 @@ void SwipeWidgetsList::CreateInnerWidget(
   setWidget(filter_buttons_widget);
 }
 
-void SwipeWidgetsList::resizeEvent(QResizeEvent *) {
+void SwipeWidgetsList::resizeEvent(QResizeEvent *e) {
 
+  QScrollArea::resizeEvent(e);
   QScroller::scroller(this)->setSnapPositionsX(0, width());
   layout_->update();
 
@@ -96,7 +98,7 @@ void SwipeWidgetsList::resizeEvent(QResizeEvent *) {
 void SwipeWidgetsList::SetCurrentItem(int index) {
   current_item_index_ = index;
   UNI_ASSERT(layout_->count() > index);
-  horizontalScrollBar()->setValue(width() * index);
+  QScroller::scroller(this)->scrollTo(QPoint(width() * index, 0), 0);
 }
 
 void SwipeWidgetsList::AddWidget(TemplateWidgetBase *widget) {

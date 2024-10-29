@@ -29,7 +29,8 @@ public:
     }
   }
 
-  virtual void resizeEvent(QResizeEvent *) override final {
+  virtual void resizeEvent(QResizeEvent *e) override final {
+    QWidget::resizeEvent(e);
     image_to_paint_ = image_.scaledToWidth(width(), Qt::SmoothTransformation);
   }
 
@@ -62,7 +63,8 @@ void LineEditWidget::setText(QString text, int id) {
   spdlog::error("LineEditWidget {}", text.toStdString());
 }
 
-void LineEditWidget::resizeEvent(QResizeEvent *) {
+void LineEditWidget::resizeEvent(QResizeEvent *e) {
+  QWidget::resizeEvent(e);
   QRect rect = {width() / 5, (int)(height() / 2.5),
                 width() - (int)(width() / 2.5), height() / 5};
   line_edit_->setGeometry(rect);
@@ -322,7 +324,10 @@ void TemplateWidgetBase::Update() {
   }
 }
 
-void TemplateWidgetBase::resizeEvent(QResizeEvent *) { Update(); }
+void TemplateWidgetBase::resizeEvent(QResizeEvent *e) {
+  QWidget::resizeEvent(e);
+  Update();
+}
 
 void TemplateWidgetBase::load(Core::FrameControl &control) {
 

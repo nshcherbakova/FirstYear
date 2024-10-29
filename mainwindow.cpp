@@ -16,19 +16,13 @@ MainWindow::MainWindow(FrameControl &frame_control)
 #ifdef Q_OS_ANDROID
   setWindowState(Qt::WindowFullScreen);
   showMaximized();
-  QSize window_size(size());
-#elif WIN32
-  QSize window_size(640, 900);
-  // QSize window_size(640, 1136);
+  setMinimumSize(size());
 #elif defined Q_OS_MACOS
   QSize window_size(640, 640);
-#elif defined Q_OS_IOS
-  const auto screen_size = QApplication::primaryScreen()->geometry().size();
-  QSize window_size(screen_size);
-#endif
-  // setMaximumSize(window_size);
   setMinimumSize(window_size);
-  // setFixedSize(window_size);
+  show();
+#endif
+
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
   CreatePhotoTuneWidget(frame_control);
@@ -52,7 +46,6 @@ MainWindow::MainWindow(FrameControl &frame_control)
   swipe_view_->SetCurrentItem(current_fame_index);
 
   is_initialised = true;
-  resizeEvent(nullptr);
 }
 
 void MainWindow::CreateLineEditWidget(
@@ -161,6 +154,7 @@ void MainWindow::UpdateFrames(TemplateWidgetBase *exept) {
 void MainWindow::CreateSwipeWidget(
     FirstYear::Core::FrameControl &frame_control) {
   swipe_view_ = new SwipeWidgetsList(this, widgets_);
+  swipe_view_->setGeometry({{0, 0}, size()});
   connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
           [&](int index) {
             frame_control.CurrentProject()->frame_id_ = widgets_[index]->id();
@@ -168,11 +162,9 @@ void MainWindow::CreateSwipeWidget(
           });
 }
 
-void MainWindow::resizeEvent(QResizeEvent *) {
+void MainWindow::resizeEvent(QResizeEvent *e) {
 
-  if (!is_initialised) {
-    return;
-  }
+  QMainWindow::resizeEvent(e);
 
   for (auto &widget : widgets_) {
     //  break;
@@ -189,7 +181,8 @@ void MainWindow::resizeEvent(QResizeEvent *) {
   if (photo_tune_widget_)
     photo_tune_widget_->setGeometry({{0, 0}, geometry().size()});
 
-  line_edit_->setGeometry({QPoint(0, 0), size()});
+  if (line_edit_)
+    line_edit_->setGeometry({QPoint(0, 0), size()});
 }
 
 MainWindow::~MainWindow() {

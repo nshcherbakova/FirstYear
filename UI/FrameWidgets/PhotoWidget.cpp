@@ -20,7 +20,8 @@ PhotoWidget::PhotoWidget(QWidget &parent)
 }
 
 void PhotoWidget::resizeEvent(QResizeEvent *event) {
-  QWidget::resizeEvent(event);
+  ImageButton::resizeEvent(event);
+
   text_widget_.setGeometry({0, 100, 100, 20});
 
   update();
