@@ -1,4 +1,5 @@
 #include "PhotoTuneWidget.h"
+#include "DefaultTemplateWidget.h"
 
 #include <stdafx.h>
 namespace FirstYear::UI {
@@ -336,6 +337,11 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
     hide();
     emit SignalImageTuned();
   });
+
+  text_ = new ClickableLabel(this, 10, "#408BB2", "Areal");
+  text_->setAlignment(Qt::AlignCenter);
+  connect(text_, &ClickableLabel::clicked, this,
+          [&] { emit SignalTextClicked(text_->text()); });
 }
 
 void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
@@ -352,6 +358,14 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
   Frame::init(frame_data_, rect());
 
   updatePhoto(photo_data_);
+
+  QRect rect = {width() / 5, (int)(height() / 20),
+                width() - (int)(width() / 2.5), height() / 7};
+  text_->setGeometry(rect);
+
+  QFont font = text_->font();
+  font.setPointSize(width() / 20);
+  text_->setFont(font);
 }
 
 bool PhotoTuneWidget::event(QEvent *event) {
@@ -365,17 +379,20 @@ bool PhotoTuneWidget::event(QEvent *event) {
 }
 
 void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
-                               const Core::PhotoData &photo) {
+                               const Core::PhotoData &photo, QString text) {
 
   id_ = id;
   Frame::init(frame_data, rect());
   updatePhoto(photo);
+  text_->setText(text);
 }
 
 void PhotoTuneWidget::updatePhoto(const Core::PhotoData &photo) {
   PhotoProcessor::init(photo, rect(), frameRect());
   update();
 }
+
+void PhotoTuneWidget::updateText(QString text) { text_->setText(text); }
 
 int PhotoTuneWidget::getPhotoId() const { return id_; }
 

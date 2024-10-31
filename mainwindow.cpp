@@ -56,19 +56,25 @@ void MainWindow::CreateLineEditWidget(
   connect(line_edit_, &LineEditWidget::SignalTextChanged, this,
           [&](QString text, int id) {
             auto project = frame_control.CurrentProject();
-            if (text == project->title_) {
-              return;
-            }
 
             if (id == TITLE_ID) {
+              if (text == project->title_) {
+                return;
+              }
               project->title_ = text;
             } else {
               UNI_ASSERT(id < (int)project->monthes_.size());
+              if (project->monthes_[id].text == text) {
+                return;
+              }
               project->monthes_[id].text = text;
             }
             frame_control.SaveProject();
 
             UpdateFrames(nullptr);
+            if (photo_tune_widget_->isVisible()) {
+              photo_tune_widget_->updateText(text);
+            }
           });
 
   for (auto &widget : widgets_) {
@@ -103,7 +109,7 @@ void MainWindow::CreatePhotoTuneWidget(
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalOpenFile, this, [&] {
     auto project = frame_control.CurrentProject();
 
-    int month = photo_tune_widget_->getPhotoId();
+    const int month = photo_tune_widget_->getPhotoId();
     auto &month_data = project->monthes_[month];
     const auto file = Utility::OpenFile(photo_tune_widget_);
     if (!file.isNull()) {
@@ -112,6 +118,15 @@ void MainWindow::CreatePhotoTuneWidget(
       photo_tune_widget_->updatePhoto(month_data.photo_data);
     }
   });
+
+  connect(photo_tune_widget_, &PhotoTuneWidget::SignalTextClicked, this,
+          [&](QString text) {
+            const int month = photo_tune_widget_->getPhotoId();
+
+            line_edit_->setText(text, month);
+            line_edit_->show();
+            line_edit_->raise();
+          });
 }
 void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
                               FirstYear::Core::FrameControl &frame_control) {
@@ -127,12 +142,14 @@ void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
     widget->setMaximumWidth(width());
     widget->setMaximumHeight(height());
 
-    connect(widget, &TemplateWidgetBase::SignalTunePhoto, this,
-            [photo_tune_widget](int month, FrameParameters frame_data,
-                                PhotoData photo_data) {
-              photo_tune_widget->setPhoto(month, frame_data, photo_data);
-              photo_tune_widget->show();
-            });
+    connect(
+        widget, &TemplateWidgetBase::SignalTunePhoto, this,
+        [&, photo_tune_widget](int month_index, FrameParameters frame_data) {
+          auto &month = frame_control.CurrentProject()->monthes_[month_index];
+          photo_tune_widget->setPhoto(month_index, frame_data, month.photo_data,
+                                      month.text);
+          photo_tune_widget->show();
+        });
 
     connect(widget, &TemplateWidgetBase::SignalTextChanged, this,
             [&]() { UpdateFrames(nullptr); });

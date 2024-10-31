@@ -18,7 +18,7 @@ struct PhotoData {
 
 struct MonthItem {
   PhotoData photo_data;
-  std::optional<QString> text;
+  QString text;
   QString filter_id;
 };
 

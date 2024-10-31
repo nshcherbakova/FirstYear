@@ -71,7 +71,7 @@ void ClickableLabel::setText(QString text) {
 
   text_ = text;
   QLabel::setText(styled_text_.arg(text));
-  QLabel::adjustSize();
+  // QLabel::adjustSize();
 }
 
 void ClickableLabel::setFontSize(int size) {
@@ -85,9 +85,20 @@ void ClickableLabel::mouseReleaseEvent(QMouseEvent *) { emit clicked(); }
 
 ////////////////////////////////////////////////////////////////////
 ///
+///
+///
+static const char *c_line_edit_style_str =
+    "QLineEdit{  background-color: rgba(253, 253, 255, 255);"
+    "color: #308BB2;  font-family: Typo Round Regular Demo;"
+    "border-style: solid;"
+    "border-radius: 30;"
+    "border-color: rgba(190, 190, 190, 255);"
+    "border-width: 5;"
+    "}";
 LineEditWidget::LineEditWidget(QWidget *parent)
     : QWidget(parent), line_edit_(new QLineEdit(this)) {
   line_edit_->setMaxLength(c_max_month_lengh);
+  line_edit_->setStyleSheet(c_line_edit_style_str);
   setAutoFillBackground(true);
   auto palette = QWidget::palette();
   palette.setColor(QPalette::Window, c_background_color);
@@ -113,6 +124,9 @@ void LineEditWidget::resizeEvent(QResizeEvent *e) {
   QRect rect = {width() / 5, (int)(height() / 2.5),
                 width() - (int)(width() / 2.5), height() / 5};
   line_edit_->setGeometry(rect);
+  QFont font = line_edit_->font();
+  font.setPointSize(width() / 15);
+  line_edit_->setFont(font);
 }
 
 void LineEditWidget::mouseReleaseEvent(QMouseEvent *) {
@@ -303,7 +317,7 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
       }
 
       if (!month.photo_data.is_stub_image) {
-        emit SignalTunePhoto(i, frame_data_[i], month.photo_data);
+        emit SignalTunePhoto(i, frame_data_[i]);
       }
     });
   }
@@ -432,10 +446,7 @@ void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {
     auto &month = control.CurrentProject()->monthes_[i];
     auto &photo_text_widget = photo_text_widgets_[i];
 
-    if (month.text)
-      photo_text_widget->setText(*month.text);
-    else
-      photo_text_widget->setText(QString("%1 month").arg(i));
+    photo_text_widget->setText(month.text);
   }
 
   update();

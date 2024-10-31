@@ -97,9 +97,8 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
       "transform_scale_rotate",
       TransformJson(month_data.photo_data.transform_scale_rotate));
 
-  if (month_data.text) {
-    month_metadata.insert("text", *month_data.text);
-  }
+  month_metadata.insert("text", month_data.text);
+
   month_metadata.insert("filter_id", month_data.filter_id);
 
   QJsonDocument month_metadata_document(month_metadata);

@@ -181,6 +181,8 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
       return false;
     }
     month.text = text;
+  } else {
+    month.text = QString("%1 month").arg(month_number);
   }
 
   QPixmap photo(month_photo_path_template_.arg(month_number));

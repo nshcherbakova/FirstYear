@@ -19,6 +19,7 @@ class QEventPoint;
 QT_END_NAMESPACE
 
 namespace FirstYear::UI {
+
 class GestureProcessor {
 
 protected:
@@ -135,6 +136,7 @@ private:
 /// \brief The PhotoTuneWidget class
 ///
 class TouchButton;
+class ClickableLabel;
 class PhotoTuneWidget final : public QWidget,
                               public GestureProcessor,
                               public PhotoProcessor,
@@ -148,11 +150,13 @@ signals:
   void SignalImageTuned();
   void SignalPhotoChanged();
   void SignalOpenFile();
+  void SignalTextClicked(QString text);
 
 public:
   void setPhoto(int id, const FrameParameters &frame_data,
-                const Core::PhotoData &photo);
+                const Core::PhotoData &photo, QString text);
   void updatePhoto(const Core::PhotoData &photo);
+  void updateText(QString text);
   Core::PhotoData getPhoto() const;
   int getPhotoId() const;
 
@@ -186,6 +190,7 @@ private:
   QPixmap background_;
   TouchButton *close_ = nullptr;
   TouchButton *open_file_ = nullptr;
+  ClickableLabel *text_ = nullptr;
 };
 
 } // namespace FirstYear::UI

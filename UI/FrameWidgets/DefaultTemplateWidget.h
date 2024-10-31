@@ -93,8 +93,7 @@ public:
   QString id() const;
 
 signals:
-  void SignalTunePhoto(int, FirstYear::UI::FrameParameters,
-                       FirstYear::Core::PhotoData);
+  void SignalTunePhoto(int, FirstYear::UI::FrameParameters);
   void SignalTextChanged();
   void SignalTitleClicked(QString text);
   void SignalMonthTextClicked(QString text, int month);
