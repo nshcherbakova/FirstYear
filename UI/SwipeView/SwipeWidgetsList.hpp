@@ -14,6 +14,7 @@ public:
 
 public:
   void SetCurrentItem(int index);
+  int CurrentItem() const;
 signals:
   void SignalItemChanged(int index);
 

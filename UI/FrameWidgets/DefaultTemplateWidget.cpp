@@ -125,7 +125,7 @@ void LineEditWidget::resizeEvent(QResizeEvent *e) {
                 width() - (int)(width() / 2.5), height() / 5};
   line_edit_->setGeometry(rect);
   QFont font = line_edit_->font();
-  font.setPointSize(width() / 15);
+  font.setPointSize(height() / 15);
   line_edit_->setFont(font);
 }
 
@@ -450,6 +450,11 @@ void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {
   }
 
   update();
+}
+
+FrameParameters TemplateWidgetBase::frameData(int month) {
+  UNI_ASSERT((int)frame_data_.size() > month);
+  return frame_data_[month];
 }
 
 void TemplateWidgetBase::setVisible(bool visible) {

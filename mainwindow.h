@@ -18,8 +18,7 @@ public:
 protected:
 private:
   void CreatePhotoTuneWidget(Core::FrameControl &frame_control);
-  void CreateFrames(PhotoTuneWidget *photo_tune_widget,
-                    Core::FrameControl &frame_control);
+  void CreateFrames(Core::FrameControl &frame_control);
   void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
   void UpdateFrames(TemplateWidgetBase *exept);

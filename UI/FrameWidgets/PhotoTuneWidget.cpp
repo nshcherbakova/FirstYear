@@ -306,6 +306,49 @@ bool TouchButton::event(QEvent *event) {
   return QPushButton::event(event);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+///
+///
+class TouchClickableLabel final : public ClickableLabel {
+public:
+  TouchClickableLabel(QWidget *parent, int font_size, QString font_color,
+                      QString font_family)
+      : ClickableLabel(parent, font_size, font_color, font_family) {
+    setAttribute(Qt::WA_AcceptTouchEvents);
+  }
+  bool event(QEvent *event);
+};
+
+bool TouchClickableLabel::event(QEvent *event) {
+  switch (event->type()) {
+  case QEvent::TouchBegin:
+  case QEvent::TouchUpdate:
+  case QEvent::TouchEnd: {
+    auto points = static_cast<QTouchEvent *>(event)->points();
+    QPointF center;
+
+    for (const QTouchEvent::TouchPoint &touchPoint : points) {
+      center += touchPoint.position();
+    }
+    if (!points.empty()) {
+      center /= points.size();
+      if (geometry().contains(center.toPoint())) {
+        return ClickableLabel::event(event);
+      }
+    }
+    return false;
+  }
+  default:
+    return ClickableLabel::event(event);
+  }
+  return ClickableLabel::event(event);
+}
+/////////////////////////////////////////////////////////
+/// \brief PhotoTuneWidget::PhotoTuneWidget
+/// \param parent
+///
+///
 PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
     : QWidget(&parent), background_(c_background_str) {
   GestureProcessor::Initialise();
@@ -318,9 +361,6 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   setAutoFillBackground(true);
 
   open_file_ = new TouchButton(this);
-  open_file_->setAttribute(Qt::WA_AcceptTouchEvents);
-  open_file_->raise();
-  open_file_->setEnabled(true);
   open_file_->setGeometry(button_margin, height() - 2 * button_with,
                           2 * button_with, button_with);
   open_file_->setText("Open");
@@ -329,16 +369,24 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
           &PhotoTuneWidget::SignalOpenFile);
 
   close_ = new TouchButton(this);
-  close_->setGeometry(width() - 3 * button_with, height() - 2 * button_with,
+  close_->setGeometry(width() - 3 * button_with, height() - 3.5 * button_with,
                       2 * button_with, button_with);
-  close_->setText("Close");
+  close_->setText("Save");
   close_->setContentsMargins(0, 0, 0, 0);
   connect(close_, &QPushButton::clicked, this, [&]() {
     hide();
     emit SignalImageTuned();
   });
 
-  text_ = new ClickableLabel(this, 10, "#408BB2", "Areal");
+  next_ = new TouchButton(this);
+  next_->setGeometry(width() - 3 * button_with, height() - 2 * button_with,
+                     2 * button_with, button_with);
+  next_->setText("Next");
+  next_->setContentsMargins(0, 0, 0, 0);
+  connect(next_, &QPushButton::clicked, this,
+          [&]() { emit SignalTuneNextImage(); });
+
+  text_ = new TouchClickableLabel(this, 10, "#408BB2", "Areal");
   text_->setAlignment(Qt::AlignCenter);
   connect(text_, &ClickableLabel::clicked, this,
           [&] { emit SignalTextClicked(text_->text()); });
@@ -352,8 +400,10 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
 
   open_file_->setGeometry(button_margin, height() - 2 * button_with,
                           2 * button_with, button_with);
-  close_->setGeometry(width() - 3 * button_with, height() - 2 * button_with,
+  close_->setGeometry(width() - 3 * button_with, height() - 3.5 * button_with,
                       2 * button_with, button_with);
+  next_->setGeometry(width() - 3 * button_with, height() - 2 * button_with,
+                     2 * button_with, button_with);
 
   Frame::init(frame_data_, rect());
 
@@ -373,6 +423,8 @@ bool PhotoTuneWidget::event(QEvent *event) {
   if (GestureProcessor::processEvent(event)) {
     close_->event(event);
     open_file_->event(event);
+    next_->event(event);
+    text_->event(event);
     return true;
   }
   return QWidget::event(event);

@@ -101,6 +101,8 @@ void SwipeWidgetsList::SetCurrentItem(int index) {
   QScroller::scroller(this)->scrollTo(QPoint(width() * index, 0), 0);
 }
 
+int SwipeWidgetsList::CurrentItem() const { return current_item_index_; }
+
 void SwipeWidgetsList::AddWidget(TemplateWidgetBase *widget) {
 
   widget->show();

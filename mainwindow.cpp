@@ -27,7 +27,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   CreatePhotoTuneWidget(frame_control);
 
-  CreateFrames(photo_tune_widget_, frame_control);
+  CreateFrames(frame_control);
   CreateLineEditWidget(frame_control);
 
   CreateSwipeWidget(frame_control);
@@ -104,6 +104,8 @@ void MainWindow::CreatePhotoTuneWidget(
     const auto new_photo_data = photo_tune_widget_->getPhoto();
     frame_control.CurrentProject()->monthes_[month].photo_data = new_photo_data;
     frame_control.SaveProjectMonth(month);
+
+    UpdateFrames(nullptr);
   });
 
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalOpenFile, this, [&] {
@@ -128,8 +130,7 @@ void MainWindow::CreatePhotoTuneWidget(
             line_edit_->raise();
           });
 }
-void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
-                              FirstYear::Core::FrameControl &frame_control) {
+void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
   widgets_ = std::vector<TemplateWidgetBase *>{
       new DefaultTemplateWidget(nullptr, frame_control),
@@ -142,21 +143,50 @@ void MainWindow::CreateFrames(PhotoTuneWidget *photo_tune_widget,
     widget->setMaximumWidth(width());
     widget->setMaximumHeight(height());
 
-    connect(
-        widget, &TemplateWidgetBase::SignalTunePhoto, this,
-        [&, photo_tune_widget](int month_index, FrameParameters frame_data) {
-          auto &month = frame_control.CurrentProject()->monthes_[month_index];
-          photo_tune_widget->setPhoto(month_index, frame_data, month.photo_data,
-                                      month.text);
-          photo_tune_widget->show();
-        });
+    connect(widget, &TemplateWidgetBase::SignalTunePhoto, this,
+            [&](int month_index, FrameParameters frame_data) {
+              auto &month =
+                  frame_control.CurrentProject()->monthes_[month_index];
+              photo_tune_widget_->setPhoto(month_index, frame_data,
+                                           month.photo_data, month.text);
+              photo_tune_widget_->show();
+            });
 
     connect(widget, &TemplateWidgetBase::SignalTextChanged, this,
             [&]() { UpdateFrames(nullptr); });
   }
 
-  connect(photo_tune_widget, &PhotoTuneWidget::SignalImageTuned, this,
-          [&]() { UpdateFrames(nullptr); });
+  connect(photo_tune_widget_, &PhotoTuneWidget::SignalTuneNextImage, this,
+          [&]() {
+            int month = photo_tune_widget_->getPhotoId();
+            const auto new_photo_data = photo_tune_widget_->getPhoto();
+            auto project = frame_control.CurrentProject();
+            project->monthes_[month].photo_data = new_photo_data;
+            frame_control.SaveProjectMonth(month);
+            UpdateFrames(nullptr);
+
+            if (month == (int)project->monthes_.size() - 1) {
+              return;
+            }
+            month++;
+            auto &month_data = project->monthes_[month];
+
+            if (month_data.photo_data.is_stub_image) {
+              const auto file = Utility::OpenFile(photo_tune_widget_);
+              if (!file.isNull()) {
+                month_data.photo_data = {QPixmap(file), false, QTransform(),
+                                         QTransform()};
+                photo_tune_widget_->updatePhoto(month_data.photo_data);
+              } else {
+                photo_tune_widget_->hide();
+                return;
+              }
+            }
+            const auto frameData =
+                widgets_[swipe_view_->CurrentItem()]->frameData(month);
+            photo_tune_widget_->setPhoto(
+                month, frameData, month_data.photo_data, month_data.text);
+          });
 }
 
 void MainWindow::UpdateFrames(TemplateWidgetBase *exept) {

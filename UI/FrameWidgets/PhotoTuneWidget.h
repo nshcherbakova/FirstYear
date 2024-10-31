@@ -136,7 +136,7 @@ private:
 /// \brief The PhotoTuneWidget class
 ///
 class TouchButton;
-class ClickableLabel;
+class TouchClickableLabel;
 class PhotoTuneWidget final : public QWidget,
                               public GestureProcessor,
                               public PhotoProcessor,
@@ -149,6 +149,7 @@ public:
 signals:
   void SignalImageTuned();
   void SignalPhotoChanged();
+  void SignalTuneNextImage();
   void SignalOpenFile();
   void SignalTextClicked(QString text);
 
@@ -190,7 +191,8 @@ private:
   QPixmap background_;
   TouchButton *close_ = nullptr;
   TouchButton *open_file_ = nullptr;
-  ClickableLabel *text_ = nullptr;
+  TouchButton *next_ = nullptr;
+  TouchClickableLabel *text_ = nullptr;
 };
 
 } // namespace FirstYear::UI

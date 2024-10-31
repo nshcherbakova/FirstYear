@@ -36,7 +36,7 @@ struct TemplateWidgetParameters {
   std::vector<FrameParameters> frame_data;
 };
 
-class ClickableLabel final : public QLabel {
+class ClickableLabel : public QLabel {
   Q_OBJECT
 
 public:
@@ -103,6 +103,7 @@ public slots:
 
 public: // QWidget
   virtual void setVisible(bool visible) override final;
+  FrameParameters frameData(int month);
 
 protected:
   virtual void paintEvent(QPaintEvent *e) override final;
