@@ -3,12 +3,14 @@
 #include <Core/FrameControl/FrameControl.h>
 #include <QMainWindow>
 #include <Types.h>
-#include <UI/FrameWidgets/DefaultTemplateWidget.h>
+// #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 
 namespace FirstYear::UI {
 class SwipeWidgetsList;
 class PhotoTuneWidget;
 class SwipeWidget;
+class TemplateWidgetHolder;
+class LineEditWidget;
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -22,13 +24,13 @@ private:
   void CreateFrames(Core::FrameControl &frame_control);
   void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
-  void UpdateFrames(TemplateWidgetBase *exept);
+  void UpdateFrames(TemplateWidgetHolder *exept);
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
 private:
-  std::vector<TemplateWidgetBase *> frame_widgets_;
+  std::vector<TemplateWidgetHolder *> frame_widgets_;
   SwipeWidgetsList *swipe_view_ = nullptr;
   SwipeWidget *swipe_widget_ = nullptr;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;

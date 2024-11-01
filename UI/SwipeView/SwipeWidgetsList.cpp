@@ -13,8 +13,8 @@ static const char *c_filter_widget_style_str = "QWidget{"
                                                "border: none;"
                                                "}";
 
-SwipeWidgetsList::SwipeWidgetsList(
-    QWidget *parent, const std::vector<TemplateWidgetBase *> &widgets)
+SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
+                                   const std::vector<QWidget *> &widgets)
     : QScrollArea(parent) {
 
   UNI_ASSERT(widgets.size() > 0);
@@ -67,7 +67,7 @@ void SwipeWidgetsList::InitialaizeScroller() {
 }
 
 void SwipeWidgetsList::CreateInnerWidget(
-    const std::vector<TemplateWidgetBase *> &widgets) {
+    const std::vector<QWidget *> &widgets) {
 
   // buttons widget
   QWidget *filter_buttons_widget = new QWidget();
@@ -102,7 +102,7 @@ void SwipeWidgetsList::SetCurrentItem(int index) {
 
 int SwipeWidgetsList::CurrentItem() const { return current_item_index_; }
 
-void SwipeWidgetsList::AddWidget(TemplateWidgetBase *widget) {
+void SwipeWidgetsList::AddWidget(QWidget *widget) {
 
   widget->show();
   layout_->addWidget(widget);

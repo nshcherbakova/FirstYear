@@ -9,10 +9,39 @@ static const int TITLE_ID = -1;
 using namespace FirstYear::Core;
 namespace FirstYear::UI {
 
+class TemplateWidgetHolder final : public QWidget {
+public:
+  TemplateWidgetHolder(QWidget *parent, TemplateWidgetBase *widget)
+      : QWidget(parent), widget_(widget) {
+    //    setAttribute(Qt::WA_TransparentForMouseEvents);
+    widget_->setParent(this);
+  }
+
+  TemplateWidgetBase *innerWidget() { return widget_; }
+
+protected:
+  virtual void resizeEvent(QResizeEvent *event) override final {
+    QWidget::resizeEvent(event);
+
+    const QSize holder_widget_size = size();
+
+    const auto frame_widget_size = widget_->preferedSize(holder_widget_size);
+    QRect frame_rect = {
+        {(holder_widget_size.width() - frame_widget_size.width()) / 2,
+         (holder_widget_size.height() - frame_widget_size.height()) / 2},
+        frame_widget_size};
+
+    widget_->setGeometry(frame_rect);
+  }
+
+private:
+  TemplateWidgetBase *widget_ = nullptr;
+};
+
 class SwipeWidget final : public QWidget {
 public:
   SwipeWidget(QWidget *parent) : QWidget(parent) {}
-  void addWidgets(std::vector<TemplateWidgetBase *> frame_widgets) {
+  void addWidgets(std::vector<TemplateWidgetHolder *> frame_widgets) {
     frame_widgets_ = frame_widgets;
   }
 
@@ -23,7 +52,6 @@ protected:
     QWidget::resizeEvent(event);
 
     for (auto &frame_widget : frame_widgets_) {
-      //  break;
       frame_widget->setGeometry({{0, 0}, size()});
       frame_widget->setMinimumWidth(width());
       frame_widget->setMinimumHeight(height());
@@ -38,7 +66,7 @@ protected:
 
 private:
   QWidget *swipe_widget_ = nullptr;
-  std::vector<TemplateWidgetBase *> frame_widgets_;
+  std::vector<TemplateWidgetHolder *> frame_widgets_;
 };
 
 MainWindow::MainWindow(FrameControl &frame_control)
@@ -75,7 +103,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
   const auto last_frame = frame_control.CurrentProject()->frame_id_;
   for (int i = 0; i < (int)frame_widgets_.size(); i++) {
 
-    if (frame_widgets_[i]->id() == last_frame) {
+    if (frame_widgets_[i]->innerWidget()->id() == last_frame) {
       current_fame_index = i;
     }
   }
@@ -115,15 +143,15 @@ void MainWindow::CreateLineEditWidget(
           });
 
   for (auto &widget : frame_widgets_) {
-    connect(widget, &TemplateWidgetBase::SignalTitleClicked, this,
-            [&](QString text) {
+    connect(widget->innerWidget(), &TemplateWidgetBase::SignalTitleClicked,
+            this, [&](QString text) {
               line_edit_->setText(text, TITLE_ID);
               line_edit_->show();
               line_edit_->raise();
             });
 
-    connect(widget, &TemplateWidgetBase::SignalMonthTextClicked, this,
-            [&](QString text, int month) {
+    connect(widget->innerWidget(), &TemplateWidgetBase::SignalMonthTextClicked,
+            this, [&](QString text, int month) {
               line_edit_->setText(text, month);
               line_edit_->show();
               line_edit_->raise();
@@ -169,9 +197,11 @@ void MainWindow::CreatePhotoTuneWidget(
 }
 void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
-  frame_widgets_ = std::vector<TemplateWidgetBase *>{
-      new DefaultTemplateWidget(nullptr, frame_control),
-      new DefaultTemplateWidget2(nullptr, frame_control)};
+  frame_widgets_ = std::vector<TemplateWidgetHolder *>{
+      new TemplateWidgetHolder(
+          nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
+      new TemplateWidgetHolder(
+          nullptr, new DefaultTemplateWidget2(nullptr, frame_control))};
 
   for (auto &widget : frame_widgets_) {
     widget->setGeometry({{0, 0}, size()});
@@ -180,7 +210,7 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
     widget->setMaximumWidth(width());
     widget->setMaximumHeight(height());
 
-    connect(widget, &TemplateWidgetBase::SignalTunePhoto, this,
+    connect(widget->innerWidget(), &TemplateWidgetBase::SignalTunePhoto, this,
             [&](int month_index, FrameParameters frame_data) {
               auto &month =
                   frame_control.CurrentProject()->monthes_[month_index];
@@ -189,7 +219,7 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
               photo_tune_widget_->show();
             });
 
-    connect(widget, &TemplateWidgetBase::SignalTextChanged, this,
+    connect(widget->innerWidget(), &TemplateWidgetBase::SignalTextChanged, this,
             [&]() { UpdateFrames(nullptr); });
   }
 
@@ -219,18 +249,19 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
                 return;
               }
             }
-            const auto frameData =
-                frame_widgets_[swipe_view_->CurrentItem()]->frameData(month);
+            const auto frameData = frame_widgets_[swipe_view_->CurrentItem()]
+                                       ->innerWidget()
+                                       ->frameData(month);
             photo_tune_widget_->setPhoto(
                 month, frameData, month_data.photo_data, month_data.text);
           });
 }
 
-void MainWindow::UpdateFrames(TemplateWidgetBase *exept) {
+void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {
 
   for (auto &widget : frame_widgets_) {
     if (exept != widget) {
-      widget->Update();
+      widget->innerWidget()->Update();
     }
   }
 }
@@ -238,32 +269,23 @@ void MainWindow::UpdateFrames(TemplateWidgetBase *exept) {
 void MainWindow::CreateSwipeWidget(
     FirstYear::Core::FrameControl &frame_control) {
   swipe_widget_ = new SwipeWidget(this);
-  swipe_view_ = new SwipeWidgetsList(swipe_widget_, frame_widgets_);
+  swipe_view_ = new SwipeWidgetsList(
+      swipe_widget_, {frame_widgets_.begin(), frame_widgets_.end()});
   swipe_widget_->addSwipeView(swipe_view_);
   swipe_widget_->addWidgets(frame_widgets_);
   swipe_widget_->setGeometry({{0, 0}, size()});
 
-  connect(
-      swipe_view_, &SwipeWidgetsList::SignalItemChanged, this, [&](int index) {
-        frame_control.CurrentProject()->frame_id_ = frame_widgets_[index]->id();
-        frame_control.SaveProject();
-      });
+  connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
+          [&](int index) {
+            frame_control.CurrentProject()->frame_id_ =
+                frame_widgets_[index]->innerWidget()->id();
+            frame_control.SaveProject();
+          });
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e) {
 
-  QRect frame_rect;
-  const QSize main_widget_size = size();
-  // #ifdef Q_OS_ANDROID
-  if (!frame_widgets_.empty()) {
-    auto frame_widget_size = frame_widgets_[0]->preferedSize(main_widget_size);
-    frame_rect = {
-        {(main_widget_size.width() - frame_widget_size.width()) / 2,
-         (main_widget_size.height() - frame_widget_size.height()) / 2},
-        frame_widget_size};
-  } else {
-    frame_rect = {{0, 0}, geometry().size()};
-  }
+  const QRect frame_rect = {{0, 0}, geometry().size()};
 
   if (swipe_widget_) {
     swipe_widget_->setGeometry(frame_rect);
