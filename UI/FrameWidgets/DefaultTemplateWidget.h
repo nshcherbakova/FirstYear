@@ -81,6 +81,8 @@ private:
   int id_ = -1;
 };
 
+class ForegroundWidget;
+
 class TemplateWidgetBase : public QWidget {
   Q_OBJECT
 public:
@@ -88,9 +90,6 @@ public:
       QWidget *parent, const TemplateWidgetParameters &frame_widget_data);
   TemplateWidgetBase &operator=(const TemplateWidgetBase &) = delete;
   virtual ~TemplateWidgetBase(){};
-
-public:
-  QString id() const;
 
 signals:
   void SignalTunePhoto(int, FirstYear::UI::FrameParameters);
@@ -100,6 +99,10 @@ signals:
 
 public slots:
   void Update();
+
+public:
+  QString id() const;
+  QSize preferedSize(QSize size) const;
 
 public: // QWidget
   virtual void setVisible(bool visible) override final;
@@ -139,7 +142,7 @@ private:
   std::vector<PhotoWidget *> photo_widgets_;
   std::vector<ClickableLabel *> photo_text_widgets_;
 
-  QWidget *foreground_widget_ = nullptr;
+  ForegroundWidget *foreground_widget_ = nullptr;
   QRectF title_slot_;
   int title_text_font_size_ = 20;
   std::vector<QRectF> photo_slots_;

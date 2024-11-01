@@ -8,19 +8,56 @@ static const int TITLE_ID = -1;
 
 using namespace FirstYear::Core;
 namespace FirstYear::UI {
+
+class SwipeWidget final : public QWidget {
+public:
+  SwipeWidget(QWidget *parent) : QWidget(parent) {}
+  void addWidgets(std::vector<TemplateWidgetBase *> frame_widgets) {
+    frame_widgets_ = frame_widgets;
+  }
+
+  void addSwipeView(QWidget *swipe_widget) { swipe_widget_ = swipe_widget; }
+
+protected:
+  virtual void resizeEvent(QResizeEvent *event) override final {
+    QWidget::resizeEvent(event);
+
+    for (auto &frame_widget : frame_widgets_) {
+      //  break;
+      frame_widget->setGeometry({{0, 0}, size()});
+      frame_widget->setMinimumWidth(width());
+      frame_widget->setMinimumHeight(height());
+      frame_widget->setMaximumWidth(width());
+      frame_widget->setMaximumHeight(height());
+    }
+
+    if (swipe_widget_) {
+      swipe_widget_->setGeometry({{0, 0}, size()});
+    }
+  }
+
+private:
+  QWidget *swipe_widget_ = nullptr;
+  std::vector<TemplateWidgetBase *> frame_widgets_;
+};
+
 MainWindow::MainWindow(FrameControl &frame_control)
     : QMainWindow()
 //, ui(new Ui::MainWindow)
 {
 
 #ifdef Q_OS_ANDROID
+
   setWindowState(Qt::WindowFullScreen);
   showMaximized();
   setMinimumSize(size());
+
 #elif defined Q_OS_MACOS
+
   QSize window_size(640, 640);
   setMinimumSize(window_size);
   show();
+
 #endif
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
@@ -36,9 +73,9 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   int current_fame_index = 0;
   const auto last_frame = frame_control.CurrentProject()->frame_id_;
-  for (int i = 0; i < (int)widgets_.size(); i++) {
+  for (int i = 0; i < (int)frame_widgets_.size(); i++) {
 
-    if (widgets_[i]->id() == last_frame) {
+    if (frame_widgets_[i]->id() == last_frame) {
       current_fame_index = i;
     }
   }
@@ -77,7 +114,7 @@ void MainWindow::CreateLineEditWidget(
             }
           });
 
-  for (auto &widget : widgets_) {
+  for (auto &widget : frame_widgets_) {
     connect(widget, &TemplateWidgetBase::SignalTitleClicked, this,
             [&](QString text) {
               line_edit_->setText(text, TITLE_ID);
@@ -132,11 +169,11 @@ void MainWindow::CreatePhotoTuneWidget(
 }
 void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
-  widgets_ = std::vector<TemplateWidgetBase *>{
+  frame_widgets_ = std::vector<TemplateWidgetBase *>{
       new DefaultTemplateWidget(nullptr, frame_control),
       new DefaultTemplateWidget2(nullptr, frame_control)};
 
-  for (auto &widget : widgets_) {
+  for (auto &widget : frame_widgets_) {
     widget->setGeometry({{0, 0}, size()});
     widget->setMinimumWidth(width());
     widget->setMinimumHeight(height());
@@ -183,7 +220,7 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
               }
             }
             const auto frameData =
-                widgets_[swipe_view_->CurrentItem()]->frameData(month);
+                frame_widgets_[swipe_view_->CurrentItem()]->frameData(month);
             photo_tune_widget_->setPhoto(
                 month, frameData, month_data.photo_data, month_data.text);
           });
@@ -191,7 +228,7 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
 void MainWindow::UpdateFrames(TemplateWidgetBase *exept) {
 
-  for (auto &widget : widgets_) {
+  for (auto &widget : frame_widgets_) {
     if (exept != widget) {
       widget->Update();
     }
@@ -200,38 +237,48 @@ void MainWindow::UpdateFrames(TemplateWidgetBase *exept) {
 
 void MainWindow::CreateSwipeWidget(
     FirstYear::Core::FrameControl &frame_control) {
-  swipe_view_ = new SwipeWidgetsList(this, widgets_);
-  swipe_view_->setGeometry({{0, 0}, size()});
-  connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
-          [&](int index) {
-            frame_control.CurrentProject()->frame_id_ = widgets_[index]->id();
-            frame_control.SaveProject();
-          });
+  swipe_widget_ = new SwipeWidget(this);
+  swipe_view_ = new SwipeWidgetsList(swipe_widget_, frame_widgets_);
+  swipe_widget_->addSwipeView(swipe_view_);
+  swipe_widget_->addWidgets(frame_widgets_);
+  swipe_widget_->setGeometry({{0, 0}, size()});
+
+  connect(
+      swipe_view_, &SwipeWidgetsList::SignalItemChanged, this, [&](int index) {
+        frame_control.CurrentProject()->frame_id_ = frame_widgets_[index]->id();
+        frame_control.SaveProject();
+      });
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e) {
 
+  QRect frame_rect;
+  const QSize main_widget_size = size();
+  // #ifdef Q_OS_ANDROID
+  if (!frame_widgets_.empty()) {
+    auto frame_widget_size = frame_widgets_[0]->preferedSize(main_widget_size);
+    frame_rect = {
+        {(main_widget_size.width() - frame_widget_size.width()) / 2,
+         (main_widget_size.height() - frame_widget_size.height()) / 2},
+        frame_widget_size};
+  } else {
+    frame_rect = {{0, 0}, geometry().size()};
+  }
+
+  if (swipe_widget_) {
+    swipe_widget_->setGeometry(frame_rect);
+  }
+
+  if (photo_tune_widget_)
+    photo_tune_widget_->setGeometry({{0, 0}, size()});
+
+  if (line_edit_)
+    line_edit_->setGeometry({{0, 0}, size()});
+
   if (e) {
     QMainWindow::resizeEvent(e);
   }
-
-  for (auto &widget : widgets_) {
-    //  break;
-    widget->setGeometry({{0, 0}, size()});
-    widget->setMinimumWidth(width());
-    widget->setMinimumHeight(height());
-    widget->setMaximumWidth(width());
-    widget->setMaximumHeight(height());
-  }
-
-  if (swipe_view_)
-    swipe_view_->setGeometry({{0, 0}, geometry().size()});
-
-  if (photo_tune_widget_)
-    photo_tune_widget_->setGeometry({{0, 0}, geometry().size()});
-
-  if (line_edit_)
-    line_edit_->setGeometry({QPoint(0, 0), size()});
+  update();
 }
 
 MainWindow::~MainWindow() {

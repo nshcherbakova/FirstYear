@@ -35,6 +35,23 @@ public:
     image_to_paint_ = image_.scaledToWidth(width(), Qt::SmoothTransformation);
   }
 
+  QSize preferedSize(QSize size) const {
+    QSize result;
+    float widget_k = (float)image_.width() / (float)image_.height();
+    float size_k = (float)size.width() / (float)size.height();
+    if (widget_k < size_k) {
+      result.setHeight(size.height());
+      result.setWidth(image_.width() * (float)size.height() /
+                      (float)image_.height());
+    } else {
+      result.setWidth(size.width());
+      result.setHeight(image_.height() * (float)size.width() /
+                       (float)image_.width());
+    }
+
+    return result;
+  }
+
 private:
   std::vector<QRectF> photo_slots_;
   QPixmap image_;
@@ -296,6 +313,13 @@ void TemplateWidgetBase::createPhotoTextWidget(Qt::Alignment alignment) {
 }
 
 QString TemplateWidgetBase::id() const { return id_; }
+QSize TemplateWidgetBase::preferedSize(QSize size) const {
+  if (foreground_widget_) {
+    return foreground_widget_->preferedSize(size);
+  } else {
+    return size;
+  }
+}
 
 void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
@@ -325,7 +349,7 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
 
 void TemplateWidgetBase::createForegroundWidget() {
   foreground_widget_ = new ForegroundWidget(this, foreground_, photo_slots_);
-  foreground_widget_->setGeometry(geometry());
+  foreground_widget_->setGeometry({{0, 0}, size()});
   foreground_widget_->raise();
   foreground_widget_->show();
   foreground_widget_->setContentsMargins(0, 0, 0, 0);
@@ -335,7 +359,7 @@ void TemplateWidgetBase::createForegroundWidget() {
 void TemplateWidgetBase::createButtons(Core::FrameControl &control) {
 
   render_button_ = new QPushButton(this);
-  render_button_->setGeometry(20, geometry().height() - 2 * 40, 2 * 40, 40);
+  render_button_->setGeometry(20, height() - 2 * 40, 2 * 40, 40);
   render_button_->setText("Render");
   render_button_->setContentsMargins(0, 0, 0, 0);
   connect(render_button_, &QPushButton::clicked, this, [&] {
@@ -347,8 +371,7 @@ void TemplateWidgetBase::createButtons(Core::FrameControl &control) {
   });
 
   share_button_ = new QPushButton(this);
-  share_button_->setGeometry(geometry().width() - 100,
-                             geometry().height() - 2 * 40, 2 * 40, 40);
+  share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
   share_button_->setText("Share");
   share_button_->setContentsMargins(0, 0, 0, 0);
   connect(share_button_, &QPushButton::clicked, this, [&] {
@@ -357,7 +380,7 @@ void TemplateWidgetBase::createButtons(Core::FrameControl &control) {
 }
 
 void TemplateWidgetBase::Update() {
-  QRect rect = {QPoint(0, 0), QWidget::size()};
+  QRect rect = {QPoint(0, 0), size()};
   foreground_widget_->setGeometry(rect);
   render_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
   share_button_->setGeometry(rect.width() - 100, rect.height() - 2 * 40, 2 * 40,

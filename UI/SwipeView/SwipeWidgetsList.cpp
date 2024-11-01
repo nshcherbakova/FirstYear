@@ -86,12 +86,11 @@ void SwipeWidgetsList::CreateInnerWidget(
   setWidget(filter_buttons_widget);
 }
 
-void SwipeWidgetsList::resizeEvent(QResizeEvent *e) {
+void SwipeWidgetsList::resizeEvent(QResizeEvent *event) {
+  QScrollArea::resizeEvent(event);
 
-  QScrollArea::resizeEvent(e);
   QScroller::scroller(this)->setSnapPositionsX(0, width());
   layout_->update();
-
   SetCurrentItem(current_item_index_);
 }
 

@@ -8,6 +8,7 @@
 namespace FirstYear::UI {
 class SwipeWidgetsList;
 class PhotoTuneWidget;
+class SwipeWidget;
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -27,8 +28,9 @@ protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
 private:
-  std::vector<TemplateWidgetBase *> widgets_;
+  std::vector<TemplateWidgetBase *> frame_widgets_;
   SwipeWidgetsList *swipe_view_ = nullptr;
+  SwipeWidget *swipe_widget_ = nullptr;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
   LineEditWidget *line_edit_ = nullptr;
 };
