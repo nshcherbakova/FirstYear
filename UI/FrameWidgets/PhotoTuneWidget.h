@@ -3,7 +3,6 @@
 #define FIRSTYEAR_UI_PHOTO_TUNE_WIDGET_H
 #include <Core/Project/Project.h>
 #include <QPixmap>
-#include <QPushButton>
 #include <QWidget>
 #include <UI/Utility.h>
 

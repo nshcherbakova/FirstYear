@@ -107,6 +107,7 @@ public:
 public: // QWidget
   virtual void setVisible(bool visible) override final;
   FrameParameters frameData(int month);
+  QPixmap renderFrame(FirstYear::Core::ProjectPtr) const;
 
 protected:
   virtual void paintEvent(QPaintEvent *e) override final;
@@ -116,13 +117,10 @@ private:
   void load(Core::FrameControl &control);
   void initMonthPhotoWidgets(Core::FrameControl &control);
   void initPhotoTuneWidget(Core::FrameControl &control);
-  void createButtons(Core::FrameControl &control);
   void createForegroundWidget();
   void createTitleTextWidget(Qt::Alignment alignment);
   void createPhotoTextWidget(Qt::Alignment alignment);
   void InitPhotos(Core::FrameControl &control);
-
-  QPixmap renderFrame(FirstYear::Core::ProjectPtr);
 
 protected:
   QString id_;
@@ -150,8 +148,6 @@ private:
   std::vector<QPoint> photo_text_anchors_;
   int photo_text_font_size_ = 20;
 
-  QPushButton *render_button_ = nullptr;
-  QPushButton *share_button_ = nullptr;
   ClickableLabel *title_text_widget_ = nullptr;
   // LineEditWidget *line_edit_ = nullptr;
 };

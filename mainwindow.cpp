@@ -13,7 +13,6 @@ class TemplateWidgetHolder final : public QWidget {
 public:
   TemplateWidgetHolder(QWidget *parent, TemplateWidgetBase *widget)
       : QWidget(parent), widget_(widget) {
-    //    setAttribute(Qt::WA_TransparentForMouseEvents);
     widget_->setParent(this);
   }
 
@@ -70,8 +69,7 @@ private:
 };
 
 MainWindow::MainWindow(FrameControl &frame_control)
-    : QMainWindow()
-//, ui(new Ui::MainWindow)
+    : QMainWindow() //, project_control_(frame_control)
 {
 
 #ifdef Q_OS_ANDROID
@@ -91,28 +89,33 @@ MainWindow::MainWindow(FrameControl &frame_control)
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
   CreatePhotoTuneWidget(frame_control);
-
   CreateFrames(frame_control);
   CreateLineEditWidget(frame_control);
-
   CreateSwipeWidget(frame_control);
+  CreateButtons(frame_control);
 
   photo_tune_widget_->raise();
 
-  int current_fame_index = 0;
-  const auto last_frame = frame_control.CurrentProject()->frame_id_;
-  for (int i = 0; i < (int)frame_widgets_.size(); i++) {
-
-    if (frame_widgets_[i]->innerWidget()->id() == last_frame) {
-      current_fame_index = i;
-    }
-  }
+  int current_fame_index = CurrentTemplateIndex(frame_control);
 
   swipe_view_->SetCurrentItem(current_fame_index);
 
   resizeEvent(nullptr);
 }
 
+int MainWindow::CurrentTemplateIndex(
+    FirstYear::Core::FrameControl &frame_control) const {
+  int current_fame_index = 0;
+  const auto last_frame = frame_control.CurrentProject()->frame_id_;
+  for (int i = 0; i < (int)frame_widgets_.size(); i++) {
+
+    if (frame_widgets_[i]->innerWidget()->id() == last_frame) {
+      current_fame_index = i;
+      break;
+    }
+  }
+  return current_fame_index;
+}
 void MainWindow::CreateLineEditWidget(
     FirstYear::Core::FrameControl &frame_control) {
   line_edit_ = new LineEditWidget(this);
@@ -195,6 +198,7 @@ void MainWindow::CreatePhotoTuneWidget(
             line_edit_->raise();
           });
 }
+
 void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
   frame_widgets_ = std::vector<TemplateWidgetHolder *>{
@@ -283,27 +287,57 @@ void MainWindow::CreateSwipeWidget(
           });
 }
 
+void MainWindow::CreateButtons(Core::FrameControl &control) {
+
+  render_button_ = new QPushButton(this);
+  render_button_->setGeometry(20, height() - 2 * 40, 2 * 40, 40);
+  render_button_->setText("Render");
+  render_button_->setContentsMargins(0, 0, 0, 0);
+  connect(render_button_, &QPushButton::clicked, this, [&] {
+    const auto index = CurrentTemplateIndex(control);
+    const auto current_widget = frame_widgets_[index]->innerWidget();
+
+    auto pixmap = current_widget->renderFrame(control.CurrentProject());
+    pixmap.save("/Users/nshcherbakova/Desktop/FirstYear/test1.png");
+    QLabel *l = new QLabel("test", this);
+    l->setPixmap(pixmap);
+    l->show();
+  });
+
+  share_button_ = new QPushButton(this);
+  share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
+  share_button_->setText("Share");
+  share_button_->setContentsMargins(0, 0, 0, 0);
+  connect(share_button_, &QPushButton::clicked, this, [&] {
+
+  });
+}
+
 void MainWindow::resizeEvent(QResizeEvent *e) {
-
-  const QRect frame_rect = {{0, 0}, geometry().size()};
-
-  if (swipe_widget_) {
-    swipe_widget_->setGeometry(frame_rect);
-  }
-
-  if (photo_tune_widget_)
-    photo_tune_widget_->setGeometry({{0, 0}, size()});
-
-  if (line_edit_)
-    line_edit_->setGeometry({{0, 0}, size()});
-
   if (e) {
     QMainWindow::resizeEvent(e);
   }
+
+  const QRect rect = {{0, 0}, size()};
+
+  if (swipe_widget_) {
+    swipe_widget_->setGeometry(rect);
+  }
+
+  if (photo_tune_widget_)
+    photo_tune_widget_->setGeometry(rect);
+
+  if (line_edit_)
+    line_edit_->setGeometry(rect);
+
+  if (render_button_)
+    render_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
+  if (share_button_)
+    share_button_->setGeometry(rect.width() - 100, rect.height() - 2 * 40,
+                               2 * 40, 40);
+
   update();
 }
 
-MainWindow::~MainWindow() {
-  // delete ui;
-}
+MainWindow::~MainWindow() {}
 } // namespace FirstYear::UI

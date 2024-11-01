@@ -282,7 +282,6 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   initMonthPhotoWidgets(control_);
 
-  createButtons(control_);
   createForegroundWidget();
 
   createTitleTextWidget(parameters.title_parameters.alignment);
@@ -356,35 +355,10 @@ void TemplateWidgetBase::createForegroundWidget() {
   foreground_widget_->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
-void TemplateWidgetBase::createButtons(Core::FrameControl &control) {
-
-  render_button_ = new QPushButton(this);
-  render_button_->setGeometry(20, height() - 2 * 40, 2 * 40, 40);
-  render_button_->setText("Render");
-  render_button_->setContentsMargins(0, 0, 0, 0);
-  connect(render_button_, &QPushButton::clicked, this, [&] {
-    auto pixmap = this->renderFrame(control.CurrentProject());
-    pixmap.save("/Users/nshcherbakova/Desktop/FirstYear/test1.png");
-    QLabel *l = new QLabel("test", this);
-    l->setPixmap(pixmap);
-    l->show();
-  });
-
-  share_button_ = new QPushButton(this);
-  share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
-  share_button_->setText("Share");
-  share_button_->setContentsMargins(0, 0, 0, 0);
-  connect(share_button_, &QPushButton::clicked, this, [&] {
-
-  });
-}
-
 void TemplateWidgetBase::Update() {
   QRect rect = {QPoint(0, 0), size()};
   foreground_widget_->setGeometry(rect);
-  render_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
-  share_button_->setGeometry(rect.width() - 100, rect.height() - 2 * 40, 2 * 40,
-                             40);
+
   load(control_);
 
   title_text_widget_->setGeometry(
@@ -497,7 +471,8 @@ void TemplateWidgetBase::paintEvent(QPaintEvent *e) {
   // Draw background
 }
 
-QPixmap TemplateWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) {
+QPixmap
+TemplateWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) const {
   QPixmap pixmap(foreground_to_render_.size() * devicePixelRatio());
   pixmap.setDevicePixelRatio(devicePixelRatio());
   //
