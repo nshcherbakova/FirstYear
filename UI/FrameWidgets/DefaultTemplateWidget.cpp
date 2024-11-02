@@ -13,21 +13,14 @@ static const QColor c_background_color = QColor(250, 250, 247, 180);
 
 class ForegroundWidget final : public QWidget {
 public:
-  ForegroundWidget(QWidget *parent, QPixmap image,
-                   std::vector<QRectF> photo_slots)
-      : QWidget(parent), photo_slots_(photo_slots), image_(image) {}
+  ForegroundWidget(QWidget *parent, QPixmap image)
+      : QWidget(parent), image_(image) {}
 
 public:
   virtual void paintEvent(QPaintEvent *) override final {
     QPainter painter(this);
 
     painter.drawPixmap(rect(), image_to_paint_, rect());
-
-    for (int i = 0; i < (int)photo_slots_.size(); i++) {
-      auto new_rect = photo_slots_[i];
-      painter.setPen(Qt::red);
-      painter.drawRect(new_rect);
-    }
   }
 
   virtual void resizeEvent(QResizeEvent *e) override final {
@@ -53,7 +46,6 @@ public:
   }
 
 private:
-  std::vector<QRectF> photo_slots_;
   QPixmap image_;
   QPixmap image_to_paint_;
 };
@@ -155,11 +147,12 @@ void LineEditWidget::mouseReleaseEvent(QMouseEvent *) {
 ////////////////////////////////////////////////////////////////////
 ///
 DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
-                                             Core::FrameControl &control)
+                                             Core::FrameControl &control,
+                                             bool render_state)
 
     : TemplateWidgetBase(parent,
                          {control,
-                          "1",
+                          templateId(),
                           {{40, 5, 600, 15}, Qt::AlignCenter},
                           {{{35, 160},
                             {184, 160},
@@ -191,14 +184,17 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
   // reload(control);
 }
 
+QString DefaultTemplateWidget::templateId() { return "1"; }
+
 ////////////////////////////////////////////////////////////////////
 ///
 DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
-                                               Core::FrameControl &control)
+                                               Core::FrameControl &control,
+                                               bool render_state)
 
     : TemplateWidgetBase(parent,
                          {control,
-                          "2",
+                          templateId(),
                           {{40, 5, 600, 15}, Qt::AlignCenter},
                           {{{97, 160},
                             {246, 160},
@@ -243,14 +239,14 @@ DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
   // reload(control);
 }
 
+QString DefaultTemplateWidget2::templateId() { return "2"; }
+
 ////////////////////////////////////////////////////////////////////
 ///
 TemplateWidgetBase::TemplateWidgetBase(
-    QWidget *parent, const TemplateWidgetParameters &parameters)
+    QWidget *parent, const TemplateWidgetParameters &parameters,
+    bool render_state)
     : QWidget(parent), id_(parameters.id),
-      foreground_(QString(c_foreground_str).arg(parameters.id)),
-      foreground_to_render_(
-          QString(c_foreground_to_render_str).arg(parameters.id)),
       title_slot_real_(std::move(parameters.title_parameters.title_rect)),
       title_text_font_size_real_(c_title_text_font_size),
       photo_slots_real_(std::move(parameters.photo_slots)),
@@ -268,6 +264,10 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   setContentsMargins(0, 0, 0, 0);
   setAutoFillBackground(true);
+
+  foreground_ = QPixmap(
+      render_state ? QString(c_foreground_to_render_str).arg(parameters.id)
+                   : QString(c_foreground_str).arg(parameters.id));
 
   if (frame_data_.size() == 1) {
     frame_data_.resize(12, frame_data_[0]);
@@ -347,7 +347,7 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
 }
 
 void TemplateWidgetBase::createForegroundWidget() {
-  foreground_widget_ = new ForegroundWidget(this, foreground_, photo_slots_);
+  foreground_widget_ = new ForegroundWidget(this, foreground_);
   foreground_widget_->setGeometry({{0, 0}, size()});
   foreground_widget_->raise();
   foreground_widget_->show();
@@ -370,6 +370,9 @@ void TemplateWidgetBase::Update() {
 
     auto &photo_text_widget = photo_text_widgets_[i];
 
+    photo_text_widget->setFontSize(photo_text_font_size_);
+    photo_text_widget->adjustSize();
+
     QRect rect;
     if (photo_text_widget->alignment() == Qt::AlignCenter) {
       rect =
@@ -383,8 +386,6 @@ void TemplateWidgetBase::Update() {
                 photo_text_widget->heightForWidth(photo_text_widget->width())};
     }
     photo_text_widget->setGeometry(rect);
-
-    photo_text_widget->setFontSize(photo_text_font_size_);
   }
 }
 
@@ -460,49 +461,11 @@ void TemplateWidgetBase::setVisible(bool visible) {
   }
   QWidget::setVisible(visible);
 }
-void TemplateWidgetBase::paintEvent(QPaintEvent *e) {
-  QWidget::paintEvent(e);
-  QPainter painter(this);
-  for (auto rect : photo_slots_) {
-    painter.setBrush(Qt::red);
-    painter.drawRect(rect);
-  }
 
-  // Draw background
-}
-
-QPixmap
-TemplateWidgetBase::renderFrame(FirstYear::Core::ProjectPtr project) const {
-  QPixmap pixmap(foreground_to_render_.size() * devicePixelRatio());
-  pixmap.setDevicePixelRatio(devicePixelRatio());
-  //
-
-  std::vector<QRectF> photo_slots_for_render;
-  photo_slots_for_render.resize(photo_slots_real_.size());
-  double k = (double)foreground_to_render_.width() / foreground_.width();
-  for (int i = 0; i < (int)photo_slots_real_.size(); i++) {
-    auto new_rect = photo_slots_real_[i];
-    new_rect.setTopLeft(photo_slots_real_[i].topLeft() * k);
-    new_rect.setSize(photo_slots_real_[i].size() * k);
-    photo_slots_for_render[i] = new_rect;
-  }
-
-  for (int i = 0; i < (int)project->monthes_.size(); i++) {
-    QPainter painter_for_photo(&pixmap);
-    QRectF slot_rect = photo_slots_for_render[i];
-
-    painter_for_photo.setClipRect(slot_rect);
-
-    PhotoPainter photo_painter;
-    photo_painter.init(project->monthes_[i].photo_data, slot_rect, slot_rect);
-    photo_painter.drawPhoto(painter_for_photo);
-  }
-
-  QPainter painter(&pixmap);
-  painter.drawPixmap(pixmap.rect(), foreground_to_render_,
-                     foreground_to_render_.rect());
-  return pixmap;
-  // Draw background
+QPixmap TemplateWidgetBase::renderFrame() {
+  setGeometry({{0, 0}, foreground_.size() * devicePixelRatio()});
+  Update();
+  return grab();
 }
 
 } // namespace FirstYear::UI

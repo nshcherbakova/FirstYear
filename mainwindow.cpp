@@ -294,10 +294,14 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
   render_button_->setText("Render");
   render_button_->setContentsMargins(0, 0, 0, 0);
   connect(render_button_, &QPushButton::clicked, this, [&] {
-    const auto index = CurrentTemplateIndex(control);
-    const auto current_widget = frame_widgets_[index]->innerWidget();
+    QPixmap pixmap;
+    if (control.CurrentProject()->frame_id_ ==
+        DefaultTemplateWidget::templateId())
+      pixmap = DefaultTemplateWidget(this, control, true).renderFrame();
+    else if (control.CurrentProject()->frame_id_ ==
+             DefaultTemplateWidget2::templateId())
+      pixmap = DefaultTemplateWidget2(this, control, true).renderFrame();
 
-    auto pixmap = current_widget->renderFrame(control.CurrentProject());
     pixmap.save("/Users/nshcherbakova/Desktop/FirstYear/test1.png");
     QLabel *l = new QLabel("test", this);
     l->setPixmap(pixmap);

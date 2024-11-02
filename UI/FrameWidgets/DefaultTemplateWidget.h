@@ -86,8 +86,9 @@ class ForegroundWidget;
 class TemplateWidgetBase : public QWidget {
   Q_OBJECT
 public:
-  explicit TemplateWidgetBase(
-      QWidget *parent, const TemplateWidgetParameters &frame_widget_data);
+  explicit TemplateWidgetBase(QWidget *parent,
+                              const TemplateWidgetParameters &frame_widget_data,
+                              bool render_state = false);
   TemplateWidgetBase &operator=(const TemplateWidgetBase &) = delete;
   virtual ~TemplateWidgetBase(){};
 
@@ -107,10 +108,9 @@ public:
 public: // QWidget
   virtual void setVisible(bool visible) override final;
   FrameParameters frameData(int month);
-  QPixmap renderFrame(FirstYear::Core::ProjectPtr) const;
+  QPixmap renderFrame();
 
 protected:
-  virtual void paintEvent(QPaintEvent *e) override final;
   virtual void resizeEvent(QResizeEvent *event) override final;
 
 private:
@@ -125,7 +125,6 @@ private:
 protected:
   QString id_;
   QPixmap foreground_;
-  QPixmap foreground_to_render_;
   QRectF title_slot_real_;
   int title_text_font_size_real_ = 20;
   std::vector<QRectF> photo_slots_real_;
@@ -155,8 +154,11 @@ private:
 class DefaultTemplateWidget final : public TemplateWidgetBase {
   Q_OBJECT
 public:
-  explicit DefaultTemplateWidget(QWidget *parent, Core::FrameControl &control);
+  explicit DefaultTemplateWidget(QWidget *parent, Core::FrameControl &control,
+                                 bool render_state = false);
   virtual ~DefaultTemplateWidget(){};
+
+  static QString templateId();
 
 public:
   DefaultTemplateWidget &operator=(const DefaultTemplateWidget &) = delete;
@@ -164,8 +166,11 @@ public:
 class DefaultTemplateWidget2 final : public TemplateWidgetBase {
   Q_OBJECT
 public:
-  explicit DefaultTemplateWidget2(QWidget *parent, Core::FrameControl &control);
+  explicit DefaultTemplateWidget2(QWidget *parent, Core::FrameControl &control,
+                                  bool render_state = false);
   virtual ~DefaultTemplateWidget2(){};
+
+  static QString templateId();
 
 public:
   DefaultTemplateWidget2 &operator=(const DefaultTemplateWidget2 &) = delete;
