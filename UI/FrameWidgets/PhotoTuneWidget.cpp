@@ -413,9 +413,9 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
                 width() - (int)(width() / 2.5), height() / 7};
   text_->setGeometry(rect);
 
-  QFont font = text_->font();
-  font.setPointSize(width() / 20);
-  text_->setFont(font);
+  // QFont font = text_->fontS();
+  //  font.setPointSize(width() / 20);
+  text_->setFontSize(width() / 20);
 }
 
 bool PhotoTuneWidget::event(QEvent *event) {
