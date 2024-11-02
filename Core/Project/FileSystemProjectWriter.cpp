@@ -47,18 +47,21 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project) {
     UNI_ENSURE_RETURN(status);
   }
 
-  QJsonObject project_metadata;
-  project_metadata.insert("id", project->id_);
-  project_metadata.insert("title", project->title_);
-  project_metadata.insert("frame_id", project->frame_id_);
+  if (project->state != 0) {
+    project->state = 0;
+    QJsonObject project_metadata;
+    project_metadata.insert("id", project->id_);
+    project_metadata.insert("title", project->title_);
+    project_metadata.insert("frame_id", project->frame_id_);
 
-  QJsonDocument project_metadata_document(project_metadata);
+    QJsonDocument project_metadata_document(project_metadata);
 
-  QFile projetct_metadata_file(project_metadata_path_);
-  projetct_metadata_file.open(QIODevice::WriteOnly);
+    QFile projetct_metadata_file(project_metadata_path_);
+    projetct_metadata_file.open(QIODevice::WriteOnly);
 
-  projetct_metadata_file.write(project_metadata_document.toJson());
-  projetct_metadata_file.close();
+    projetct_metadata_file.write(project_metadata_document.toJson());
+    projetct_metadata_file.close();
+  }
 
   for (int i = 0; i < 12; i++) {
     Write(project, i);
@@ -89,40 +92,53 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
   const auto &month_data = project->monthes_[month];
 
-  QJsonObject month_metadata;
+  if (month_data.photo_data.state &
+          (short)PhotoData::STATE::TRANSFORM_SR_CHANGED ||
+      month_data.photo_data.state &
+          (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED ||
+      month_data.state & (short)MonthItem::STATE::TEXT_CHANGED ||
+      month_data.state & (short)MonthItem::STATE::FILTER_ID_CHANGED) {
+    QJsonObject month_metadata;
 
-  month_metadata.insert("transform_offset",
-                        TransformJson(month_data.photo_data.transform_offset));
-  month_metadata.insert(
-      "transform_scale_rotate",
-      TransformJson(month_data.photo_data.transform_scale_rotate));
+    month_metadata.insert(
+        "transform_offset",
+        TransformJson(month_data.photo_data.transform_offset));
+    month_metadata.insert(
+        "transform_scale_rotate",
+        TransformJson(month_data.photo_data.transform_scale_rotate));
 
-  month_metadata.insert("text", month_data.text);
+    month_metadata.insert("text", month_data.text);
 
-  month_metadata.insert("filter_id", month_data.filter_id);
+    month_metadata.insert("filter_id", month_data.filter_id);
 
-  QJsonDocument month_metadata_document(month_metadata);
+    QJsonDocument month_metadata_document(month_metadata);
 
-  const QString month_path = month_path_template_.arg(QString::number(month));
+    const QString month_path = month_path_template_.arg(QString::number(month));
 
-  const QString month_metadata_path =
-      month_metadata_path_template_.arg(QString::number(month));
-  QFile month_metadata_file(month_metadata_path);
-  if (!month_metadata_file.open(QIODevice::WriteOnly)) {
-    spdlog::error("Can't open {} to save metadata.",
-                  month_metadata_path.toStdString());
+    const QString month_metadata_path =
+        month_metadata_path_template_.arg(QString::number(month));
+    QFile month_metadata_file(month_metadata_path);
+    if (!month_metadata_file.open(QIODevice::WriteOnly)) {
+      spdlog::error("Can't open {} to save metadata.",
+                    month_metadata_path.toStdString());
+    }
+    month_metadata_file.write(month_metadata_document.toJson());
+    month_metadata_file.close();
   }
-  month_metadata_file.write(month_metadata_document.toJson());
-  month_metadata_file.close();
 
-  if (!month_data.photo_data.is_stub_image) {
-    if (!month_data.photo_data.image.isNull()) {
-      if (!month_data.photo_data.image.save(
-              month_photo_path_template_.arg(month), IMAGE_FORMAT)) {
-        spdlog::info("Error, image was not saved {0}",
-                     month_photo_path_template_.arg(month).toStdString());
+  if (month_data.photo_data.state & (short)PhotoData::STATE::IMAGE_CHANGED) {
+    if (!month_data.photo_data.is_stub_image) {
+      if (!month_data.photo_data.image.isNull()) {
+        if (!month_data.photo_data.image.save(
+                month_photo_path_template_.arg(month), IMAGE_FORMAT)) {
+          spdlog::info("Error, image was not saved {0}",
+                       month_photo_path_template_.arg(month).toStdString());
+        }
       }
     }
   }
+
+  month_data.photo_data.state = 0;
+  month_data.state = 0;
 }
 } // namespace FirstYear::Core

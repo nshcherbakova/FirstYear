@@ -222,6 +222,9 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
     transform_ = transform;
     photo_data_.transform_scale_rotate = scale_rotate;
     photo_data_.transform_offset = translate;
+    photo_data_.state |=
+        (short)Core::PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+        (short)Core::PhotoData::STATE::TRANSFORM_SR_CHANGED;
   }
 }
 

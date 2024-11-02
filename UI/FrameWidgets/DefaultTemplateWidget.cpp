@@ -346,6 +346,10 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
         if (!file.isNull()) {
           month.photo_data.is_stub_image = false;
           month.photo_data.image = QPixmap(file);
+          month.photo_data.state =
+              ((short)Core::PhotoData::STATE::IMAGE_CHANGED |
+               (short)Core::PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+               (short)Core::PhotoData::STATE::TRANSFORM_SR_CHANGED);
           //  month.photo_data.scale = 2.5;
 
           control.SaveProjectMonth(i);

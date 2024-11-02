@@ -130,12 +130,15 @@ void MainWindow::CreateLineEditWidget(
                 return;
               }
               project->title_ = text;
+              project->state |= (short)Core::Project::STATE::TITLE_CHANGED;
             } else {
               UNI_ASSERT(id < (int)project->monthes_.size());
               if (project->monthes_[id].text == text) {
                 return;
               }
               project->monthes_[id].text = text;
+              project->monthes_[id].state |=
+                  (short)Core::MonthItem::STATE::TEXT_CHANGED;
             }
             frame_control.SaveProject();
 
@@ -183,8 +186,11 @@ void MainWindow::CreatePhotoTuneWidget(
     auto &month_data = project->monthes_[month];
     const auto file = Utility::OpenFile(photo_tune_widget_);
     if (!file.isNull()) {
-      month_data.photo_data = {QPixmap(file), false, QTransform(),
-                               QTransform()};
+      month_data.photo_data = {
+          QPixmap(file), false, QTransform(), QTransform(),
+          ((short)PhotoData::STATE::IMAGE_CHANGED |
+           (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+           (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
       photo_tune_widget_->updatePhoto(month_data.photo_data);
     }
   });
@@ -245,8 +251,11 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
             if (month_data.photo_data.is_stub_image) {
               const auto file = Utility::OpenFile(photo_tune_widget_);
               if (!file.isNull()) {
-                month_data.photo_data = {QPixmap(file), false, QTransform(),
-                                         QTransform()};
+                month_data.photo_data = {
+                    QPixmap(file), false, QTransform(), QTransform(),
+                    ((short)PhotoData::STATE::IMAGE_CHANGED |
+                     (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+                     (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
                 photo_tune_widget_->updatePhoto(month_data.photo_data);
               } else {
                 photo_tune_widget_->hide();
@@ -283,6 +292,8 @@ void MainWindow::CreateSwipeWidget(
           [&](int index) {
             frame_control.CurrentProject()->frame_id_ =
                 frame_widgets_[index]->innerWidget()->id();
+            frame_control.CurrentProject()->state |=
+                (short)Core::Project::STATE::FRAME_ID_CHANGED;
             frame_control.SaveProject();
           });
 }
@@ -302,8 +313,17 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
              DefaultTemplateWidget2::templateId())
       pixmap = DefaultTemplateWidget2(this, control, true).renderFrame();
 
-    pixmap.save("/Users/nshcherbakova/Desktop/FirstYear/test1.png");
+#ifdef Q_OS_ANDROID
+      // QString path =
+      //     QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)
+      //     + "/test.png";
+#else
+    QString path ="/Users/nshcherbakova/Desktop/FirstYear/test1.png";
+pixmap.save(path);
+#endif
+
     QLabel *l = new QLabel("test", this);
+    l->setGeometry({{0, 0}, size()});
     l->setPixmap(pixmap);
     l->show();
   });
