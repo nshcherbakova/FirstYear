@@ -66,26 +66,35 @@ static const int c_title_text_font_size = 30;
 static const int c_month_text_font_size = 20;
 
 ClickableLabel::ClickableLabel(QWidget *parent, int font_size,
-                               QString font_color, QString font_family)
-    : QLabel(parent) {
+                               QString font_color, QString font_family,
+                               bool hide_edit_icon)
+    : QLabel(parent), hide_edit_icon_(hide_edit_icon) {
 
   font_ = QFont(font_family, font_size, QFont::Normal);
   QLabel::setFont(font_);
 
   styled_text_ = "<a style=text-decoration:none style=color:%1>%2</a>";
   styled_text_ = styled_text_.arg(font_color);
+  icon_text_ =
+      "<html><img src=':images/icons/edit' width='%1' height='%1'></html>";
 }
 
 void ClickableLabel::setText(QString text) {
 
   text_ = text;
-  QLabel::setText(styled_text_.arg(text));
+  if (hide_edit_icon_) {
+    QLabel::setText(styled_text_.arg(text));
+  } else {
+    QLabel::setText(icon_text_.arg(icon_size_) + styled_text_.arg(text));
+  }
   // QLabel::adjustSize();
 }
 
 void ClickableLabel::setFontSize(int size) {
   font_.setPointSize(size);
   QLabel::setFont(font_);
+  icon_size_ = size;
+  setText(text_);
 }
 
 QString ClickableLabel::text() const { return text_; }
@@ -179,7 +188,8 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
                            {184, 330, 125, 125},
                            {328, 330, 125, 125},
                            {476, 330, 125, 125}},
-                          {{FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}}) {
+                          {{FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}},
+                         render_state) {
 
   // reload(control);
 }
@@ -234,7 +244,8 @@ DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
                            {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
                            {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
                            {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}}) {
+                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}},
+                         render_state) {
 
   // reload(control);
 }
@@ -255,7 +266,7 @@ TemplateWidgetBase::TemplateWidgetBase(
       // photo_text_aligment_(parameters.photo_text_parameters.aligment),
       photo_text_font_size_real_(c_month_text_font_size),
       frame_data_(std::move(parameters.frame_data)),
-      control_(parameters.control) {
+      control_(parameters.control), render_state_(render_state) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
@@ -284,25 +295,28 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   createForegroundWidget();
 
-  createTitleTextWidget(parameters.title_parameters.alignment);
-  createPhotoTextWidget(parameters.photo_text_parameters.alignment);
+  createTitleTextWidget(parameters.title_parameters.alignment, render_state);
+  createPhotoTextWidget(parameters.photo_text_parameters.alignment,
+                        render_state);
 }
 
-void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment) {
+void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment,
+                                               bool is_rendering) {
   title_text_widget_ =
       new ClickableLabel(this, c_title_text_font_size, c_title_font_color_str,
-                         c_title_font_family_str);
+                         c_title_font_family_str, is_rendering);
   title_text_widget_->setAlignment(alignment);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
 }
 
-void TemplateWidgetBase::createPhotoTextWidget(Qt::Alignment alignment) {
+void TemplateWidgetBase::createPhotoTextWidget(Qt::Alignment alignment,
+                                               bool is_rendering) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    photo_text_widgets_[i] = new ClickableLabel(this, c_month_text_font_size,
-                                                c_month_text_font_color_str,
-                                                c_month_text_font_family_str);
+    photo_text_widgets_[i] = new ClickableLabel(
+        this, c_month_text_font_size, c_month_text_font_color_str,
+        c_month_text_font_family_str, is_rendering);
     photo_text_widgets_[i]->setAlignment(alignment);
 
     connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
@@ -396,8 +410,12 @@ void TemplateWidgetBase::resizeEvent(QResizeEvent *e) {
 
 void TemplateWidgetBase::load(Core::FrameControl &control) {
 
-  double k = (double)width() / foreground_.width();
+  double k = (double)width() / (double)foreground_.width();
 
+  if (render_state_) {
+    auto base_size = QImageReader(QString(c_foreground_str).arg(id_)).size();
+    k *= (double)foreground_.width() / (double)base_size.width();
+  }
   // adjust coordinatrs
   for (int i = 0; i < (int)photo_slots_real_.size(); i++) {
     auto new_rect = photo_slots_real_[i];
@@ -463,8 +481,7 @@ void TemplateWidgetBase::setVisible(bool visible) {
 }
 
 QPixmap TemplateWidgetBase::renderFrame() {
-  setGeometry({{0, 0}, foreground_.size() * devicePixelRatio()});
-  Update();
+  setGeometry({{0, 0}, foreground_.size()});
   return grab();
 }
 

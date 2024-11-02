@@ -41,7 +41,7 @@ class ClickableLabel : public QLabel {
 
 public:
   explicit ClickableLabel(QWidget *parent, int font_size, QString font_color,
-                          QString font_family);
+                          QString font_family, bool hide_edit_icon = false);
 
   void setText(QString text);
   void setFontSize(int size);
@@ -56,7 +56,10 @@ protected:
 private:
   QFont font_;
   QString styled_text_;
+  QString icon_text_;
   QString text_;
+  int icon_size_ = 10;
+  bool hide_edit_icon_ = false;
 };
 
 class LineEditWidget final : public QWidget {
@@ -118,8 +121,8 @@ private:
   void initMonthPhotoWidgets(Core::FrameControl &control);
   void initPhotoTuneWidget(Core::FrameControl &control);
   void createForegroundWidget();
-  void createTitleTextWidget(Qt::Alignment alignment);
-  void createPhotoTextWidget(Qt::Alignment alignment);
+  void createTitleTextWidget(Qt::Alignment alignment, bool is_rendering);
+  void createPhotoTextWidget(Qt::Alignment alignment, bool is_rendering);
   void InitPhotos(Core::FrameControl &control);
 
 protected:
@@ -128,9 +131,7 @@ protected:
   QRectF title_slot_real_;
   int title_text_font_size_real_ = 20;
   std::vector<QRectF> photo_slots_real_;
-  // std::vector<QRectF> photo_text_slots_real_;
   std::vector<QPoint> photo_text_anchors_real_;
-  //  Qt::Alignment photo_text_aligment_;
   int photo_text_font_size_real_ = 20;
   std::vector<FrameParameters> frame_data_;
 
@@ -143,12 +144,12 @@ private:
   QRectF title_slot_;
   int title_text_font_size_ = 20;
   std::vector<QRectF> photo_slots_;
-  // std::vector<QRectF> photo_text_slots_;
+
   std::vector<QPoint> photo_text_anchors_;
   int photo_text_font_size_ = 20;
 
   ClickableLabel *title_text_widget_ = nullptr;
-  // LineEditWidget *line_edit_ = nullptr;
+  bool render_state_ = false;
 };
 
 class DefaultTemplateWidget final : public TemplateWidgetBase {
