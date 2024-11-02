@@ -113,8 +113,6 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
     QJsonDocument month_metadata_document(month_metadata);
 
-    const QString month_path = month_path_template_.arg(QString::number(month));
-
     const QString month_metadata_path =
         month_metadata_path_template_.arg(QString::number(month));
     QFile month_metadata_file(month_metadata_path);

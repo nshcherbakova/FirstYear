@@ -121,6 +121,10 @@ LineEditWidget::LineEditWidget(QWidget *parent)
   auto palette = QWidget::palette();
   palette.setColor(QPalette::Window, c_background_color);
   setPalette(palette);
+  connect(line_edit_, &QLineEdit::returnPressed, this, [&] {
+    emit SignalTextChanged(line_edit_->text(), id_);
+    hide();
+  });
 }
 
 void LineEditWidget::setVisible(bool visible) {
