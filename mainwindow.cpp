@@ -172,27 +172,14 @@ void MainWindow::CreatePhotoTuneWidget(
 
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this, [&] {
     int month = photo_tune_widget_->getPhotoId();
-    const auto new_photo_data = photo_tune_widget_->getPhoto();
-    frame_control.CurrentProject()->monthes_[month].photo_data = new_photo_data;
-    frame_control.SaveProjectMonth(month);
-
-    UpdateFrames(nullptr);
+    SaveTunedImage(month, frame_control);
   });
 
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalOpenFile, this, [&] {
     auto project = frame_control.CurrentProject();
 
     const int month = photo_tune_widget_->getPhotoId();
-    auto &month_data = project->monthes_[month];
-    const auto file = Utility::OpenFile(photo_tune_widget_);
-    if (!file.isNull()) {
-      month_data.photo_data = {
-          QPixmap(file), false, QTransform(), QTransform(),
-          ((short)PhotoData::STATE::IMAGE_CHANGED |
-           (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-           (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
-      photo_tune_widget_->updatePhoto(month_data.photo_data);
-    }
+    OpenImage(month, frame_control);
   });
 
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalTextClicked, this,
@@ -235,39 +222,82 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalTuneNextImage, this,
           [&]() {
-            int month = photo_tune_widget_->getPhotoId();
-            const auto new_photo_data = photo_tune_widget_->getPhoto();
-            auto project = frame_control.CurrentProject();
-            project->monthes_[month].photo_data = new_photo_data;
-            frame_control.SaveProjectMonth(month);
-            UpdateFrames(nullptr);
+            const auto project = frame_control.CurrentProject();
+            int current_month = photo_tune_widget_->getPhotoId();
+            int next_month =
+                (current_month + 1) % ((int)project->monthes_.size() - 1);
 
-            if (month == (int)project->monthes_.size() - 1) {
-              return;
-            }
-            month++;
-            auto &month_data = project->monthes_[month];
-
-            if (month_data.photo_data.is_stub_image) {
-              const auto file = Utility::OpenFile(photo_tune_widget_);
-              if (!file.isNull()) {
-                month_data.photo_data = {
-                    QPixmap(file), false, QTransform(), QTransform(),
-                    ((short)PhotoData::STATE::IMAGE_CHANGED |
-                     (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-                     (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
-                photo_tune_widget_->updatePhoto(month_data.photo_data);
-              } else {
-                photo_tune_widget_->hide();
-                return;
-              }
-            }
-            const auto frameData = frame_widgets_[swipe_view_->CurrentItem()]
-                                       ->innerWidget()
-                                       ->frameData(month);
-            photo_tune_widget_->setPhoto(
-                month, frameData, month_data.photo_data, month_data.text);
+            TuneNewImage(current_month, next_month, frame_control);
           });
+
+  connect(photo_tune_widget_, &PhotoTuneWidget::SignalTunePrevImage, this,
+          [&]() {
+            const auto project = frame_control.CurrentProject();
+            int current_month = photo_tune_widget_->getPhotoId();
+            int next_month =
+                (current_month - 1) % ((int)project->monthes_.size() - 1);
+
+            TuneNewImage(current_month, next_month, frame_control);
+          });
+}
+
+void MainWindow::TuneNewImage(int current_month, int next_month,
+                              FirstYear::Core::FrameControl &frame_control) {
+
+  SaveTunedImage(current_month, frame_control);
+
+  auto project = frame_control.CurrentProject();
+  auto &month_data = project->monthes_[next_month];
+
+  TuneImage(next_month, frame_control);
+}
+
+bool MainWindow::OpenImage(int month,
+                           FirstYear::Core::FrameControl &frame_control) {
+
+  const auto file = Utility::OpenFile(photo_tune_widget_);
+  if (!file.isNull()) {
+    auto project = frame_control.CurrentProject();
+    auto &month_data = project->monthes_[month];
+    month_data.photo_data = {
+        QPixmap(file), false, QTransform(), QTransform(),
+        ((short)PhotoData::STATE::IMAGE_CHANGED |
+         (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+         (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
+    photo_tune_widget_->updatePhoto(month_data.photo_data);
+    return true;
+  }
+  return false;
+}
+
+void MainWindow::SaveTunedImage(int month,
+                                FirstYear::Core::FrameControl &frame_control) {
+
+  const auto new_photo_data = photo_tune_widget_->getPhoto();
+  auto project = frame_control.CurrentProject();
+  project->monthes_[month].photo_data = new_photo_data;
+  frame_control.SaveProjectMonth(month);
+  UpdateFrames(nullptr);
+}
+
+void MainWindow::TuneImage(int month,
+                           FirstYear::Core::FrameControl &frame_control) {
+
+  auto project = frame_control.CurrentProject();
+  auto &month_data = project->monthes_[month];
+
+  if (month_data.photo_data.is_stub_image) {
+
+    if (!OpenImage(month, frame_control)) {
+      photo_tune_widget_->hide();
+      return;
+    }
+  }
+  const auto frameData =
+      frame_widgets_[swipe_view_->CurrentItem()]->innerWidget()->frameData(
+          month);
+  photo_tune_widget_->setPhoto(month, frameData, month_data.photo_data,
+                               month_data.text);
 }
 
 void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {

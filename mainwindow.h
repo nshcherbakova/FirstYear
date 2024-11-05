@@ -30,6 +30,12 @@ private:
   void UpdateFrames(TemplateWidgetHolder *exept);
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
 
+  void TuneImage(int month, FirstYear::Core::FrameControl &frame_control);
+  void SaveTunedImage(int month, FirstYear::Core::FrameControl &frame_control);
+  bool OpenImage(int month, FirstYear::Core::FrameControl &frame_control);
+  void TuneNewImage(int current_month, int next_month,
+                    FirstYear::Core::FrameControl &frame_control);
+
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 

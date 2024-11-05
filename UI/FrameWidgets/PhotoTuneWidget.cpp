@@ -364,7 +364,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   setAutoFillBackground(true);
 
   open_file_ = new TouchButton(this);
-  open_file_->setGeometry(button_margin, height() - 2 * button_with,
+  open_file_->setGeometry(button_margin, height() - 3.5 * button_with,
                           2 * button_with, button_with);
   open_file_->setText("Open");
   open_file_->setContentsMargins(0, 0, 0, 0);
@@ -389,6 +389,14 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   connect(next_, &QPushButton::clicked, this,
           [&]() { emit SignalTuneNextImage(); });
 
+  prev_ = new TouchButton(this);
+  prev_->setGeometry(button_margin, height() - 2 * button_with, 2 * button_with,
+                     button_with);
+  prev_->setText("Prev");
+  prev_->setContentsMargins(0, 0, 0, 0);
+  connect(prev_, &QPushButton::clicked, this,
+          [&]() { emit SignalTunePrevImage(); });
+
   text_ = new TouchClickableLabel(this, 10, "#408BB2", "Areal");
   text_->setAlignment(Qt::AlignCenter);
   connect(text_, &ClickableLabel::clicked, this,
@@ -401,12 +409,15 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
   if (photo_data_.image.isNull())
     return;
 
-  open_file_->setGeometry(button_margin, height() - 2 * button_with,
+  open_file_->setGeometry(button_margin, height() - 3.5 * button_with,
                           2 * button_with, button_with);
   close_->setGeometry(width() - 3 * button_with, height() - 3.5 * button_with,
                       2 * button_with, button_with);
   next_->setGeometry(width() - 3 * button_with, height() - 2 * button_with,
                      2 * button_with, button_with);
+
+  prev_->setGeometry(button_margin, height() - 2 * button_with, 2 * button_with,
+                     button_with);
 
   Frame::init(frame_data_, rect());
 
@@ -427,6 +438,7 @@ bool PhotoTuneWidget::event(QEvent *event) {
     close_->event(event);
     open_file_->event(event);
     next_->event(event);
+    prev_->event(event);
     text_->event(event);
     return true;
   }

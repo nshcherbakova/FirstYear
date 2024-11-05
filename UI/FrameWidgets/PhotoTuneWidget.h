@@ -149,6 +149,7 @@ signals:
   void SignalImageTuned();
   void SignalPhotoChanged();
   void SignalTuneNextImage();
+  void SignalTunePrevImage();
   void SignalOpenFile();
   void SignalTextClicked(QString text);
 
@@ -191,6 +192,7 @@ private:
   TouchButton *close_ = nullptr;
   TouchButton *open_file_ = nullptr;
   TouchButton *next_ = nullptr;
+  TouchButton *prev_ = nullptr;
   TouchClickableLabel *text_ = nullptr;
 };
 
