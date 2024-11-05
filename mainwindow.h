@@ -2,9 +2,14 @@
 #define MAINWINDOW_H
 #include <Core/FrameControl/FrameControl.h>
 #include <QMainWindow>
+#include <QPixmap>
 #include <Types.h>
 
 class QPushButton;
+
+namespace ShareUtils {
+class ShareUtilsCpp;
+}
 
 namespace FirstYear::UI {
 class SwipeWidgetsList;
@@ -35,12 +40,14 @@ private:
   bool OpenImage(int month, FirstYear::Core::FrameControl &frame_control);
   void TuneNewImage(int current_month, int next_month,
                     FirstYear::Core::FrameControl &frame_control);
+  QPixmap Render(Core::FrameControl &control);
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
 private:
   // FirstYear::Core::FrameControl &project_control_;
+  std::shared_ptr<ShareUtils::ShareUtilsCpp> share_utiles_;
   std::vector<TemplateWidgetHolder *> frame_widgets_;
   SwipeWidgetsList *swipe_view_ = nullptr;
   SwipeWidget *swipe_widget_ = nullptr;

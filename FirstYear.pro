@@ -27,6 +27,9 @@ SOURCES += \
     Core/Project/FileSystemProjectLoader.cpp \
     Core/Project/FileSystemProjectWriter.cpp \
     Core/Project/Project.cpp \
+    Core/shareutils/AndroidShareUtils.cpp \
+    Core/shareutils/DummyShareUtils.cpp \
+    Core/shareutils/ShareUtilsCpp.cpp \
     UI/FrameWidgets/DefaultTemplateWidget.cpp \
     UI/FrameWidgets/ImageButton.cpp \
     UI/FrameWidgets/PhotoTuneWidget.cpp \
@@ -44,6 +47,10 @@ HEADERS += \
     Core/Project/FileSystemProjectWriter.h \
     Core/Project/IProjecLoader.h \
     Core/Project/Project.h \
+    Core/shareutils/AndroidShareUtils.h \
+    Core/shareutils/DummyShareUtils.h \
+    Core/shareutils/IPlatformShareUtils.h \
+    Core/shareutils/ShareUtilsCpp.h \
     UI/FrameWidgets/DefaultTemplateWidget.h \
     UI/FrameWidgets/ImageButton.h \
     UI/FrameWidgets/Photo.h \
@@ -53,7 +60,10 @@ HEADERS += \
     UI/Utility.h \
     mainwindow.h
 
-
+!android {
+HEADERS -= Core/shareutils/AndroidShareUtils.h
+SOURCES -= Core/shareutils/AndroidShareUtils.cpp
+}
 
 QSwipeView/qpageindicator.cpp
 
@@ -67,15 +77,21 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     resource.qrc
 
+android {
 DISTFILES += \
-    android/AndroidManifest.xml \
+android/AndroidManifest.xml \
     android/build.gradle \
     android/gradle.properties \
     android/gradle/wrapper/gradle-wrapper.jar \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew \
     android/gradlew.bat \
-    android/res/values/libs.xml
+    android/res/values/libs.xml \
+    android/res/xml/filepaths.xml \
+    android/src/org/nshchapps/firstyear/activity/QShareActivity.java \
+    android/src/org/nshchapps/firstyear/utils/QSharePathResolver.java \
+    android/src/org/nshchapps/firstyear/utils/QShareUtils.java
+}
 
 contains(ANDROID_TARGET_ARCH,arm64-v8a) {
     ANDROID_PACKAGE_SOURCE_DIR = \

@@ -10,7 +10,7 @@ QT_BEGIN_NAMESPACE
 class QGestureEvent;
 class QPanGesture;
 class QPinchGesture;
-// class QSwipeGesture;
+class QSwipeGesture;
 class QTapAndHoldGesture;
 class QTouchEvent;
 class QEventPoint;
@@ -33,6 +33,7 @@ protected:
   virtual void processScaleChanged(qreal scale, QPointF center) = 0;
   virtual void processLongTap(QTapAndHoldGesture *) = 0;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) = 0;
+  virtual void processSwipe(QSwipeGesture *) = 0;
   virtual void grabWidgetGesture(Qt::GestureType gesture) = 0;
 
 private:
@@ -40,6 +41,7 @@ private:
   void panTriggered(QPanGesture *);
   void pinchTriggered(QPinchGesture *);
   void longTapTriggered(QTapAndHoldGesture *);
+  void swipeTriggered(QSwipeGesture *gesture);
   bool toucheEvent(QTouchEvent *touch);
 
 private:
@@ -169,6 +171,7 @@ private:
   virtual void processScaleChanged(qreal scale, QPointF center) override;
   virtual void processLongTap(QTapAndHoldGesture *) override;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) override;
+  virtual void processSwipe(QSwipeGesture *) override;
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
 
 protected:
@@ -178,7 +181,8 @@ protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
   virtual void wheelEvent(QWheelEvent *event) override;
   virtual void resizeEvent(QResizeEvent *event) override;
-
+  // virtual bool nativeEvent(const QByteArray &eventType, void *message,
+  // qintptr *result) override;
 private:
   void grabGestures(const QList<Qt::GestureType> &gestures);
   void updatePhoto(std::optional<QPointF> pos_delta,

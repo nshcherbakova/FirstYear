@@ -5,6 +5,10 @@
 #include <stdafx.h>
 
 static const int TITLE_ID = -1;
+static const char *c_share_image_tmp_name_str = "/ie_tmp.jpg";
+static const char *c_save_share_image_format_str = "JPG";
+static const char *c_share_image_extension_str = "jpg";
+static const char *c_share_image_mime_type_str = "image/jpeg";
 
 using namespace FirstYear::Core;
 namespace FirstYear::UI {
@@ -96,6 +100,9 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   photo_tune_widget_->raise();
 
+  if (frame_control.CurrentProject()->frame_id_.isEmpty())
+    frame_control.CurrentProject()->frame_id_ =
+        frame_widgets_[0]->innerWidget()->id();
   int current_fame_index = CurrentTemplateIndex(frame_control);
 
   swipe_view_->SetCurrentItem(current_fame_index);
@@ -247,7 +254,6 @@ void MainWindow::TuneNewImage(int current_month, int next_month,
   SaveTunedImage(current_month, frame_control);
 
   auto project = frame_control.CurrentProject();
-  auto &month_data = project->monthes_[next_month];
 
   TuneImage(next_month, frame_control);
 }
@@ -335,18 +341,12 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
   render_button_->setText("Render");
   render_button_->setContentsMargins(0, 0, 0, 0);
   connect(render_button_, &QPushButton::clicked, this, [&] {
-    QPixmap pixmap;
-    if (control.CurrentProject()->frame_id_ ==
-        DefaultTemplateWidget::templateId())
-      pixmap = DefaultTemplateWidget(this, control, true).renderFrame();
-    else if (control.CurrentProject()->frame_id_ ==
-             DefaultTemplateWidget2::templateId())
-      pixmap = DefaultTemplateWidget2(this, control, true).renderFrame();
+    QPixmap pixmap = Render(control);
 
 #ifdef Q_OS_ANDROID
-      // QString path =
-      //     QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)
-      //     + "/test.png";
+    // QString path =
+    //     QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)
+    //     + "/test.png";
 #else
     QString path ="/Users/nshcherbakova/Desktop/FirstYear/test1.png";
 pixmap.save(path);
@@ -363,8 +363,29 @@ pixmap.save(path);
   share_button_->setText("Share");
   share_button_->setContentsMargins(0, 0, 0, 0);
   connect(share_button_, &QPushButton::clicked, this, [&] {
+    if (!share_utiles_) {
+      share_utiles_ = std::make_shared<ShareUtils::ShareUtilsCpp>();
+    }
+    auto tmp_path = QStandardPaths::writableLocation(
+                        QStandardPaths::StandardLocation::PicturesLocation) +
+                    c_share_image_tmp_name_str;
 
+    QPixmap pixmap = Render(control);
+    pixmap.save(tmp_path, c_save_share_image_format_str);
+
+    share_utiles_->sendFile(tmp_path, "View File", c_share_image_mime_type_str,
+                            0);
   });
+}
+
+QPixmap MainWindow::Render(Core::FrameControl &control) {
+  if (control.CurrentProject()->frame_id_ ==
+      DefaultTemplateWidget::templateId())
+    return DefaultTemplateWidget(this, control, true).renderFrame();
+  else if (control.CurrentProject()->frame_id_ ==
+           DefaultTemplateWidget2::templateId())
+    return DefaultTemplateWidget2(this, control, true).renderFrame();
+  return DefaultTemplateWidget(this, control, true).renderFrame();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e) {

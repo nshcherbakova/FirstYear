@@ -18,6 +18,7 @@ void GestureProcessor::Initialise() {
   gestures << Qt::PanGesture;
   gestures << Qt::PinchGesture;
   gestures << Qt::TapAndHoldGesture;
+  // gestures << Qt::SwipeGesture;
   grabGestures(gestures);
 }
 
@@ -51,6 +52,8 @@ bool GestureProcessor::gestureEvent(QGestureEvent *event) {
     panTriggered(static_cast<QPanGesture *>(pan));
   if (QGesture *pinch = event->gesture(Qt::PinchGesture))
     pinchTriggered(static_cast<QPinchGesture *>(pinch));
+  if (QGesture *pinch = event->gesture(Qt::SwipeGesture))
+    swipeTriggered(static_cast<QSwipeGesture *>(pinch));
 
   return true;
 }
@@ -106,6 +109,12 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
 void GestureProcessor::longTapTriggered(QTapAndHoldGesture *gesture) {
 
   processLongTap(gesture);
+}
+
+void GestureProcessor::swipeTriggered(QSwipeGesture *gesture) {
+  if (gesture->state() == Qt::GestureFinished) {
+    processSwipe(gesture);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -434,6 +443,7 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
 
 bool PhotoTuneWidget::event(QEvent *event) {
 
+  //  spdlog::error("event {}", (int)event->type());
   if (GestureProcessor::processEvent(event)) {
     close_->event(event);
     open_file_->event(event);
@@ -525,6 +535,12 @@ bool PhotoTuneWidget::processToucheEvent(const QList<QEventPoint> &points) {
   return false;
 }
 
+void PhotoTuneWidget::processSwipe(QSwipeGesture *gesture) {
+  if (gesture->horizontalDirection() == QSwipeGesture::Right) {
+    emit SignalTunePrevImage();
+  }
+}
+
 void PhotoTuneWidget::processPan(QPointF delta) {
   updatePhoto(delta, std::optional<double>(), std::optional<double>(),
               std::optional<QPointF>());
@@ -549,6 +565,12 @@ void PhotoTuneWidget::processLongTap(QTapAndHoldGesture *) {
 void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
   QWidget::grabGesture(gesture);
 }
+
+/* bool PhotoTuneWidget::nativeEvent(const QByteArray &eventType, void *message,
+qintptr *result)
+{
+     spdlog::error("nativeEvent");
+}*/
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);

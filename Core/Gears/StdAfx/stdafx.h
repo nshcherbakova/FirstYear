@@ -50,6 +50,7 @@
 
 #include <Core/FrameControl/FrameControl.h>
 #include <Core/Project/Project.h>
+#include <Core/shareutils/ShareUtilsCpp.h>
 #include <Types.h>
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 #include <UI/FrameWidgets/Photo.h>
