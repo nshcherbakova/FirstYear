@@ -2,26 +2,7 @@
 #include <stdafx.h>
 
 namespace FirstYear::Core {
-/*
-struct MonthItem {
-    std::optional<QPixmap> photo;
-    int angle = 0;
-    int scale = 1;
-    QPoint center_coordinates = {0, 0};
-    std::optional<QString> text;
-    QString filter_id_;
-};
 
-class Project {
-public:
-    using MonthItems = std::vector<MonthItem>;
-
-    QString id_;
-    QString title_ = "First year";
-    QString frame_id_;
-    MonthItems monthes_;
-};
-*/
 bool ReadString(const QJsonObject &json, QString key, QString &value) {
   if (const QJsonValue json_value = json[key]; json_value.isString()) {
     value = json_value.toString();
@@ -60,7 +41,7 @@ ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
   if (!project_metadata_file.open(QIODevice::ReadOnly)) {
     spdlog::info("Couldn't open file {0}.",
                  project_metadata_path_.toStdString());
-    return nullptr;
+    // return nullptr;
   }
 
   const QByteArray project_metadata = project_metadata_file.readAll();
@@ -73,24 +54,24 @@ ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
   if (!ReadString(project_json, "id", project->id_)) {
     spdlog::error("Error while reading a project id from json {0}.",
                   project_metadata.toStdString());
-    return nullptr;
+    // return nullptr;
   }
 
   if (!ReadString(project_json, "title", project->title_)) {
     spdlog::error("Error while reading a project title from json {0}.",
                   project_metadata.toStdString());
-    return nullptr;
+    // return nullptr;
   }
 
   if (!ReadString(project_json, "frame_id", project->frame_id_)) {
     spdlog::error("Error while reading a project frame id from json {0}.",
                   project_metadata.toStdString());
-    return nullptr;
+    // return nullptr;
   }
 
   for (int i = 0; i < 12; i++) {
     if (!LoadMonth(i, project)) {
-      return nullptr;
+      spdlog::error("Error while loading a project month  data .", i);
     }
   }
 
@@ -141,7 +122,7 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     spdlog::error(
         "Couldn't open file {0}.",
         month_metadata_path_template_.arg(month_number).toStdString());
-    return false;
+    //  return false;
   }
 
   const QByteArray month_metadata = month_metadata_file.readAll();
@@ -156,21 +137,21 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     spdlog::error("Error while reading  transform_scale_rotate in a {0} month "
                   "photo scale from json {1}.",
                   month_number, month_metadata.toStdString());
-    return false;
+    // return false;
   }
   if (!LoadTransform(month_json, "transform_offset",
                      month.photo_data.transform_offset)) {
     spdlog::error("Error while reading transform_offset in a {0} month photo "
                   "scale from json {1}.",
                   month_number, month_metadata.toStdString());
-    return false;
+    // return false;
   }
 
   if (!ReadString(month_json, "filter_id", month.filter_id)) {
     spdlog::error(
         "Error while reading a {0} month photo filter_id from json {1}.",
         month_number, month_metadata.toStdString());
-    return false;
+    // return false;
   }
 
   if (month_json.contains("text")) {
@@ -178,9 +159,10 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     if (!ReadString(month_json, "text", text)) {
       spdlog::error("Error while reading a {0} month photo text from json {1}.",
                     month_number, month_metadata.toStdString());
-      return false;
+      // return false;
+    } else {
+      month.text = text;
     }
-    month.text = text;
   } else {
     month.text = QString("%1 month").arg(month_number);
   }
