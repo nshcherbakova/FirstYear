@@ -292,7 +292,7 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   photo_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    photo_widgets_[i] = new PhotoWidget(*this);
+    photo_widgets_[i] = new PhotoWidget(*this, render_state_);
   }
 
   initMonthPhotoWidgets(control_);
@@ -323,6 +323,8 @@ void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
   remove_buttons_.resize(12);
   for (int i = 0; i < (int)remove_buttons_.size(); i++) {
     remove_buttons_[i] = new QPushButton("X", this);
+    remove_buttons_[i]->setAttribute(Qt::WA_TranslucentBackground);
+    remove_buttons_[i]->setObjectName("RemoveuButton");
 
     connect(remove_buttons_[i], &ImageButton::clicked, this,
             [&, i] { emit SignalRemoveButtonClicked(i); });
@@ -469,17 +471,20 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
   title_text_widget_->setText(project->title_.isEmpty() ? "First Year"
                                                         : project->title_);
 
-  for (int i = 0; i < (int)photo_slots_.size(); i++) {
-    QRect new_rect;
-    new_rect.setTopLeft(photo_slots_[i].topLeft().toPoint() -
-                        QPoint(10.0, 10.0) * k);
-    new_rect.setSize(QSize{(int)(20 * k), (int)(20 * k)});
+  if (!render_state_) {
+    UNI_ASSERT(remove_buttons_.size() == photo_slots_.size());
+    for (int i = 0; i < (int)photo_slots_.size(); i++) {
+      QRect new_rect;
+      new_rect.setTopLeft(photo_slots_[i].topLeft().toPoint() -
+                          QPoint(10.0, 10.0) * k);
+      new_rect.setSize(QSize{(int)(20 * k), (int)(20 * k)});
 
-    if (!project->monthes_[i].photo_data.is_stub_image) {
-      remove_buttons_[i]->show();
-      remove_buttons_[i]->setGeometry(new_rect);
-    } else {
-      remove_buttons_[i]->hide();
+      if (!project->monthes_[i].photo_data.is_stub_image) {
+        remove_buttons_[i]->show();
+        remove_buttons_[i]->setGeometry(new_rect);
+      } else {
+        remove_buttons_[i]->hide();
+      }
     }
   }
 }

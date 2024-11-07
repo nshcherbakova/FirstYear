@@ -12,7 +12,7 @@ namespace FirstYear::UI {
 class PhotoWidget final : public ImageButton {
   Q_OBJECT
 public:
-  explicit PhotoWidget(QWidget &parent);
+  explicit PhotoWidget(QWidget &parent, bool render_state);
   PhotoWidget &operator=(const PhotoWidget &) = delete;
 
 public:
@@ -28,6 +28,7 @@ signals:
 
 private:
   QLabel text_widget_;
+  bool render_state_ = false;
 };
 
 } // namespace FirstYear::UI
