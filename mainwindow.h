@@ -34,6 +34,7 @@ private:
   void CreateButtons(FirstYear::Core::FrameControl &frame_control);
   void UpdateFrames(TemplateWidgetHolder *exept);
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
+  void UpdateSelectionButton(FirstYear::Core::FrameControl &frame_control);
 
   void TuneImage(int month, FirstYear::Core::FrameControl &frame_control);
   void SaveTunedImage(int month, FirstYear::Core::FrameControl &frame_control);
@@ -46,7 +47,7 @@ protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
 private:
-  // FirstYear::Core::FrameControl &project_control_;
+  FirstYear::Core::FrameControl &project_control_;
   std::shared_ptr<ShareUtils::ShareUtilsCpp> share_utiles_;
   std::vector<TemplateWidgetHolder *> frame_widgets_;
   SwipeWidgetsList *swipe_view_ = nullptr;
@@ -56,6 +57,7 @@ private:
 
   QPushButton *render_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
+  QPushButton *select_images_button_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

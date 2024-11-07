@@ -35,6 +35,7 @@
 #include <QSettings>
 #include <QSplashScreen>
 #include <QStandardPaths>
+#include <QStringList>
 // #include <QTextEdit>
 #include <QTouchEvent>
 #include <QVariant>

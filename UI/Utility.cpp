@@ -10,32 +10,33 @@ static const QStringList c_mime_type_filters({"image/jpeg", "image/pjpeg",
 static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
 
 QString OpenFile(QWidget *parent) {
-  QString image_file_name;
-  QString path;
-  if (path.isEmpty()) {
-    const QSettings settings(QSettings::Scope::UserScope);
-    path = settings.value(c_last_opend_dir).toString();
-  }
 
-  QFileDialog dialog(parent, c_open_image_str, path, c_file_types_str);
+  QSettings settings(QSettings::Scope::UserScope);
+  const QString path = settings.value(c_last_opend_dir).toString();
 
-  dialog.setMimeTypeFilters(c_mime_type_filters);
-  dialog.setFileMode(QFileDialog::ExistingFile);
+  const QString image_file_name = QFileDialog::getOpenFileName(
+      parent, c_open_image_str, path, c_file_types_str);
 
-  QStringList file_names;
-  if (dialog.exec()) {
-    file_names = dialog.selectedFiles();
-  }
-
-  if (!file_names.isEmpty()) {
-    image_file_name = file_names.front();
-
-    QSettings settings(QSettings::Scope::UserScope);
-    settings.setValue(c_last_opend_dir,
-                      QFileInfo(image_file_name).dir().path());
-  }
+  settings.setValue(c_last_opend_dir, QFileInfo(image_file_name).dir().path());
 
   return image_file_name;
+}
+
+QStringList OpenFiles(QWidget *parent) {
+
+  QSettings settings(QSettings::Scope::UserScope);
+  QString path = settings.value(c_last_opend_dir).toString();
+
+  auto image_file_names = QFileDialog::getOpenFileNames(
+      parent, c_open_image_str, path, c_file_types_str, nullptr,
+      QFileDialog::ReadOnly);
+
+  if (!image_file_names.empty()) {
+    settings.setValue(c_last_opend_dir,
+                      QFileInfo(image_file_names.front()).dir().path());
+  }
+
+  return image_file_names;
 }
 
 } // namespace FirstYear::UI::Utility

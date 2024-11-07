@@ -7,7 +7,7 @@
 static const int TITLE_ID = -1;
 static const char *c_share_image_tmp_name_str = "/ie_tmp.jpg";
 static const char *c_save_share_image_format_str = "JPG";
-static const char *c_share_image_extension_str = "jpg";
+// static const char *c_share_image_extension_str = "jpg";
 static const char *c_share_image_mime_type_str = "image/jpeg";
 
 using namespace FirstYear::Core;
@@ -73,8 +73,7 @@ private:
 };
 
 MainWindow::MainWindow(FrameControl &frame_control)
-    : QMainWindow() //, project_control_(frame_control)
-{
+    : QMainWindow(), project_control_(frame_control) {
 
 #ifdef Q_OS_ANDROID
 
@@ -313,6 +312,24 @@ void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {
       widget->innerWidget()->Update();
     }
   }
+
+  UpdateSelectionButton(project_control_);
+}
+
+void MainWindow::UpdateSelectionButton(
+    FirstYear::Core::FrameControl &frame_control) {
+  auto project = frame_control.CurrentProject();
+  int empty_slots_count = 0;
+  for (const auto &month_data : project->monthes_) {
+    if (month_data.photo_data.is_stub_image) {
+      empty_slots_count++;
+    }
+  }
+  if (empty_slots_count)
+    select_images_button_->setText(
+        QString("Select %1 images").arg(empty_slots_count));
+  else
+    select_images_button_->hide();
 }
 
 void MainWindow::CreateSwipeWidget(
@@ -376,6 +393,43 @@ pixmap.save(path);
     share_utiles_->sendFile(tmp_path, "View File", c_share_image_mime_type_str,
                             0);
   });
+
+  select_images_button_ = new QPushButton(this);
+  select_images_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40,
+                                     40);
+  select_images_button_->setText(
+      QString("Select %1 images")
+          .arg(control.CurrentProject()->monthes_.size()));
+  select_images_button_->setContentsMargins(0, 0, 0, 0);
+  connect(select_images_button_, &QPushButton::clicked, this, [&] {
+    const auto image_filse_pathes = Utility::OpenFiles(this);
+    std::map<QDateTime, QString> map;
+    for (const auto &path : image_filse_pathes) {
+
+      map[QFileInfo(path).birthTime()] = path;
+    }
+
+    auto project = control.CurrentProject();
+
+    size_t month = 0;
+    for (const auto &[_, file] : map) {
+      while (project->monthes_.size() > month) {
+        auto &month_data = project->monthes_[month];
+        month++;
+        if (month_data.photo_data.is_stub_image) {
+          month_data.photo_data = {
+              QPixmap(file), false, QTransform(), QTransform(),
+              ((short)PhotoData::STATE::IMAGE_CHANGED |
+               (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+               (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
+          break;
+        }
+      }
+    }
+    UpdateFrames(nullptr);
+  });
+
+  UpdateSelectionButton(project_control_);
 }
 
 QPixmap MainWindow::Render(Core::FrameControl &control) {
@@ -407,10 +461,14 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
 
   if (render_button_)
     render_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
+
   if (share_button_)
     share_button_->setGeometry(rect.width() - 100, rect.height() - 2 * 40,
                                2 * 40, 40);
 
+  if (select_images_button_)
+    select_images_button_->setGeometry(rect.width() - 100,
+                                       rect.height() - 4 * 40, 2 * 40, 40);
   update();
 }
 
