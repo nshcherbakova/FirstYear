@@ -224,6 +224,21 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
     connect(widget->innerWidget(), &TemplateWidgetBase::SignalTextChanged, this,
             [&]() { UpdateFrames(nullptr); });
+
+    connect(widget->innerWidget(),
+            &TemplateWidgetBase::SignalRemoveButtonClicked, this,
+            [&](int month_index) {
+              auto &month_data =
+                  frame_control.CurrentProject()->monthes_[month_index];
+              month_data.photo_data = {
+                  QPixmap(month_data.stub_image_path), true, QTransform(),
+                  QTransform(),
+                  ((short)PhotoData::STATE::IMAGE_CHANGED |
+                   (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+                   (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
+
+              UpdateFrames(nullptr);
+            });
   }
 
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalTuneNextImage, this,

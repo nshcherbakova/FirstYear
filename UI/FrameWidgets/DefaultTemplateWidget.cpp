@@ -300,8 +300,9 @@ TemplateWidgetBase::TemplateWidgetBase(
   createForegroundWidget();
 
   createTitleTextWidget(parameters.title_parameters.alignment, render_state);
-  createPhotoTextWidget(parameters.photo_text_parameters.alignment,
-                        render_state);
+  createPhotoTextWidgets(parameters.photo_text_parameters.alignment,
+                         render_state);
+  createRemoveButtonWidgets(render_state);
 }
 
 void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment,
@@ -314,8 +315,22 @@ void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
 }
 
-void TemplateWidgetBase::createPhotoTextWidget(Qt::Alignment alignment,
-                                               bool is_rendering) {
+void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
+
+  if (is_rendering) {
+    return;
+  }
+  remove_buttons_.resize(12);
+  for (int i = 0; i < (int)remove_buttons_.size(); i++) {
+    remove_buttons_[i] = new QPushButton("X", this);
+
+    connect(remove_buttons_[i], &ImageButton::clicked, this,
+            [&, i] { emit SignalRemoveButtonClicked(i); });
+  }
+}
+
+void TemplateWidgetBase::createPhotoTextWidgets(Qt::Alignment alignment,
+                                                bool is_rendering) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_text_widgets_[i] = new ClickableLabel(
@@ -453,6 +468,20 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
   auto project = control.CurrentProject();
   title_text_widget_->setText(project->title_.isEmpty() ? "First Year"
                                                         : project->title_);
+
+  for (int i = 0; i < (int)photo_slots_.size(); i++) {
+    QRect new_rect;
+    new_rect.setTopLeft(photo_slots_[i].topLeft().toPoint() -
+                        QPoint(10.0, 10.0) * k);
+    new_rect.setSize(QSize{(int)(20 * k), (int)(20 * k)});
+
+    if (!project->monthes_[i].photo_data.is_stub_image) {
+      remove_buttons_[i]->show();
+      remove_buttons_[i]->setGeometry(new_rect);
+    } else {
+      remove_buttons_[i]->hide();
+    }
+  }
 }
 
 void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {

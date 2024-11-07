@@ -125,14 +125,16 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
   }
 
   if (month_data.photo_data.state & (short)PhotoData::STATE::IMAGE_CHANGED) {
+    const auto image_path = month_photo_path_template_.arg(month);
     if (!month_data.photo_data.is_stub_image) {
       if (!month_data.photo_data.image.isNull()) {
-        if (!month_data.photo_data.image.save(
-                month_photo_path_template_.arg(month), IMAGE_FORMAT)) {
+        if (!month_data.photo_data.image.save(image_path, IMAGE_FORMAT)) {
           spdlog::info("Error, image was not saved {0}",
-                       month_photo_path_template_.arg(month).toStdString());
+                       image_path.toStdString());
         }
       }
+    } else if (QFileInfo::exists(image_path)) {
+      QFile::remove(image_path);
     }
   }
 

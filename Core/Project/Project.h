@@ -26,6 +26,7 @@ struct MonthItem {
   PhotoData photo_data;
   QString text;
   QString filter_id;
+  QString stub_image_path;
 
   mutable short state = 0;
   enum class STATE : short {

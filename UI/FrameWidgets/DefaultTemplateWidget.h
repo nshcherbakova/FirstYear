@@ -100,6 +100,7 @@ signals:
   void SignalTextChanged();
   void SignalTitleClicked(QString text);
   void SignalMonthTextClicked(QString text, int month);
+  void SignalRemoveButtonClicked(int month);
 
 public slots:
   void Update();
@@ -122,7 +123,8 @@ private:
   void initPhotoTuneWidget(Core::FrameControl &control);
   void createForegroundWidget();
   void createTitleTextWidget(Qt::Alignment alignment, bool is_rendering);
-  void createPhotoTextWidget(Qt::Alignment alignment, bool is_rendering);
+  void createPhotoTextWidgets(Qt::Alignment alignment, bool is_rendering);
+  void createRemoveButtonWidgets(bool is_rendering);
   void InitPhotos(Core::FrameControl &control);
 
 protected:
@@ -139,6 +141,7 @@ private:
   Core::FrameControl &control_;
   std::vector<PhotoWidget *> photo_widgets_;
   std::vector<ClickableLabel *> photo_text_widgets_;
+  std::vector<QPushButton *> remove_buttons_;
 
   ForegroundWidget *foreground_widget_ = nullptr;
   QRectF title_slot_;
