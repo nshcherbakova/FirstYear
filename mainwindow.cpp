@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 #include <UI/FrameWidgets/PhotoTuneWidget.h>
+#include <UI/FrameWidgets/PreviewWidget.h>
 #include <UI/SwipeView/SwipeWidgetsList.hpp>
 #include <stdafx.h>
 
@@ -96,6 +97,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
   CreateLineEditWidget(frame_control);
   CreateSwipeWidget(frame_control);
   CreateButtons(frame_control);
+  CreatePreviewWindow(frame_control);
 
   photo_tune_widget_->raise();
 
@@ -107,6 +109,15 @@ MainWindow::MainWindow(FrameControl &frame_control)
   swipe_view_->SetCurrentItem(current_fame_index);
 
   resizeEvent(nullptr);
+}
+
+void MainWindow::CreatePreviewWindow(
+    FirstYear::Core::FrameControl &frame_control) {
+  preview_ = new Preview::PreviewWidget(*this);
+  preview_->setGeometry({{0, 0}, size()});
+  connect(preview_, &Preview::PreviewWidget::SignalShareImage, this,
+          [&] { Share(frame_control); });
+  preview_->hide();
 }
 
 int MainWindow::CurrentTemplateIndex(
@@ -384,30 +395,15 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
 pixmap.save(path);
 #endif
 
-    QLabel *l = new QLabel("test", this);
-    l->setGeometry({{0, 0}, size()});
-    l->setPixmap(pixmap);
-    l->show();
+    preview_->setImage(pixmap);
+    preview_->show();
   });
 
   share_button_ = new QPushButton(this);
   share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
   share_button_->setText("Share");
   share_button_->setContentsMargins(0, 0, 0, 0);
-  connect(share_button_, &QPushButton::clicked, this, [&] {
-    if (!share_utiles_) {
-      share_utiles_ = std::make_shared<ShareUtils::ShareUtilsCpp>();
-    }
-    auto tmp_path = QStandardPaths::writableLocation(
-                        QStandardPaths::StandardLocation::PicturesLocation) +
-                    c_share_image_tmp_name_str;
-
-    QPixmap pixmap = Render(control);
-    pixmap.save(tmp_path, c_save_share_image_format_str);
-
-    share_utiles_->sendFile(tmp_path, "View File", c_share_image_mime_type_str,
-                            0);
-  });
+  connect(share_button_, &QPushButton::clicked, this, [&] { Share(control); });
 
   select_images_button_ = new QPushButton(this);
   select_images_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40,
@@ -418,26 +414,37 @@ pixmap.save(path);
   select_images_button_->setContentsMargins(0, 0, 0, 0);
   connect(select_images_button_, &QPushButton::clicked, this, [&] {
     const auto image_filse_pathes = Utility::OpenFiles(this);
-    std::map<QDateTime, QString> map;
+    std::map<QDateTime, std::vector<QString>> map;
     for (const auto &path : image_filse_pathes) {
+      QFileInfo file_info(path);
+      QDateTime time;
+      if (file_info.birthTime().isValid()) {
+        time = file_info.birthTime();
+      } else if (file_info.lastModified().isValid()) {
+        time = file_info.lastModified();
+      } else {
+        time = QDateTime::currentDateTime();
+      }
 
-      map[QFileInfo(path).birthTime()] = path;
+      map[time].push_back(path);
     }
 
     auto project = control.CurrentProject();
 
     size_t month = 0;
-    for (const auto &[_, file] : map) {
-      while (project->monthes_.size() > month) {
-        auto &month_data = project->monthes_[month];
-        month++;
-        if (month_data.photo_data.is_stub_image) {
-          month_data.photo_data = {
-              QPixmap(file), false, QTransform(), QTransform(),
-              ((short)PhotoData::STATE::IMAGE_CHANGED |
-               (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-               (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
-          break;
+    for (const auto &[_, file_vector] : map) {
+      for (const auto &file : file_vector) {
+        while (project->monthes_.size() > month) {
+          auto &month_data = project->monthes_[month];
+          month++;
+          if (month_data.photo_data.is_stub_image) {
+            month_data.photo_data = {
+                QPixmap(file), false, QTransform(), QTransform(),
+                ((short)PhotoData::STATE::IMAGE_CHANGED |
+                 (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+                 (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
+            break;
+          }
         }
       }
     }
@@ -445,6 +452,21 @@ pixmap.save(path);
   });
 
   UpdateSelectionButton(project_control_);
+}
+
+void MainWindow::Share(Core::FrameControl &control) {
+  if (!share_utiles_) {
+    share_utiles_ = std::make_shared<ShareUtils::ShareUtilsCpp>();
+  }
+  auto tmp_path = QStandardPaths::writableLocation(
+                      QStandardPaths::StandardLocation::PicturesLocation) +
+                  c_share_image_tmp_name_str;
+
+  QPixmap pixmap = Render(control);
+  pixmap.save(tmp_path, c_save_share_image_format_str);
+
+  share_utiles_->sendFile(tmp_path, "View File", c_share_image_mime_type_str,
+                          0);
 }
 
 QPixmap MainWindow::Render(Core::FrameControl &control) {
@@ -484,6 +506,9 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (select_images_button_)
     select_images_button_->setGeometry(rect.width() - 100,
                                        rect.height() - 4 * 40, 2 * 40, 40);
+  if (preview_)
+    preview_->setGeometry(rect);
+
   update();
 }
 

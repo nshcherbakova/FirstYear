@@ -18,6 +18,9 @@ class SwipeWidget;
 class TemplateWidgetHolder;
 class LineEditWidget;
 
+namespace Preview {
+class PreviewWidget;
+}
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -32,6 +35,8 @@ private:
   void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateButtons(FirstYear::Core::FrameControl &frame_control);
+  void CreatePreviewWindow(FirstYear::Core::FrameControl &frame_control);
+
   void UpdateFrames(TemplateWidgetHolder *exept);
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
   void UpdateSelectionButton(FirstYear::Core::FrameControl &frame_control);
@@ -41,7 +46,9 @@ private:
   bool OpenImage(int month, FirstYear::Core::FrameControl &frame_control);
   void TuneNewImage(int current_month, int next_month,
                     FirstYear::Core::FrameControl &frame_control);
+
   QPixmap Render(Core::FrameControl &control);
+  void Share(Core::FrameControl &control);
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
@@ -54,6 +61,7 @@ private:
   SwipeWidget *swipe_widget_ = nullptr;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
   LineEditWidget *line_edit_ = nullptr;
+  Preview::PreviewWidget *preview_ = nullptr;
 
   QPushButton *render_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
