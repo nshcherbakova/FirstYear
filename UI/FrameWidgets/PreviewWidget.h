@@ -25,7 +25,6 @@ protected:
 protected:
   bool processEvent(QEvent *event);
   virtual void processPan(QPointF delta) = 0;
-  virtual void processAngleChanged(qreal rotation_delta, QPointF center) = 0;
   virtual void processScaleChanged(qreal scale, QPointF center) = 0;
   virtual void processLongTap(QTapAndHoldGesture *) = 0;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) = 0;
@@ -63,7 +62,6 @@ protected:
   struct PhotoPosition {
     //   PhotoPosition()
     //    {};
-    std::optional<double> angle;
     std::optional<double> scale;
     std::optional<QPointF> offset;
     std::optional<QPointF> center;
@@ -72,14 +70,12 @@ protected:
     void reset() {
       offset.reset();
       scale.reset();
-      angle.reset();
       center.reset();
     }
 
     void reset_exept_center() {
       offset.reset();
       scale.reset();
-      angle.reset();
     }
   };
   QTransform getTransformForWidget(const PhotoPosition &photo_position,
@@ -106,7 +102,6 @@ public:
 protected:
   void updatePhotoPosition(std::optional<QPointF> pos_delta,
                            std::optional<double> scale_factor,
-                           std::optional<double> angle_delta,
                            std::optional<QPointF> center);
 
 private:
@@ -138,8 +133,6 @@ public:
 private:
   // GestureProcessor
   virtual void processPan(QPointF delta) override;
-  virtual void processAngleChanged(qreal rotation_delta,
-                                   QPointF center) override;
   virtual void processScaleChanged(qreal scale, QPointF center) override;
   virtual void processLongTap(QTapAndHoldGesture *) override;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) override;
@@ -158,7 +151,6 @@ private:
   void updatePhoto(const Core::PhotoData &photo);
   void updatePhoto(std::optional<QPointF> pos_delta,
                    std::optional<double> scale_factor,
-                   std::optional<double> angle_delta,
                    std::optional<QPointF> center);
 
 private:

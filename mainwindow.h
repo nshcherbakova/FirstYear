@@ -35,7 +35,7 @@ private:
   void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateButtons(FirstYear::Core::FrameControl &frame_control);
-  void CreatePreviewWindow(FirstYear::Core::FrameControl &frame_control);
+  void CreatePreviewWindow();
 
   void UpdateFrames(TemplateWidgetHolder *exept);
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
@@ -48,14 +48,14 @@ private:
                     FirstYear::Core::FrameControl &frame_control);
 
   QPixmap Render(Core::FrameControl &control);
-  void Share(Core::FrameControl &control);
+  void Share(const QPixmap &pixmap) const;
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
 private:
   FirstYear::Core::FrameControl &project_control_;
-  std::shared_ptr<ShareUtils::ShareUtilsCpp> share_utiles_;
+  mutable std::shared_ptr<ShareUtils::ShareUtilsCpp> share_utiles_;
   std::vector<TemplateWidgetHolder *> frame_widgets_;
   SwipeWidgetsList *swipe_view_ = nullptr;
   SwipeWidget *swipe_widget_ = nullptr;
@@ -63,7 +63,7 @@ private:
   LineEditWidget *line_edit_ = nullptr;
   Preview::PreviewWidget *preview_ = nullptr;
 
-  QPushButton *render_button_ = nullptr;
+  QPushButton *preview_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
   QPushButton *select_images_button_ = nullptr;
 };

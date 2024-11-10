@@ -372,6 +372,8 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
                (short)Core::PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
                (short)Core::PhotoData::STATE::TRANSFORM_SR_CHANGED);
           //  month.photo_data.scale = 2.5;
+          month.photo_data.image.setDevicePixelRatio(
+              QGuiApplication::primaryScreen()->devicePixelRatio());
 
           control.SaveProjectMonth(i);
           photo_widgets_[i]->setPhoto(month.photo_data);
@@ -524,6 +526,7 @@ void TemplateWidgetBase::setVisible(bool visible) {
 
 QPixmap TemplateWidgetBase::renderFrame() {
   setGeometry({{0, 0}, foreground_.size()});
+
   return grab();
 }
 

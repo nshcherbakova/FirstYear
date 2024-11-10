@@ -127,9 +127,12 @@ void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
   boundary_rect_ = boundary_rect;
   destanation_rect_ = destanation_rect;
 
-  QRectF photo_rect = photo.image.rect();
-  double k1 = photo_rect.width() / photo_rect.height();
-  double k2 = boundary_rect_.width() / boundary_rect_.height();
+  const QRectF photo_rect = {
+      QPointF(0, 0), photo_data_.image.size() /
+                         QGuiApplication::primaryScreen()->devicePixelRatio()};
+
+  const double k1 = photo_rect.width() / photo_rect.height();
+  const double k2 = boundary_rect_.width() / boundary_rect_.height();
 
   if (k1 < k2) {
     internal_scale_ = ((double)boundary_rect_.height() / photo_rect.height()) *
@@ -155,8 +158,10 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
   const auto offset_diff = photo_position.offset.value_or(QPointF(0, 0));
   const auto center = photo_position.center.value_or(QPointF(0, 0));
 
-  const qreal iw = photo_data_.image.width();
-  const qreal ih = photo_data_.image.height();
+  const qreal iw = photo_data_.image.width() /
+                   QGuiApplication::primaryScreen()->devicePixelRatio();
+  const qreal ih = photo_data_.image.height() /
+                   QGuiApplication::primaryScreen()->devicePixelRatio();
   const qreal wh = destanation_rect_.height();
   const qreal ww = destanation_rect_.width();
 
@@ -201,8 +206,10 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
 ///
 bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
 
-  QRectF image_rect = photo_data_.image.rect();
-  auto translated_image_rect = transform.mapRect(image_rect);
+  const QRectF image_rect = {
+      QPointF(0, 0), photo_data_.image.size() /
+                         QGuiApplication::primaryScreen()->devicePixelRatio()};
+  const auto translated_image_rect = transform.mapRect(image_rect);
 
   if (translated_image_rect.width() < boundary_rect_.width() * MIN_SIZE_K ||
       translated_image_rect.height() < boundary_rect_.height() * MIN_SIZE_K)

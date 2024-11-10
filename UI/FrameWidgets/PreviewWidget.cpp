@@ -4,12 +4,10 @@
 namespace FirstYear::UI::Preview {
 const double MIN_SIZE_K = 0.7;
 const double MAX_SIZE_K = 15.0;
-const double INITIAL_SCALE_FACTOR = 2.5;
+const double INITIAL_SCALE_FACTOR = 1;
 const double ZOOM_STEP = 1.10;
-const double ROTATE_STEP = 0.5;
 const int button_with = 40;
-const int button_margin = 20;
-static const char *c_background_str = ":/images/tune_photo/background";
+// static const char *c_background_str = ":/images/tune_photo/background";
 
 void GestureProcessor::Initialise() {
   QList<Qt::GestureType> gestures;
@@ -126,7 +124,9 @@ void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
   boundary_rect_ = boundary_rect;
   destanation_rect_ = destanation_rect;
 
-  QRectF photo_rect = photo.image.rect();
+  const QRectF photo_rect = {
+      QPointF(0, 0), photo_data_.image.size() /
+                         QGuiApplication::primaryScreen()->devicePixelRatio()};
   double k1 = photo_rect.width() / photo_rect.height();
   double k2 = boundary_rect_.width() / boundary_rect_.height();
 
@@ -139,8 +139,8 @@ void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
   }
 
   transform_ = getTransformForWidget(
-      {std::optional<double>(), std::optional<double>(),
-       std::optional<QPointF>(), std::optional<QPointF>()},
+      {std::optional<double>(), std::optional<QPointF>(),
+       std::optional<QPointF>()},
       photo_data_.transform_offset, photo_data_.transform_scale_rotate);
 }
 
@@ -149,13 +149,14 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
                                     QTransform &transform_offset,
                                     QTransform &transform_scale_rotate) {
   // spdlog::info("a {}, s {},  ", photo_position_.angle, photo_.scale);
-  const auto angle_diff = photo_position.angle.value_or(0);
   const auto scale_diff = photo_position.scale.value_or(1);
   const auto offset_diff = photo_position.offset.value_or(QPointF(0, 0));
   const auto center = photo_position.center.value_or(QPointF(0, 0));
 
-  const qreal iw = photo_data_.image.width();
-  const qreal ih = photo_data_.image.height();
+  const qreal iw = photo_data_.image.width() /
+                   QGuiApplication::primaryScreen()->devicePixelRatio();
+  const qreal ih = photo_data_.image.height() /
+                   QGuiApplication::primaryScreen()->devicePixelRatio();
   const qreal wh = destanation_rect_.height();
   const qreal ww = destanation_rect_.width();
 
@@ -174,7 +175,6 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
                   .map(center);
 
   transform_scale_rotate.translate(c.x(), c.y());
-  transform_scale_rotate.rotate(angle_diff);
   transform_scale_rotate.scale(scale_diff, scale_diff);
   transform_scale_rotate.translate(-c.x(), -c.y());
 
@@ -200,7 +200,9 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
 ///
 bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
 
-  QRectF image_rect = photo_data_.image.rect();
+  const QRectF image_rect = {
+      QPointF(0, 0), photo_data_.image.size() /
+                         QGuiApplication::primaryScreen()->devicePixelRatio()};
   auto translated_image_rect = transform.mapRect(image_rect);
 
   if (translated_image_rect.width() < boundary_rect_.width() * MIN_SIZE_K ||
@@ -219,12 +221,11 @@ bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
 
 void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
                                          std::optional<double> scale_factor,
-                                         std::optional<double> angle_delta,
                                          std::optional<QPointF> center) {
   QTransform scale_rotate = photo_data_.transform_scale_rotate;
   QTransform translate = photo_data_.transform_offset;
   QTransform transform = getTransformForWidget(
-      {angle_delta, scale_factor, pos_delta, center}, translate, scale_rotate);
+      {scale_factor, pos_delta, center}, translate, scale_rotate);
 
   if (checkBoundares(transform)) {
     transform_ = transform;
@@ -394,29 +395,16 @@ QPixmap PreviewWidget::getImage() const { return photo_data_.image; }
 
 void PreviewWidget::updatePhoto(std::optional<QPointF> pos_delta,
                                 std::optional<double> scale_factor,
-                                std::optional<double> angle_delta,
                                 std::optional<QPointF> center) {
-  PhotoProcessor::updatePhotoPosition(pos_delta, scale_factor, angle_delta,
-                                      center);
+  PhotoProcessor::updatePhotoPosition(pos_delta, scale_factor, center);
   update();
 }
 
 void PreviewWidget::wheelEvent(QWheelEvent *event) {
-  if (event->modifiers().testFlag(Qt::ControlModifier)) {
-
-    if (event->angleDelta().y() < 0) {
-      updatePhoto(std::optional<QPointF>(), std::optional<double>(),
-                  ROTATE_STEP, event->position());
-    } else if (event->angleDelta().y() > 0) {
-      updatePhoto(std::optional<QPointF>(), std::optional<double>(),
-                  -ROTATE_STEP, event->position());
-    }
-  } else if (event->angleDelta().y() < 0) {
-    updatePhoto(std::optional<QPointF>(), ZOOM_STEP, std::optional<double>(),
-                event->position());
+  if (event->angleDelta().y() < 0) {
+    updatePhoto(std::optional<QPointF>(), ZOOM_STEP, event->position());
   } else if (event->angleDelta().y() > 0) {
-    updatePhoto(std::optional<QPointF>(), 1.0 / ZOOM_STEP,
-                std::optional<double>(), event->position());
+    updatePhoto(std::optional<QPointF>(), 1.0 / ZOOM_STEP, event->position());
   }
 }
 
@@ -439,8 +427,7 @@ bool PreviewWidget::processToucheEvent(const QList<QEventPoint> &points) {
   }
   if (count > 0) {
     delta /= count;
-    updatePhoto(delta, std::optional<double>(), std::optional<double>(),
-                std::optional<QPointF>());
+    updatePhoto(delta, std::optional<double>(), std::optional<QPointF>());
     return true;
   }
   return false;
@@ -453,18 +440,11 @@ void PreviewWidget::processSwipe(QSwipeGesture *gesture) {
 }
 
 void PreviewWidget::processPan(QPointF delta) {
-  updatePhoto(delta, std::optional<double>(), std::optional<double>(),
-              std::optional<QPointF>());
-}
-
-void PreviewWidget::processAngleChanged(qreal rotation_delta, QPointF center) {
-  // updatePhoto(std::optional<QPointF>(), std::optional<double>(),
-  // rotation_delta,
-  //             center);
+  updatePhoto(delta, std::optional<double>(), std::optional<QPointF>());
 }
 
 void PreviewWidget::processScaleChanged(qreal scale, QPointF center) {
-  updatePhoto(std::optional<QPointF>(), scale, std::optional<double>(), center);
+  updatePhoto(std::optional<QPointF>(), scale, center);
 }
 
 void PreviewWidget::processLongTap(QTapAndHoldGesture *) {

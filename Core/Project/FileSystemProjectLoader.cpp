@@ -170,6 +170,8 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   QPixmap photo(month_photo_path_template_.arg(month_number));
 
   if (!photo.isNull()) {
+    const auto dpr = QGuiApplication::primaryScreen()->devicePixelRatio();
+    photo.setDevicePixelRatio(dpr);
     month.photo_data.image = photo;
   }
   return true;

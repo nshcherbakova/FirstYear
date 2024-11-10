@@ -97,7 +97,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
   CreateLineEditWidget(frame_control);
   CreateSwipeWidget(frame_control);
   CreateButtons(frame_control);
-  CreatePreviewWindow(frame_control);
+  CreatePreviewWindow();
 
   photo_tune_widget_->raise();
 
@@ -111,12 +111,11 @@ MainWindow::MainWindow(FrameControl &frame_control)
   resizeEvent(nullptr);
 }
 
-void MainWindow::CreatePreviewWindow(
-    FirstYear::Core::FrameControl &frame_control) {
+void MainWindow::CreatePreviewWindow() {
   preview_ = new Preview::PreviewWidget(*this);
   preview_->setGeometry({{0, 0}, size()});
   connect(preview_, &Preview::PreviewWidget::SignalShareImage, this,
-          [&] { Share(frame_control); });
+          [&] { Share(preview_->getImage()); });
   preview_->hide();
 }
 
@@ -248,6 +247,9 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
                    (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
                    (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
 
+              month_data.photo_data.image.setDevicePixelRatio(
+                  QGuiApplication::primaryScreen()->devicePixelRatio());
+
               UpdateFrames(nullptr);
             });
   }
@@ -295,6 +297,8 @@ bool MainWindow::OpenImage(int month,
         ((short)PhotoData::STATE::IMAGE_CHANGED |
          (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
          (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
+    month_data.photo_data.image.setDevicePixelRatio(devicePixelRatio());
+
     photo_tune_widget_->updatePhoto(month_data.photo_data);
     return true;
   }
@@ -351,10 +355,11 @@ void MainWindow::UpdateSelectionButton(
       empty_slots_count++;
     }
   }
-  if (empty_slots_count)
+  if (empty_slots_count) {
+    select_images_button_->show();
     select_images_button_->setText(
         QString("Select %1 images").arg(empty_slots_count));
-  else
+  } else
     select_images_button_->hide();
 }
 
@@ -379,13 +384,13 @@ void MainWindow::CreateSwipeWidget(
 
 void MainWindow::CreateButtons(Core::FrameControl &control) {
 
-  render_button_ = new QPushButton(this);
-  render_button_->setGeometry(20, height() - 2 * 40, 2 * 40, 40);
-  render_button_->setText("Render");
-  render_button_->setContentsMargins(0, 0, 0, 0);
-  connect(render_button_, &QPushButton::clicked, this, [&] {
+  preview_button_ = new QPushButton(this);
+  preview_button_->setGeometry(20, height() - 2 * 40, 2 * 40, 40);
+  preview_button_->setText("Preview");
+  preview_button_->setContentsMargins(0, 0, 0, 0);
+  connect(preview_button_, &QPushButton::clicked, this, [&] {
     QPixmap pixmap = Render(control);
-
+    pixmap.setDevicePixelRatio(devicePixelRatio());
 #ifdef Q_OS_ANDROID
     // QString path =
     //     QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)
@@ -403,7 +408,10 @@ pixmap.save(path);
   share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
   share_button_->setText("Share");
   share_button_->setContentsMargins(0, 0, 0, 0);
-  connect(share_button_, &QPushButton::clicked, this, [&] { Share(control); });
+  connect(share_button_, &QPushButton::clicked, this, [&] {
+    const QPixmap pixmap = Render(control);
+    Share(pixmap);
+  });
 
   select_images_button_ = new QPushButton(this);
   select_images_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40,
@@ -443,6 +451,7 @@ pixmap.save(path);
                 ((short)PhotoData::STATE::IMAGE_CHANGED |
                  (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
                  (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
+            month_data.photo_data.image.setDevicePixelRatio(devicePixelRatio());
             break;
           }
         }
@@ -454,7 +463,7 @@ pixmap.save(path);
   UpdateSelectionButton(project_control_);
 }
 
-void MainWindow::Share(Core::FrameControl &control) {
+void MainWindow::Share(const QPixmap &pixmap) const {
   if (!share_utiles_) {
     share_utiles_ = std::make_shared<ShareUtils::ShareUtilsCpp>();
   }
@@ -462,7 +471,6 @@ void MainWindow::Share(Core::FrameControl &control) {
                       QStandardPaths::StandardLocation::PicturesLocation) +
                   c_share_image_tmp_name_str;
 
-  QPixmap pixmap = Render(control);
   pixmap.save(tmp_path, c_save_share_image_format_str);
 
   share_utiles_->sendFile(tmp_path, "View File", c_share_image_mime_type_str,
@@ -496,8 +504,8 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (line_edit_)
     line_edit_->setGeometry(rect);
 
-  if (render_button_)
-    render_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
+  if (preview_button_)
+    preview_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
 
   if (share_button_)
     share_button_->setGeometry(rect.width() - 100, rect.height() - 2 * 40,
