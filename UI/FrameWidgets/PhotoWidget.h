@@ -5,7 +5,13 @@
 #include <Core/Project/Project.h>
 #include <QLabel>
 #include <QPixmap>
+#include <QTimer>
 #include <QWidget>
+
+QT_BEGIN_NAMESPACE
+class QDragEnterEvent;
+class QDropEvent;
+QT_END_NAMESPACE
 
 namespace FirstYear::UI {
 
@@ -23,12 +29,20 @@ public:
 public:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
+  void dragEnterEvent(QDragEnterEvent *event) override;
+  void dragMoveEvent(QDragMoveEvent *event) override;
+  void dropEvent(QDropEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
 signals:
   void SignalImagePressed();
 
 private:
   QLabel text_widget_;
   bool render_state_ = false;
+  Core::PhotoData photo_data_;
+  QPixmap photo_scaled_;
+  QTimer timer_;
 };
 
 } // namespace FirstYear::UI
