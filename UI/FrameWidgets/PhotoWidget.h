@@ -23,19 +23,20 @@ public:
 
 public:
   void setText(QString text);
-  void setPhoto(const Core::PhotoData &photo);
+  void setPhoto(const Core::PhotoData &photo, int id);
   Core::PhotoData getPhoto();
 
 public:
   virtual void resizeEvent(QResizeEvent *event) override final;
+  virtual void dragEnterEvent(QDragEnterEvent *event) override;
+  virtual void dragMoveEvent(QDragMoveEvent *event) override;
+  virtual void dropEvent(QDropEvent *event) override;
+  virtual void mousePressEvent(QMouseEvent *event) override;
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
 
-  void dragEnterEvent(QDragEnterEvent *event) override;
-  void dragMoveEvent(QDragMoveEvent *event) override;
-  void dropEvent(QDropEvent *event) override;
-  void mousePressEvent(QMouseEvent *event) override;
-  void mouseReleaseEvent(QMouseEvent *event) override;
 signals:
   void SignalImagePressed();
+  void SignalImageDroped(int);
 
 private:
   QLabel text_widget_;
@@ -43,6 +44,7 @@ private:
   Core::PhotoData photo_data_;
   QPixmap photo_scaled_;
   QTimer timer_;
+  int id_;
 };
 
 } // namespace FirstYear::UI

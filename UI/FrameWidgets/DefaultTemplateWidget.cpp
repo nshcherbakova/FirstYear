@@ -357,6 +357,10 @@ QSize TemplateWidgetBase::preferedSize(QSize size) const {
 
 void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    connect(photo_widgets_[i], &PhotoWidget::SignalImageDroped, this,
+            [&, i](int dropped_index) {
+              emit SignalImageDroped(dropped_index, i);
+            });
 
     connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this, [&, i] {
       auto project = control.CurrentProject();
@@ -376,7 +380,7 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
               QGuiApplication::primaryScreen()->devicePixelRatio());
 
           control.SaveProjectMonth(i);
-          photo_widgets_[i]->setPhoto(month.photo_data);
+          photo_widgets_[i]->setPhoto(month.photo_data, i);
         }
       }
 
@@ -498,7 +502,7 @@ void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {
     auto &photo_widget = photo_widgets_[i];
 
     photo_widget->setGeometry(photo_slots_[i].toRect());
-    photo_widget->setPhoto(month.photo_data);
+    photo_widget->setPhoto(month.photo_data, i);
     photo_widget->show();
   }
 

@@ -20,15 +20,14 @@ PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
   text_widget_.setStyleSheet(c_text_widget_style_str);
   text_widget_.setAlignment(Qt::AlignCenter);
   text_widget_.setVisible(!render_state_);
-  timer_.setInterval(500);
-  timer_.setSingleShot(true);
-  connect(&timer_, &QTimer::timeout, this, [&] {
-    QPixmap &pixmap = photo_data_.image; // child->pixmap(Qt::ReturnByValue);
 
+  timer_.setInterval(200);
+  timer_.setSingleShot(true);
+
+  connect(&timer_, &QTimer::timeout, this, [&] {
     QByteArray itemData;
     QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-    dataStream << (void *)&photo_data_
-                      .image; // << QPoint(event->position().toPoint() - pos());
+    dataStream << id_; // << QPoint(event->position().toPoint() - pos());
     //! [1]
 
     //! [2]
@@ -41,7 +40,7 @@ PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
     drag->setMimeData(mimeData);
 
     drag->setPixmap(photo_scaled_);
-    drag->setHotSpot({100, 100});
+    drag->setHotSpot({size().width(), size().height()});
     //! [3]
 
     drag->exec(Qt::CopyAction);
@@ -63,10 +62,20 @@ void PhotoWidget::resizeEvent(QResizeEvent *event) {
   update();
 }
 
-void PhotoWidget::setPhoto(const Core::PhotoData &photo) {
+void PhotoWidget::setPhoto(const Core::PhotoData &photo, int id) {
   photo_data_ = photo;
-  photo_scaled_ = photo.image.scaledToHeight(500);
+
+  id_ = id;
+  /* QPixmap pm(photo_scaled_.size());
+
+   QPainter painter(&pm);
+   painter.fillRect(QRectF{{0,0}, pm.size()},Qt::white);
+   painter.setOpacity(0.1);  //0.00 = 0%, 1.00 = 100% opacity.
+   painter.drawPixmap(0,0,photo_scaled_);
+   photo_scaled_ = pm;*/
   ImageButton::setPhoto(photo);
+  photo_scaled_ = ImageButton::grab();
+
   if (photo.is_stub_image) {
     setText("Open Image");
   } else {
@@ -112,17 +121,10 @@ void PhotoWidget::dropEvent(QDropEvent *event) {
     QByteArray itemData = event->mimeData()->data("application/x-dnditemdata");
     QDataStream dataStream(&itemData, QIODevice::ReadOnly);
 
-    long long pixmap;
+    int id = 0;
+    dataStream >> id;
 
-    dataStream >> pixmap;
-
-    // QLabel *newIcon = new QLabel(this);
-    photo_data_.image = *((QPixmap *)pixmap);
-    setPhoto(photo_data_);
-    //   newIcon->setPixmap(pixmap);
-    //      newIcon->move(event->position().toPoint() - offset);
-    //  newIcon->show();
-    //  newIcon->setAttribute(Qt::WA_DeleteOnClose);
+    emit SignalImageDroped(id);
 
     if (event->source() == this) {
       // event->setDropAction(Qt::MoveAction);
@@ -137,9 +139,6 @@ void PhotoWidget::dropEvent(QDropEvent *event) {
 
 //! [1]
 void PhotoWidget::mousePressEvent(QMouseEvent *event) {
-  //  QLabel *child =
-  //  static_cast<QLabel*>(childAt(event->position().toPoint())); if (!child)
-  //  return;
 
   timer_.start();
 

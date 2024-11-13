@@ -223,6 +223,29 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
     widget->setMaximumWidth(width());
     widget->setMaximumHeight(height());
 
+    connect(widget->innerWidget(), &TemplateWidgetBase::SignalImageDroped, this,
+            [&](int from_index, int to_index) {
+              auto &monthes = frame_control.CurrentProject()->monthes_;
+
+              auto month_from_photo_data = monthes[from_index].photo_data;
+              auto &month_to = monthes[to_index];
+
+              monthes[from_index].photo_data = month_to.photo_data;
+              month_to.photo_data = month_from_photo_data;
+
+              monthes[from_index].photo_data.state =
+                  ((short)PhotoData::STATE::IMAGE_CHANGED |
+                   (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+                   (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+              monthes[to_index].photo_data.state =
+                  ((short)PhotoData::STATE::IMAGE_CHANGED |
+                   (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+                   (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+
+              UpdateFrames(nullptr);
+              frame_control.SaveProject();
+            });
+
     connect(widget->innerWidget(), &TemplateWidgetBase::SignalTunePhoto, this,
             [&](int month_index, FrameParameters frame_data) {
               auto &month =

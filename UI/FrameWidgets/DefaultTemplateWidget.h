@@ -101,6 +101,7 @@ signals:
   void SignalTitleClicked(QString text);
   void SignalMonthTextClicked(QString text, int month);
   void SignalRemoveButtonClicked(int month);
+  void SignalImageDroped(int from_id, int to_id);
 
 public slots:
   void Update();
