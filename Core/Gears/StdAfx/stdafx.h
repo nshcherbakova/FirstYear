@@ -55,5 +55,6 @@
 #include <Types.h>
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 #include <UI/FrameWidgets/Photo.h>
+#include <UI/FrameWidgets/TouchButton.h>
 #include <UI/SwipeView/SwipeWidgetsList.hpp>
 #include <UI/Utility.h>

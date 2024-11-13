@@ -1,6 +1,6 @@
 #include "PreviewWidget.h"
-
 #include <stdafx.h>
+
 namespace FirstYear::UI::Preview {
 const double MIN_SIZE_K = 0.7;
 const double MAX_SIZE_K = 15.0;
@@ -237,81 +237,6 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-///
-///
-class TouchButton : public QPushButton {
-public:
-  TouchButton(QWidget *parent) : QPushButton(parent) {
-    setAttribute(Qt::WA_AcceptTouchEvents);
-  }
-  bool event(QEvent *event);
-};
-
-bool TouchButton::event(QEvent *event) {
-  switch (event->type()) {
-  case QEvent::TouchBegin:
-  case QEvent::TouchUpdate:
-  case QEvent::TouchEnd: {
-    auto points = static_cast<QTouchEvent *>(event)->points();
-    QPointF center;
-
-    for (const QTouchEvent::TouchPoint &touchPoint : points) {
-      center += touchPoint.position();
-    }
-    if (!points.empty()) {
-      center /= points.size();
-      if (geometry().contains(center.toPoint())) {
-        return QPushButton::event(event);
-      }
-    }
-    return false;
-  }
-  default:
-    return QPushButton::event(event);
-  }
-  return QPushButton::event(event);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-///
-///
-class TouchClickableLabel final : public ClickableLabel {
-public:
-  TouchClickableLabel(QWidget *parent, int font_size, QString font_color,
-                      QString font_family)
-      : ClickableLabel(parent, font_size, font_color, font_family) {
-    setAttribute(Qt::WA_AcceptTouchEvents);
-  }
-  bool event(QEvent *event);
-};
-
-bool TouchClickableLabel::event(QEvent *event) {
-  switch (event->type()) {
-  case QEvent::TouchBegin:
-  case QEvent::TouchUpdate:
-  case QEvent::TouchEnd: {
-    auto points = static_cast<QTouchEvent *>(event)->points();
-    QPointF center;
-
-    for (const QTouchEvent::TouchPoint &touchPoint : points) {
-      center += touchPoint.position();
-    }
-    if (!points.empty()) {
-      center /= points.size();
-      if (geometry().contains(center.toPoint())) {
-        return ClickableLabel::event(event);
-      }
-    }
-    return false;
-  }
-  default:
-    return ClickableLabel::event(event);
-  }
-  return ClickableLabel::event(event);
-}
 /////////////////////////////////////////////////////////
 /// \brief PhotoTuneWidget::PhotoTuneWidget
 /// \param parent

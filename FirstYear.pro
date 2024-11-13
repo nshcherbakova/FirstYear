@@ -35,6 +35,7 @@ SOURCES += \
     UI/FrameWidgets/PhotoTuneWidget.cpp \
     UI/FrameWidgets/PhotoWidget.cpp \
     UI/FrameWidgets/PreviewWidget.cpp \
+    UI/FrameWidgets/TouchButton.cpp \
     UI/SwipeView/SwipeWidgetsList.cpp \
     UI/Utility.cpp \
     main.cpp \
@@ -58,6 +59,7 @@ HEADERS += \
     UI/FrameWidgets/PhotoTuneWidget.h \
     UI/FrameWidgets/PhotoWidget.h \
     UI/FrameWidgets/PreviewWidget.h \
+    UI/FrameWidgets/TouchButton.h \
     UI/SwipeView/SwipeWidgetsList.hpp \
     UI/Utility.h \
     mainwindow.h

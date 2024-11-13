@@ -13,6 +13,10 @@ class QTapAndHoldGesture;
 class QTouchEvent;
 class QEventPoint;
 
+namespace FirstYear::UI {
+class TouchButton;
+}
+
 namespace FirstYear::UI::Preview {
 
 class GestureProcessor {
@@ -111,7 +115,7 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 /// \brief The PhotoTuneWidget class
 ///
-class TouchButton;
+
 class PreviewWidget final : public QWidget,
                             public GestureProcessor,
                             public PhotoProcessor {
