@@ -15,7 +15,7 @@ void ImageButton::setPhoto(const Core::PhotoDataPtr &photo) {
 void ImageButton::UpdateButton() {
   if (buffer_.size() != rect().size()) {
     buffer_ = QPixmap(rect().size() * devicePixelRatio());
-    //  buffer_.setDevicePixelRatio(devicePixelRatio());
+    buffer_.setDevicePixelRatio(devicePixelRatio());
   }
 
   QPainter painter(&buffer_);

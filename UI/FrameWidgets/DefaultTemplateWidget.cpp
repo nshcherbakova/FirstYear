@@ -366,25 +366,18 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
       auto project = control.CurrentProject();
       auto &month = project->monthes_[i];
 
-      if (month.photo_data->is_stub_image) {
+      if (month.photo_data->isStub()) {
         const auto file = Utility::OpenFile(this);
         if (!file.isNull()) {
-          month.photo_data->is_stub_image = false;
-          month.photo_data->image = QPixmap(file);
-          month.photo_data->state =
-              ((short)Core::PhotoData::STATE::IMAGE_CHANGED |
-               (short)Core::PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-               (short)Core::PhotoData::STATE::TRANSFORM_SR_CHANGED);
+          month.photo_data->setImage(QPixmap(file));
           //  month.photo_data.scale = 2.5;
-          month.photo_data->image.setDevicePixelRatio(
-              QGuiApplication::primaryScreen()->devicePixelRatio());
 
           control.SaveProjectMonth(i);
           photo_widgets_[i]->setPhoto(month.photo_data, i);
         }
       }
 
-      if (!month.photo_data->is_stub_image) {
+      if (!month.photo_data->isStub()) {
         emit SignalTunePhoto(i, frame_data_[i]);
       }
     });
@@ -485,7 +478,7 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
                           QPoint(10.0, 10.0) * k);
       new_rect.setSize(QSize{(int)(20 * k), (int)(20 * k)});
 
-      if (!project->monthes_[i].photo_data->is_stub_image) {
+      if (!project->monthes_[i].photo_data->isStub()) {
         remove_buttons_[i]->show();
         remove_buttons_[i]->setGeometry(new_rect);
       } else {

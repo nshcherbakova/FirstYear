@@ -1,26 +1,49 @@
 #pragma once
 #ifndef FIRSTYEAR_CORE_PROJECT_H
 #define FIRSTYEAR_CORE_PROJECT_H
+#include <QGuiApplication>
 #include <QPixmap>
 #include <QRectF>
+#include <QScreen>
 #include <QString>
 #include <Types.h>
 #include <vector>
 
 namespace FirstYear::Core {
 class PhotoData {
-public:
-  QPixmap image;
-  bool is_stub_image = false;
-  QTransform transform_scale_rotate;
-  QTransform transform_offset;
+  friend class FileSystemProjectLoader;
+  friend class FileSystemProjectWriter;
 
-  mutable short state = 0;
+public:
+  void setImage(QPixmap image);
+  void setImage(QPixmap image, QTransform transform_scale_rotate,
+                const QTransform transform_offset);
+  void setTransforms(QTransform transform_scale_rotate,
+                     QTransform transform_offset);
+  void setStubImage(QPixmap image);
+  void setState(short state);
+
+  const QPixmap &image() const;
+  const QTransform &transformScaleRotate() const;
+  const QTransform &transformOffset() const;
+  QTransform &transformScaleRotateRef();
+  QTransform &transformOffsetRef();
+  short state() const;
+  bool isStub() const;
+
   enum class STATE : short {
     IMAGE_CHANGED = 0x01,
     TRANSFORM_SR_CHANGED = 0x02,
     TRANSFORM_OFFSET_CHANGED = 0x04,
   };
+
+protected:
+  QPixmap image_;
+  bool is_stub_image_ = false;
+  QTransform transform_scale_rotate_;
+  QTransform transform_offset_;
+
+  mutable short state_ = 0;
 };
 
 struct MonthItem {

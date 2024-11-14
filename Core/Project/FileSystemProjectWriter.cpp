@@ -92,9 +92,9 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
   const auto &month_data = project->monthes_[month];
 
-  if (month_data.photo_data->state &
+  if (month_data.photo_data->state() &
           (short)PhotoData::STATE::TRANSFORM_SR_CHANGED ||
-      month_data.photo_data->state &
+      month_data.photo_data->state() &
           (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED ||
       month_data.state & (short)MonthItem::STATE::TEXT_CHANGED ||
       month_data.state & (short)MonthItem::STATE::FILTER_ID_CHANGED) {
@@ -102,10 +102,10 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
     month_metadata.insert(
         "transform_offset",
-        TransformJson(month_data.photo_data->transform_offset));
+        TransformJson(month_data.photo_data->transformOffset()));
     month_metadata.insert(
         "transform_scale_rotate",
-        TransformJson(month_data.photo_data->transform_scale_rotate));
+        TransformJson(month_data.photo_data->transformScaleRotate()));
 
     month_metadata.insert("text", month_data.text);
 
@@ -124,11 +124,11 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
     month_metadata_file.close();
   }
 
-  if (month_data.photo_data->state & (short)PhotoData::STATE::IMAGE_CHANGED) {
+  if (month_data.photo_data->state() & (short)PhotoData::STATE::IMAGE_CHANGED) {
     const auto image_path = month_photo_path_template_.arg(month);
-    if (!month_data.photo_data->is_stub_image) {
-      if (!month_data.photo_data->image.isNull()) {
-        if (!month_data.photo_data->image.save(image_path, IMAGE_FORMAT)) {
+    if (!month_data.photo_data->isStub()) {
+      if (!month_data.photo_data->image().isNull()) {
+        if (!month_data.photo_data->image().save(image_path, IMAGE_FORMAT)) {
           spdlog::info("Error, image was not saved {0}",
                        image_path.toStdString());
         }
@@ -138,7 +138,7 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
     }
   }
 
-  month_data.photo_data->state = 0;
+  month_data.photo_data->state_ = 0;
   month_data.state = 0;
 }
 } // namespace FirstYear::Core

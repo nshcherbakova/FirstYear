@@ -42,7 +42,7 @@ PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
     drag->setMimeData(mimeData);
 
     drag->setPixmap(photo_scaled_);
-    drag->setHotSpot({size().width(), size().height()});
+    drag->setHotSpot({size().width() / 2, size().height() / 2});
     //! [3]
 
     drag->exec(Qt::CopyAction);
@@ -81,7 +81,7 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
   painter.drawPixmap(0,0,photo_scaled_);
   photo_scaled_ = pm;*/
 
-  if (photo->is_stub_image) {
+  if (photo->isStub()) {
     setText("Open Image");
   } else {
     setText("Edit");
@@ -126,7 +126,7 @@ void PhotoWidget::dragMoveEvent(QDragMoveEvent *event) {
 
 void PhotoWidget::dropEvent(QDropEvent *event) {
   drag_enter_ = false;
-  update();
+  // update();
   if (event->source() == this) {
     // event->setDropAction(Qt::MoveAction);
     event->ignore();

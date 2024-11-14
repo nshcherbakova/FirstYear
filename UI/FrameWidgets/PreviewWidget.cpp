@@ -125,7 +125,7 @@ void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
   destanation_rect_ = destanation_rect;
 
   const QRectF photo_rect = {
-      QPointF(0, 0), photo_data_.image.size() /
+      QPointF(0, 0), photo_data_.image().size() /
                          QGuiApplication::primaryScreen()->devicePixelRatio()};
   double k1 = photo_rect.width() / photo_rect.height();
   double k2 = boundary_rect_.width() / boundary_rect_.height();
@@ -141,7 +141,7 @@ void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
   transform_ = getTransformForWidget(
       {std::optional<double>(), std::optional<QPointF>(),
        std::optional<QPointF>()},
-      photo_data_.transform_offset, photo_data_.transform_scale_rotate);
+      photo_data_.transformOffsetRef(), photo_data_.transformScaleRotateRef());
 }
 
 QTransform
@@ -153,10 +153,9 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
   const auto offset_diff = photo_position.offset.value_or(QPointF(0, 0));
   const auto center = photo_position.center.value_or(QPointF(0, 0));
 
-  const qreal iw = photo_data_.image.width() /
-                   QGuiApplication::primaryScreen()->devicePixelRatio();
-  const qreal ih = photo_data_.image.height() /
-                   QGuiApplication::primaryScreen()->devicePixelRatio();
+  const auto dpr = QGuiApplication::primaryScreen()->devicePixelRatio();
+  const qreal iw = photo_data_.image().width() / dpr;
+  const qreal ih = photo_data_.image().height() / dpr;
   const qreal wh = destanation_rect_.height();
   const qreal ww = destanation_rect_.width();
 
@@ -186,11 +185,11 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
 }
 
 void PhotoPainter::drawPhoto(QPainter &painter) {
-  if (photo_data_.image.isNull())
+  if (photo_data_.image().isNull())
     return;
 
   painter.setTransform(transform_);
-  painter.drawPixmap(0, 0, photo_data_.image);
+  painter.drawPixmap(0, 0, photo_data_.image());
   painter.setTransform(QTransform());
 }
 
@@ -201,7 +200,7 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
 bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
 
   const QRectF image_rect = {
-      QPointF(0, 0), photo_data_.image.size() /
+      QPointF(0, 0), photo_data_.image().size() /
                          QGuiApplication::primaryScreen()->devicePixelRatio()};
   auto translated_image_rect = transform.mapRect(image_rect);
 
@@ -222,18 +221,14 @@ bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
 void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
                                          std::optional<double> scale_factor,
                                          std::optional<QPointF> center) {
-  QTransform scale_rotate = photo_data_.transform_scale_rotate;
-  QTransform translate = photo_data_.transform_offset;
-  QTransform transform = getTransformForWidget(
-      {scale_factor, pos_delta, center}, translate, scale_rotate);
+  QTransform scale_rotate = photo_data_.transformScaleRotate();
+  QTransform translate = photo_data_.transformOffset();
+  auto transform = getTransformForWidget({scale_factor, pos_delta, center},
+                                         translate, scale_rotate);
 
   if (checkBoundares(transform)) {
     transform_ = transform;
-    photo_data_.transform_scale_rotate = scale_rotate;
-    photo_data_.transform_offset = translate;
-    photo_data_.state |=
-        (short)Core::PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-        (short)Core::PhotoData::STATE::TRANSFORM_SR_CHANGED;
+    photo_data_.setTransforms(std::move(scale_rotate), std::move(translate));
   }
 }
 
@@ -279,7 +274,7 @@ void PreviewWidget::setVisible(bool visible) {
 void PreviewWidget::resizeEvent(QResizeEvent *e) {
   QWidget::resizeEvent(e);
 
-  if (photo_data_.image.isNull())
+  if (photo_data_.image().isNull())
     return;
 
   share_->setGeometry(width() - 3 * button_with, height() - 2 * button_with,
@@ -307,7 +302,7 @@ bool PreviewWidget::event(QEvent *event) {
 void PreviewWidget::setImage(QPixmap photo) {
 
   Core::PhotoData photo_data;
-  photo_data.image = photo;
+  photo_data.setImage(std::move(photo));
   updatePhoto(photo_data);
 }
 
@@ -316,7 +311,7 @@ void PreviewWidget::updatePhoto(const Core::PhotoData &photo) {
   update();
 }
 
-QPixmap PreviewWidget::getImage() const { return photo_data_.image; }
+QPixmap PreviewWidget::getImage() const { return photo_data_.image(); }
 
 void PreviewWidget::updatePhoto(std::optional<QPointF> pos_delta,
                                 std::optional<double> scale_factor,

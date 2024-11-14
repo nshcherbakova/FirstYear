@@ -25,15 +25,8 @@ ProjectPtr FrameControl::LoadProject() {
     auto &month = current_project_->monthes_[i];
 
     month.stub_image_path = QString(c_stub_month_photo_template_str).arg(i);
-    if (month.photo_data->image.isNull()) {
-      month.photo_data->is_stub_image = true;
-
-      month.photo_data->image = QPixmap(month.stub_image_path);
-      month.photo_data->image.setDevicePixelRatio(
-          QGuiApplication::primaryScreen()->devicePixelRatio());
-      // month.photo_data.angle = 0;
-      // month.photo_data.scale = 1;
-      // month.photo_data.offset = QPoint();
+    if (month.photo_data->image().isNull()) {
+      month.photo_data->setStubImage(QPixmap(month.stub_image_path));
     }
   }
 

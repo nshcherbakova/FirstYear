@@ -134,14 +134,14 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   auto month_json = month_json_document.object();
 
   if (!LoadTransform(month_json, "transform_scale_rotate",
-                     month.photo_data->transform_scale_rotate)) {
+                     month.photo_data->transform_scale_rotate_)) {
     spdlog::error("Error while reading  transform_scale_rotate in a {0} month "
                   "photo scale from json {1}.",
                   month_number, month_metadata.toStdString());
     // return false;
   }
   if (!LoadTransform(month_json, "transform_offset",
-                     month.photo_data->transform_offset)) {
+                     month.photo_data->transform_offset_)) {
     spdlog::error("Error while reading transform_offset in a {0} month photo "
                   "scale from json {1}.",
                   month_number, month_metadata.toStdString());
@@ -171,9 +171,8 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   QPixmap photo(month_photo_path_template_.arg(month_number));
 
   if (!photo.isNull()) {
-    const auto dpr = QGuiApplication::primaryScreen()->devicePixelRatio();
-    photo.setDevicePixelRatio(dpr);
-    month.photo_data->image = photo;
+    month.photo_data->setImage(std::move(photo));
+    month.photo_data->setState(0);
   }
   return true;
 }

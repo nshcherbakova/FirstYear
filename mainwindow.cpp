@@ -233,14 +233,15 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
               monthes[from_index].photo_data = month_to.photo_data;
               month_to.photo_data = month_from_photo_data;
 
-              monthes[from_index].photo_data->state =
+              monthes[from_index].photo_data->setState(
                   ((short)PhotoData::STATE::IMAGE_CHANGED |
                    (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-                   (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
-              monthes[to_index].photo_data->state =
-                  ((short)PhotoData::STATE::IMAGE_CHANGED |
-                   (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-                   (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+                   (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
+
+              monthes[to_index].photo_data->setState(
+                  (short)PhotoData::STATE::IMAGE_CHANGED |
+                  (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+                  (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
 
               UpdateFrames(nullptr);
               frame_control.SaveProject();
@@ -263,15 +264,9 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
             [&](int month_index) {
               auto &month_data =
                   frame_control.CurrentProject()->monthes_[month_index];
-              *month_data.photo_data = {
-                  QPixmap(month_data.stub_image_path), true, QTransform(),
-                  QTransform(),
-                  ((short)PhotoData::STATE::IMAGE_CHANGED |
-                   (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-                   (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
 
-              month_data.photo_data->image.setDevicePixelRatio(
-                  QGuiApplication::primaryScreen()->devicePixelRatio());
+              month_data.photo_data->setStubImage(
+                  QPixmap(month_data.stub_image_path));
 
               UpdateFrames(nullptr);
             });
@@ -315,12 +310,8 @@ bool MainWindow::OpenImage(int month,
   if (!file.isNull()) {
     auto project = frame_control.CurrentProject();
     auto &month_data = project->monthes_[month];
-    *month_data.photo_data = {
-        QPixmap(file), false, QTransform(), QTransform(),
-        ((short)PhotoData::STATE::IMAGE_CHANGED |
-         (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-         (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
-    month_data.photo_data->image.setDevicePixelRatio(devicePixelRatio());
+
+    month_data.photo_data->setImage(QPixmap(file), QTransform(), QTransform());
 
     photo_tune_widget_->updatePhoto(month_data.photo_data);
     return true;
@@ -344,7 +335,7 @@ void MainWindow::TuneImage(int month,
   auto project = frame_control.CurrentProject();
   auto &month_data = project->monthes_[month];
 
-  if (month_data.photo_data->is_stub_image) {
+  if (month_data.photo_data->isStub()) {
 
     if (!OpenImage(month, frame_control)) {
       photo_tune_widget_->hide();
@@ -374,7 +365,7 @@ void MainWindow::UpdateSelectionButton(
   auto project = frame_control.CurrentProject();
   int empty_slots_count = 0;
   for (const auto &month_data : project->monthes_) {
-    if (month_data.photo_data->is_stub_image) {
+    if (month_data.photo_data->isStub()) {
       empty_slots_count++;
     }
   }
@@ -397,11 +388,13 @@ void MainWindow::CreateSwipeWidget(
 
   connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
           [&](int index) {
-            frame_control.CurrentProject()->frame_id_ =
-                frame_widgets_[index]->innerWidget()->id();
-            frame_control.CurrentProject()->state |=
-                (short)Core::Project::STATE::FRAME_ID_CHANGED;
-            frame_control.SaveProject();
+            const auto new_id = frame_widgets_[index]->innerWidget()->id();
+            if (new_id != frame_control.CurrentProject()->frame_id_) {
+              frame_control.CurrentProject()->frame_id_ = new_id;
+              frame_control.CurrentProject()->state |=
+                  (short)Core::Project::STATE::FRAME_ID_CHANGED;
+              frame_control.SaveProject();
+            }
           });
 }
 
@@ -423,7 +416,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
 pixmap.save(path);
 #endif
 
-    preview_->setImage(pixmap);
+    preview_->setImage(std::move(pixmap));
     preview_->show();
   });
 
@@ -468,14 +461,9 @@ pixmap.save(path);
         while (project->monthes_.size() > month) {
           auto &month_data = project->monthes_[month];
           month++;
-          if (month_data.photo_data->is_stub_image) {
-            *month_data.photo_data = {
-                QPixmap(file), false, QTransform(), QTransform(),
-                ((short)PhotoData::STATE::IMAGE_CHANGED |
-                 (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-                 (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
-            month_data.photo_data->image.setDevicePixelRatio(
-                devicePixelRatio());
+          if (month_data.photo_data->isStub()) {
+            month_data.photo_data->setImage(QPixmap(file), QTransform(),
+                                            QTransform());
             break;
           }
         }
