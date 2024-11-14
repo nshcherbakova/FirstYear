@@ -64,7 +64,7 @@ void PhotoWidget::resizeEvent(QResizeEvent *event) {
   update();
 }
 
-void PhotoWidget::setPhoto(const Core::PhotoData &photo, int id) {
+void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
   photo_data_ = photo;
 
   id_ = id;
@@ -81,7 +81,7 @@ void PhotoWidget::setPhoto(const Core::PhotoData &photo, int id) {
   painter.drawPixmap(0,0,photo_scaled_);
   photo_scaled_ = pm;*/
 
-  if (photo.is_stub_image) {
+  if (photo->is_stub_image) {
     setText("Open Image");
   } else {
     setText("Edit");

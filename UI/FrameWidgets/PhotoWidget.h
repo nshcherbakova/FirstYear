@@ -23,7 +23,7 @@ public:
 
 public:
   void setText(QString text);
-  void setPhoto(const Core::PhotoData &photo, int id);
+  void setPhoto(const Core::PhotoDataPtr &photo, int id);
   Core::PhotoData getPhoto();
 
 public:
@@ -43,7 +43,7 @@ signals:
 private:
   QLabel text_widget_;
   bool render_state_ = false;
-  Core::PhotoData photo_data_;
+  Core::PhotoDataPtr photo_data_;
   QPixmap photo_scaled_;
   QTimer timer_;
   int id_ = 0;

@@ -8,7 +8,8 @@
 #include <vector>
 
 namespace FirstYear::Core {
-struct PhotoData {
+class PhotoData {
+public:
   QPixmap image;
   bool is_stub_image = false;
   QTransform transform_scale_rotate;
@@ -23,7 +24,7 @@ struct PhotoData {
 };
 
 struct MonthItem {
-  PhotoData photo_data;
+  PhotoDataPtr photo_data;
   QString text;
   QString filter_id;
   QString stub_image_path;

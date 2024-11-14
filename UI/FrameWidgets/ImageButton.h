@@ -14,7 +14,7 @@ public:
   ImageButton &operator=(const ImageButton &) = delete;
 
 public:
-  void setPhoto(const Core::PhotoData &photo);
+  void setPhoto(const Core::PhotoDataPtr &photo);
   void UpdateButton();
 
 public:
@@ -22,7 +22,7 @@ public:
   virtual void resizeEvent(QResizeEvent *) override;
 
 private:
-  Core::PhotoData photo_data_;
+  Core::PhotoDataPtr photo_data_;
   QPixmap buffer_;
 };
 

@@ -116,6 +116,7 @@ bool FileSystemProjectLoader::LoadTransform(const QJsonObject &json,
 bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
 
   MonthItem &month = project->monthes_[month_number];
+  month.photo_data = std::make_shared<PhotoData>();
   QFile month_metadata_file(month_metadata_path_template_.arg(month_number));
 
   if (!month_metadata_file.open(QIODevice::ReadOnly)) {
@@ -133,14 +134,14 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   auto month_json = month_json_document.object();
 
   if (!LoadTransform(month_json, "transform_scale_rotate",
-                     month.photo_data.transform_scale_rotate)) {
+                     month.photo_data->transform_scale_rotate)) {
     spdlog::error("Error while reading  transform_scale_rotate in a {0} month "
                   "photo scale from json {1}.",
                   month_number, month_metadata.toStdString());
     // return false;
   }
   if (!LoadTransform(month_json, "transform_offset",
-                     month.photo_data.transform_offset)) {
+                     month.photo_data->transform_offset)) {
     spdlog::error("Error while reading transform_offset in a {0} month photo "
                   "scale from json {1}.",
                   month_number, month_metadata.toStdString());
@@ -172,7 +173,7 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   if (!photo.isNull()) {
     const auto dpr = QGuiApplication::primaryScreen()->devicePixelRatio();
     photo.setDevicePixelRatio(dpr);
-    month.photo_data.image = photo;
+    month.photo_data->image = photo;
   }
   return true;
 }

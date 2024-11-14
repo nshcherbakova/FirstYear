@@ -5,7 +5,7 @@ namespace FirstYear::UI {
 
 ImageButton::ImageButton(QWidget &parent) : QPushButton(&parent) {}
 
-void ImageButton::setPhoto(const Core::PhotoData &photo) {
+void ImageButton::setPhoto(const Core::PhotoDataPtr &photo) {
   photo_data_ = photo;
   PhotoPainter::init(photo, {{}, rect().size()}, {{}, rect().size()});
 

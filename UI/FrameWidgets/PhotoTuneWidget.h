@@ -59,7 +59,7 @@ public:
   PhotoPainter &operator=(const PhotoPainter &) = delete;
 
 public:
-  void init(const Core::PhotoData &photo, QRectF destanation_rect,
+  void init(const Core::PhotoDataPtr &photo, QRectF destanation_rect,
             QRectF boundary_rect);
   void drawPhoto(QPainter &);
 
@@ -93,7 +93,7 @@ protected:
 
 protected:
   QTransform transform_;
-  Core::PhotoData photo_data_;
+  Core::PhotoDataPtr photo_data_;
 
   double internal_scale_ = 1;
   QRectF boundary_rect_;
@@ -157,10 +157,10 @@ signals:
 
 public:
   void setPhoto(int id, const FrameParameters &frame_data,
-                const Core::PhotoData &photo, QString text);
-  void updatePhoto(const Core::PhotoData &photo);
+                const Core::PhotoDataPtr &photo, QString text);
+  void updatePhoto(const Core::PhotoDataPtr &photo);
   void updateText(QString text);
-  Core::PhotoData getPhoto() const;
+  Core::PhotoDataPtr getPhoto() const;
   int getPhotoId() const;
 
 private:

@@ -7,6 +7,8 @@
 namespace FirstYear::Core {
 class Project;
 using ProjectPtr = std::shared_ptr<Project>;
+class PhotoData;
+using PhotoDataPtr = std::shared_ptr<PhotoData>;
 class FrameControl;
 } // namespace FirstYear::Core
 

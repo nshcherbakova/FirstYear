@@ -233,11 +233,11 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
               monthes[from_index].photo_data = month_to.photo_data;
               month_to.photo_data = month_from_photo_data;
 
-              monthes[from_index].photo_data.state =
+              monthes[from_index].photo_data->state =
                   ((short)PhotoData::STATE::IMAGE_CHANGED |
                    (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
                    (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
-              monthes[to_index].photo_data.state =
+              monthes[to_index].photo_data->state =
                   ((short)PhotoData::STATE::IMAGE_CHANGED |
                    (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
                    (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
@@ -263,14 +263,14 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
             [&](int month_index) {
               auto &month_data =
                   frame_control.CurrentProject()->monthes_[month_index];
-              month_data.photo_data = {
+              *month_data.photo_data = {
                   QPixmap(month_data.stub_image_path), true, QTransform(),
                   QTransform(),
                   ((short)PhotoData::STATE::IMAGE_CHANGED |
                    (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
                    (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
 
-              month_data.photo_data.image.setDevicePixelRatio(
+              month_data.photo_data->image.setDevicePixelRatio(
                   QGuiApplication::primaryScreen()->devicePixelRatio());
 
               UpdateFrames(nullptr);
@@ -315,12 +315,12 @@ bool MainWindow::OpenImage(int month,
   if (!file.isNull()) {
     auto project = frame_control.CurrentProject();
     auto &month_data = project->monthes_[month];
-    month_data.photo_data = {
+    *month_data.photo_data = {
         QPixmap(file), false, QTransform(), QTransform(),
         ((short)PhotoData::STATE::IMAGE_CHANGED |
          (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
          (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
-    month_data.photo_data.image.setDevicePixelRatio(devicePixelRatio());
+    month_data.photo_data->image.setDevicePixelRatio(devicePixelRatio());
 
     photo_tune_widget_->updatePhoto(month_data.photo_data);
     return true;
@@ -344,7 +344,7 @@ void MainWindow::TuneImage(int month,
   auto project = frame_control.CurrentProject();
   auto &month_data = project->monthes_[month];
 
-  if (month_data.photo_data.is_stub_image) {
+  if (month_data.photo_data->is_stub_image) {
 
     if (!OpenImage(month, frame_control)) {
       photo_tune_widget_->hide();
@@ -374,7 +374,7 @@ void MainWindow::UpdateSelectionButton(
   auto project = frame_control.CurrentProject();
   int empty_slots_count = 0;
   for (const auto &month_data : project->monthes_) {
-    if (month_data.photo_data.is_stub_image) {
+    if (month_data.photo_data->is_stub_image) {
       empty_slots_count++;
     }
   }
@@ -468,13 +468,14 @@ pixmap.save(path);
         while (project->monthes_.size() > month) {
           auto &month_data = project->monthes_[month];
           month++;
-          if (month_data.photo_data.is_stub_image) {
-            month_data.photo_data = {
+          if (month_data.photo_data->is_stub_image) {
+            *month_data.photo_data = {
                 QPixmap(file), false, QTransform(), QTransform(),
                 ((short)PhotoData::STATE::IMAGE_CHANGED |
                  (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
                  (short)PhotoData::STATE::TRANSFORM_SR_CHANGED)};
-            month_data.photo_data.image.setDevicePixelRatio(devicePixelRatio());
+            month_data.photo_data->image.setDevicePixelRatio(
+                devicePixelRatio());
             break;
           }
         }
