@@ -70,8 +70,9 @@ void PhotoWidget::setPhoto(const Core::PhotoData &photo, int id) {
   id_ = id;
 
   ImageButton::setPhoto(photo);
-  photo_scaled_ = ImageButton::grab();
-
+  if (!render_state_) {
+    photo_scaled_ = ImageButton::grab();
+  }
   /*QPixmap pm(photo_scaled_.size());
 
   QPainter painter(&pm);
