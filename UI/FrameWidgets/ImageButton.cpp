@@ -7,7 +7,7 @@ ImageButton::ImageButton(QWidget &parent) : QPushButton(&parent) {}
 
 void ImageButton::setPhoto(const Core::PhotoDataPtr &photo) {
   photo_data_ = photo;
-  PhotoPainter::init(photo, {{}, rect().size()}, {{}, rect().size()});
+  PhotoPainter::init(photo, rect(), rect());
 
   UpdateButton();
 }
@@ -38,6 +38,6 @@ void ImageButton::paintEvent(QPaintEvent *e) {
   // painter.begin();
   painter.drawPixmap(0, 0, buffer_);
   //  painter.end();
-  QPushButton::paintEvent(e);
+  // QPushButton::paintEvent(e);
 }
 } // namespace FirstYear::UI

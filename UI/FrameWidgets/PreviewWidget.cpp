@@ -128,13 +128,14 @@ void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
       QPointF(0, 0), photo_data_.image().size() /
                          QGuiApplication::primaryScreen()->devicePixelRatio()};
   double k1 = photo_rect.width() / photo_rect.height();
-  double k2 = boundary_rect_.width() / boundary_rect_.height();
+  double k2 = destanation_rect_.width() / destanation_rect_.height();
 
   if (k1 < k2) {
-    internal_scale_ = ((double)boundary_rect_.height() / photo_rect.height()) *
-                      INITIAL_SCALE_FACTOR;
+    internal_scale_ =
+        ((double)destanation_rect_.height() / photo_rect.height()) *
+        INITIAL_SCALE_FACTOR;
   } else {
-    internal_scale_ = ((double)boundary_rect_.width() / photo_rect.width()) *
+    internal_scale_ = ((double)destanation_rect_.width() / photo_rect.width()) *
                       INITIAL_SCALE_FACTOR;
   }
 
@@ -202,15 +203,18 @@ bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
   const QRectF image_rect = {
       QPointF(0, 0), photo_data_.image().size() /
                          QGuiApplication::primaryScreen()->devicePixelRatio()};
+
   auto translated_image_rect = transform.mapRect(image_rect);
 
   if (translated_image_rect.width() < boundary_rect_.width() * MIN_SIZE_K ||
-      translated_image_rect.height() < boundary_rect_.height() * MIN_SIZE_K)
+      translated_image_rect.height() < boundary_rect_.height() * MIN_SIZE_K) {
     return false;
+  }
 
   if (translated_image_rect.width() > boundary_rect_.width() * MAX_SIZE_K ||
-      translated_image_rect.height() > boundary_rect_.height() * MAX_SIZE_K)
+      translated_image_rect.height() > boundary_rect_.height() * MAX_SIZE_K) {
     return false;
+  }
 
   if (!translated_image_rect.intersects(boundary_rect_))
     return false;
@@ -307,7 +311,13 @@ void PreviewWidget::setImage(QPixmap photo) {
 }
 
 void PreviewWidget::updatePhoto(const Core::PhotoData &photo) {
-  PhotoProcessor::init(photo, rect(), rect());
+  auto boundary_rect = rect();
+  boundary_rect.moveTopLeft(
+      {boundary_rect.width() / 3, boundary_rect.height() / 3});
+  boundary_rect.setHeight(boundary_rect.height() / 3);
+  boundary_rect.setWidth(boundary_rect.width() / 3);
+
+  PhotoProcessor::init(photo, rect(), boundary_rect);
   update();
 }
 

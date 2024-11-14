@@ -394,8 +394,8 @@ void TemplateWidgetBase::createForegroundWidget() {
 }
 
 void TemplateWidgetBase::Update() {
-  QRect rect = {QPoint(0, 0), size()};
-  foreground_widget_->setGeometry(rect);
+
+  foreground_widget_->setGeometry(rect());
 
   load(control_);
 

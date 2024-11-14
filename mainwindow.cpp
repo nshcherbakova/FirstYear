@@ -56,7 +56,7 @@ protected:
     QWidget::resizeEvent(event);
 
     for (auto &frame_widget : frame_widgets_) {
-      frame_widget->setGeometry({{0, 0}, size()});
+      frame_widget->setGeometry(rect());
       frame_widget->setMinimumWidth(width());
       frame_widget->setMinimumHeight(height());
       frame_widget->setMaximumWidth(width());
@@ -64,7 +64,7 @@ protected:
     }
 
     if (swipe_widget_) {
-      swipe_widget_->setGeometry({{0, 0}, size()});
+      swipe_widget_->setGeometry(rect());
     }
   }
 
@@ -113,7 +113,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
 void MainWindow::CreatePreviewWindow() {
   preview_ = new Preview::PreviewWidget(*this);
-  preview_->setGeometry({{0, 0}, size()});
+  preview_->setGeometry(rect());
   connect(preview_, &Preview::PreviewWidget::SignalShareImage, this,
           [&] { Share(preview_->getImage()); });
   preview_->hide();
@@ -217,7 +217,7 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
           nullptr, new DefaultTemplateWidget2(nullptr, frame_control))};
 
   for (auto &widget : frame_widgets_) {
-    widget->setGeometry({{0, 0}, size()});
+    widget->setGeometry(rect());
     widget->setMinimumWidth(width());
     widget->setMinimumHeight(height());
     widget->setMaximumWidth(width());
@@ -384,7 +384,7 @@ void MainWindow::CreateSwipeWidget(
       swipe_widget_, {frame_widgets_.begin(), frame_widgets_.end()});
   swipe_widget_->addSwipeView(swipe_view_);
   swipe_widget_->addWidgets(frame_widgets_);
-  swipe_widget_->setGeometry({{0, 0}, size()});
+  swipe_widget_->setGeometry(rect());
 
   connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
           [&](int index) {
@@ -504,30 +504,27 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     QMainWindow::resizeEvent(e);
   }
 
-  const QRect rect = {{0, 0}, size()};
-
   if (swipe_widget_) {
-    swipe_widget_->setGeometry(rect);
+    swipe_widget_->setGeometry(rect());
   }
 
   if (photo_tune_widget_)
-    photo_tune_widget_->setGeometry(rect);
+    photo_tune_widget_->setGeometry(rect());
 
   if (line_edit_)
-    line_edit_->setGeometry(rect);
+    line_edit_->setGeometry(rect());
 
   if (preview_button_)
-    preview_button_->setGeometry(20, rect.height() - 2 * 40, 2 * 40, 40);
+    preview_button_->setGeometry(20, rect().height() - 2 * 40, 2 * 40, 40);
 
   if (share_button_)
-    share_button_->setGeometry(rect.width() - 100, rect.height() - 2 * 40,
-                               2 * 40, 40);
+    share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
 
   if (select_images_button_)
-    select_images_button_->setGeometry(rect.width() - 100,
-                                       rect.height() - 4 * 40, 2 * 40, 40);
+    select_images_button_->setGeometry(width() - 100, height() - 4 * 40, 2 * 40,
+                                       40);
   if (preview_)
-    preview_->setGeometry(rect);
+    preview_->setGeometry(rect());
 
   update();
 }

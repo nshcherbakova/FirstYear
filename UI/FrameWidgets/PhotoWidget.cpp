@@ -13,8 +13,9 @@ static const char *c_text_widget_style_str =
 PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
     : ImageButton(parent), text_widget_(this), render_state_(render_state) {
 
-  setAcceptDrops(true);
-
+  if (!render_state) {
+    setAcceptDrops(true);
+  }
   setContentsMargins(0, 0, 0, 0);
   setStyleSheet(c_image_widget_button_style_str);
   connect(this, &QPushButton::clicked, this, &PhotoWidget::SignalImagePressed);
@@ -73,13 +74,6 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
   if (!render_state_) {
     photo_scaled_ = ImageButton::grab();
   }
-  /*QPixmap pm(photo_scaled_.size());
-
-  QPainter painter(&pm);
-  painter.fillRect(QRectF{{0,0}, pm.size()},QColor(255, 255, 255, 100));
-  painter.setOpacity(0.1);  //0.00 = 0%, 1.00 = 100% opacity.
-  painter.drawPixmap(0,0,photo_scaled_);
-  photo_scaled_ = pm;*/
 
   if (photo->isStub()) {
     setText("Open Image");
@@ -154,25 +148,25 @@ void PhotoWidget::dropEvent(QDropEvent *event) {
 
 //! [1]
 void PhotoWidget::mousePressEvent(QMouseEvent *event) {
-
-  timer_.start();
-
+  if (!render_state_) {
+    timer_.start();
+  }
   ImageButton::mousePressEvent(event);
 }
 
 void PhotoWidget::mouseReleaseEvent(QMouseEvent *event) {
-  timer_.stop();
+  if (!render_state_) {
+    timer_.stop();
+  }
   ImageButton::mouseReleaseEvent(event);
 }
 
 void PhotoWidget::paintEvent(QPaintEvent *e) {
 
-  //  painter.end();
   ImageButton::paintEvent(e);
-  if (drag_enter_) {
+  if (!render_state_ && drag_enter_) {
     QPainter painter(this);
-    // painter.begin();
-    painter.fillRect(QRectF{{0, 0}, size()}, QColor(200, 200, 200, 200));
+    painter.fillRect(rect(), QColor(200, 200, 200, 200));
   }
 }
 } // namespace FirstYear::UI
