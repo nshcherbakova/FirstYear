@@ -128,6 +128,7 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
     const auto image_path = month_photo_path_template_.arg(month);
     if (!month_data.photo_data->isStub()) {
       if (!month_data.photo_data->image().isNull()) {
+        qDebug() << "Save image";
         if (!month_data.photo_data->image().save(image_path, IMAGE_FORMAT)) {
           spdlog::info("Error, image was not saved {0}",
                        image_path.toStdString());

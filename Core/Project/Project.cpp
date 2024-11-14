@@ -4,6 +4,7 @@
 namespace FirstYear::Core {
 
 void PhotoData::setImage(QPixmap image) {
+  is_stub_image_ = false;
   image_ = std::move(image);
   image_.setDevicePixelRatio(
       QGuiApplication::primaryScreen()->devicePixelRatio());
