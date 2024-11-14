@@ -386,7 +386,7 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
 
 void TemplateWidgetBase::createForegroundWidget() {
   foreground_widget_ = new ForegroundWidget(this, foreground_);
-  foreground_widget_->setGeometry({{0, 0}, size()});
+  foreground_widget_->setGeometry(rect());
   foreground_widget_->raise();
   foreground_widget_->show();
   foreground_widget_->setContentsMargins(0, 0, 0, 0);
