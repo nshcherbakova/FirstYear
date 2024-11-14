@@ -32,9 +32,12 @@ void ImageButton::resizeEvent(QResizeEvent *e) {
   UpdateButton();
 }
 
-void ImageButton::paintEvent(QPaintEvent *) {
-  QPainter painter(this);
+void ImageButton::paintEvent(QPaintEvent *e) {
 
+  QPainter painter(this);
+  // painter.begin();
   painter.drawPixmap(0, 0, buffer_);
+  //  painter.end();
+  QPushButton::paintEvent(e);
 }
 } // namespace FirstYear::UI

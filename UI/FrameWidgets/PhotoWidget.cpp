@@ -4,7 +4,9 @@
 namespace FirstYear::UI {
 
 static const char *c_image_widget_button_style_str =
-    "QPushButton{ background-color: rgba(255, 255, 255, 0);}";
+    "QPushButton{ background-color: rgba(255, 255, 255, 0);"
+    "}";
+
 static const char *c_text_widget_style_str =
     "QLabel{ background-color: rgba(255, 255, 255, 0);}";
 
@@ -66,15 +68,17 @@ void PhotoWidget::setPhoto(const Core::PhotoData &photo, int id) {
   photo_data_ = photo;
 
   id_ = id;
-  /* QPixmap pm(photo_scaled_.size());
 
-   QPainter painter(&pm);
-   painter.fillRect(QRectF{{0,0}, pm.size()},Qt::white);
-   painter.setOpacity(0.1);  //0.00 = 0%, 1.00 = 100% opacity.
-   painter.drawPixmap(0,0,photo_scaled_);
-   photo_scaled_ = pm;*/
   ImageButton::setPhoto(photo);
   photo_scaled_ = ImageButton::grab();
+
+  /*QPixmap pm(photo_scaled_.size());
+
+  QPainter painter(&pm);
+  painter.fillRect(QRectF{{0,0}, pm.size()},QColor(255, 255, 255, 100));
+  painter.setOpacity(0.1);  //0.00 = 0%, 1.00 = 100% opacity.
+  painter.drawPixmap(0,0,photo_scaled_);
+  photo_scaled_ = pm;*/
 
   if (photo.is_stub_image) {
     setText("Open Image");
@@ -88,14 +92,22 @@ void PhotoWidget::setText(QString text) { text_widget_.setText(text); }
 void PhotoWidget::dragEnterEvent(QDragEnterEvent *event) {
   if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
     if (event->source() == this) {
-      event->setDropAction(Qt::MoveAction);
-      event->accept();
+      //  event->setDropAction(Qt::MoveAction);
+      //  event->accept();
+      event->ignore();
     } else {
       event->acceptProposedAction();
+      drag_enter_ = true;
+      update();
     }
   } else {
     event->ignore();
   }
+}
+
+void PhotoWidget::dragLeaveEvent(QDragLeaveEvent *) {
+  drag_enter_ = false;
+  update();
 }
 
 void PhotoWidget::dragMoveEvent(QDragMoveEvent *event) {
@@ -112,6 +124,8 @@ void PhotoWidget::dragMoveEvent(QDragMoveEvent *event) {
 }
 
 void PhotoWidget::dropEvent(QDropEvent *event) {
+  drag_enter_ = false;
+  update();
   if (event->source() == this) {
     // event->setDropAction(Qt::MoveAction);
     event->ignore();
@@ -148,5 +162,16 @@ void PhotoWidget::mousePressEvent(QMouseEvent *event) {
 void PhotoWidget::mouseReleaseEvent(QMouseEvent *event) {
   timer_.stop();
   ImageButton::mouseReleaseEvent(event);
+}
+
+void PhotoWidget::paintEvent(QPaintEvent *e) {
+
+  //  painter.end();
+  ImageButton::paintEvent(e);
+  if (drag_enter_) {
+    QPainter painter(this);
+    // painter.begin();
+    painter.fillRect(QRectF{{0, 0}, size()}, QColor(200, 200, 200, 200));
+  }
 }
 } // namespace FirstYear::UI

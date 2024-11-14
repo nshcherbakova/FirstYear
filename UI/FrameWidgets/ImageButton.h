@@ -17,8 +17,9 @@ public:
   void setPhoto(const Core::PhotoData &photo);
   void UpdateButton();
 
-  void paintEvent(QPaintEvent *);
-  void resizeEvent(QResizeEvent *);
+public:
+  virtual void paintEvent(QPaintEvent *) override;
+  virtual void resizeEvent(QResizeEvent *) override;
 
 private:
   Core::PhotoData photo_data_;
