@@ -356,7 +356,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   close_->setContentsMargins(0, 0, 0, 0);
   connect(close_, &QPushButton::clicked, this, [&]() {
     hide();
-    emit SignalImageTuned();
+    // emit SignalImageTuned();
   });
 
   next_ = new TouchButton(this);
@@ -381,6 +381,13 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
           [&] { emit SignalTextClicked(text_->text()); });
 }
 
+void PhotoTuneWidget::setVisible(bool visible) {
+  QWidget::setVisible(visible);
+  if (!visible && photo_data_) //&& !photo_data_->image().isNull())
+  {
+    emit SignalImageTuned();
+  }
+}
 void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
   QWidget::resizeEvent(e);
 
@@ -411,8 +418,10 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
 }
 
 bool PhotoTuneWidget::event(QEvent *event) {
+  if (!isVisible() || !isEnabled()) {
+    return QWidget::event(event);
+  }
 
-  //  spdlog::error("event {}", (int)event->type());
   if (GestureProcessor::processEvent(event)) {
     close_->event(event);
     open_file_->event(event);
@@ -447,7 +456,7 @@ Core::PhotoDataPtr PhotoTuneWidget::getPhoto() const { return photo_data_; }
 void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   QWidget::mouseReleaseEvent(event);
   hide();
-  emit SignalImageTuned();
+  // emit SignalImageTuned();
 }
 
 void PhotoTuneWidget::updatePhoto(std::optional<QPointF> pos_delta,
@@ -534,12 +543,6 @@ void PhotoTuneWidget::processLongTap(QTapAndHoldGesture *) {
 void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
   QWidget::grabGesture(gesture);
 }
-
-/* bool PhotoTuneWidget::nativeEvent(const QByteArray &eventType, void *message,
-qintptr *result)
-{
-     spdlog::error("nativeEvent");
-}*/
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);

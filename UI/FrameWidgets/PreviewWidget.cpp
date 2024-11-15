@@ -292,7 +292,10 @@ void PreviewWidget::resizeEvent(QResizeEvent *e) {
 
 bool PreviewWidget::event(QEvent *event) {
 
-  //  spdlog::error("event {}", (int)event->type());
+  if (!isVisible() || !isEnabled()) {
+    return QWidget::event(event);
+  }
+
   if (GestureProcessor::processEvent(event)) {
 
     share_->event(event);
@@ -387,15 +390,8 @@ void PreviewWidget::grabWidgetGesture(Qt::GestureType gesture) {
   QWidget::grabGesture(gesture);
 }
 
-/* bool PhotoTuneWidget::nativeEvent(const QByteArray &eventType, void *message,
-qintptr *result)
-{
-     spdlog::error("nativeEvent");
-}*/
-
 void PreviewWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
-  // painter.drawPixmap(rect(), background_, rect());
   PhotoProcessor::drawPhoto(painter);
 }
 } // namespace FirstYear::UI::Preview

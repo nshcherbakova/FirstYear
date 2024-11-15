@@ -92,6 +92,8 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
+  // stackedLayout = new QStackedLayout;
+
   CreatePhotoTuneWidget(frame_control);
   CreateFrames(frame_control);
   CreateLineEditWidget(frame_control);
@@ -254,6 +256,7 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
               photo_tune_widget_->setPhoto(month_index, frame_data,
                                            month.photo_data, month.text);
               photo_tune_widget_->show();
+              // stackedLayout->addWidget(photo_tune_widget_);
             });
 
     connect(widget->innerWidget(), &TemplateWidgetBase::SignalTextChanged, this,
@@ -339,6 +342,9 @@ void MainWindow::TuneImage(int month,
 
     if (!OpenImage(month, frame_control)) {
       photo_tune_widget_->hide();
+      // QWidget *top = stackedLayout->currentWidget();
+      // stackedLayout->removeWidget( top );
+
       return;
     }
   }
@@ -418,6 +424,7 @@ pixmap.save(path);
 
     preview_->setImage(std::move(pixmap));
     preview_->show();
+    // stackedLayout->addWidget(preview_);
   });
 
   share_button_ = new QPushButton(this);
@@ -527,6 +534,21 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     preview_->setGeometry(rect());
 
   update();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+
+  if (photo_tune_widget_->isVisible()) {
+    // QWidget *top = stackedLayout->currentWidget();
+    // stackedLayout->removeWidget( top );
+    photo_tune_widget_->hide();
+    event->ignore();
+  } else if (preview_->isVisible()) {
+    preview_->hide();
+    event->ignore();
+  } else {
+    QMainWindow::closeEvent(event);
+  }
 }
 
 MainWindow::~MainWindow() {}

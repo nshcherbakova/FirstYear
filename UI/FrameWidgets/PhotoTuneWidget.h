@@ -181,8 +181,8 @@ protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
   virtual void wheelEvent(QWheelEvent *event) override;
   virtual void resizeEvent(QResizeEvent *event) override;
-  // virtual bool nativeEvent(const QByteArray &eventType, void *message,
-  // qintptr *result) override;
+  virtual void setVisible(bool visible) override;
+
 private:
   void grabGestures(const QList<Qt::GestureType> &gestures);
   void updatePhoto(std::optional<QPointF> pos_delta,

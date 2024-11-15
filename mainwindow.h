@@ -6,6 +6,7 @@
 #include <Types.h>
 
 class QPushButton;
+class QStackedLayout;
 
 namespace ShareUtils {
 class ShareUtilsCpp;
@@ -27,6 +28,9 @@ class MainWindow : public QMainWindow {
 public:
   MainWindow(Core::FrameControl &frame_control);
   ~MainWindow();
+
+signals:
+  void SignalBack();
 
 protected:
 private:
@@ -52,6 +56,7 @@ private:
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
+  virtual void closeEvent(QCloseEvent *event) override final;
 
 private:
   FirstYear::Core::FrameControl &project_control_;
@@ -66,6 +71,7 @@ private:
   QPushButton *preview_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
   QPushButton *select_images_button_ = nullptr;
+  QStackedLayout *stackedLayout = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

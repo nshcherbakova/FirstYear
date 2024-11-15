@@ -85,7 +85,8 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
 void PhotoWidget::setText(QString text) { text_widget_.setText(text); }
 
 void PhotoWidget::dragEnterEvent(QDragEnterEvent *event) {
-  if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
+  if (isVisible() &&
+      event->mimeData()->hasFormat("application/x-dnditemdata")) {
     if (event->source() == this) {
       //  event->setDropAction(Qt::MoveAction);
       //  event->accept();
@@ -97,6 +98,7 @@ void PhotoWidget::dragEnterEvent(QDragEnterEvent *event) {
     }
   } else {
     event->ignore();
+    drag_enter_ = false;
   }
 }
 
@@ -106,7 +108,8 @@ void PhotoWidget::dragLeaveEvent(QDragLeaveEvent *) {
 }
 
 void PhotoWidget::dragMoveEvent(QDragMoveEvent *event) {
-  if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
+  if (isVisible() &&
+      event->mimeData()->hasFormat("application/x-dnditemdata")) {
     if (event->source() == this) {
       //   event->setDropAction(Qt::MoveAction);
       event->ignore();
@@ -114,6 +117,7 @@ void PhotoWidget::dragMoveEvent(QDragMoveEvent *event) {
       event->acceptProposedAction();
     }
   } else {
+    drag_enter_ = false;
     event->ignore();
   }
 }
@@ -148,7 +152,7 @@ void PhotoWidget::dropEvent(QDropEvent *event) {
 
 //! [1]
 void PhotoWidget::mousePressEvent(QMouseEvent *event) {
-  if (!render_state_) {
+  if (isVisible() && !render_state_) {
     timer_.start();
   }
   ImageButton::mousePressEvent(event);
