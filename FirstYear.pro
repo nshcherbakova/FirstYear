@@ -24,6 +24,7 @@ PRECOMPILED_HEADER = Core/Gears/StdAfx/stdafx.h
 SOURCES += \
     Core/FrameControl/FrameControl.cpp \
     Core/Gears/StdAfx/stdafx.cpp \
+    Core/ImagePicker/ImagePicker.cpp \
     Core/Project/FileSystemProjectLoader.cpp \
     Core/Project/FileSystemProjectWriter.cpp \
     Core/Project/Project.cpp \
@@ -44,6 +45,8 @@ SOURCES += \
 HEADERS += \
     Core/FrameControl/FrameControl.h \
     Core/Gears/StdAfx/stdafx.h \
+    Core/ImagePicker/IImagePicker.h \
+    Core/ImagePicker/ImagePicker.h \
     Core/Project/Constants.h \
     Core/Project/FileSystemProjectLoader.h \
     Core/Project/FileSystemProjectWriter.h \
@@ -101,3 +104,6 @@ contains(ANDROID_TARGET_ARCH,arm64-v8a) {
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android
 }
+
+DISTFILES += \
+    android/src/org/nshchapps/firstyear/utils/Converter.java

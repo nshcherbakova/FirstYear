@@ -32,7 +32,7 @@ void ImageButton::resizeEvent(QResizeEvent *e) {
   UpdateButton();
 }
 
-void ImageButton::paintEvent(QPaintEvent *e) {
+void ImageButton::paintEvent(QPaintEvent *) {
 
   QPainter painter(this);
   // painter.begin();

@@ -27,16 +27,19 @@ QStringList OpenFiles(QWidget *parent) {
   QSettings settings(QSettings::Scope::UserScope);
   QString path = settings.value(c_last_opend_dir).toString();
 
-  auto image_file_names = QFileDialog::getOpenFileNames(
-      parent, c_open_image_str, path, c_file_types_str, nullptr,
-      QFileDialog::ReadOnly);
+  ImagePicker().showImagePicker();
+  /* auto image_file_names = QFileDialog::getOpenFileNames(
+       parent, c_open_image_str, path, c_file_types_str, nullptr,
+       QFileDialog::ReadOnly);
 
-  if (!image_file_names.empty()) {
-    settings.setValue(c_last_opend_dir,
-                      QFileInfo(image_file_names.front()).dir().path());
-  }
+   if (!image_file_names.empty()) {
+     settings.setValue(c_last_opend_dir,
+                       QFileInfo(image_file_names.front()).dir().path());
+   }
 
-  return image_file_names;
+
+   return image_file_names;*/
+  return {};
 }
 
 } // namespace FirstYear::UI::Utility
