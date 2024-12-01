@@ -1,7 +1,4 @@
-#include <cstddef>
-#include <limits>
 #include <memory>
-#include <optional>
 
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -44,13 +41,13 @@
 #include <QtWidgets>
 
 #ifdef Q_OS_ANDROID
+#include <Core/ImagePicker/ImagePicker.h>
 #include <QJniObject>
 #include <QtCore/private/qandroidextras_p.h>
 #include <jni.h>
 #endif
 
 #include <Core/FrameControl/FrameControl.h>
-#include <Core/ImagePicker/ImagePicker.h>
 #include <Core/Project/Project.h>
 #include <Core/shareutils/ShareUtilsCpp.h>
 #include <Types.h>

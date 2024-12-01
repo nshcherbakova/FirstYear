@@ -70,6 +70,9 @@ HEADERS += \
 !android {
 HEADERS -= Core/shareutils/AndroidShareUtils.h
 SOURCES -= Core/shareutils/AndroidShareUtils.cpp
+
+HEADERS -= Core/ImagePicker/ImagePicker.h
+SOURCES -= Core/ImagePicker/ImagePicker.cpp
 }
 
 QSwipeView/qpageindicator.cpp
@@ -97,7 +100,8 @@ android/AndroidManifest.xml \
     android/res/xml/filepaths.xml \
     android/src/org/nshchapps/firstyear/activity/QShareActivity.java \
     android/src/org/nshchapps/firstyear/utils/QSharePathResolver.java \
-    android/src/org/nshchapps/firstyear/utils/QShareUtils.java
+    android/src/org/nshchapps/firstyear/utils/QShareUtils.java \
+     android/src/org/nshchapps/firstyear/utils/Converter.java
 }
 
 contains(ANDROID_TARGET_ARCH,arm64-v8a) {
@@ -105,5 +109,3 @@ contains(ANDROID_TARGET_ARCH,arm64-v8a) {
         $$PWD/android
 }
 
-DISTFILES += \
-    android/src/org/nshchapps/firstyear/utils/Converter.java

@@ -1,45 +1,45 @@
 #include "Utility.h"
 #include <stdafx.h>
 
-namespace FirstYear::UI::Utility {
-
+#ifndef Q_OS_ANDROID
 static const char *c_open_image_str = "Open Image";
 static const char *c_file_types_str = "Image Files (*.png *.jpg *.jpeg *.bmp)";
 static const QStringList c_mime_type_filters({"image/jpeg", "image/pjpeg",
                                               "image/png", "image/bmp"});
-static const char *c_last_opend_dir = "LAST_OPEND_DIRRECTORY_TO_LOAD_PHOTO";
+#endif
 
-QString OpenFile(QWidget *parent) {
+namespace FirstYear::UI::Utility {
 
-  QSettings settings(QSettings::Scope::UserScope);
-  const QString path = settings.value(c_last_opend_dir).toString();
-
-  const QString image_file_name = QFileDialog::getOpenFileName(
-      parent, c_open_image_str, path, c_file_types_str);
-
-  settings.setValue(c_last_opend_dir, QFileInfo(image_file_name).dir().path());
-
-  return image_file_name;
+OpenFileDialog::OpenFileDialog(QObject *parent) : QObject(parent) {
+#ifdef Q_OS_ANDROID
+  connect(&single_image_picker_,
+          &FirstYear::Core::Android::SingleImagePicker::SignalPickedImage, this,
+          &FirstYear::UI::Utility::OpenFileDialog::SignalPickedImage);
+  connect(&images_picker_,
+          &FirstYear::Core::Android::ImagesPicker::SignalPickedImages, this,
+          &FirstYear::UI::Utility::OpenFileDialog::SignalPickedImages);
+#endif
 }
 
-QStringList OpenFiles(QWidget *parent) {
+void OpenFileDialog::OpenFile() {
+#ifdef Q_OS_ANDROID
+  single_image_picker_.show();
+#else
+  const QString image_file_name = QFileDialog::getOpenFileName(
+      nullptr, c_open_image_str, QString(), c_file_types_str);
+  emit SignalPickedImage(image_file_name);
+#endif
+}
 
-  QSettings settings(QSettings::Scope::UserScope);
-  QString path = settings.value(c_last_opend_dir).toString();
-
-  ImagePicker().showImagePicker();
-  /* auto image_file_names = QFileDialog::getOpenFileNames(
-       parent, c_open_image_str, path, c_file_types_str, nullptr,
-       QFileDialog::ReadOnly);
-
-   if (!image_file_names.empty()) {
-     settings.setValue(c_last_opend_dir,
-                       QFileInfo(image_file_names.front()).dir().path());
-   }
-
-
-   return image_file_names;*/
-  return {};
+void OpenFileDialog::OpenFiles() {
+#ifdef Q_OS_ANDROID
+  images_picker_.show();
+#else
+  auto image_file_names = QFileDialog::getOpenFileNames(
+      nullptr, c_open_image_str, QString(), c_file_types_str, nullptr,
+      QFileDialog::ReadOnly);
+  emit SignalPickedImages(image_file_names);
+#endif
 }
 
 } // namespace FirstYear::UI::Utility

@@ -47,20 +47,40 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#pragma once
 #ifndef IMAGEPICKER_H
 #define IMAGEPICKER_H
 #include <QtCore/private/qandroidextras_p.h>
 #include <QtCore>
 
-class ImagePicker : public QObject {
+namespace FirstYear::Core::Android {
+class SingleImagePicker : public QObject,
+                          public QAndroidActivityResultReceiver {
   Q_OBJECT
 
 public:
-  ImagePicker(QObject *parent = nullptr);
-  void showImagePicker();
+  void show();
 
+public:
+  // QAndroidActivityResultReceiver
+  virtual void handleActivityResult(int receiverRequestCode, int resultCode,
+                                    const QJniObject &data) override;
 signals:
-  //   void receiveFromActivityResult(const QString &message);
+  void SignalPickedImage(QString);
 };
 
+class ImagesPicker : public QObject, public QAndroidActivityResultReceiver {
+  Q_OBJECT
+
+public:
+  void show();
+
+public:
+  // QAndroidActivityResultReceiver
+  virtual void handleActivityResult(int receiverRequestCode, int resultCode,
+                                    const QJniObject &data) override;
+signals:
+  void SignalPickedImages(QStringList);
+};
+} // namespace FirstYear::Core::Android
 #endif // IMAGEPICKER_H

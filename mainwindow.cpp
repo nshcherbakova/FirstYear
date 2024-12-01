@@ -91,8 +91,9 @@ MainWindow::MainWindow(FrameControl &frame_control)
 #endif
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
-
   // stackedLayout = new QStackedLayout;
+
+  open_file_dielog_ = new Utility::OpenFileDialog();
 
   CreatePhotoTuneWidget(frame_control);
   CreateFrames(frame_control);
@@ -197,7 +198,7 @@ void MainWindow::CreatePhotoTuneWidget(
     auto project = frame_control.CurrentProject();
 
     const int month = photo_tune_widget_->getPhotoId();
-    OpenImage(month, frame_control);
+    OpenImage(month);
   });
 
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalTextClicked, this,
@@ -250,12 +251,9 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
             });
 
     connect(widget->innerWidget(), &TemplateWidgetBase::SignalTunePhoto, this,
-            [&](int month_index, FrameParameters frame_data) {
-              auto &month =
-                  frame_control.CurrentProject()->monthes_[month_index];
-              photo_tune_widget_->setPhoto(month_index, frame_data,
-                                           month.photo_data, month.text);
-              photo_tune_widget_->show();
+            [&](int month_index) {
+              TuneImage(month_index, project_control_);
+
               // stackedLayout->addWidget(photo_tune_widget_);
             });
 
@@ -275,25 +273,25 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
             });
   }
 
-  connect(photo_tune_widget_, &PhotoTuneWidget::SignalTuneNextImage, this,
-          [&]() {
-            const auto project = frame_control.CurrentProject();
-            int current_month = photo_tune_widget_->getPhotoId();
-            int next_month =
-                (current_month + 1) % ((int)project->monthes_.size() - 1);
+  connect(
+      photo_tune_widget_, &PhotoTuneWidget::SignalTuneNextImage, this, [&]() {
+        const auto project = frame_control.CurrentProject();
+        int current_month = photo_tune_widget_->getPhotoId();
+        int next_month = (current_month + 1) % ((int)project->monthes_.size());
 
-            TuneNewImage(current_month, next_month, frame_control);
-          });
+        TuneNewImage(current_month, next_month, frame_control);
+      });
 
-  connect(photo_tune_widget_, &PhotoTuneWidget::SignalTunePrevImage, this,
-          [&]() {
-            const auto project = frame_control.CurrentProject();
-            int current_month = photo_tune_widget_->getPhotoId();
-            int next_month =
-                (current_month - 1) % ((int)project->monthes_.size() - 1);
+  connect(
+      photo_tune_widget_, &PhotoTuneWidget::SignalTunePrevImage, this, [&]() {
+        const auto project = frame_control.CurrentProject();
+        int current_month = photo_tune_widget_->getPhotoId();
+        int next_month = (current_month - 1) % ((int)project->monthes_.size());
+        next_month = next_month < 0 ? (int)project->monthes_.size() + next_month
+                                    : next_month;
 
-            TuneNewImage(current_month, next_month, frame_control);
-          });
+        TuneNewImage(current_month, next_month, frame_control);
+      });
 }
 
 void MainWindow::TuneNewImage(int current_month, int next_month,
@@ -306,20 +304,28 @@ void MainWindow::TuneNewImage(int current_month, int next_month,
   TuneImage(next_month, frame_control);
 }
 
-bool MainWindow::OpenImage(int month,
-                           FirstYear::Core::FrameControl &frame_control) {
+void MainWindow::OpenImage(int month) {
+  connect(
+      open_file_dielog_,
+      &FirstYear::UI::Utility::OpenFileDialog::SignalPickedImage, this,
+      [&, month](QString file) { MainWindow::OnImagePicked(file, month); },
+      Qt::SingleShotConnection);
+  open_file_dielog_->OpenFile();
+}
 
-  const auto file = Utility::OpenFile(photo_tune_widget_);
+void MainWindow::OnImagePicked(QString file, int month) {
+  auto project = project_control_.CurrentProject();
+
+  auto &month_data = project->monthes_[month];
   if (!file.isNull()) {
-    auto project = frame_control.CurrentProject();
-    auto &month_data = project->monthes_[month];
-
     month_data.photo_data->setImage(QPixmap(file), QTransform(), QTransform());
 
-    photo_tune_widget_->updatePhoto(month_data.photo_data);
-    return true;
+    TuneImage(month, project_control_);
+
+    project_control_.SaveProjectMonth(month);
+  } else if (month_data.photo_data->isStub()) {
+    photo_tune_widget_->hide();
   }
-  return false;
 }
 
 void MainWindow::SaveTunedImage(int month,
@@ -339,20 +345,15 @@ void MainWindow::TuneImage(int month,
   auto &month_data = project->monthes_[month];
 
   if (month_data.photo_data->isStub()) {
-
-    if (!OpenImage(month, frame_control)) {
-      photo_tune_widget_->hide();
-      // QWidget *top = stackedLayout->currentWidget();
-      // stackedLayout->removeWidget( top );
-
-      return;
-    }
+    OpenImage(month);
+  } else {
+    const auto frame_data =
+        frame_widgets_[swipe_view_->CurrentItem()]->innerWidget()->frameData(
+            month);
+    photo_tune_widget_->setPhoto(month, frame_data, month_data.photo_data,
+                                 month_data.text);
+    photo_tune_widget_->show();
   }
-  const auto frameData =
-      frame_widgets_[swipe_view_->CurrentItem()]->innerWidget()->frameData(
-          month);
-  photo_tune_widget_->setPhoto(month, frameData, month_data.photo_data,
-                               month_data.text);
 }
 
 void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {
@@ -443,43 +444,52 @@ pixmap.save(path);
       QString("Select %1 images")
           .arg(control.CurrentProject()->monthes_.size()));
   select_images_button_->setContentsMargins(0, 0, 0, 0);
+
   connect(select_images_button_, &QPushButton::clicked, this, [&] {
-    const auto image_filse_pathes = Utility::OpenFiles(this);
-    std::map<QDateTime, std::vector<QString>> map;
-    for (const auto &path : image_filse_pathes) {
-      QFileInfo file_info(path);
-      QDateTime time;
-      if (file_info.birthTime().isValid()) {
-        time = file_info.birthTime();
-      } else if (file_info.lastModified().isValid()) {
-        time = file_info.lastModified();
-      } else {
-        time = QDateTime::currentDateTime();
-      }
-
-      map[time].push_back(path);
-    }
-
-    auto project = control.CurrentProject();
-
-    size_t month = 0;
-    for (const auto &[_, file_vector] : map) {
-      for (const auto &file : file_vector) {
-        while (project->monthes_.size() > month) {
-          auto &month_data = project->monthes_[month];
-          month++;
-          if (month_data.photo_data->isStub()) {
-            month_data.photo_data->setImage(QPixmap(file), QTransform(),
-                                            QTransform());
-            break;
-          }
-        }
-      }
-    }
-    UpdateFrames(nullptr);
+    connect(
+        open_file_dielog_,
+        &FirstYear::UI::Utility::OpenFileDialog::SignalPickedImages, this,
+        [&](QStringList files) { MainWindow::SelectImages(files); },
+        Qt::SingleShotConnection);
+    open_file_dielog_->OpenFiles();
   });
 
   UpdateSelectionButton(project_control_);
+}
+
+void MainWindow::SelectImages(QStringList files) {
+  std::map<QDateTime, std::vector<QString>> map;
+  for (const auto &path : files) {
+    QFileInfo file_info(path);
+    QDateTime time;
+    if (file_info.birthTime().isValid()) {
+      time = file_info.birthTime();
+    } else if (file_info.lastModified().isValid()) {
+      time = file_info.lastModified();
+    } else {
+      time = QDateTime::currentDateTime();
+    }
+
+    map[time].push_back(path);
+  }
+
+  auto project = project_control_.CurrentProject();
+
+  size_t month = 0;
+  for (const auto &[_, file_vector] : map) {
+    for (const auto &file : file_vector) {
+      while (project->monthes_.size() > month) {
+        auto &month_data = project->monthes_[month];
+        month++;
+        if (month_data.photo_data->isStub()) {
+          month_data.photo_data->setImage(QPixmap(file), QTransform(),
+                                          QTransform());
+          break;
+        }
+      }
+    }
+  }
+  UpdateFrames(nullptr);
 }
 
 void MainWindow::Share(const QPixmap &pixmap) const {

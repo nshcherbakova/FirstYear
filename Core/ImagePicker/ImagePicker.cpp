@@ -56,68 +56,88 @@ const int REQUEST_CODE = 123;
 const jint RESULT_OK =
     QJniObject::getStaticField<jint>("android/app/Activity", "RESULT_OK");
 
-class AndroidImagePicker : public QAndroidActivityResultReceiver {
-public:
-  AndroidImagePicker() {}
+namespace FirstYear::Core::Android {
+void ImagesPicker::show() {
+  QJniObject ACTION_PICK =
+      QJniObject::fromString("android.intent.action.GET_CONTENT");
+  QJniObject ALLOW_MULTIPLE =
+      QJniObject::fromString("android.intent.extra.ALLOW_MULTIPLE");
+  QJniObject PICK_IMAGES_MAX =
+      QJniObject::fromString("android.provider.extra.PICK_IMAGES_MAX");
 
-  void show() {
-    QJniObject ACTION_PICK =
-        QJniObject::fromString("android.intent.action.GET_CONTENT");
-    QJniObject ALLOW_MULTIPLE =
-        QJniObject::fromString("android.intent.extra.ALLOW_MULTIPLE");
-    QJniObject PICK_IMAGES_MAX =
-        QJniObject::fromString("android.provider.extra.PICK_IMAGES_MAX");
+  QJniObject intent("android/content/Intent");
+  if (ACTION_PICK.isValid() && intent.isValid()) {
+    intent.callObjectMethod("setAction",
+                            "(Ljava/lang/String;)Landroid/content/Intent;",
+                            ACTION_PICK.object<jstring>());
+    intent.callObjectMethod(
+        "setType", "(Ljava/lang/String;)Landroid/content/Intent;",
+        QJniObject::fromString("image/*").object<jstring>());
+    intent.callObjectMethod("putExtra",
+                            "(Ljava/lang/String;Z)Landroid/content/Intent;",
+                            ALLOW_MULTIPLE.object<jstring>(), jboolean(true));
 
-    QJniObject intent("android/content/Intent");
-    if (ACTION_PICK.isValid() && intent.isValid()) {
-      intent.callObjectMethod("setAction",
-                              "(Ljava/lang/String;)Landroid/content/Intent;",
-                              ACTION_PICK.object<jstring>());
-      intent.callObjectMethod(
-          "setType", "(Ljava/lang/String;)Landroid/content/Intent;",
-          QJniObject::fromString("image/*").object<jstring>());
-      intent.callObjectMethod("putExtra",
-                              "(Ljava/lang/String;Z)Landroid/content/Intent;",
-                              ALLOW_MULTIPLE.object<jstring>(), jboolean(true));
-
-      QtAndroidPrivate::startActivity(intent.object<jobject>(), REQUEST_CODE,
-                                      this);
-    }
-  }
-
-  virtual void handleActivityResult(int receiverRequestCode, int resultCode,
-                                    const QJniObject &data) override {
-
-    qDebug() << "handleActivityResult " << receiverRequestCode << " "
-             << resultCode;
-    qDebug() << "RESULT_OK " << RESULT_OK;
-    if (receiverRequestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-      QJniObject resultArray = QJniObject::callStaticObjectMethod(
-          "org/nshchapps/firstyear/utils/Converter", "UriListToStringArray",
-          "(Landroid/content/Intent;)[Ljava/lang/String;",
-          data.object<jobject>());
-
-      if (resultArray != nullptr) {
-        QJniEnvironment env;
-        int count = env->GetArrayLength((jobjectArray)resultArray.object());
-        for (int i = 0; i < count; i++) {
-          QJniObject item = (jstring)env->GetObjectArrayElement(
-              (jobjectArray)resultArray.object(), i);
-          qDebug() << "++++++=  " << item.toString();
-          QImage image(item.toString());
-          qDebug() << "  " << image.format();
-          qDebug() << "  " << image.width();
-        }
-      }
-    }
-  }
-};
-
-static AndroidImagePicker *aip;
-ImagePicker::ImagePicker(QObject *parent) : QObject(parent) {
-  if (!aip) {
-    aip = new AndroidImagePicker();
+    QtAndroidPrivate::startActivity(intent.object<jobject>(), REQUEST_CODE,
+                                    this);
   }
 }
 
-void ImagePicker::showImagePicker() { aip->show(); }
+void ImagesPicker::handleActivityResult(int receiverRequestCode, int resultCode,
+                                        const QJniObject &data) {
+
+  //  qDebug() << "handleActivityResult " << receiverRequestCode << " " <<
+  //  resultCode;
+  //    qDebug() << "RESULT_OK " << RESULT_OK;
+  if (receiverRequestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+    QJniObject resultArray = QJniObject::callStaticObjectMethod(
+        "org/nshchapps/firstyear/utils/Converter", "UriListToStringArray",
+        "(Landroid/content/Intent;)[Ljava/lang/String;",
+        data.object<jobject>());
+
+    if (resultArray != nullptr) {
+      QJniEnvironment env;
+      int count = env->GetArrayLength((jobjectArray)resultArray.object());
+
+      QStringList files;
+      for (int i = 0; i < count; i++) {
+        QJniObject item = (jstring)env->GetObjectArrayElement(
+            (jobjectArray)resultArray.object(), i);
+
+        files << item.toString();
+        // qDebug() << "2 handleActivityResult " << item.toString();
+      }
+
+      emit SignalPickedImages(files);
+    }
+  }
+}
+
+void SingleImagePicker::show() {
+  QJniObject ACTION_PICK =
+      QJniObject::fromString("android.intent.action.GET_CONTENT");
+
+  QJniObject intent("android/content/Intent");
+  if (ACTION_PICK.isValid() && intent.isValid()) {
+    intent.callObjectMethod("setAction",
+                            "(Ljava/lang/String;)Landroid/content/Intent;",
+                            ACTION_PICK.object<jstring>());
+    intent.callObjectMethod(
+        "setType", "(Ljava/lang/String;)Landroid/content/Intent;",
+        QJniObject::fromString("image/*").object<jstring>());
+
+    QtAndroidPrivate::startActivity(intent.object<jobject>(), REQUEST_CODE,
+                                    this);
+  }
+}
+
+void SingleImagePicker::handleActivityResult(int receiverRequestCode,
+                                             int resultCode,
+                                             const QJniObject &data) {
+
+  if (receiverRequestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+    QJniObject uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
+    // qDebug() << "1 handleActivityResult " << uri.toString();
+    emit SignalPickedImage(uri.toString());
+  }
+}
+} // namespace FirstYear::Core::Android

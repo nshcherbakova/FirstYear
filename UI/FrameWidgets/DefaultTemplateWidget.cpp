@@ -295,7 +295,7 @@ TemplateWidgetBase::TemplateWidgetBase(
     photo_widgets_[i] = new PhotoWidget(*this, render_state_);
   }
 
-  initMonthPhotoWidgets(control_);
+  initMonthPhotoWidgets();
 
   createForegroundWidget();
 
@@ -355,7 +355,8 @@ QSize TemplateWidgetBase::preferedSize(QSize size) const {
   }
 }
 
-void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
+void TemplateWidgetBase::initMonthPhotoWidgets(
+    /*Core::FrameControl &control*/) {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     connect(photo_widgets_[i], &PhotoWidget::SignalImageDroped, this,
             [&, i](int dropped_index) {
@@ -363,23 +364,23 @@ void TemplateWidgetBase::initMonthPhotoWidgets(Core::FrameControl &control) {
             });
 
     connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this, [&, i] {
-      auto project = control.CurrentProject();
-      auto &month = project->monthes_[i];
+      /* auto project = control.CurrentProject();
+       auto &month = project->monthes_[i];
 
-      if (month.photo_data->isStub()) {
-        const auto file = Utility::OpenFile(this);
-        if (!file.isNull()) {
-          month.photo_data->setImage(QPixmap(file));
-          //  month.photo_data.scale = 2.5;
+       if (month.photo_data->isStub()) {
+         const auto file = Utility::OpenFile(this);
+         if (!file.isNull()) {
+           month.photo_data->setImage(QPixmap(file));
+           //  month.photo_data.scale = 2.5;
 
-          control.SaveProjectMonth(i);
-          photo_widgets_[i]->setPhoto(month.photo_data, i);
-        }
-      }
+           control.SaveProjectMonth(i);
+           photo_widgets_[i]->setPhoto(month.photo_data, i);
+         }
+       }*/
 
-      if (!month.photo_data->isStub()) {
-        emit SignalTunePhoto(i, frame_data_[i]);
-      }
+      // if (!month.photo_data->isStub()) {
+      emit SignalTunePhoto(i /*, frame_data_[i]*/);
+      // }
     });
   }
 }

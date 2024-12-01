@@ -22,6 +22,10 @@ class LineEditWidget;
 namespace Preview {
 class PreviewWidget;
 }
+
+namespace Utility {
+class OpenFileDialog;
+}
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -32,7 +36,6 @@ public:
 signals:
   void SignalBack();
 
-protected:
 private:
   void CreatePhotoTuneWidget(Core::FrameControl &frame_control);
   void CreateFrames(Core::FrameControl &frame_control);
@@ -47,12 +50,15 @@ private:
 
   void TuneImage(int month, FirstYear::Core::FrameControl &frame_control);
   void SaveTunedImage(int month, FirstYear::Core::FrameControl &frame_control);
-  bool OpenImage(int month, FirstYear::Core::FrameControl &frame_control);
+  void OpenImage(int month);
   void TuneNewImage(int current_month, int next_month,
                     FirstYear::Core::FrameControl &frame_control);
 
   QPixmap Render(Core::FrameControl &control);
   void Share(const QPixmap &pixmap) const;
+
+  void OnImagePicked(QString file, int month);
+  void SelectImages(QStringList files);
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
@@ -72,6 +78,7 @@ private:
   QPushButton *share_button_ = nullptr;
   QPushButton *select_images_button_ = nullptr;
   QStackedLayout *stackedLayout = nullptr;
+  Utility::OpenFileDialog *open_file_dielog_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

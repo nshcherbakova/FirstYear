@@ -96,7 +96,7 @@ public:
   virtual ~TemplateWidgetBase(){};
 
 signals:
-  void SignalTunePhoto(int, FirstYear::UI::FrameParameters);
+  void SignalTunePhoto(int /*, FirstYear::UI::FrameParameters*/);
   void SignalTextChanged();
   void SignalTitleClicked(QString text);
   void SignalMonthTextClicked(QString text, int month);
@@ -120,7 +120,7 @@ protected:
 
 private:
   void load(Core::FrameControl &control);
-  void initMonthPhotoWidgets(Core::FrameControl &control);
+  void initMonthPhotoWidgets();
   void initPhotoTuneWidget(Core::FrameControl &control);
   void createForegroundWidget();
   void createTitleTextWidget(Qt::Alignment alignment, bool is_rendering);
