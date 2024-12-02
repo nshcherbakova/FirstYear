@@ -149,10 +149,9 @@ void PhotoPainter::init(const Core::PhotoDataPtr &photo,
       photo_data_->transformScaleRotateRef());
 }
 
-QTransform
-PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
-                                    QTransform &transform_offset,
-                                    QTransform &transform_scale_rotate) {
+QTransform PhotoPainter::getTransformForWidget(
+    const PhotoPosition &photo_position, Core::PhotoTransform &transform_offset,
+    Core::PhotoTransform &transform_scale_rotate) {
   // spdlog::info("a {}, s {},  ", photo_position_.angle, photo_.scale);
   const auto angle_diff = photo_position.angle.value_or(0);
   const auto scale_diff = photo_position.scale.value_or(1);
@@ -173,17 +172,24 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
   transform_internal1.translate(d.x(), d.y());
   transform_internal1.scale(internal_scale_, internal_scale_);
 
-  transform_offset.translate(offset_diff.x() / internal_scale_,
-                             offset_diff.y() / internal_scale_);
+  if (photo_position.offset.has_value()) {
+    transform_offset.translate(offset_diff.x() / internal_scale_,
+                               offset_diff.y() / internal_scale_);
+  }
 
-  QPointF c = (transform_scale_rotate * transform_offset * transform_internal1)
-                  .inverted()
-                  .map(center);
+  if (photo_position.angle.has_value() || photo_position.scale.has_value() ||
+      photo_position.center.has_value()) {
 
-  transform_scale_rotate.translate(c.x(), c.y());
-  transform_scale_rotate.rotate(angle_diff);
-  transform_scale_rotate.scale(scale_diff, scale_diff);
-  transform_scale_rotate.translate(-c.x(), -c.y());
+    QPointF c =
+        (transform_scale_rotate * transform_offset * transform_internal1)
+            .inverted()
+            .map(center);
+
+    transform_scale_rotate.translate(c.x(), c.y());
+    transform_scale_rotate.rotate(angle_diff);
+    transform_scale_rotate.scale(scale_diff, scale_diff);
+    transform_scale_rotate.translate(-c.x(), -c.y());
+  }
 
   QTransform transform_internal2;
   transform_internal2.translate(-iw / 2, -ih / 2);
@@ -231,9 +237,9 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
                                          std::optional<double> scale_factor,
                                          std::optional<double> angle_delta,
                                          std::optional<QPointF> center) {
-  QTransform scale_rotate = photo_data_->transformScaleRotate();
-  QTransform translate = photo_data_->transformOffset();
-  QTransform transform = getTransformForWidget(
+  auto scale_rotate = photo_data_->transformScaleRotate();
+  auto translate = photo_data_->transformOffset();
+  auto transform = getTransformForWidget(
       {angle_delta, scale_factor, pos_delta, center}, translate, scale_rotate);
 
   if (checkBoundares(transform)) {

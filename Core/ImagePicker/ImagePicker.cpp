@@ -62,8 +62,15 @@ void ImagesPicker::show() {
       QJniObject::fromString("android.intent.action.GET_CONTENT");
   QJniObject ALLOW_MULTIPLE =
       QJniObject::fromString("android.intent.extra.ALLOW_MULTIPLE");
-  QJniObject PICK_IMAGES_MAX =
-      QJniObject::fromString("android.provider.extra.PICK_IMAGES_MAX");
+  /*  QJniObject PICK_IMAGES_MAX =
+        QJniObject::fromString("android.provider.extra.PICK_IMAGES_MAX");
+
+    QJniObject INITIAL_URI =
+        QJniObject::fromString("android.provider.extra.INITIAL_URI");
+
+    QJniObject test =
+        QJniObject::fromString("content://com.android.providers.media.documents/document/image%3A1000015060");
+  */
 
   QJniObject intent("android/content/Intent");
   if (ACTION_PICK.isValid() && intent.isValid()) {
@@ -76,6 +83,11 @@ void ImagesPicker::show() {
     intent.callObjectMethod("putExtra",
                             "(Ljava/lang/String;Z)Landroid/content/Intent;",
                             ALLOW_MULTIPLE.object<jstring>(), jboolean(true));
+
+    //  intent.callObjectMethod("putExtra",
+    //                           "(Ljava/lang/String;Ljava/lang/String)Landroid/content/Intent;",
+    //                           INITIAL_URI.object<jstring>(),
+    //                           test.object<jstring>());
 
     QtAndroidPrivate::startActivity(intent.object<jobject>(), REQUEST_CODE,
                                     this);
@@ -104,7 +116,7 @@ void ImagesPicker::handleActivityResult(int receiverRequestCode, int resultCode,
             (jobjectArray)resultArray.object(), i);
 
         files << item.toString();
-        // qDebug() << "2 handleActivityResult " << item.toString();
+        qDebug() << "2 handleActivityResult " << item.toString();
       }
 
       emit SignalPickedImages(files);
@@ -136,7 +148,7 @@ void SingleImagePicker::handleActivityResult(int receiverRequestCode,
 
   if (receiverRequestCode == REQUEST_CODE && resultCode == RESULT_OK) {
     QJniObject uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
-    // qDebug() << "1 handleActivityResult " << uri.toString();
+    qDebug() << "1 handleActivityResult " << uri.toString();
     emit SignalPickedImage(uri.toString());
   }
 }

@@ -120,7 +120,7 @@ void GestureProcessor::swipeTriggered(QSwipeGesture *gesture) {
 void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
                         QRectF boundary_rect) {
 
-  photo_data_ = photo;
+  photo_data_ = Core::PhotoData::CreateCopy(photo);
   boundary_rect_ = boundary_rect;
   destanation_rect_ = destanation_rect;
 
@@ -225,8 +225,8 @@ bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
 void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
                                          std::optional<double> scale_factor,
                                          std::optional<QPointF> center) {
-  QTransform scale_rotate = photo_data_.transformScaleRotate();
-  QTransform translate = photo_data_.transformOffset();
+  auto scale_rotate = photo_data_.transformScaleRotate();
+  auto translate = photo_data_.transformOffset();
   auto transform = getTransformForWidget({scale_factor, pos_delta, center},
                                          translate, scale_rotate);
 
@@ -271,7 +271,7 @@ PreviewWidget::PreviewWidget(QWidget &parent)
 void PreviewWidget::setVisible(bool visible) {
   QWidget::setVisible(visible);
   if (!visible) {
-    photo_data_ = Core::PhotoData();
+    photo_data_ = Core::PhotoData::CreateEmptyData();
   }
 }
 
@@ -308,8 +308,8 @@ bool PreviewWidget::event(QEvent *event) {
 
 void PreviewWidget::setImage(QPixmap photo) {
 
-  Core::PhotoData photo_data;
-  photo_data.setImage(std::move(photo));
+  Core::PhotoData photo_data = Core::PhotoData::CreateNewData(photo);
+
   updatePhoto(photo_data);
 }
 

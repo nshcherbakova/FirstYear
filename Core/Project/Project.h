@@ -10,24 +10,54 @@
 #include <vector>
 
 namespace FirstYear::Core {
+class PhotoData;
+class PhotoTransform : public QTransform {
+  friend class PhotoData;
+
+public:
+  PhotoTransform(PhotoData *owner, short state_flag);
+
+public:
+  void reset();
+  QTransform &rotate(qreal a, Qt::Axis axis = Qt::ZAxis);
+  QTransform &scale(qreal sx, qreal sy);
+  QTransform &translate(qreal dx, qreal dy);
+
+protected:
+  void setOwner(PhotoData *owner);
+  const PhotoData *owner() const;
+
+private:
+  PhotoData *owner_ = nullptr;
+  short state_flag_ = 0;
+};
+
 class PhotoData {
   friend class FileSystemProjectLoader;
   friend class FileSystemProjectWriter;
 
 public:
+  static PhotoData CreateEmptyData();
+  static PhotoData CreateStubData(QPixmap image);
+  static PhotoData CreateNewData(QPixmap image);
+  static PhotoData CreateCopy(const PhotoData &source);
+
+  explicit PhotoData();
+
+public:
   void setImage(QPixmap image);
-  void setImage(QPixmap image, QTransform transform_scale_rotate,
-                const QTransform transform_offset);
-  void setTransforms(QTransform transform_scale_rotate,
-                     QTransform transform_offset);
+  /*void setImage(QPixmap image, PhotoTransform transform_scale_rotate,
+                const PhotoTransform transform_offset);*/
+  void setTransforms(PhotoTransform transform_scale_rotate,
+                     PhotoTransform transform_offset);
   void setStubImage(QPixmap image);
   void setState(short state);
 
   const QPixmap &image() const;
-  const QTransform &transformScaleRotate() const;
-  const QTransform &transformOffset() const;
-  QTransform &transformScaleRotateRef();
-  QTransform &transformOffsetRef();
+  const PhotoTransform &transformScaleRotate() const;
+  const PhotoTransform &transformOffset() const;
+  PhotoTransform &transformScaleRotateRef();
+  PhotoTransform &transformOffsetRef();
   short state() const;
   bool isStub() const;
 
@@ -40,8 +70,8 @@ public:
 protected:
   QPixmap image_;
   bool is_stub_image_ = false;
-  QTransform transform_scale_rotate_;
-  QTransform transform_offset_;
+  PhotoTransform transform_scale_rotate_;
+  PhotoTransform transform_offset_;
 
   mutable short state_ = 0;
 };

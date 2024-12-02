@@ -1,7 +1,45 @@
 #include "FileSystemProjectWriter.h"
+#include <functional>
 #include <stdafx.h>
 
 namespace FirstYear::Core {
+
+bool saveFile(QString path, std::function<bool(QString namec)> saveFunction) {
+  const auto path_tmp = path + "_tmp";
+  const auto path_old = path + "_old";
+
+  qDebug() << "Save " << path;
+  if (QFileInfo::exists(path_tmp)) {
+    QFile::remove(path_tmp);
+  }
+
+  if (QFileInfo::exists(path_old)) {
+    QFile::remove(path_old);
+  }
+
+  if (!saveFunction(path_tmp)) {
+    spdlog::info("Error, image was not saved {0}", path_tmp.toStdString());
+    return false;
+  } else if (!QFileInfo::exists(path)) {
+    return QFile::rename(path_tmp, path);
+  } else {
+
+    if (!QFile::rename(path, path_old)) {
+      return false;
+    }
+
+    if (QFile::rename(path_tmp, path)) {
+      QFile::remove(path_old);
+      return true;
+    } else {
+      spdlog::info("Error, image was not renamed {0}", path_tmp.toStdString());
+      // rename back;
+      QFile::rename(path_old, path);
+      QFile::remove(path_tmp);
+      return false;
+    }
+  }
+}
 
 bool FileSystemProjectWriter::CheckExistingProject() {
   return QDir().exists(project_data_path_);
@@ -56,11 +94,25 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project) {
 
     QJsonDocument project_metadata_document(project_metadata);
 
-    QFile projetct_metadata_file(project_metadata_path_);
-    projetct_metadata_file.open(QIODevice::WriteOnly);
+    const bool result =
+        saveFile(project_metadata_path_, [&](QString path) -> bool {
+          QFile file(path);
+          if (!file.open(QIODevice::WriteOnly)) {
+            return false;
+          }
+          const auto data = project_metadata_document.toJson();
+          const auto res_size = file.write(project_metadata_document.toJson());
+          if (res_size != data.size()) {
+            return false;
+          }
+          file.close();
+          return true;
+        });
 
-    projetct_metadata_file.write(project_metadata_document.toJson());
-    projetct_metadata_file.close();
+    if (!result) {
+      spdlog::error("Can't save {} project metadata.",
+                    project_metadata_path_.toStdString());
+    }
   }
 
   for (int i = 0; i < 12; i++) {
@@ -92,6 +144,20 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
   const auto &month_data = project->monthes_[month];
 
+  /* qDebug() << "**********";
+   qDebug()  << month_data.photo_data->state();
+   qDebug()  << month_data.state;
+   qDebug() << "TRANSFORM_SR_CHANGED "<< (month_data.photo_data->state() &
+       (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+   qDebug() << "TRANSFORM_OFFSET_CHANGED "<< (month_data.photo_data->state() &
+                                           (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED);
+   qDebug() << "TEXT_CHANGED "<< (month_data.state &
+                                           (short)MonthItem::STATE::TEXT_CHANGED);
+   qDebug() << "FILTER_ID_CHANGED "<< (month_data.state &
+                                   (short)MonthItem::STATE::FILTER_ID_CHANGED);
+
+ */
+
   if (month_data.photo_data->state() &
           (short)PhotoData::STATE::TRANSFORM_SR_CHANGED ||
       month_data.photo_data->state() &
@@ -115,30 +181,46 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
     const QString month_metadata_path =
         month_metadata_path_template_.arg(QString::number(month));
-    QFile month_metadata_file(month_metadata_path);
-    if (!month_metadata_file.open(QIODevice::WriteOnly)) {
-      spdlog::error("Can't open {} to save metadata.",
+
+    const bool result =
+        saveFile(month_metadata_path, [&](QString path) -> bool {
+          QFile file(path);
+          if (!file.open(QIODevice::WriteOnly)) {
+            return false;
+          }
+          const auto data = month_metadata_document.toJson();
+          const auto res_size = file.write(month_metadata_document.toJson());
+          if (res_size != data.size()) {
+            return false;
+          }
+          file.close();
+          return true;
+        });
+
+    if (!result) {
+      spdlog::error("Can't save {} metadata.",
                     month_metadata_path.toStdString());
     }
-    month_metadata_file.write(month_metadata_document.toJson());
-    month_metadata_file.close();
   }
 
   if (month_data.photo_data->state() & (short)PhotoData::STATE::IMAGE_CHANGED) {
+
     const auto image_path = month_photo_path_template_.arg(month);
+
     if (!month_data.photo_data->isStub()) {
       if (!month_data.photo_data->image().isNull()) {
-        qDebug() << "Save image";
-        if (!month_data.photo_data->image().save(image_path, IMAGE_FORMAT)) {
-          spdlog::info("Error, image was not saved {0}",
-                       image_path.toStdString());
+        const bool result = saveFile(image_path, [&](QString path) -> bool {
+          return month_data.photo_data->image().save(path, IMAGE_FORMAT);
+        });
+
+        if (!result) {
+          spdlog::error("Can't save {} image file.", image_path.toStdString());
         }
       }
     } else if (QFileInfo::exists(image_path)) {
       QFile::remove(image_path);
     }
   }
-
   month_data.photo_data->state_ = 0;
   month_data.state = 0;
 }

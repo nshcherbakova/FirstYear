@@ -318,7 +318,7 @@ void MainWindow::OnImagePicked(QString file, int month) {
 
   auto &month_data = project->monthes_[month];
   if (!file.isNull()) {
-    month_data.photo_data->setImage(QPixmap(file), QTransform(), QTransform());
+    month_data.photo_data->setImage(QPixmap(file));
 
     TuneImage(month, project_control_);
 
@@ -482,8 +482,7 @@ void MainWindow::SelectImages(QStringList files) {
         auto &month_data = project->monthes_[month];
         month++;
         if (month_data.photo_data->isStub()) {
-          month_data.photo_data->setImage(QPixmap(file), QTransform(),
-                                          QTransform());
+          month_data.photo_data->setImage(QPixmap(file));
           break;
         }
       }

@@ -86,9 +86,10 @@ protected:
       angle.reset();
     }
   };
-  QTransform getTransformForWidget(const PhotoPosition &photo_position,
-                                   QTransform &transform_offset,
-                                   QTransform &transform_scale_rotate);
+  QTransform
+  getTransformForWidget(const PhotoPosition &photo_position,
+                        Core::PhotoTransform &transform_offset,
+                        Core::PhotoTransform &transform_scale_rotate);
   // QTransform getTransformForWidget() const ;
 
 protected:
