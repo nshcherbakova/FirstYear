@@ -482,7 +482,7 @@ void MainWindow::SelectImages(QStringList files) {
 
   size_t month = 0;
   for (const auto &[time, file_vector] : map) {
-    qDebug() << "**  " << time;
+    //   qDebug() << "**  " <<   time;
     for (const auto &file : file_vector) {
       while (project->monthes_.size() > month) {
         auto &month_data = project->monthes_[month];
