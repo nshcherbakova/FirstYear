@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fatal_error_msg">Aplicaţia dumneavoastră a întâmpinat o eroare fatală şi nu poate continua.</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="unsupported_android_version">Această versiune de Android nu este suportată.</string>
+</resources>

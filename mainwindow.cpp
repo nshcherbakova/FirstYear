@@ -458,16 +458,21 @@ pixmap.save(path);
 }
 
 void MainWindow::SelectImages(QStringList files) {
-  std::map<QDateTime, std::vector<QString>> map;
+  std::map<QString, std::vector<QString>> map;
   for (const auto &path : files) {
     QFileInfo file_info(path);
-    QDateTime time;
+    if (!file_info.exists()) {
+      spdlog::error("SelectImages invalid file {}", path.toStdString());
+      continue;
+    }
+
+    QString time;
     if (file_info.birthTime().isValid()) {
-      time = file_info.birthTime();
+      time = QString().setNum(file_info.birthTime().toSecsSinceEpoch());
     } else if (file_info.lastModified().isValid()) {
-      time = file_info.lastModified();
+      time = QString().setNum(file_info.lastModified().toSecsSinceEpoch());
     } else {
-      time = QDateTime::currentDateTime();
+      time = file_info.fileName();
     }
 
     map[time].push_back(path);
@@ -476,19 +481,28 @@ void MainWindow::SelectImages(QStringList files) {
   auto project = project_control_.CurrentProject();
 
   size_t month = 0;
-  for (const auto &[_, file_vector] : map) {
+  for (const auto &[time, file_vector] : map) {
+    qDebug() << "**  " << time;
     for (const auto &file : file_vector) {
       while (project->monthes_.size() > month) {
         auto &month_data = project->monthes_[month];
         month++;
         if (month_data.photo_data->isStub()) {
-          month_data.photo_data->setImage(QPixmap(file));
+          QPixmap image(file);
+          if (!image.isNull()) {
+            month_data.photo_data->setImage(QPixmap(file));
+          } else {
+            month--;
+            spdlog::error("SelectImages invalid image file {}",
+                          file.toStdString());
+          }
           break;
         }
       }
     }
   }
   UpdateFrames(nullptr);
+  project_control_.SaveProject();
 }
 
 void MainWindow::Share(const QPixmap &pixmap) const {

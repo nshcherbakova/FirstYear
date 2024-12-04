@@ -6,7 +6,7 @@ repositories {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath 'com.android.tools.build:gradle:8.7.0'
     }
 }
 
@@ -19,7 +19,7 @@ apply plugin: 'com.android.application'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation 'androidx.core:core:1.7.0'
+    implementation 'androidx.core:core:1.9.0'
     //implementation 'com.android.support:support-v4:23.0.1'
 }
 
@@ -36,6 +36,7 @@ android {
      * updated by QtCreator and androiddeployqt tools.
      * Changing them manually might break the compilation!
      *******************************************************/
+    namespace 'org.nshchapps.firstyear'
 
     compileSdkVersion androidCompileSdkVersion.toInteger()
     buildToolsVersion androidBuildToolsVersion
@@ -62,8 +63,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_15
+        targetCompatibility JavaVersion.VERSION_15
     }
 
     lintOptions {

@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "org.nshchapps.firstyear-mergeDebugResources-6:/values-land/values-land.xml",
+            "map": [
+                {
+                    "source": "/Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Debug/android-build/res/values-land/splashscreentheme.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "181"
+                    }
+                }
+            ]
+        }
+    ]
+}

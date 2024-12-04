@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fatal_error_msg">Sua aplicação encontrou um erro fatal e não pode continuar.</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="unsupported_android_version">Esta versão do Android não é suportada.</string>
+</resources>
