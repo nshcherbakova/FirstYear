@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="fatal_error_msg">アプリケーションで致命的なエラーが発生したため続行できません。</string>
-    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
-    <string name="unsupported_android_version">このバージョンのAndroidはサポートされていません。</string>
-</resources>

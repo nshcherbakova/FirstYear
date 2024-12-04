@@ -1,9 +1,0 @@
-org.qtproject.example.FirstYear-pngs-0 /Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/build/generated/res/pngs/release
-org.qtproject.example.FirstYear-resValues-1 /Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/build/generated/res/resValues/release
-org.qtproject.example.FirstYear-rs-2 /Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/build/generated/res/rs/release
-org.qtproject.example.FirstYear-mergeReleaseResources-3 /Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
-org.qtproject.example.FirstYear-mergeReleaseResources-4 /Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
-org.qtproject.example.FirstYear-merged_res-5 /Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/build/intermediates/merged_res/release
-org.qtproject.example.FirstYear-android-build-6 /Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/res
-org.qtproject.example.FirstYear-release-7 /Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/src/release/res
-org.qtproject.example.FirstYear-java-8 /Users/nshcherbakova/Qt/6.4.2/android_arm64_v8a/src/android/java/res

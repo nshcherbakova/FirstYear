@@ -1,4 +1,0 @@
-#Wed Aug 28 01:06:07 KRAT 2024
-base.0=/Users/nshcherbakova/Documents/dev/FirstYear/build/Qt_6_4_2/Android/Clang/arm64_v8a/Release/android-build/build/intermediates/dex/release/mergeDexRelease/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
