@@ -16,6 +16,7 @@ x64
 *.o
 *.so
 *.app/
+*.idx
 
 # Packages #
 ############
