@@ -41,9 +41,9 @@
 #include <QtWidgets>
 
 #ifdef Q_OS_ANDROID
-#include <Core/ImagePicker/ImagePicker.h>
 #include <QJniObject>
 #include <QtCore/private/qandroidextras_p.h>
+#include <UI/FileDialog/AndroidFileDialog.h>
 #include <jni.h>
 #endif
 

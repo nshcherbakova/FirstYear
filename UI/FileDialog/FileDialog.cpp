@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 #include "FileDialog.h"
-#include "AndroidFileDialog.h"
+#include <stdafx.h>
 
 #ifndef Q_OS_ANDROID
 static const char *c_open_image_str = "Open Image";

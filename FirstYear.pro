@@ -71,7 +71,7 @@ HEADERS -= Core/shareutils/AndroidShareUtils.h
 SOURCES -= Core/shareutils/AndroidShareUtils.cpp
 
 HEADERS -=  UI/FileDialog/AndroidFileDialog.h
-SOURCES -=  UI/FileDialog/AndroidFileDialog.h
+SOURCES -=  UI/FileDialog/AndroidFileDialog.cpp
 }
 
 QSwipeView/qpageindicator.cpp
