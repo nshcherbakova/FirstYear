@@ -23,9 +23,6 @@ namespace Preview {
 class PreviewWidget;
 }
 
-namespace Utility {
-class OpenFileDialog;
-}
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -78,7 +75,6 @@ private:
   QPushButton *share_button_ = nullptr;
   QPushButton *select_images_button_ = nullptr;
   QStackedLayout *stackedLayout = nullptr;
-  Utility::OpenFileDialog *open_file_dielog_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

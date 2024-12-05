@@ -24,13 +24,14 @@ PRECOMPILED_HEADER = Core/Gears/StdAfx/stdafx.h
 SOURCES += \
     Core/FrameControl/FrameControl.cpp \
     Core/Gears/StdAfx/stdafx.cpp \
-    Core/ImagePicker/ImagePicker.cpp \
     Core/Project/FileSystemProjectLoader.cpp \
     Core/Project/FileSystemProjectWriter.cpp \
     Core/Project/Project.cpp \
     Core/shareutils/AndroidShareUtils.cpp \
     Core/shareutils/DummyShareUtils.cpp \
     Core/shareutils/ShareUtilsCpp.cpp \
+    UI/FileDialog/AndroidFileDialog.cpp \
+    UI/FileDialog/FileDialog.cpp \
     UI/FrameWidgets/DefaultTemplateWidget.cpp \
     UI/FrameWidgets/ImageButton.cpp \
     UI/FrameWidgets/PhotoTuneWidget.cpp \
@@ -38,15 +39,12 @@ SOURCES += \
     UI/FrameWidgets/PreviewWidget.cpp \
     UI/FrameWidgets/TouchButton.cpp \
     UI/SwipeView/SwipeWidgetsList.cpp \
-    UI/Utility.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Core/FrameControl/FrameControl.h \
     Core/Gears/StdAfx/stdafx.h \
-    Core/ImagePicker/IImagePicker.h \
-    Core/ImagePicker/ImagePicker.h \
     Core/Project/Constants.h \
     Core/Project/FileSystemProjectLoader.h \
     Core/Project/FileSystemProjectWriter.h \
@@ -56,6 +54,8 @@ HEADERS += \
     Core/shareutils/DummyShareUtils.h \
     Core/shareutils/IPlatformShareUtils.h \
     Core/shareutils/ShareUtilsCpp.h \
+    UI/FileDialog/AndroidFileDialog.h \
+    UI/FileDialog/FileDialog.h \
     UI/FrameWidgets/DefaultTemplateWidget.h \
     UI/FrameWidgets/ImageButton.h \
     UI/FrameWidgets/Photo.h \
@@ -64,15 +64,14 @@ HEADERS += \
     UI/FrameWidgets/PreviewWidget.h \
     UI/FrameWidgets/TouchButton.h \
     UI/SwipeView/SwipeWidgetsList.hpp \
-    UI/Utility.h \
     mainwindow.h
 
 !android {
 HEADERS -= Core/shareutils/AndroidShareUtils.h
 SOURCES -= Core/shareutils/AndroidShareUtils.cpp
 
-HEADERS -= Core/ImagePicker/ImagePicker.h
-SOURCES -= Core/ImagePicker/ImagePicker.cpp
+HEADERS -=  UI/FileDialog/AndroidFileDialog.h
+SOURCES -=  UI/FileDialog/AndroidFileDialog.h
 }
 
 QSwipeView/qpageindicator.cpp

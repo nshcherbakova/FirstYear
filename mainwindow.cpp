@@ -91,9 +91,6 @@ MainWindow::MainWindow(FrameControl &frame_control)
 #endif
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
-  // stackedLayout = new QStackedLayout;
-
-  open_file_dielog_ = new Utility::OpenFileDialog();
 
   CreatePhotoTuneWidget(frame_control);
   CreateFrames(frame_control);
@@ -305,12 +302,8 @@ void MainWindow::TuneNewImage(int current_month, int next_month,
 }
 
 void MainWindow::OpenImage(int month) {
-  connect(
-      open_file_dielog_,
-      &FirstYear::UI::Utility::OpenFileDialog::SignalPickedImage, this,
-      [&, month](QString file) { MainWindow::OnImagePicked(file, month); },
-      Qt::SingleShotConnection);
-  open_file_dielog_->OpenFile();
+  const auto file = FileDialog::getOpenFileName();
+  MainWindow::OnImagePicked(file, month);
 }
 
 void MainWindow::OnImagePicked(QString file, int month) {
@@ -446,12 +439,8 @@ pixmap.save(path);
   select_images_button_->setContentsMargins(0, 0, 0, 0);
 
   connect(select_images_button_, &QPushButton::clicked, this, [&] {
-    connect(
-        open_file_dielog_,
-        &FirstYear::UI::Utility::OpenFileDialog::SignalPickedImages, this,
-        [&](QStringList files) { MainWindow::SelectImages(files); },
-        Qt::SingleShotConnection);
-    open_file_dielog_->OpenFiles();
+    const auto files = FileDialog::getOpenFileNames();
+    MainWindow::SelectImages(files);
   });
 
   UpdateSelectionButton(project_control_);
