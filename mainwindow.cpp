@@ -10,6 +10,52 @@ static const char *c_share_image_tmp_name_str = "/ie_tmp.jpg";
 static const char *c_save_share_image_format_str = "JPG";
 // static const char *c_share_image_extension_str = "jpg";
 static const char *c_share_image_mime_type_str = "image/jpeg";
+static const char *c_background_str = "QMainWindow{"
+                                      "background-color: #CFD1BF;"
+                                      "}";
+
+static const char *c_share_button_style_str =
+    "QPushButton{"
+    "background-color: #4C5220;"
+    "color: #CFBED1; "
+    "font-size: 23px; "
+    "font-family: Typo Round Regular Demo;"
+    "border-radius: 36;"
+    "border:none;"
+    "}"
+
+    //  "QPushButton:pressed {border-color: #1C2247);}"
+    "QPushButton:pressed {background-color:#2D2052;}";
+
+static const char *c_preview_button_style_str =
+    "QPushButton{"
+    "background-color: #CFD1BF;"
+    "color:white; "
+    "font-size: 23px; "
+    "font-family: Typo Round Regular Demo;"
+    "border-style: solid;"
+    "border-radius: 0;"
+    "border-color: white;"
+    "border-width: 3;"
+    "}"
+
+    "QPushButton:pressed {border-color: #C3BED1;}"
+    "QPushButton:pressed{color: #C3BED1;}";
+
+static const char *c_select_button_style_str =
+    "QPushButton{"
+    "background-color: #CFD1BF;"
+    "color:#83368A; "
+    "font-size: 23px; "
+    "font-family: Typo Round Regular Demo;"
+    "border-style: solid;"
+    "border-radius: 30;"
+    "border-color: #83368A;"
+    "border-width: 3;"
+    "}"
+
+    "QPushButton:pressed {border-color: #C3BED1;}"
+    "QPushButton:pressed{color: #C3BED1;}";
 
 using namespace FirstYear::Core;
 namespace FirstYear::UI {
@@ -84,11 +130,12 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
 #elif defined Q_OS_MACOS
 
-  QSize window_size(640, 640);
+  QSize window_size(9 * 45, 20 * 45);
   setMinimumSize(window_size);
   show();
 
 #endif
+  setStyleSheet(c_background_str);
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
@@ -401,6 +448,7 @@ void MainWindow::CreateSwipeWidget(
 void MainWindow::CreateButtons(Core::FrameControl &control) {
 
   preview_button_ = new QPushButton(this);
+  preview_button_->setStyleSheet(c_preview_button_style_str);
   preview_button_->setGeometry(20, height() - 2 * 40, 2 * 40, 40);
   preview_button_->setText("Preview");
   preview_button_->setContentsMargins(0, 0, 0, 0);
@@ -421,10 +469,13 @@ pixmap.save(path);
     // stackedLayout->addWidget(preview_);
   });
 
+  QRect share_button_rect;
+
   share_button_ = new QPushButton(this);
-  share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
+  share_button_->setGeometry(width() - 100, height() - 2 * 72, 72, 72);
   share_button_->setText("Share");
   share_button_->setContentsMargins(0, 0, 0, 0);
+  share_button_->setStyleSheet(c_share_button_style_str);
   connect(share_button_, &QPushButton::clicked, this, [&] {
     const QPixmap pixmap = Render(control);
     Share(pixmap);
@@ -433,6 +484,7 @@ pixmap.save(path);
   select_images_button_ = new QPushButton(this);
   select_images_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40,
                                      40);
+  select_images_button_->setStyleSheet(c_select_button_style_str);
   select_images_button_->setText(
       QString("Select %1 images")
           .arg(control.CurrentProject()->monthes_.size()));
@@ -534,14 +586,14 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     line_edit_->setGeometry(rect());
 
   if (preview_button_)
-    preview_button_->setGeometry(20, rect().height() - 2 * 40, 2 * 40, 40);
+    preview_button_->setGeometry(20, rect().height() - 2 * 72 + 6, 120, 60);
 
   if (share_button_)
-    share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
+    share_button_->setGeometry(width() - 100, height() - 2 * 72, 72, 72);
+  //  share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
 
   if (select_images_button_)
-    select_images_button_->setGeometry(width() - 100, height() - 4 * 40, 2 * 40,
-                                       40);
+    select_images_button_->setGeometry(width() - 200 - 20, 40, 200, 60);
   if (preview_)
     preview_->setGeometry(rect());
 
