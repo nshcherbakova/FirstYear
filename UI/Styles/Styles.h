@@ -68,6 +68,10 @@ static const char *c_select_button_style_str =
     "}"
     "QPushButton:pressed {border-color: #C3BED1;}"
     "QPushButton:pressed{color: #C3BED1;}";
+
+static const char *c_tune_frame_light_color_str = "#E9D5EB";
+static const char *c_tune_frame_dark_color_str = "#555C24";
+
 // Preview Widget styles
 static const char *c_preview_background_color_str = "#DBD5EB";
 

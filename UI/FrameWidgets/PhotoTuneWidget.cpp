@@ -258,8 +258,10 @@ void Frame::init(const FrameParameters &frame_data, QRectF widget_rect) {
   if (frame_data_.type == FrameParameters::TYPE::RECT ||
       frame_data_.type == FrameParameters::TYPE::ROUND) {
 
+    // auto size = std::min(widget_rect.width(), widget_rect.height());
     auto frame_size = frame_data_.data.toSizeF().scaled(
-        widget_rect.width() / 2, widget_rect.height(), Qt::KeepAspectRatio);
+        widget_rect.width() / 1.5, widget_rect.height() / 1.5,
+        Qt::KeepAspectRatio);
 
     frame_boundary_rect_.setTopLeft(QPoint(0, 0));
     frame_boundary_rect_.setSize(frame_size);
@@ -270,21 +272,29 @@ void Frame::init(const FrameParameters &frame_data, QRectF widget_rect) {
 }
 
 void Frame::drawFrame(QPainter &painter) {
-  if (frame_data_.type == FrameParameters::TYPE::RECT) {
-    painter.setPen(Qt::gray);
-    painter.drawRoundedRect(frame_boundary_rect_, 10, 10);
-    QRectF new_rect(frame_boundary_rect_);
-    painter.setPen(Qt::white);
-    new_rect.moveTopLeft(frame_boundary_rect_.topLeft() + QPoint{1, 1});
-    painter.drawRoundedRect(new_rect, 10, 10);
-  } else
+  painter.setRenderHints(QPainter::RenderHint::Antialiasing);
 
-      if (frame_data_.type == FrameParameters::TYPE::ROUND) {
-    painter.setPen(Qt::gray);
+  QColor dark_color(c_tune_frame_dark_color_str);
+  QPen pen_dark(dark_color);
+  pen_dark.setWidth(3);
+
+  QColor light_color(c_tune_frame_light_color_str);
+  QPen pen_light(light_color);
+  pen_light.setWidth(3);
+
+  painter.setPen(pen_dark);
+  if (frame_data_.type == FrameParameters::TYPE::RECT) {
+    painter.drawRoundedRect(frame_boundary_rect_, 10, 10);
+  } else {
     painter.drawEllipse(frame_boundary_rect_);
-    QRectF new_rect(frame_boundary_rect_);
-    painter.setPen(Qt::white);
-    new_rect.moveTopLeft(frame_boundary_rect_.topLeft() + QPoint{1, 1});
+  }
+
+  QRectF new_rect(frame_boundary_rect_);
+  new_rect.moveTopLeft(frame_boundary_rect_.topLeft() + QPoint{2, 2});
+  painter.setPen(pen_light);
+  if (frame_data_.type == FrameParameters::TYPE::RECT) {
+    painter.drawRoundedRect(new_rect, 10, 10);
+  } else {
     painter.drawEllipse(new_rect);
   }
 }
