@@ -35,6 +35,7 @@ private:
 class PhotoData {
   friend class FileSystemProjectLoader;
   friend class FileSystemProjectWriter;
+  friend class FrameControl;
 
 public:
   static PhotoData CreateEmptyData();
@@ -45,7 +46,7 @@ public:
   explicit PhotoData();
 
 public:
-  void setImage(QPixmap image);
+  void resetData(QPixmap image);
   /*void setImage(QPixmap image, PhotoTransform transform_scale_rotate,
                 const PhotoTransform transform_offset);*/
   void setTransforms(PhotoTransform transform_scale_rotate,
@@ -66,6 +67,9 @@ public:
     TRANSFORM_SR_CHANGED = 0x02,
     TRANSFORM_OFFSET_CHANGED = 0x04,
   };
+
+protected:
+  void fillImage(QPixmap image, bool is_stub);
 
 protected:
   QPixmap image_;

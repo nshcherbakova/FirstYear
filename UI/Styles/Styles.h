@@ -72,6 +72,15 @@ static const char *c_select_button_style_str =
 static const char *c_preview_background_color_str = "#DBD5EB";
 
 // Edit window styles
+static const char *c_line_edit_style_str =
+    "QLineEdit{  background-color: #F5F5DF;"
+    "color: #83368A;  font-family: Typo Round Regular Demo;"
+    "bborder-style: solid;"
+    "border-radius: 30;"
+    "border-color: #F5F5DF;"
+    "border-width: 10;"
+    "}";
+static const QColor c_line_edit_background_color = QColor(164, 166, 151, 200);
 
 // General
 static const char *c_share_image_str = ":/images/icons/share";

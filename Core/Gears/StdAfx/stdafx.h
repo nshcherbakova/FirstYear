@@ -51,7 +51,9 @@
 #include <Core/Project/Project.h>
 #include <Core/shareutils/ShareUtilsCpp.h>
 #include <Types.h>
-#include <UI/Controls/ShareButton.h>
+#include <UI/Controls/Buttons.h>
+#include <UI/Controls/ClickableLabel.h>
+#include <UI/Controls/LineEdit.h>
 #include <UI/FileDialog/FileDialog.h>
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 #include <UI/FrameWidgets/Photo.h>

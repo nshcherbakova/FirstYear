@@ -7,13 +7,13 @@
 #include <Types.h>
 #include <UI/Utility.h>
 
-#include <QLabel>
 #include <QWidget>
 
 class QPushButton;
-class QLineEdit;
 
 namespace FirstYear::UI {
+
+class ClickableLabel;
 
 struct TitleParameters {
   QRect title_rect;
@@ -34,54 +34,6 @@ struct TemplateWidgetParameters {
 
   // std::vector<QRectF> photo_text_slots;
   std::vector<FrameParameters> frame_data;
-};
-
-class ClickableLabel : public QLabel {
-  Q_OBJECT
-
-public:
-  explicit ClickableLabel(QWidget *parent, int font_size, QString font_color,
-                          QString font_family, bool hide_edit_icon = false);
-
-  void setText(QString text);
-  void setFontSize(int size);
-
-  QString text() const;
-signals:
-  void clicked();
-
-protected:
-  void mouseReleaseEvent(QMouseEvent *event);
-
-private:
-  QFont font_;
-  QString styled_text_;
-  QString icon_text_;
-  QString text_;
-  int icon_size_ = 10;
-  bool hide_edit_icon_ = false;
-};
-
-class LineEditWidget final : public QWidget {
-
-  Q_OBJECT
-public:
-  LineEditWidget(QWidget *parent);
-
-public:
-  virtual void setVisible(bool visible) override final;
-  void setText(QString text, int id);
-
-signals:
-  void SignalTextChanged(QString text, int id);
-
-protected:
-  virtual void resizeEvent(QResizeEvent *) override final;
-  virtual void mouseReleaseEvent(QMouseEvent *) override final;
-
-private:
-  QLineEdit *line_edit_ = nullptr;
-  int id_ = -1;
 };
 
 class ForegroundWidget;

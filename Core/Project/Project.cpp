@@ -52,16 +52,13 @@ PhotoData PhotoData::CreateStubData(QPixmap image) {
 }
 PhotoData PhotoData::CreateNewData(QPixmap image) {
   PhotoData data;
-  data.setImage(image);
+  data.fillImage(image, image.isNull());
   return data;
 }
 PhotoData PhotoData::CreateCopy(const PhotoData &source) { return source; }
 
-void PhotoData::setImage(QPixmap image) {
-  is_stub_image_ = false;
-  image_ = std::move(image);
-  image_.setDevicePixelRatio(
-      QGuiApplication::primaryScreen()->devicePixelRatio());
+void PhotoData::resetData(QPixmap image) {
+  fillImage(image, image.isNull());
 
   transform_scale_rotate_.reset();
   transform_offset_.reset();
@@ -69,6 +66,13 @@ void PhotoData::setImage(QPixmap image) {
   state_ |= (short)STATE::IMAGE_CHANGED;
   state_ |= (short)STATE::TRANSFORM_SR_CHANGED;
   state_ |= (short)STATE::TRANSFORM_OFFSET_CHANGED;
+}
+
+void PhotoData::fillImage(QPixmap image, bool is_stub) {
+  is_stub_image_ = is_stub;
+  image_ = std::move(image);
+  image_.setDevicePixelRatio(
+      QGuiApplication::primaryScreen()->devicePixelRatio());
 }
 /*
 void PhotoData::setImage(QPixmap image, PhotoTransform transform_scale_rotate,

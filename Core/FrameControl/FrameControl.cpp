@@ -26,7 +26,7 @@ ProjectPtr FrameControl::LoadProject() {
 
     month.stub_image_path = QString(c_stub_month_photo_template_str).arg(i);
     if (month.photo_data->image().isNull()) {
-      month.photo_data->setStubImage(QPixmap(month.stub_image_path));
+      month.photo_data->fillImage(QPixmap(month.stub_image_path), true);
     }
   }
 

@@ -8,8 +8,6 @@ static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
 // static const int c_max_title_lengh = 20;
-static const int c_max_month_lengh = 20;
-static const QColor c_background_color = QColor(250, 250, 247, 180);
 
 class ForegroundWidget final : public QWidget {
 public:
@@ -50,11 +48,6 @@ private:
   QPixmap image_to_paint_;
 };
 
-////////////////////////////////////////////////////////////////////
-/// \brief ClickableLabel::ClickableLabel
-/// \param parent
-//////
-
 static const char *c_title_font_color_str = "#669692";
 
 static const char *c_month_text_font_color_str = "#969692";
@@ -65,100 +58,6 @@ static const char *c_month_text_font_family_str = "Areal";
 static const int c_title_text_font_size = 30;
 static const int c_month_text_font_size = 20;
 
-ClickableLabel::ClickableLabel(QWidget *parent, int font_size,
-                               QString font_color, QString font_family,
-                               bool hide_edit_icon)
-    : QLabel(parent), hide_edit_icon_(hide_edit_icon) {
-
-  font_ = QFont(font_family, font_size, QFont::Normal);
-  QLabel::setFont(font_);
-
-  styled_text_ = "<a style=text-decoration:none style=color:%1>%2</a>";
-  styled_text_ = styled_text_.arg(font_color);
-  icon_text_ =
-      "<html><img src=':images/icons/edit' width='%1' height='%1'></html>";
-}
-
-void ClickableLabel::setText(QString text) {
-
-  text_ = text;
-  if (hide_edit_icon_) {
-    QLabel::setText(styled_text_.arg(text));
-  } else {
-    QLabel::setText(icon_text_.arg(icon_size_) + styled_text_.arg(text));
-  }
-  // QLabel::adjustSize();
-}
-
-void ClickableLabel::setFontSize(int size) {
-  font_.setPointSize(size);
-  QLabel::setFont(font_);
-  icon_size_ = size;
-  setText(text_);
-}
-
-QString ClickableLabel::text() const { return text_; }
-
-void ClickableLabel::mouseReleaseEvent(QMouseEvent *) { emit clicked(); }
-
-////////////////////////////////////////////////////////////////////
-///
-///
-///
-static const char *c_line_edit_style_str =
-    "QLineEdit{  background-color: rgba(253, 253, 255, 255);"
-    "color: #308BB2;  font-family: Typo Round Regular Demo;"
-    "border-style: solid;"
-    "border-radius: 30;"
-    "border-color: rgba(190, 190, 190, 255);"
-    "border-width: 5;"
-    "}";
-LineEditWidget::LineEditWidget(QWidget *parent)
-    : QWidget(parent), line_edit_(new QLineEdit(this)) {
-  line_edit_->setMaxLength(c_max_month_lengh);
-  line_edit_->setStyleSheet(c_line_edit_style_str);
-  setAutoFillBackground(true);
-  auto palette = QWidget::palette();
-  palette.setColor(QPalette::Window, c_background_color);
-  setPalette(palette);
-  connect(line_edit_, &QLineEdit::returnPressed, this, [&] {
-    emit SignalTextChanged(line_edit_->text(), id_);
-    hide();
-  });
-}
-
-void LineEditWidget::setVisible(bool visible) {
-  QWidget::setVisible(visible);
-  if (!visible) {
-    id_ = -1;
-    line_edit_->setText("");
-  }
-}
-
-void LineEditWidget::setText(QString text, int id) {
-  id_ = id;
-  line_edit_->setText(text);
-  spdlog::error("LineEditWidget {}", text.toStdString());
-}
-
-void LineEditWidget::resizeEvent(QResizeEvent *e) {
-  QWidget::resizeEvent(e);
-  QRect rect = {width() / 5, (int)(height() / 2.5),
-                width() - (int)(width() / 2.5), height() / 5};
-  line_edit_->setGeometry(rect);
-  QFont font = line_edit_->font();
-  font.setPointSize(height() / 15);
-  line_edit_->setFont(font);
-}
-
-void LineEditWidget::mouseReleaseEvent(QMouseEvent *) {
-
-  emit SignalTextChanged(line_edit_->text(), id_);
-  hide();
-}
-
-////////////////////////////////////////////////////////////////////
-///
 DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
                                              Core::FrameControl &control,
                                              bool render_state)

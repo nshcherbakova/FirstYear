@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
 
   FirstYear::Core::FrameControl frame_control;
-  auto project = frame_control.LoadProject();
+  frame_control.LoadProject();
 
   FirstYear::UI::MainWindow w(frame_control);
   // todo list of farmes and registration system

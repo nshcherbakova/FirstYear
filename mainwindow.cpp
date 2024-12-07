@@ -312,7 +312,7 @@ void MainWindow::OnImagePicked(QString file, int month) {
 
   auto &month_data = project->monthes_[month];
   if (!file.isNull()) {
-    month_data.photo_data->setImage(QPixmap(file));
+    month_data.photo_data->resetData(QPixmap(file));
 
     TuneImage(month, project_control_);
 
@@ -476,7 +476,7 @@ void MainWindow::SelectImages(QStringList files) {
         if (month_data.photo_data->isStub()) {
           QPixmap image(file);
           if (!image.isNull()) {
-            month_data.photo_data->setImage(QPixmap(file));
+            month_data.photo_data->resetData(QPixmap(file));
           } else {
             month--;
             spdlog::error("SelectImages invalid image file {}",
