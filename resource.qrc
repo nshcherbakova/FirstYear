@@ -27,5 +27,6 @@
     <qresource prefix="/images/icons">
         <file alias="edit">resources/Images/edit.png</file>
           <file alias="share">resources/Images/share.svg</file>
+          <file alias="share@2x">resources/Images/share.svg</file>
     </qresource>
 </RCC>

@@ -534,14 +534,14 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     const int diff = share_button_->height() - preview_button_->height();
     preview_button_->setGeometry(
         {{height() / 50,
-          height() - height() / 10 - share_button_->height() + diff / 2},
+          height() - height() / 20 - share_button_->height() + diff / 2},
          preview_button_->size()});
   }
 
   if (share_button_)
     share_button_->setGeometry(
         {{width() - share_button_->width() - height() / 40,
-          height() - share_button_->height() - height() / 10},
+          height() - share_button_->height() - height() / 20},
          share_button_->size()});
 
   if (select_images_button_)

@@ -78,9 +78,6 @@ static const char *c_share_image_str = ":/images/icons/share";
 static const char *c_share_button_style_template_str =
     "QPushButton{"
     "background-color: #4C5220;"
-    "color: #CFBED1; "
-    "font-size: 23px; "
-    "font-family: Typo Round Regular Demo;"
     "border-radius: %1;"
     "border:none;"
     "}"

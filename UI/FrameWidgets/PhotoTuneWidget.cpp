@@ -390,11 +390,11 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
        open_file_->size()});
 
   prev_->setGeometry(
-      {{height() / 35, height() - height() / 10 - prev_->height()},
+      {{height() / 35, height() - height() / 20 - prev_->height()},
        prev_->size()});
 
   next_->setGeometry({{width() - next_->width() - height() / 35,
-                       height() - height() / 10 - prev_->height()},
+                       height() - height() / 20 - prev_->height()},
                       next_->size()});
 
   Frame::init(frame_data_, rect());

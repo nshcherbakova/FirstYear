@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui svg
 # QT = core gui widgets openglwidgets opengl network svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 android {

@@ -30,6 +30,8 @@ ShareButton::ShareButton(QWidget *parent, bool accept_touch)
   setMaximumSize(size);
   setGeometry({{}, size});
   setIconSize({55, 55});
+
+  adjustSize();
 }
 
 /*
