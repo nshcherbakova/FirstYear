@@ -49,17 +49,19 @@ TouchebleButton(parent, accept_touch) { QSize size(80, 40);
 TextButton::TextButton(QWidget *parent, bool accept_touch)
     : TouchebleButton(parent, accept_touch) {
 
-  QSize size(200, 60);
-
   setContentsMargins(0, 0, 0, 0);
 
-  setMinimumSize(size);
-  setMaximumSize(size);
-  setGeometry({{}, size});
+  setSize(QSize(200, 60));
 
   QFont font(this->font());
   font.setPointSize(width() / 4.0);
   setFont(font);
+}
+
+void TextButton::setSize(QSize size) {
+  setMinimumSize(size);
+  setMaximumSize(size);
+  setGeometry({{}, size});
 }
 
 void TextButton::resizeEvent(QResizeEvent *e) {

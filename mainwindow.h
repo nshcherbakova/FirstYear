@@ -18,6 +18,7 @@ class PhotoTuneWidget;
 class SwipeWidget;
 class TemplateWidgetHolder;
 class LineEditWidget;
+class TextButton;
 
 namespace Preview {
 class PreviewWidget;
@@ -72,7 +73,7 @@ private:
   LineEditWidget *line_edit_ = nullptr;
   Preview::PreviewWidget *preview_ = nullptr;
 
-  QPushButton *preview_button_ = nullptr;
+  TextButton *preview_button_ = nullptr;
   QPushButton *share_button_ = nullptr;
   QPushButton *select_images_button_ = nullptr;
   QStackedLayout *stackedLayout = nullptr;

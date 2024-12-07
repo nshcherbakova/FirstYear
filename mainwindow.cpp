@@ -403,11 +403,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
 
   preview_button_ = new TextButton(this);
   preview_button_->setStyleSheet(c_white_button_style_str);
-  QSize size(120, 60);
-  preview_button_->setMinimumSize(size);
-  preview_button_->setMaximumSize(size);
-  preview_button_->setGeometry(
-      {{20, height() - 2 * preview_button_->height()}, size});
+  preview_button_->setSize(QSize(120, 60));
   preview_button_->setText("Preview");
 
   connect(preview_button_, &QPushButton::clicked, this, [&] {
@@ -428,19 +424,12 @@ pixmap.save(path);
   });
 
   share_button_ = new ShareButton(this);
-  share_button_->setGeometry({{width() - share_button_->width() - 25,
-                               height() - 2 * share_button_->height()},
-                              share_button_->size()});
-
   connect(share_button_, &QPushButton::clicked, this, [&] {
     const QPixmap pixmap = Render(control);
     Share(pixmap);
   });
 
   select_images_button_ = new TextButton(this);
-  select_images_button_->setGeometry(
-      {{width() - select_images_button_->width() - 20, 40},
-       select_images_button_->size()});
   select_images_button_->setStyleSheet(c_select_button_style_str);
   select_images_button_->setText(
       QString("Select %1 images")
@@ -544,19 +533,23 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (preview_button_) {
     const int diff = share_button_->height() - preview_button_->height();
     preview_button_->setGeometry(
-        {{20, height() - 2 * share_button_->height() + diff / 2},
+        {{height() / 50,
+          height() - height() / 10 - share_button_->height() + diff / 2},
          preview_button_->size()});
   }
 
   if (share_button_)
-    share_button_->setGeometry({{width() - share_button_->width() - 25,
-                                 height() - 2 * share_button_->height()},
-                                share_button_->size()});
+    share_button_->setGeometry(
+        {{width() - share_button_->width() - height() / 40,
+          height() - share_button_->height() - height() / 10},
+         share_button_->size()});
 
   if (select_images_button_)
     select_images_button_->setGeometry(
-        {{width() - select_images_button_->width() - 20, 40},
+        {{width() - select_images_button_->width() - height() / 40,
+          height() / 20},
          select_images_button_->size()});
+
   if (preview_)
     preview_->setGeometry(rect());
 

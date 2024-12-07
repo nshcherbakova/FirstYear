@@ -137,7 +137,7 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 /// \brief The PhotoTuneWidget class
 ///
-class TouchButton;
+class TextButton;
 class TouchClickableLabel;
 class PhotoTuneWidget final : public QWidget,
                               public GestureProcessor,
@@ -194,10 +194,10 @@ private:
 private:
   int id_;
   QPixmap background_;
-  TouchButton *close_ = nullptr;
-  TouchButton *open_file_ = nullptr;
-  TouchButton *next_ = nullptr;
-  TouchButton *prev_ = nullptr;
+
+  TextButton *open_file_ = nullptr;
+  TextButton *next_ = nullptr;
+  TextButton *prev_ = nullptr;
   TouchClickableLabel *text_ = nullptr;
 };
 

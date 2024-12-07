@@ -8,8 +8,7 @@ const double MAX_SIZE_K = 15.0;
 const double INITIAL_SCALE_FACTOR = 2.5;
 const double ZOOM_STEP = 1.10;
 const double ROTATE_STEP = 0.5;
-const int button_with = 40;
-const int button_margin = 20;
+
 static const char *c_widget_background_str = ":/images/tune_photo/background";
 
 void GestureProcessor::Initialise() {
@@ -347,46 +346,25 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   setGeometry(parent.geometry());
   setAutoFillBackground(true);
 
-  open_file_ = new TouchButton(this);
-  open_file_->setGeometry(button_margin, height() - 3.5 * button_with,
-                          2 * button_with, button_with);
+  open_file_ = new TextButton(this, true);
   open_file_->setText("Open");
-  open_file_->setContentsMargins(0, 0, 0, 0);
-  open_file_->setStyleSheet(c_select_button_style_str);
-  //  open_file_->setAttribute(Qt::WA_TranslucentBackground);
-
+  open_file_->setStyleSheet(c_open_button_style_str);
   connect(open_file_, &QPushButton::clicked, this,
           &PhotoTuneWidget::SignalOpenFile);
-  /*
-    close_ = new TouchButton(this);
-    close_->setGeometry(width() - 3 * button_with, height() - 3.5 * button_with,
-                        2 * button_with, button_with);
-    close_->setText("Save");
-    close_->setContentsMargins(0, 0, 0, 0);
-    connect(close_, &QPushButton::clicked, this, [&]() {
-      hide();
-      // emit SignalImageTuned();
-    });
-  */
-  next_ = new TouchButton(this);
-  next_->setGeometry(width() - 3 * button_with, height() - 2 * button_with,
-                     2 * button_with, button_with);
+
+  next_ = new TextButton(this, true);
   next_->setText("Next");
-  next_->setContentsMargins(0, 0, 0, 0);
+  next_->setSize(QSize(120, 60));
+  next_->setStyleSheet(c_dark_button_style_str);
   connect(next_, &QPushButton::clicked, this,
           [&]() { emit SignalTuneNextImage(); });
-  next_->setStyleSheet(c_dark_button_style_str);
-  // next_->setAttribute(Qt::WA_TranslucentBackground);
 
-  prev_ = new TouchButton(this);
-  prev_->setGeometry(button_margin, height() - 2 * button_with, 2 * button_with,
-                     button_with);
+  prev_ = new TextButton(this, true);
   prev_->setText("Prev");
-  prev_->setContentsMargins(0, 0, 0, 0);
+  prev_->setSize(QSize(120, 60));
+  prev_->setStyleSheet(c_dark_button_style_str);
   connect(prev_, &QPushButton::clicked, this,
           [&]() { emit SignalTunePrevImage(); });
-  prev_->setStyleSheet(c_dark_button_style_str);
-  // prev_->setAttribute(Qt::WA_TranslucentBackground);
 
   text_ = new TouchClickableLabel(this, 10, "#408BB2", "Areal");
   text_->setAlignment(Qt::AlignCenter);
@@ -407,13 +385,17 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
   if (!photo_data_ || photo_data_->image().isNull())
     return;
 
-  open_file_->setGeometry(width() - 200 - 20, 40, 200, 60);
-  //  close_->setGeometry(width() - 3 * button_with, height() - 3.5 *
-  //  button_with,
-  //                      2 * button_with, button_with);
-  next_->setGeometry(width() - 20 - 120, rect().height() - 2 * 72 + 6, 120, 60);
+  open_file_->setGeometry(
+      {{width() - open_file_->width() - height() / 40, height() / 20},
+       open_file_->size()});
 
-  prev_->setGeometry(20, rect().height() - 2 * 72 + 6, 120, 60);
+  prev_->setGeometry(
+      {{height() / 35, height() - height() / 10 - prev_->height()},
+       prev_->size()});
+
+  next_->setGeometry({{width() - next_->width() - height() / 35,
+                       height() - height() / 10 - prev_->height()},
+                      next_->size()});
 
   Frame::init(frame_data_, rect());
 

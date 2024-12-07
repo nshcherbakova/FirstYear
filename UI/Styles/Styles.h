@@ -11,7 +11,7 @@ static const char *c_background_str = "QMainWindow{"
 
 static const char *c_white_button_style_str =
     "QPushButton{"
-    "background-color: rgba(255, 255, 255, 0);"
+    "background-color: rgba(207, 209, 191, 200);"
     "color:white; "
     "font-size: 23px; "
     "font-family: Typo Round Regular Demo;"
@@ -27,7 +27,7 @@ static const char *c_white_button_style_str =
 // Tune Widget styles
 static const char *c_dark_button_style_str =
     "QPushButton{"
-    "background-color: rgba(255, 255, 255, 150);"
+    "background-color: rgba(255, 255, 255, 200);"
     "color:#555C24; "
     "font-size: 23px; "
     "font-family: Typo Round Regular Demo;"
@@ -40,9 +40,9 @@ static const char *c_dark_button_style_str =
     "QPushButton:pressed {border-color: #C3BED1;}"
     "QPushButton:pressed{color: #C3BED1;}";
 
-static const char *c_select_button_style_str =
+static const char *c_open_button_style_str =
     "QPushButton{"
-    "background-color: rgba(255, 255, 255, 0);"
+    "background-color: rgba(255, 255, 255, 200);"
     "color:#83368A; "
     "font-size: 23px; "
     "font-family: Typo Round Regular Demo;"
@@ -55,6 +55,19 @@ static const char *c_select_button_style_str =
     "QPushButton:pressed {border-color: #C3BED1;}"
     "QPushButton:pressed{color: #C3BED1;}";
 
+static const char *c_select_button_style_str =
+    "QPushButton{"
+    "background-color: rgba(207, 209, 191, 200);"
+    "color:#83368A; "
+    "font-size: 23px; "
+    "font-family: Typo Round Regular Demo;"
+    "border-style: solid;"
+    "border-radius: 30;"
+    "border-color: #83368A;"
+    "border-width: 3;"
+    "}"
+    "QPushButton:pressed {border-color: #C3BED1;}"
+    "QPushButton:pressed{color: #C3BED1;}";
 // Preview Widget styles
 static const char *c_preview_background_color_str = "#DBD5EB";
 

@@ -247,9 +247,6 @@ PreviewWidget::PreviewWidget(QWidget &parent)
   setGeometry(parent.geometry());
 
   share_ = new ShareButton(this, true);
-  share_->setGeometry(
-      {{width() - share_->width() - 25, height() - 2 * share_->height()},
-       share_->size()});
 
   connect(share_, &QPushButton::clicked, this,
           [&]() { emit SignalShareImage(); });
@@ -268,9 +265,9 @@ void PreviewWidget::resizeEvent(QResizeEvent *e) {
   if (photo_data_.image().isNull())
     return;
 
-  share_->setGeometry(
-      {{width() - share_->width() - 25, height() - 2 * share_->height()},
-       share_->size()});
+  share_->setGeometry({{width() - share_->width() - height() / 40,
+                        height() - share_->height() - height() / 10},
+                       share_->size()});
 
   updatePhoto(photo_data_);
 }

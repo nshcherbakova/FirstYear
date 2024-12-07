@@ -30,6 +30,9 @@ public:
   TextButton(QWidget *parent, bool accept_touch = false);
 
 public:
+  void setSize(QSize size);
+
+public:
   virtual void resizeEvent(QResizeEvent *event) override;
 };
 /*
