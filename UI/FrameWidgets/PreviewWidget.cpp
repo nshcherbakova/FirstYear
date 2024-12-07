@@ -4,23 +4,8 @@
 namespace FirstYear::UI::Preview {
 const double MIN_SIZE_K = 0.7;
 const double MAX_SIZE_K = 15.0;
-const double INITIAL_SCALE_FACTOR = 1;
+const double INITIAL_SCALE_FACTOR = 1.3;
 const double ZOOM_STEP = 1.10;
-const int button_with = 40;
-// static const char *c_background_str = ":/images/tune_photo/background";
-static const char *c_background_str = "#DBD5EB";
-static const char *c_share_button_style_str =
-    "QPushButton{"
-    "background-color: #4C5220;"
-    "color: #CFBED1; "
-    "font-size: 23px; "
-    "font-family: Typo Round Regular Demo;"
-    "border-radius: 36;"
-    "border:none;"
-    "}"
-
-    //  "QPushButton:pressed {border-color: #1C2247);}"
-    "QPushButton:pressed {background-color:#2D2052;}";
 
 void GestureProcessor::Initialise() {
   QList<Qt::GestureType> gestures;
@@ -261,20 +246,13 @@ PreviewWidget::PreviewWidget(QWidget &parent)
 
   setGeometry(parent.geometry());
 
-  share_ = new TouchButton(this);
-  share_->setStyleSheet(c_share_button_style_str);
-  share_->setGeometry(width() - 100, height() - 2 * 72, 72, 72);
-  share_->setText("Share");
-  share_->setContentsMargins(0, 0, 0, 0);
+  share_ = new ShareButton(this, true);
+  share_->setGeometry(
+      {{width() - share_->width() - 25, height() - 2 * share_->height()},
+       share_->size()});
+
   connect(share_, &QPushButton::clicked, this,
           [&]() { emit SignalShareImage(); });
-
-  /*  close_ = new TouchButton(this);
-    close_->setGeometry(width() - 3 * button_with, height() - 2 * button_with,
-                        2 * button_with, button_with);
-    close_->setText("Close");
-    close_->setContentsMargins(0, 0, 0, 0);
-    connect(close_, &QPushButton::clicked, this, [&]() { hide(); });*/
 }
 
 void PreviewWidget::setVisible(bool visible) {
@@ -290,11 +268,9 @@ void PreviewWidget::resizeEvent(QResizeEvent *e) {
   if (photo_data_.image().isNull())
     return;
 
-  share_->setGeometry(width() - 100, height() - 2 * 72, 72, 72);
-
-  // close_->setGeometry(button_with, height() - 2 * button_with, 2 *
-  // button_with,
-  //                     button_with);
+  share_->setGeometry(
+      {{width() - share_->width() - 25, height() - 2 * share_->height()},
+       share_->size()});
 
   updatePhoto(photo_data_);
 }
@@ -399,9 +375,15 @@ void PreviewWidget::grabWidgetGesture(Qt::GestureType gesture) {
   QWidget::grabGesture(gesture);
 }
 
+void PreviewWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+  QWidget::mouseDoubleClickEvent(event);
+  hide();
+  // emit SignalImageTuned();
+}
+
 void PreviewWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
-  painter.fillRect(rect(), QColor(c_background_str));
+  painter.fillRect(rect(), QColor(c_preview_background_color_str));
   PhotoProcessor::drawPhoto(painter);
 }
 } // namespace FirstYear::UI::Preview

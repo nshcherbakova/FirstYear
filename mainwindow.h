@@ -60,6 +60,7 @@ private:
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
   virtual void closeEvent(QCloseEvent *event) override final;
+  virtual void keyReleaseEvent(QKeyEvent *event) override final;
 
 private:
   FirstYear::Core::FrameControl &project_control_;

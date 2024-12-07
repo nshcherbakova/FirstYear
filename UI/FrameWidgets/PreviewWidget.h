@@ -149,6 +149,7 @@ protected:
   virtual void paintEvent(QPaintEvent *) override;
   virtual void wheelEvent(QWheelEvent *event) override;
   virtual void resizeEvent(QResizeEvent *event) override;
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private:
   void grabGestures(const QList<Qt::GestureType> &gestures);
@@ -160,7 +161,7 @@ private:
 private:
   QPixmap image_;
   TouchButton *share_ = nullptr;
-  TouchButton *close_ = nullptr;
+  //  TouchButton *close_ = nullptr;
 };
 
 } // namespace FirstYear::UI::Preview

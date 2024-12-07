@@ -23,8 +23,9 @@
     </qresource>
     <qresource prefix="/images/tune_photo">
         <file alias="background">resources/Images/tune_photo_background.jpg</file>
-        </qresource>
-        <qresource prefix="/images/icons">
-            <file alias="edit">resources/Images/edit.png</file>
-            </qresource>
+    </qresource>
+    <qresource prefix="/images/icons">
+        <file alias="edit">resources/Images/edit.png</file>
+          <file alias="share">resources/Images/share.svg</file>
+    </qresource>
 </RCC>

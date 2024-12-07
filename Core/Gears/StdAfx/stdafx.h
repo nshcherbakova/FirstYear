@@ -51,8 +51,10 @@
 #include <Core/Project/Project.h>
 #include <Core/shareutils/ShareUtilsCpp.h>
 #include <Types.h>
+#include <UI/Controls/ShareButton.h>
 #include <UI/FileDialog/FileDialog.h>
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 #include <UI/FrameWidgets/Photo.h>
 #include <UI/FrameWidgets/TouchButton.h>
+#include <UI/Styles/Styles.h>
 #include <UI/SwipeView/SwipeWidgetsList.hpp>

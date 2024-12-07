@@ -30,6 +30,7 @@ SOURCES += \
     Core/shareutils/AndroidShareUtils.cpp \
     Core/shareutils/DummyShareUtils.cpp \
     Core/shareutils/ShareUtilsCpp.cpp \
+    UI/Controls/ShareButton.cpp \
     UI/FileDialog/AndroidFileDialog.cpp \
     UI/FileDialog/FileDialog.cpp \
     UI/FrameWidgets/DefaultTemplateWidget.cpp \
@@ -54,6 +55,7 @@ HEADERS += \
     Core/shareutils/DummyShareUtils.h \
     Core/shareutils/IPlatformShareUtils.h \
     Core/shareutils/ShareUtilsCpp.h \
+    UI/Controls/ShareButton.h \
     UI/FileDialog/AndroidFileDialog.h \
     UI/FileDialog/FileDialog.h \
     UI/FrameWidgets/DefaultTemplateWidget.h \
@@ -63,6 +65,7 @@ HEADERS += \
     UI/FrameWidgets/PhotoWidget.h \
     UI/FrameWidgets/PreviewWidget.h \
     UI/FrameWidgets/TouchButton.h \
+    UI/Styles/Styles.h \
     UI/SwipeView/SwipeWidgetsList.hpp \
     mainwindow.h
 

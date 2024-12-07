@@ -10,52 +10,6 @@ static const char *c_share_image_tmp_name_str = "/ie_tmp.jpg";
 static const char *c_save_share_image_format_str = "JPG";
 // static const char *c_share_image_extension_str = "jpg";
 static const char *c_share_image_mime_type_str = "image/jpeg";
-static const char *c_background_str = "QMainWindow{"
-                                      "background-color: #CFD1BF;"
-                                      "}";
-
-static const char *c_share_button_style_str =
-    "QPushButton{"
-    "background-color: #4C5220;"
-    "color: #CFBED1; "
-    "font-size: 23px; "
-    "font-family: Typo Round Regular Demo;"
-    "border-radius: 36;"
-    "border:none;"
-    "}"
-
-    //  "QPushButton:pressed {border-color: #1C2247);}"
-    "QPushButton:pressed {background-color:#2D2052;}";
-
-static const char *c_preview_button_style_str =
-    "QPushButton{"
-    "background-color: #CFD1BF;"
-    "color:white; "
-    "font-size: 23px; "
-    "font-family: Typo Round Regular Demo;"
-    "border-style: solid;"
-    "border-radius: 0;"
-    "border-color: white;"
-    "border-width: 3;"
-    "}"
-
-    "QPushButton:pressed {border-color: #C3BED1;}"
-    "QPushButton:pressed{color: #C3BED1;}";
-
-static const char *c_select_button_style_str =
-    "QPushButton{"
-    "background-color: #CFD1BF;"
-    "color:#83368A; "
-    "font-size: 23px; "
-    "font-family: Typo Round Regular Demo;"
-    "border-style: solid;"
-    "border-radius: 30;"
-    "border-color: #83368A;"
-    "border-width: 3;"
-    "}"
-
-    "QPushButton:pressed {border-color: #C3BED1;}"
-    "QPushButton:pressed{color: #C3BED1;}";
 
 using namespace FirstYear::Core;
 namespace FirstYear::UI {
@@ -447,11 +401,15 @@ void MainWindow::CreateSwipeWidget(
 
 void MainWindow::CreateButtons(Core::FrameControl &control) {
 
-  preview_button_ = new QPushButton(this);
-  preview_button_->setStyleSheet(c_preview_button_style_str);
-  preview_button_->setGeometry(20, height() - 2 * 40, 2 * 40, 40);
+  preview_button_ = new TextButton(this);
+  preview_button_->setStyleSheet(c_white_button_style_str);
+  QSize size(120, 60);
+  preview_button_->setMinimumSize(size);
+  preview_button_->setMaximumSize(size);
+  preview_button_->setGeometry(
+      {{20, height() - 2 * preview_button_->height()}, size});
   preview_button_->setText("Preview");
-  preview_button_->setContentsMargins(0, 0, 0, 0);
+
   connect(preview_button_, &QPushButton::clicked, this, [&] {
     QPixmap pixmap = Render(control);
     pixmap.setDevicePixelRatio(devicePixelRatio());
@@ -469,26 +427,24 @@ pixmap.save(path);
     // stackedLayout->addWidget(preview_);
   });
 
-  QRect share_button_rect;
+  share_button_ = new ShareButton(this);
+  share_button_->setGeometry({{width() - share_button_->width() - 25,
+                               height() - 2 * share_button_->height()},
+                              share_button_->size()});
 
-  share_button_ = new QPushButton(this);
-  share_button_->setGeometry(width() - 100, height() - 2 * 72, 72, 72);
-  share_button_->setText("Share");
-  share_button_->setContentsMargins(0, 0, 0, 0);
-  share_button_->setStyleSheet(c_share_button_style_str);
   connect(share_button_, &QPushButton::clicked, this, [&] {
     const QPixmap pixmap = Render(control);
     Share(pixmap);
   });
 
-  select_images_button_ = new QPushButton(this);
-  select_images_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40,
-                                     40);
+  select_images_button_ = new TextButton(this);
+  select_images_button_->setGeometry(
+      {{width() - select_images_button_->width() - 20, 40},
+       select_images_button_->size()});
   select_images_button_->setStyleSheet(c_select_button_style_str);
   select_images_button_->setText(
       QString("Select %1 images")
           .arg(control.CurrentProject()->monthes_.size()));
-  select_images_button_->setContentsMargins(0, 0, 0, 0);
 
   connect(select_images_button_, &QPushButton::clicked, this, [&] {
     const auto files = FileDialog::getOpenFileNames();
@@ -585,19 +541,58 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (line_edit_)
     line_edit_->setGeometry(rect());
 
-  if (preview_button_)
-    preview_button_->setGeometry(20, rect().height() - 2 * 72 + 6, 120, 60);
+  if (preview_button_) {
+    const int diff = share_button_->height() - preview_button_->height();
+    preview_button_->setGeometry(
+        {{20, height() - 2 * share_button_->height() + diff / 2},
+         preview_button_->size()});
+  }
 
   if (share_button_)
-    share_button_->setGeometry(width() - 100, height() - 2 * 72, 72, 72);
-  //  share_button_->setGeometry(width() - 100, height() - 2 * 40, 2 * 40, 40);
+    share_button_->setGeometry({{width() - share_button_->width() - 25,
+                                 height() - 2 * share_button_->height()},
+                                share_button_->size()});
 
   if (select_images_button_)
-    select_images_button_->setGeometry(width() - 200 - 20, 40, 200, 60);
+    select_images_button_->setGeometry(
+        {{width() - select_images_button_->width() - 20, 40},
+         select_images_button_->size()});
   if (preview_)
     preview_->setGeometry(rect());
 
   update();
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event) {
+#ifdef Q_OS_MAC
+  static bool portrait = true;
+  static bool do_small = true;
+  static const QSize portret_size = QSize(20 * 45, 9 * 45);
+  static const QSize landscape_size = QSize(9 * 45, 20 * 45);
+
+  if (event->key() == Qt::Key_R) {
+    QSize window_size;
+    if (portrait) {
+      window_size = portret_size;
+    } else {
+      window_size = landscape_size;
+    }
+    setMinimumSize(window_size);
+    setGeometry({geometry().topLeft(), window_size});
+    portrait = !portrait;
+    do_small = true;
+  } else if (event->key() == Qt::Key_S) {
+    QSize window_size;
+    float scale = do_small ? 0.7 : 1.0 / 0.7;
+
+    window_size = size() * scale;
+
+    setMinimumSize(window_size);
+    setGeometry({geometry().topLeft(), window_size});
+    do_small = !do_small;
+  }
+#endif
+  QMainWindow::keyReleaseEvent(event);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

@@ -9,7 +9,7 @@ namespace FirstYear::UI {
 class TouchButton : public QPushButton {
 public:
   TouchButton(QWidget *parent);
-  bool event(QEvent *event);
+  virtual bool event(QEvent *event) override;
 };
 
 } // namespace FirstYear::UI
