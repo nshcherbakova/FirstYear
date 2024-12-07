@@ -221,7 +221,9 @@ void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
   }
   remove_buttons_.resize(12);
   for (int i = 0; i < (int)remove_buttons_.size(); i++) {
-    remove_buttons_[i] = new QPushButton("X", this);
+    remove_buttons_[i] = new QPushButton(this);
+    remove_buttons_[i]->setIconSize({20, 20});
+    remove_buttons_[i]->setIcon(QIcon(c_remove_image_str));
     remove_buttons_[i]->setAttribute(Qt::WA_TranslucentBackground);
     remove_buttons_[i]->setObjectName("RemoveuButton");
 

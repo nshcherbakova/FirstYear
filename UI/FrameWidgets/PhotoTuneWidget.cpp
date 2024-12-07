@@ -363,20 +363,24 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
           &PhotoTuneWidget::SignalOpenFile);
 
   next_ = new TextButton(this, true);
-  next_->setText("Next");
-  next_->setSize(QSize(120, 60));
+  next_->setIcon(QIcon(":/images/icons/next"));
+  next_->setIconSize(QSize(40, 40));
+  next_->setSize(QSize(80, 60));
   next_->setStyleSheet(c_dark_button_style_str);
   connect(next_, &QPushButton::clicked, this,
           [&]() { emit SignalTuneNextImage(); });
 
   prev_ = new TextButton(this, true);
   prev_->setText("Prev");
-  prev_->setSize(QSize(120, 60));
+  prev_->setIcon(QIcon(":/images/icons/prev"));
+  prev_->setIconSize(QSize(40, 40));
+  prev_->setSize(QSize(80, 60));
   prev_->setStyleSheet(c_dark_button_style_str);
   connect(prev_, &QPushButton::clicked, this,
           [&]() { emit SignalTunePrevImage(); });
 
-  text_ = new TouchClickableLabel(this, 10, "#408BB2", "Areal");
+  text_ =
+      new TouchClickableLabel(this, 10, c_tune_frame_text_color_str, "Areal");
   text_->setAlignment(Qt::AlignCenter);
   connect(text_, &ClickableLabel::clicked, this,
           [&] { emit SignalTextClicked(text_->text()); });
@@ -411,13 +415,11 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
 
   updatePhoto(photo_data_);
 
-  QRect rect = {width() / 5, (int)(height() / 20),
-                width() - (int)(width() / 2.5), height() / 7};
+  auto top =
+      std::max((int)frameRect().top() - 70, open_file_->geometry().top());
+  QRect rect(QPoint{(int)(width() * 0.25), top}, QSize{width() / 2, 50});
   text_->setGeometry(rect);
-
-  // QFont font = text_->fontS();
-  //  font.setPointSize(width() / 20);
-  text_->setFontSize(width() / 20);
+  text_->setFontSize(40);
 }
 
 bool PhotoTuneWidget::event(QEvent *event) {

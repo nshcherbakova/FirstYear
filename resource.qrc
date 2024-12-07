@@ -25,8 +25,15 @@
         <file alias="background">resources/Images/tune_photo_background.jpg</file>
     </qresource>
     <qresource prefix="/images/icons">
-        <file alias="edit">resources/Images/edit.png</file>
+        <file alias="edit">resources/Images/edit.svg</file>
+        <file alias="edit@2x">resources/Images/edit.svg</file>
           <file alias="share">resources/Images/share.svg</file>
           <file alias="share@2x">resources/Images/share.svg</file>
+          <file alias="remove">resources/Images/remove.svg</file>
+          <file alias="remove@2x">resources/Images/remove.svg</file>
+          <file alias="prev">resources/Images/prev.svg</file>
+          <file alias="prev@2x">resources/Images/prev.svg</file>
+          <file alias="next">resources/Images/next.svg</file>
+          <file alias="next@2x">resources/Images/next.svg</file>
     </qresource>
 </RCC>

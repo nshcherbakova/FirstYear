@@ -71,6 +71,7 @@ static const char *c_select_button_style_str =
 
 static const char *c_tune_frame_light_color_str = "#E9D5EB";
 static const char *c_tune_frame_dark_color_str = "#555C24";
+static const char *c_tune_frame_text_color_str = "#79B0A0";
 
 // Preview Widget styles
 static const char *c_preview_background_color_str = "#DBD5EB";
@@ -83,6 +84,9 @@ static const char *c_line_edit_style_str =
     "border-radius: 30;"
     "}";
 static const QColor c_line_edit_background_color = QColor(164, 166, 151, 200);
+
+// Frame
+static const char *c_remove_image_str = ":/images/icons/remove";
 
 // General
 static const char *c_share_image_str = ":/images/icons/share";
