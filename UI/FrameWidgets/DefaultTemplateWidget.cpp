@@ -238,12 +238,12 @@ void TemplateWidgetBase::createPhotoTextWidgets(Qt::Alignment alignment,
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_text_widgets_[i] = new ClickableLabel(
         this, c_month_text_font_size, c_month_text_font_color_str,
-        c_month_text_font_family_str, is_rendering);
+        c_month_text_font_family_str, true);
     photo_text_widgets_[i]->setAlignment(alignment);
 
-    connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
-      emit SignalMonthTextClicked(photo_text_widgets_[i]->text(), i);
-    });
+    //  connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
+    //    emit SignalMonthTextClicked(photo_text_widgets_[i]->text(), i);
+    //  });
   }
 }
 

@@ -283,15 +283,20 @@ void Frame::drawFrame(QPainter &painter) {
   pen_light.setWidth(3);
 
   painter.setPen(pen_dark);
+
+  QRectF rect(frame_boundary_rect_);
+  rect.moveTopLeft(frame_boundary_rect_.topLeft() + QPoint{-4, -4});
   if (frame_data_.type == FrameParameters::TYPE::RECT) {
-    painter.drawRoundedRect(frame_boundary_rect_, 10, 10);
+    painter.drawRoundedRect(rect, 10, 10);
   } else {
-    painter.drawEllipse(frame_boundary_rect_);
+    painter.drawEllipse(rect);
   }
 
-  QRectF new_rect(frame_boundary_rect_);
-  new_rect.moveTopLeft(frame_boundary_rect_.topLeft() + QPoint{2, 2});
   painter.setPen(pen_light);
+
+  QRectF new_rect(frame_boundary_rect_);
+  new_rect.moveTopLeft(frame_boundary_rect_.topLeft() + QPoint{4, 4});
+
   if (frame_data_.type == FrameParameters::TYPE::RECT) {
     painter.drawRoundedRect(new_rect, 10, 10);
   } else {
@@ -371,7 +376,6 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
           [&]() { emit SignalTuneNextImage(); });
 
   prev_ = new TextButton(this, true);
-  prev_->setText("Prev");
   prev_->setIcon(QIcon(":/images/icons/prev"));
   prev_->setIconSize(QSize(40, 40));
   prev_->setSize(QSize(80, 60));

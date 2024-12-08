@@ -35,5 +35,9 @@
           <file alias="prev@2x">resources/Images/prev.svg</file>
           <file alias="next">resources/Images/next.svg</file>
           <file alias="next@2x">resources/Images/next.svg</file>
+          <file alias="edit_image">resources/Images/edit_image.svg</file>
+          <file alias="edit_image@2x">resources/Images/edit_image.svg</file>
+          <file alias="open">resources/Images/open.svg</file>
+          <file alias="open@2x">resources/Images/open.svg</file>
     </qresource>
 </RCC>

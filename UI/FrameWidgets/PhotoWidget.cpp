@@ -4,7 +4,7 @@
 namespace FirstYear::UI {
 
 static const char *c_image_widget_button_style_str =
-    "QPushButton{ background-color: rgba(255, 255, 255, 0);"
+    "QPushButton{ background: transparent;"
     "}";
 
 static const char *c_text_widget_style_str =
@@ -76,10 +76,13 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
   }
 
   if (photo->isStub()) {
-    setText("Open Image");
+    setIcon(QIcon(":/images/icons/open"));
+    //  setText("Open Image");
   } else {
-    setText("Edit");
+    setIcon(QIcon(":/images/icons/edit_image"));
+    //  setText("Edit");
   }
+  setIconSize(size() * 0.7);
 }
 
 void PhotoWidget::setText(QString text) { text_widget_.setText(text); }
@@ -171,6 +174,8 @@ void PhotoWidget::paintEvent(QPaintEvent *e) {
   if (!render_state_ && drag_enter_) {
     QPainter painter(this);
     painter.fillRect(rect(), QColor(200, 200, 200, 200));
+  } else {
+    QPushButton::paintEvent(e);
   }
 }
 } // namespace FirstYear::UI
