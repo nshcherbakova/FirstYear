@@ -9,9 +9,6 @@ const double INITIAL_SCALE_FACTOR = 2.5;
 const double ZOOM_STEP = 1.10;
 const double ROTATE_STEP = 0.5;
 
-// static const char *c_widget_background_str =
-// ":/images/tune_photo/background";
-
 void GestureProcessor::Initialise() {
   QList<Qt::GestureType> gestures;
 
@@ -416,11 +413,12 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
 
   updatePhoto(photo_data_);
 
-  auto top =
-      std::max((int)frameRect().top() - 70, open_file_->geometry().top());
-  QRect rect(QPoint{(int)(width() * 0.25), top}, QSize{width() / 2, 50});
+  const auto top = std::max((int)frameRect().top() - 70, 0);
+  const auto text_width = (int)(width() / 1.5);
+  QRect rect(QPoint{(int)(width() - text_width) / 2, top},
+             QSize{text_width, 40});
   text_->setGeometry(rect);
-  text_->setFontSize(40);
+  text_->setFontSize(30);
 }
 
 bool PhotoTuneWidget::event(QEvent *event) {
