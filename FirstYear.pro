@@ -1,4 +1,4 @@
-QT       += core gui svg
+QT       += core gui svg svgwidgets
 # QT = core gui widgets openglwidgets opengl network svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 android {
@@ -42,6 +42,7 @@ SOURCES += \
     UI/FrameWidgets/PreviewWidget.cpp \
     UI/FrameWidgets/TouchButton.cpp \
     UI/SwipeView/SwipeWidgetsList.cpp \
+    UI/Utility.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -71,6 +72,7 @@ HEADERS += \
     UI/FrameWidgets/TouchButton.h \
     UI/Styles/Styles.h \
     UI/SwipeView/SwipeWidgetsList.hpp \
+    UI/Utility.h \
     mainwindow.h
 
 !android {

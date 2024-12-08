@@ -174,7 +174,8 @@ void PhotoWidget::paintEvent(QPaintEvent *e) {
   if (!render_state_ && drag_enter_) {
     QPainter painter(this);
     painter.fillRect(rect(), QColor(200, 200, 200, 200));
-  } else {
+
+  } else if (!render_state_) {
     QPushButton::paintEvent(e);
   }
 }

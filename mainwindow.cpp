@@ -93,6 +93,9 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
+  background_ = new QSvgWidget(this);
+  background_->load(QString(":/images/icons/stars"));
+
   CreatePhotoTuneWidget(frame_control);
   CreateFrames(frame_control);
   CreateLineEditWidget(frame_control);
@@ -518,6 +521,11 @@ QPixmap MainWindow::Render(Core::FrameControl &control) {
 void MainWindow::resizeEvent(QResizeEvent *e) {
   if (e) {
     QMainWindow::resizeEvent(e);
+  }
+
+  if (background_) {
+    const int size = std::max(width(), height());
+    background_->setGeometry(QRect{QPoint{0, 0}, QSize{size, size}});
   }
 
   if (swipe_widget_) {

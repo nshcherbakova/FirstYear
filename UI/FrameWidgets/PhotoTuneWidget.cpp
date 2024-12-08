@@ -9,7 +9,8 @@ const double INITIAL_SCALE_FACTOR = 2.5;
 const double ZOOM_STEP = 1.10;
 const double ROTATE_STEP = 0.5;
 
-static const char *c_widget_background_str = ":/images/tune_photo/background";
+// static const char *c_widget_background_str =
+// ":/images/tune_photo/background";
 
 void GestureProcessor::Initialise() {
   QList<Qt::GestureType> gestures;
@@ -350,16 +351,12 @@ bool TouchClickableLabel::event(QEvent *event) {
 /// \param parent
 ///
 ///
-PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
-    : QWidget(&parent), background_(c_widget_background_str) {
+PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   GestureProcessor::Initialise();
   setAttribute(Qt::WA_AcceptTouchEvents);
 
-  auto palette = QWidget::palette();
-  //  palette.setColor(QPalette::Window, Qt::red);
-  setPalette(palette);
-  setGeometry(parent.geometry());
-  setAutoFillBackground(true);
+  background_ = new QSvgRenderer(this);
+  background_->load(QString(":/images/icons/stars2"));
 
   open_file_ = new TextButton(this, true);
   open_file_->setText("Open");
@@ -555,7 +552,13 @@ void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
-  painter.drawPixmap(rect(), background_, rect());
+  painter.fillRect(rect(), Qt::white);
+
+  const auto size = std::min(width(), height()) * 2;
+  background_->render(&painter, QRect{QPoint{(width() - size) / 2,
+                                             (int)((height() - size) / 1.8)},
+                                      QSize{size, size}});
+
   PhotoProcessor::drawPhoto(painter);
   Frame::drawFrame(painter);
 }

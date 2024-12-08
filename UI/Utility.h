@@ -21,24 +21,6 @@ struct FrameParameters {
 Q_DECLARE_METATYPE(FirstYear::UI::FrameParameters)
 
 namespace FirstYear::UI::Utility {
-class OpenFileDialog : public QObject {
-  Q_OBJECT
-public:
-  explicit OpenFileDialog(QObject *parent = nullptr);
-
-public:
-  void OpenFile();
-  void OpenFiles();
-
-signals:
-  void SignalPickedImages(QStringList);
-  void SignalPickedImage(QString);
-
-private:
-#ifdef Q_OS_ANDROID
-  Core::Android::SingleImagePicker single_image_picker_;
-  Core::Android::ImagesPicker images_picker_;
-#endif
-};
+// QString static RandomBackground();
 } // namespace FirstYear::UI::Utility
 #endif // FIRSTYEAR_UI_UTILITY_H

@@ -14,6 +14,7 @@ class QSwipeGesture;
 class QTapAndHoldGesture;
 class QTouchEvent;
 class QEventPoint;
+class QSvgRenderer;
 
 QT_END_NAMESPACE
 
@@ -193,7 +194,8 @@ private:
 
 private:
   int id_;
-  QPixmap background_;
+  // QPixmap background_;
+  QSvgRenderer *background_ = nullptr;
 
   TextButton *open_file_ = nullptr;
   TextButton *next_ = nullptr;

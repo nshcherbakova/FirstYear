@@ -12,6 +12,7 @@ class QSwipeGesture;
 class QTapAndHoldGesture;
 class QTouchEvent;
 class QEventPoint;
+class QSvgRenderer;
 
 namespace FirstYear::UI {
 class TouchButton;
@@ -162,6 +163,7 @@ private:
   QPixmap image_;
   TouchButton *share_ = nullptr;
   //  TouchButton *close_ = nullptr;
+  QSvgRenderer *background_ = nullptr;
 };
 
 } // namespace FirstYear::UI::Preview

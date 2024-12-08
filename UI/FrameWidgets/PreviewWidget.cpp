@@ -244,12 +244,15 @@ PreviewWidget::PreviewWidget(QWidget &parent)
   GestureProcessor::Initialise();
   setAttribute(Qt::WA_AcceptTouchEvents);
 
-  setGeometry(parent.geometry());
+  background_ = new QSvgRenderer(this);
+  background_->load(QString(":/images/icons/rattles"));
 
   share_ = new ShareButton(this, true);
 
   connect(share_, &QPushButton::clicked, this,
           [&]() { emit SignalShareImage(); });
+
+  setGeometry(parent.geometry());
 }
 
 void PreviewWidget::setVisible(bool visible) {
@@ -381,6 +384,10 @@ void PreviewWidget::mouseDoubleClickEvent(QMouseEvent *event) {
 void PreviewWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   painter.fillRect(rect(), QColor(c_preview_background_color_str));
+
+  const auto size = std::min(width(), height());
+  background_->render(&painter, QRect{QPoint{}, QSize{size, size}});
+
   PhotoProcessor::drawPhoto(painter);
 }
 } // namespace FirstYear::UI::Preview

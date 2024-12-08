@@ -33,6 +33,8 @@
 #include <QSplashScreen>
 #include <QStandardPaths>
 #include <QStringList>
+#include <QSvgRenderer>
+#include <QSvgWidget>
 // #include <QTextEdit>
 #include <QTouchEvent>
 #include <QVariant>

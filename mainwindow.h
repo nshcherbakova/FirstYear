@@ -7,6 +7,7 @@
 
 class QPushButton;
 class QStackedLayout;
+class QSvgWidget;
 
 namespace ShareUtils {
 class ShareUtilsCpp;
@@ -77,6 +78,7 @@ private:
   QPushButton *share_button_ = nullptr;
   QPushButton *select_images_button_ = nullptr;
   QStackedLayout *stackedLayout = nullptr;
+  QSvgWidget *background_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H
