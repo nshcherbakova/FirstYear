@@ -1,17 +1,17 @@
 <RCC>
     <qresource prefix="/images/month_stubs">
-        <file alias="month_stub_0">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_1">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_2">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_3">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_4">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_5">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_6">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_7">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_8">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_9">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_10">resources/Images/month_stubs/month_image_stub.jpg</file>
-        <file alias="month_stub_11">resources/Images/month_stubs/month_image_stub.jpg</file>
+        <file alias="month_stub_0">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_1">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_2">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_3">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_4">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_5">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_6">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_7">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_8">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_9">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_10">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_11">resources/Images/month_stubs/month_image_stub.svg</file>
     </qresource>
     <qresource prefix="/images/frame_1">
         <file alias="foreground">resources/Images/frame_1/foreground.png</file>

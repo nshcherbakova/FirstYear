@@ -232,8 +232,7 @@ void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
   }
 }
 
-void TemplateWidgetBase::createPhotoTextWidgets(Qt::Alignment alignment,
-                                                bool is_rendering) {
+void TemplateWidgetBase::createPhotoTextWidgets(Qt::Alignment alignment, bool) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_text_widgets_[i] = new ClickableLabel(
