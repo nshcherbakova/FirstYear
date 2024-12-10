@@ -200,6 +200,27 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
     return;
 
   painter.setTransform(transform_);
+
+  int margin = 12;
+
+  auto boder_rect =
+      QRect{QPoint{margin, margin},
+            photo_data_->image().size() /
+                QGuiApplication::primaryScreen()->devicePixelRatio()};
+
+  auto old_pen = painter.pen();
+  auto pen = old_pen;
+  pen.setColor(QColor(150, 150, 150, 10));
+  pen.setWidth(0);
+  painter.setPen(pen);
+  auto old_brush = painter.brush();
+  painter.setBrush(QColor(150, 150, 150, 30));
+
+  painter.drawRoundedRect(boder_rect, 4, 4);
+
+  painter.setBrush(old_brush);
+  painter.setPen(old_pen);
+
   painter.drawPixmap(0, 0, photo_data_->image());
   painter.setTransform(QTransform());
 }
