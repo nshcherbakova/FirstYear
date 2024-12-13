@@ -315,7 +315,7 @@ void MainWindow::OnImagePicked(QString file, int month) {
 
   auto &month_data = project->monthes_[month];
   if (!file.isNull()) {
-    month_data.photo_data->resetData(QPixmap(file));
+    month_data.photo_data->resetData(QPixmap(file), true);
 
     TuneImage(month, project_control_);
 
@@ -350,6 +350,8 @@ void MainWindow::TuneImage(int month,
     photo_tune_widget_->setPhoto(month, frame_data, month_data.photo_data,
                                  month_data.text);
     photo_tune_widget_->show();
+
+    setEnabledControls(false);
   }
 }
 
@@ -423,7 +425,8 @@ pixmap.save(path);
 
     preview_->setImage(std::move(pixmap));
     preview_->show();
-    // stackedLayout->addWidget(preview_);
+
+    setEnabledControls(false);
   });
 
   share_button_ = new ShareButton(this);
@@ -479,7 +482,7 @@ void MainWindow::SelectImages(QStringList files) {
         if (month_data.photo_data->isStub()) {
           QPixmap image(file);
           if (!image.isNull()) {
-            month_data.photo_data->resetData(QPixmap(file));
+            month_data.photo_data->resetData(QPixmap(file), true);
           } else {
             month--;
             spdlog::error("SelectImages invalid image file {}",
@@ -602,13 +605,36 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     // QWidget *top = stackedLayout->currentWidget();
     // stackedLayout->removeWidget( top );
     photo_tune_widget_->hide();
+
+    setEnabledControls(true);
+
     event->ignore();
   } else if (preview_->isVisible()) {
     preview_->hide();
+
+    setEnabledControls(true);
+
     event->ignore();
   } else {
     QMainWindow::closeEvent(event);
   }
+}
+
+void MainWindow::setEnabledControls(bool enabled) {
+  swipe_widget_->setUpdatesEnabled(enabled);
+  swipe_widget_->setEnabled(enabled);
+
+  background_->setUpdatesEnabled(enabled);
+  background_->setEnabled(enabled);
+
+  preview_button_->setUpdatesEnabled(enabled);
+  preview_button_->setEnabled(enabled);
+
+  share_button_->setUpdatesEnabled(enabled);
+  share_button_->setEnabled(enabled);
+
+  select_images_button_->setUpdatesEnabled(enabled);
+  select_images_button_->setEnabled(enabled);
 }
 
 MainWindow::~MainWindow() {}

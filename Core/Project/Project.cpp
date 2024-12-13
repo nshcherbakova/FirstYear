@@ -1,6 +1,8 @@
 #include "Project.h"
 #include <stdafx.h>
 
+static const int c_image_scale_size = 1536;
+
 namespace FirstYear::Core {
 
 bool absoluteToleranceCompare(double x, double y) {
@@ -50,15 +52,15 @@ PhotoData PhotoData::CreateStubData(QPixmap image) {
   data.setStubImage(image);
   return data;
 }
-PhotoData PhotoData::CreateNewData(QPixmap image) {
+PhotoData PhotoData::CreateNewData(QPixmap image, bool scaled) {
   PhotoData data;
-  data.fillImage(image, image.isNull());
+  data.fillImage(image, image.isNull(), scaled);
   return data;
 }
 PhotoData PhotoData::CreateCopy(const PhotoData &source) { return source; }
 
-void PhotoData::resetData(QPixmap image) {
-  fillImage(image, image.isNull());
+void PhotoData::resetData(QPixmap image, bool scale) {
+  fillImage(image, image.isNull(), scale);
 
   transform_scale_rotate_.reset();
   transform_offset_.reset();
@@ -68,9 +70,18 @@ void PhotoData::resetData(QPixmap image) {
   state_ |= (short)STATE::TRANSFORM_OFFSET_CHANGED;
 }
 
-void PhotoData::fillImage(QPixmap image, bool is_stub) {
+void PhotoData::fillImage(QPixmap image, bool is_stub, bool scaled) {
   is_stub_image_ = is_stub;
   image_ = std::move(image);
+  if (scaled) {
+    if (image_.width() > image_.height()) {
+      image_ =
+          image_.scaledToWidth(c_image_scale_size, Qt::SmoothTransformation);
+    } else {
+      image_ =
+          image_.scaledToHeight(c_image_scale_size, Qt::SmoothTransformation);
+    }
+  }
   image_.setDevicePixelRatio(
       QGuiApplication::primaryScreen()->devicePixelRatio());
 }

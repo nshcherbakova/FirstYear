@@ -40,13 +40,13 @@ class PhotoData {
 public:
   static PhotoData CreateEmptyData();
   static PhotoData CreateStubData(QPixmap image);
-  static PhotoData CreateNewData(QPixmap image);
+  static PhotoData CreateNewData(QPixmap image, bool scale);
   static PhotoData CreateCopy(const PhotoData &source);
 
   explicit PhotoData();
 
 public:
-  void resetData(QPixmap image);
+  void resetData(QPixmap image, bool scale);
   /*void setImage(QPixmap image, PhotoTransform transform_scale_rotate,
                 const PhotoTransform transform_offset);*/
   void setTransforms(PhotoTransform transform_scale_rotate,
@@ -69,7 +69,7 @@ public:
   };
 
 protected:
-  void fillImage(QPixmap image, bool is_stub);
+  void fillImage(QPixmap image, bool is_stub, bool scaled);
 
 protected:
   QPixmap image_;

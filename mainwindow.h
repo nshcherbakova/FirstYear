@@ -59,6 +59,8 @@ private:
   void OnImagePicked(QString file, int month);
   void SelectImages(QStringList files);
 
+  void setEnabledControls(bool enabled);
+
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
   virtual void closeEvent(QCloseEvent *event) override final;
@@ -79,6 +81,7 @@ private:
   QPushButton *select_images_button_ = nullptr;
   QStackedLayout *stackedLayout = nullptr;
   QSvgWidget *background_ = nullptr;
+  QPixmap background_image_;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

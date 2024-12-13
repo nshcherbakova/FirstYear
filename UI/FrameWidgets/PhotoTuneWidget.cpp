@@ -200,26 +200,26 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
     return;
 
   painter.setTransform(transform_);
+  /*
+     int margin = 12;
 
-  int margin = 12;
+    auto boder_rect =
+        QRect{QPoint{margin, margin},
+              photo_data_->image().size() /
+                  QGuiApplication::primaryScreen()->devicePixelRatio()};
 
-  auto boder_rect =
-      QRect{QPoint{margin, margin},
-            photo_data_->image().size() /
-                QGuiApplication::primaryScreen()->devicePixelRatio()};
+    auto old_pen = painter.pen();
+    auto pen = old_pen;
+    pen.setColor(QColor(150, 150, 150, 10));
+    pen.setWidth(0);
+    painter.setPen(pen);
+    auto old_brush = painter.brush();
+    painter.setBrush(QColor(150, 150, 150, 30));
 
-  auto old_pen = painter.pen();
-  auto pen = old_pen;
-  pen.setColor(QColor(150, 150, 150, 10));
-  pen.setWidth(0);
-  painter.setPen(pen);
-  auto old_brush = painter.brush();
-  painter.setBrush(QColor(150, 150, 150, 30));
+    painter.drawRoundedRect(boder_rect, 4, 4);
 
-  painter.drawRoundedRect(boder_rect, 4, 4);
-
-  painter.setBrush(old_brush);
-  painter.setPen(old_pen);
+    painter.setBrush(old_brush);
+    painter.setPen(old_pen);*/
 
   painter.drawPixmap(0, 0, photo_data_->image());
   painter.setTransform(QTransform());
@@ -371,7 +371,6 @@ bool TouchClickableLabel::event(QEvent *event) {
 ///
 PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   GestureProcessor::Initialise();
-  setAttribute(Qt::WA_AcceptTouchEvents);
 
   background_ = new QSvgRenderer(this);
   background_->load(QString(":/images/icons/stars2"));
@@ -403,17 +402,29 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   text_->setAlignment(Qt::AlignCenter);
   connect(text_, &ClickableLabel::clicked, this,
           [&] { emit SignalTextClicked(text_->text()); });
+  resizeEvent(nullptr);
 }
 
 void PhotoTuneWidget::setVisible(bool visible) {
   QWidget::setVisible(visible);
+  setAttribute(Qt::WA_AcceptTouchEvents, visible);
   if (!visible && photo_data_) //&& !photo_data_->image().isNull())
   {
     emit SignalImageTuned();
   }
 }
 void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
-  QWidget::resizeEvent(e);
+  if (e) {
+    QWidget::resizeEvent(e);
+  }
+  background_image_ = QPixmap(size());
+
+  QPainter painter(&background_image_);
+
+  const auto size = std::min(width(), height()) * 2;
+  background_->render(&painter, QRect{QPoint{(width() - size) / 2,
+                                             (int)((height() - size) / 1.8)},
+                                      QSize{size, size}});
 
   if (!photo_data_ || photo_data_->image().isNull())
     return;
@@ -573,10 +584,7 @@ void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   painter.fillRect(rect(), Qt::white);
 
-  const auto size = std::min(width(), height()) * 2;
-  background_->render(&painter, QRect{QPoint{(width() - size) / 2,
-                                             (int)((height() - size) / 1.8)},
-                                      QSize{size, size}});
+  painter.drawPixmap(rect(), background_image_, rect());
 
   PhotoProcessor::drawPhoto(painter);
   Frame::drawFrame(painter);

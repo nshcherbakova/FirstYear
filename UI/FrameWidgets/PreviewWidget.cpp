@@ -257,6 +257,7 @@ PreviewWidget::PreviewWidget(QWidget &parent)
 
 void PreviewWidget::setVisible(bool visible) {
   QWidget::setVisible(visible);
+  setAttribute(Qt::WA_AcceptTouchEvents, visible);
   if (!visible) {
     photo_data_ = Core::PhotoData::CreateEmptyData();
   }
@@ -293,7 +294,7 @@ bool PreviewWidget::event(QEvent *event) {
 
 void PreviewWidget::setImage(QPixmap photo) {
 
-  Core::PhotoData photo_data = Core::PhotoData::CreateNewData(photo);
+  Core::PhotoData photo_data = Core::PhotoData::CreateNewData(photo, false);
 
   updatePhoto(photo_data);
 }

@@ -196,6 +196,7 @@ private:
   int id_;
   // QPixmap background_;
   QSvgRenderer *background_ = nullptr;
+  QPixmap background_image_;
 
   TextButton *open_file_ = nullptr;
   TextButton *next_ = nullptr;
