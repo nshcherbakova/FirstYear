@@ -93,8 +93,21 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
-  background_ = new QSvgWidget(this);
-  background_->load(QString(":/images/icons/stars"));
+  background_ = new QSvgWidget(":/images/icons/stars", this);
+
+  //  QInputMethod *keyboard = QGuiApplication::inputMethod();
+
+  // connect(keyboard, &QInputMethod::visibleChanged, this, [&] {
+  //     qDebug() << "++++++++++ ";
+  //   if(!QGuiApplication::inputMethod()->isVisible())
+  //        { qDebug() << "%%%%%%%%%%% ";
+  //  resizeEvent(nullptr);
+  //        adjustSize();
+  //       updateGeometry();
+  //   update();
+
+  //     }
+  //  });
 
   CreatePhotoTuneWidget(frame_control);
   CreateFrames(frame_control);
@@ -105,9 +118,10 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   photo_tune_widget_->raise();
 
-  if (frame_control.CurrentProject()->frame_id_.isEmpty())
+  if (frame_control.CurrentProject()->frame_id_.isEmpty()) {
     frame_control.CurrentProject()->frame_id_ =
         frame_widgets_[0]->innerWidget()->id();
+  }
   int current_fame_index = CurrentTemplateIndex(frame_control);
 
   swipe_view_->SetCurrentItem(current_fame_index);
@@ -523,9 +537,13 @@ QPixmap MainWindow::Render(Core::FrameControl &control) {
 
 void MainWindow::resizeEvent(QResizeEvent *e) {
   if (e) {
+    // qDebug() << "MainWindow *** " << e->size();
+    if (!e->size().isValid() || e->size().isEmpty()) {
+      return;
+    }
     QMainWindow::resizeEvent(e);
   }
-
+  // qDebug() << "MainWindow *** " << size();
   if (background_) {
     const int size = std::max(width(), height());
     background_->setGeometry(QRect{QPoint{0, 0}, QSize{size, size}});
@@ -602,8 +620,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event) {
 void MainWindow::closeEvent(QCloseEvent *event) {
 
   if (photo_tune_widget_->isVisible()) {
-    // QWidget *top = stackedLayout->currentWidget();
-    // stackedLayout->removeWidget( top );
+
     photo_tune_widget_->hide();
 
     setEnabledControls(true);

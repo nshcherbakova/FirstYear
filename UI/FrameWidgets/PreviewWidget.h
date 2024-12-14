@@ -158,12 +158,14 @@ private:
   void updatePhoto(std::optional<QPointF> pos_delta,
                    std::optional<double> scale_factor,
                    std::optional<QPointF> center);
+  void redrawBackgroundImage();
 
 private:
   QPixmap image_;
   TouchButton *share_ = nullptr;
   //  TouchButton *close_ = nullptr;
   QSvgRenderer *background_ = nullptr;
+  QPixmap background_image_;
 };
 
 } // namespace FirstYear::UI::Preview

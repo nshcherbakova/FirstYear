@@ -80,7 +80,7 @@ static const char *c_preview_background_color_str = "#DBD5EB";
 static const char *c_line_edit_style_str =
     "QLineEdit{  background-color: #F5F5DF;"
     "color: #83368A;  font-family: Typo Round Regular Demo;"
-    "bborder: none;"
+    "border: none;"
     "border-radius: 30;"
     "}";
 static const QColor c_line_edit_background_color = QColor(164, 166, 151, 200);

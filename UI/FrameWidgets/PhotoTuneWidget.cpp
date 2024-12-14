@@ -144,6 +144,8 @@ void PhotoPainter::init(const Core::PhotoDataPtr &photo,
        std::optional<QPointF>(), std::optional<QPointF>()},
       photo_data_->transformOffsetRef(),
       photo_data_->transformScaleRotateRef());
+
+  //  drawFrame();
 }
 
 QTransform PhotoPainter::getTransformForWidget(
@@ -220,11 +222,35 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
 
     painter.setBrush(old_brush);
     painter.setPen(old_pen);*/
-
+  // painter.drawPixmap(0, 0, frame_);
   painter.drawPixmap(0, 0, photo_data_->image());
   painter.setTransform(QTransform());
 }
 
+void PhotoPainter::drawFrame() {
+  int margin = 12;
+  auto boder_rect =
+      QRect{QPoint{margin, margin},
+            photo_data_->image().size() /
+                QGuiApplication::primaryScreen()->devicePixelRatio()};
+
+  frame_ = QPixmap(boder_rect.size() + QSize{margin, margin});
+
+  QPainter painter(&frame_);
+
+  auto old_pen = painter.pen();
+  auto pen = old_pen;
+  pen.setColor(QColor(150, 150, 150, 10));
+  pen.setWidth(0);
+  painter.setPen(pen);
+  auto old_brush = painter.brush();
+  painter.setBrush(QColor(150, 150, 150, 30));
+
+  painter.drawRoundedRect(boder_rect, 4, 4);
+
+  painter.setBrush(old_brush);
+  painter.setPen(old_pen);
+}
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -271,6 +297,10 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
 ///
 
 void Frame::init(const FrameParameters &frame_data, QRectF widget_rect) {
+
+  if (frame_data.data.isNull()) {
+    return;
+  }
 
   frame_data_ = frame_data;
 
@@ -413,21 +443,28 @@ void PhotoTuneWidget::setVisible(bool visible) {
     emit SignalImageTuned();
   }
 }
-void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
-  if (e) {
-    QWidget::resizeEvent(e);
-  }
+
+void PhotoTuneWidget::redrawBackgroundImage() {
   background_image_ = QPixmap(size());
 
   QPainter painter(&background_image_);
 
+  painter.fillRect(rect(), Qt::white);
   const auto size = std::min(width(), height()) * 2;
   background_->render(&painter, QRect{QPoint{(width() - size) / 2,
                                              (int)((height() - size) / 1.8)},
                                       QSize{size, size}});
+}
 
-  if (!photo_data_ || photo_data_->image().isNull())
-    return;
+void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
+  if (e) {
+    if (!e->size().isValid() || e->size().isEmpty()) {
+      return;
+    }
+    QWidget::resizeEvent(e);
+  }
+
+  redrawBackgroundImage();
 
   open_file_->setGeometry(
       {{width() - open_file_->width() - height() / 40, height() / 20},
@@ -441,9 +478,10 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
                        height() - height() / 20 - prev_->height()},
                       next_->size()});
 
-  Frame::init(frame_data_, rect());
-
-  updatePhoto(photo_data_);
+  if (photo_data_ && !photo_data_->image().isNull()) {
+    Frame::init(frame_data_, rect());
+    updatePhoto(photo_data_);
+  }
 
   const auto top = std::max((int)frameRect().top() - 70, 0);
   const auto text_width = (int)(width() / 1.5);
@@ -479,6 +517,7 @@ void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
 }
 
 void PhotoTuneWidget::updatePhoto(const Core::PhotoDataPtr &photo) {
+
   PhotoProcessor::init(photo, rect(), frameRect());
   update();
 }
@@ -582,7 +621,6 @@ void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
-  painter.fillRect(rect(), Qt::white);
 
   painter.drawPixmap(rect(), background_image_, rect());
 

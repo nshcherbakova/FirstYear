@@ -263,15 +263,26 @@ void PreviewWidget::setVisible(bool visible) {
   }
 }
 
-void PreviewWidget::resizeEvent(QResizeEvent *e) {
-  QWidget::resizeEvent(e);
+void PreviewWidget::redrawBackgroundImage() {
+  background_image_ = QPixmap(size());
+  QPainter painter(&background_image_);
+  painter.fillRect(rect(), QColor(c_preview_background_color_str));
 
-  if (photo_data_.image().isNull())
-    return;
+  const auto size = std::min(width(), height());
+  background_->render(&painter, QRect{QPoint{}, QSize{size, size}});
 
   share_->setGeometry({{width() - share_->width() - height() / 40,
                         height() - share_->height() - height() / 10},
                        share_->size()});
+}
+
+void PreviewWidget::resizeEvent(QResizeEvent *e) {
+  if (!e->size().isValid() || e->size().isEmpty()) {
+    return;
+  }
+  QWidget::resizeEvent(e);
+
+  redrawBackgroundImage();
 
   updatePhoto(photo_data_);
 }
@@ -300,6 +311,10 @@ void PreviewWidget::setImage(QPixmap photo) {
 }
 
 void PreviewWidget::updatePhoto(const Core::PhotoData &photo) {
+
+  if (photo.image().isNull())
+    return;
+
   auto boundary_rect = rect();
   boundary_rect.moveTopLeft(
       {boundary_rect.width() / 3, boundary_rect.height() / 3});
@@ -384,10 +399,8 @@ void PreviewWidget::mouseDoubleClickEvent(QMouseEvent *event) {
 
 void PreviewWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
-  painter.fillRect(rect(), QColor(c_preview_background_color_str));
 
-  const auto size = std::min(width(), height());
-  background_->render(&painter, QRect{QPoint{}, QSize{size, size}});
+  painter.drawPixmap(rect(), background_image_, rect());
 
   PhotoProcessor::drawPhoto(painter);
 }

@@ -92,10 +92,12 @@ protected:
                         Core::PhotoTransform &transform_offset,
                         Core::PhotoTransform &transform_scale_rotate);
   // QTransform getTransformForWidget() const ;
+  void drawFrame();
 
 protected:
   QTransform transform_;
   Core::PhotoDataPtr photo_data_;
+  QPixmap frame_;
 
   double internal_scale_ = 1;
   QRectF boundary_rect_;
@@ -191,6 +193,7 @@ private:
                    std::optional<double> scale_factor,
                    std::optional<double> angle_delta,
                    std::optional<QPointF> center);
+  void redrawBackgroundImage();
 
 private:
   int id_;

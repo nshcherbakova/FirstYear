@@ -38,21 +38,46 @@ void LineEditWidget::setVisible(bool visible) {
 void LineEditWidget::setText(QString text, int id) {
   id_ = id;
   line_edit_->setText(text);
-  spdlog::info("LineEditWidget {}", text.toStdString());
+  //  spdlog::info("LineEditWidget {}", text.toStdString());
 }
 
 void LineEditWidget::resizeEvent(QResizeEvent *e) {
+  if (!e->size().isValid() || e->size().isEmpty()) {
+    return;
+  }
   QWidget::resizeEvent(e);
 
-  int size = std::min(width(), height());
-  int line_edit_width = (int)(width() * 0.8);
-  QRect rect = {(width() - line_edit_width) / 2, (int)(height() / 3),
-                line_edit_width, (int)(size / 4.5)};
+  //   QInputMethod *keyboard = QGuiApplication::inputMethod();
+  //  qDebug() << "**** " << keyboard->isVisible();
+  /* if(keyboard->isVisible())
+     {
 
-  line_edit_->setGeometry(rect);
-  QFont font = line_edit_->font();
-  font.setPointSize(size / 10);
-  line_edit_->setFont(font);
+         int size = std::min(width(), height());
+         int line_edit_width = (int)(width() * 0.8);
+         QRect rect = {(width() - line_edit_width) / 2, (int)(height() / 8),
+                       line_edit_width, (int)(size / 2)};
+
+         line_edit_->setGeometry({0,0, 20, 400});
+         QFont font = line_edit_->font();
+         font.setPointSize(20);
+          qDebug() << "****1 " << size / 4.0;
+         line_edit_->setFont(font);
+   }
+   else*/
+  {
+
+    int size = std::min(width(), height());
+    int line_edit_width = (int)(width() * 0.8);
+    QRect rect = {(width() - line_edit_width) / 2, (int)(height() / 3),
+                  line_edit_width, (int)(size / 4.5)};
+
+    line_edit_->setGeometry(rect);
+    QFont font = line_edit_->font();
+
+    font.setPointSize(size / 10.0);
+
+    line_edit_->setFont(font);
+  }
 }
 
 void LineEditWidget::mouseReleaseEvent(QMouseEvent *e) {
