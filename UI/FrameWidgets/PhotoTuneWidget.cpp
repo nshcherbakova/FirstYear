@@ -43,8 +43,6 @@ bool GestureProcessor::processEvent(QEvent *event) {
 }
 
 bool GestureProcessor::gestureEvent(QGestureEvent *event) {
-  if (QGesture *tap_and_hold = event->gesture(Qt::TapAndHoldGesture))
-    longTapTriggered(static_cast<QTapAndHoldGesture *>(tap_and_hold));
   if (QGesture *pan = event->gesture(Qt::PanGesture))
     panTriggered(static_cast<QPanGesture *>(pan));
   if (QGesture *pinch = event->gesture(Qt::PinchGesture))
@@ -101,11 +99,6 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
     processScaleChanged(gesture->scaleFactor() / gesture->lastScaleFactor(),
                         gesture->centerPoint());
   }
-}
-
-void GestureProcessor::longTapTriggered(QTapAndHoldGesture *gesture) {
-
-  processLongTap(gesture);
 }
 
 void GestureProcessor::swipeTriggered(QSwipeGesture *gesture) {
@@ -531,7 +524,6 @@ Core::PhotoDataPtr PhotoTuneWidget::getPhoto() const { return photo_data_; }
 void PhotoTuneWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   QWidget::mouseDoubleClickEvent(event);
   hide();
-  // emit SignalImageTuned();
 }
 
 void PhotoTuneWidget::updatePhoto(std::optional<QPointF> pos_delta,
@@ -607,12 +599,6 @@ void PhotoTuneWidget::processAngleChanged(qreal rotation_delta,
 
 void PhotoTuneWidget::processScaleChanged(qreal scale, QPointF center) {
   updatePhoto(std::optional<QPointF>(), scale, std::optional<double>(), center);
-}
-
-void PhotoTuneWidget::processLongTap(QTapAndHoldGesture *) {
-
-  // hide();
-  // emit SignalImageTuned();
 }
 
 void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {

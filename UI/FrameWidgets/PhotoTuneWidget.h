@@ -32,7 +32,6 @@ protected:
   virtual void processPan(QPointF delta) = 0;
   virtual void processAngleChanged(qreal rotation_delta, QPointF center) = 0;
   virtual void processScaleChanged(qreal scale, QPointF center) = 0;
-  virtual void processLongTap(QTapAndHoldGesture *) = 0;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) = 0;
   virtual void processSwipe(QSwipeGesture *) = 0;
   virtual void grabWidgetGesture(Qt::GestureType gesture) = 0;
@@ -41,7 +40,6 @@ private:
   bool gestureEvent(QGestureEvent *event);
   void panTriggered(QPanGesture *);
   void pinchTriggered(QPinchGesture *);
-  void longTapTriggered(QTapAndHoldGesture *);
   void swipeTriggered(QSwipeGesture *gesture);
   bool toucheEvent(QTouchEvent *touch);
 
@@ -173,7 +171,6 @@ private:
   virtual void processAngleChanged(qreal rotation_delta,
                                    QPointF center) override;
   virtual void processScaleChanged(qreal scale, QPointF center) override;
-  virtual void processLongTap(QTapAndHoldGesture *) override;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) override;
   virtual void processSwipe(QSwipeGesture *) override;
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;

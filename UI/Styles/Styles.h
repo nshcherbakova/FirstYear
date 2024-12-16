@@ -71,7 +71,7 @@ static const char *c_select_button_style_str =
 
 static const char *c_tune_frame_light_color_str = "#E9D5EB";
 static const char *c_tune_frame_dark_color_str = "#555C24";
-static const char *c_tune_frame_text_color_str = "#79B0A0";
+static const char *c_tune_frame_text_color_str = "#53798C";
 
 // Preview Widget styles
 static const char *c_preview_background_color_str = "#DBD5EB";

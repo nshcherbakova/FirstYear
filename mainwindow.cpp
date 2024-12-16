@@ -207,6 +207,7 @@ void MainWindow::CreatePhotoTuneWidget(
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalImageTuned, this, [&] {
     int month = photo_tune_widget_->getPhotoId();
     SaveTunedImage(month, frame_control);
+    setEnabledControls(true);
   });
 
   connect(photo_tune_widget_, &PhotoTuneWidget::SignalOpenFile, this, [&] {
