@@ -222,7 +222,7 @@ void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
   remove_buttons_.resize(12);
   for (int i = 0; i < (int)remove_buttons_.size(); i++) {
     remove_buttons_[i] = new QPushButton(this);
-    remove_buttons_[i]->setIconSize({20, 20});
+    remove_buttons_[i]->setIconSize({25, 25});
     remove_buttons_[i]->setIcon(QIcon(c_remove_image_str));
     remove_buttons_[i]->setAttribute(Qt::WA_TranslucentBackground);
     remove_buttons_[i]->setObjectName("RemoveuButton");
@@ -376,12 +376,13 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
     for (int i = 0; i < (int)photo_slots_.size(); i++) {
       QRect new_rect;
       new_rect.setTopLeft(photo_slots_[i].topLeft().toPoint() -
-                          QPoint(10.0, 10.0) * k);
-      new_rect.setSize(QSize{(int)(20 * k), (int)(20 * k)});
+                          QPoint(15.0, 10.0) * k);
+      new_rect.setSize(QSize{(int)(50 * k), (int)(50 * k)});
 
       if (!project->monthes_[i].photo_data->isStub()) {
         remove_buttons_[i]->show();
         remove_buttons_[i]->setGeometry(new_rect);
+        remove_buttons_[i]->setIconSize(new_rect.size());
       } else {
         remove_buttons_[i]->hide();
       }

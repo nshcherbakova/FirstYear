@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <QProgressDialog>
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 #include <UI/FrameWidgets/PhotoTuneWidget.h>
 #include <UI/FrameWidgets/PreviewWidget.h>
@@ -392,8 +393,7 @@ void MainWindow::UpdateSelectionButton(
   }
   if (empty_slots_count) {
     select_images_button_->show();
-    select_images_button_->setText(
-        QString("Select %1 images").arg(empty_slots_count));
+    select_images_button_->setText(SelectButtonText(empty_slots_count));
   } else
     select_images_button_->hide();
 }
@@ -419,6 +419,15 @@ void MainWindow::CreateSwipeWidget(
           });
 }
 
+QString MainWindow::SelectButtonText(int count) {
+  if (count == 12) {
+    return "Load photos";
+  } else if (count != 1) {
+    return QString("Load %1 photos").arg(count);
+  } else {
+    return "Load a photo";
+  }
+}
 void MainWindow::CreateButtons(Core::FrameControl &control) {
 
   preview_button_ = new TextButton(this);
@@ -452,9 +461,6 @@ pixmap.save(path);
 
   select_images_button_ = new TextButton(this);
   select_images_button_->setStyleSheet(c_select_button_style_str);
-  select_images_button_->setText(
-      QString("Select %1 images")
-          .arg(control.CurrentProject()->monthes_.size()));
 
   connect(select_images_button_, &QPushButton::clicked, this, [&] {
     const auto files = FileDialog::getOpenFileNames();
@@ -465,6 +471,14 @@ pixmap.save(path);
 }
 
 void MainWindow::SelectImages(QStringList files) {
+  QProgressDialog progress("Loading photos...", "", 0, files.size(), this);
+  progress.setStyleSheet(c_progress_dialog_style_str);
+  progress.setMinimumDuration(500);
+  progress.setCancelButton(nullptr);
+
+  progress.setWindowModality(Qt::WindowModal);
+  int count_loaded = 0;
+
   std::map<QString, std::vector<QString>> map;
   for (const auto &path : files) {
     QFileInfo file_info(path);
@@ -498,6 +512,8 @@ void MainWindow::SelectImages(QStringList files) {
           QPixmap image(file);
           if (!image.isNull()) {
             month_data.photo_data->resetData(QPixmap(file), true);
+            count_loaded++;
+            progress.setValue(count_loaded);
           } else {
             month--;
             spdlog::error("SelectImages invalid image file {}",
@@ -510,6 +526,7 @@ void MainWindow::SelectImages(QStringList files) {
   }
   UpdateFrames(nullptr);
   project_control_.SaveProject();
+  progress.setValue(files.size());
 }
 
 void MainWindow::Share(const QPixmap &pixmap) const {

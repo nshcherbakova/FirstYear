@@ -60,6 +60,7 @@ private:
   void SelectImages(QStringList files);
 
   void setEnabledControls(bool enabled);
+  QString SelectButtonText(int count);
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;

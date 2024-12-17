@@ -24,6 +24,17 @@ static const char *c_white_button_style_str =
     "QPushButton:pressed {border-color: #C3BED1;}"
     "QPushButton:pressed{color: #C3BED1;}";
 
+static const char *c_progress_dialog_style_str =
+    "QProgressDialog{"
+    "background-color: rgba(207, 209, 191, 200);"
+    "color:#83368A; "
+    "font-size: 23px; "
+    "font-family: Typo Round Regular Demo;"
+    "border-style: solid;"
+    "border-color: #83368A;"
+    "border-width: 3;"
+    "}";
+
 // Tune Widget styles
 static const char *c_dark_button_style_str =
     "QPushButton{"
