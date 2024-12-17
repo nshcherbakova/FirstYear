@@ -11,7 +11,7 @@ ClickableLabel::ClickableLabel(QWidget *parent, int font_size,
   font_ = QFont(font_family, font_size, QFont::Normal);
   QLabel::setFont(font_);
 
-  styled_text_ = "<a style=text-decoration:none style=color:%1>%2</a>";
+  styled_text_ = "<a style=text-decoration:none style=color:%1> %2</a>";
   styled_text_ = styled_text_.arg(font_color);
   icon_text_ =
       "<html><img src=':images/icons/edit' width='%1' height='%1'></html>";
