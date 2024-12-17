@@ -76,10 +76,10 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
   }
 
   if (photo->isStub()) {
-    //   setIcon(QIcon(":/images/icons/open"));
+    setIcon(QIcon(":/images/icons/open"));
     //  setText("Open Image");
   } else {
-    //   setIcon(QIcon(":/images/icons/edit_image"));
+    setIcon(QIcon(":/images/icons/edit_image"));
     //  setText("Edit");
   }
   setIconSize(size() * 0.7);

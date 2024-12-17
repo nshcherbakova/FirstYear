@@ -338,7 +338,8 @@ void MainWindow::OnImagePicked(QString file, int month) {
     TuneImage(month, project_control_);
 
     project_control_.SaveProjectMonth(month);
-  } else if (month_data.photo_data->isStub()) {
+  } else if (month_data.photo_data->isStub() &&
+             photo_tune_widget_->isVisible()) {
     photo_tune_widget_->hide();
   }
 }
