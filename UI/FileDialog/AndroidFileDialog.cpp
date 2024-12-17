@@ -58,6 +58,7 @@ void AndroidFileDialog::handleActivityResult(int requestCode, int resultCode,
 
   if (resultCode != RESULT_OK) {
     emit SignalFileSelectionRejected();
+    hide();
     return;
   }
 
