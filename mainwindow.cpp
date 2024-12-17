@@ -245,51 +245,54 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
     widget->setMaximumWidth(width());
     widget->setMaximumHeight(height());
 
-    connect(widget->innerWidget(), &TemplateWidgetBase::SignalImageDroped, this,
-            [&](int from_index, int to_index) {
-              auto &monthes = frame_control.CurrentProject()->monthes_;
+    connect(
+        widget->innerWidget(), &TemplateWidgetBase::SignalImageDroped, this,
+        [&](int from_index, int to_index) {
+          auto &monthes = frame_control.CurrentProject()->monthes_;
 
-              auto month_from_photo_data = monthes[from_index].photo_data;
-              auto &month_to = monthes[to_index];
+          auto month_from_photo_data = monthes[from_index].photo_data;
+          auto &month_to = monthes[to_index];
 
-              monthes[from_index].photo_data = month_to.photo_data;
-              month_to.photo_data = month_from_photo_data;
+          monthes[from_index].photo_data = month_to.photo_data;
+          month_to.photo_data = month_from_photo_data;
 
-              monthes[from_index].photo_data->setState(
-                  ((short)PhotoData::STATE::IMAGE_CHANGED |
-                   (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-                   (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
+          monthes[from_index].photo_data->setState(
+              ((short)PhotoData::STATE::IMAGE_CHANGED |
+               (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+               (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
 
-              monthes[to_index].photo_data->setState(
-                  (short)PhotoData::STATE::IMAGE_CHANGED |
-                  (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-                  (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+          monthes[to_index].photo_data->setState(
+              (short)PhotoData::STATE::IMAGE_CHANGED |
+              (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+              (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
 
-              UpdateFrames(nullptr);
-              frame_control.SaveProject();
-            });
+          UpdateFrames(nullptr);
+          frame_control.SaveProject();
+        },
+        Qt::QueuedConnection);
 
-    connect(widget->innerWidget(), &TemplateWidgetBase::SignalTunePhoto, this,
-            [&](int month_index) {
-              TuneImage(month_index, project_control_);
+    connect(
+        widget->innerWidget(), &TemplateWidgetBase::SignalTunePhoto, this,
+        [&](int month_index) { TuneImage(month_index, project_control_); },
+        Qt::QueuedConnection);
 
-              // stackedLayout->addWidget(photo_tune_widget_);
-            });
+    connect(
+        widget->innerWidget(), &TemplateWidgetBase::SignalTextChanged, this,
+        [&]() { UpdateFrames(nullptr); }, Qt::QueuedConnection);
 
-    connect(widget->innerWidget(), &TemplateWidgetBase::SignalTextChanged, this,
-            [&]() { UpdateFrames(nullptr); });
+    connect(
+        widget->innerWidget(), &TemplateWidgetBase::SignalRemoveButtonClicked,
+        this,
+        [&](int month_index) {
+          auto &month_data =
+              frame_control.CurrentProject()->monthes_[month_index];
 
-    connect(widget->innerWidget(),
-            &TemplateWidgetBase::SignalRemoveButtonClicked, this,
-            [&](int month_index) {
-              auto &month_data =
-                  frame_control.CurrentProject()->monthes_[month_index];
+          month_data.photo_data->setStubImage(
+              QPixmap(month_data.stub_image_path));
 
-              month_data.photo_data->setStubImage(
-                  QPixmap(month_data.stub_image_path));
-
-              UpdateFrames(nullptr);
-            });
+          UpdateFrames(nullptr);
+        },
+        Qt::QueuedConnection);
   }
 
   connect(
