@@ -54,6 +54,7 @@ static const char *c_month_text_font_color_str = "#969692";
 
 static const char *c_title_font_family_str = "Areal";
 static const char *c_month_text_font_family_str = "Areal";
+static const char *c_title_defoult_text_str = "My First Year";
 
 static const int c_title_text_font_size = 30;
 static const int c_month_text_font_size = 20;
@@ -255,33 +256,15 @@ QSize TemplateWidgetBase::preferedSize(QSize size) const {
   }
 }
 
-void TemplateWidgetBase::initMonthPhotoWidgets(
-    /*Core::FrameControl &control*/) {
+void TemplateWidgetBase::initMonthPhotoWidgets() {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     connect(photo_widgets_[i], &PhotoWidget::SignalImageDroped, this,
             [&, i](int dropped_index) {
               emit SignalImageDroped(dropped_index, i);
             });
 
-    connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this, [&, i] {
-      /* auto project = control.CurrentProject();
-       auto &month = project->monthes_[i];
-
-       if (month.photo_data->isStub()) {
-         const auto file = Utility::OpenFile(this);
-         if (!file.isNull()) {
-           month.photo_data->setImage(QPixmap(file));
-           //  month.photo_data.scale = 2.5;
-
-           control.SaveProjectMonth(i);
-           photo_widgets_[i]->setPhoto(month.photo_data, i);
-         }
-       }*/
-
-      // if (!month.photo_data->isStub()) {
-      emit SignalTunePhoto(i /*, frame_data_[i]*/);
-      // }
-    });
+    connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this,
+            [&, i] { emit SignalTunePhoto(i); });
   }
 }
 
@@ -300,10 +283,11 @@ void TemplateWidgetBase::Update() {
 
   load(control_);
 
+  title_text_widget_->setFontSize(title_text_font_size_);
+
   title_text_widget_->setGeometry(
       title_slot_.left(), title_slot_.top(), title_slot_.width(),
       title_text_widget_->heightForWidth(title_text_widget_->width()));
-  title_text_widget_->setFontSize(title_text_font_size_);
 
   for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
 
@@ -368,8 +352,8 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
   InitPhotos(control);
 
   auto project = control.CurrentProject();
-  title_text_widget_->setText(project->title_.isEmpty() ? "First Year"
-                                                        : project->title_);
+  title_text_widget_->setText(
+      project->title_.isEmpty() ? c_title_defoult_text_str : project->title_);
 
   if (!render_state_) {
     UNI_ASSERT(remove_buttons_.size() == photo_slots_.size());

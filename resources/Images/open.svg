@@ -7,10 +7,10 @@
 <g transform="matrix(0.4 0 0 0.4 665 673)"  >
 <g style=""   >
 		<g transform="matrix(33.33 0 0 33.33 -16.67 0)"  >
-<path style="stroke: rgb(188, 183, 201); stroke-width: 2; stroke-dasharray: none; stroke-linecap: round; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: none; fill-rule: nonzero; opacity: 1;"  transform=" translate(-11.5, -12)" d="M 20 21 H 3 C 2.44772 21 2 20.5523 2 20 L 2 4 C 2 3.44772 2.44771 3 3 3 H 7.73381 C 8.08507 3 8.41058 3.1843 8.5913 3.4855 L 9.8087 5.5145 C 9.98942 5.8157 10.3149 6 10.6662 6 H 20 C 20.5523 6 21 6.44772 21 7 V 10" stroke-linecap="round" />
+<path style="stroke: rgb(179, 157, 191); stroke-width: 2; stroke-dasharray: none; stroke-linecap: round; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: none; fill-rule: nonzero; opacity: 1;"  transform=" translate(-11.5, -12)" d="M 20 21 H 3 C 2.44772 21 2 20.5523 2 20 L 2 4 C 2 3.44772 2.44771 3 3 3 H 7.73381 C 8.08507 3 8.41058 3.1843 8.5913 3.4855 L 9.8087 5.5145 C 9.98942 5.8157 10.3149 6 10.6662 6 H 20 C 20.5523 6 21 6.44772 21 7 V 10" stroke-linecap="round" />
 </g>
 		<g transform="matrix(33.33 0 0 33.33 16.67 116.67)"  >
-<path style="stroke: rgb(188, 183, 201); stroke-width: 2; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: none; fill-rule: nonzero; opacity: 1;"  transform=" translate(-12.5, -15.5)" d="M 4.79903 10.7369 L 2.34449 19.7369 C 2.17099 20.373 2.64988 21 3.30925 21 H 19.2362 C 19.6872 21 20.0823 20.6982 20.201 20.2631 L 22.6555 11.2631 C 22.829 10.627 22.3501 10 21.6908 10 H 5.7638 C 5.31284 10 4.91769 10.3018 4.79903 10.7369 Z" stroke-linecap="round" />
+<path style="stroke: rgb(179, 157, 191); stroke-width: 2; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: none; fill-rule: nonzero; opacity: 1;"  transform=" translate(-12.5, -15.5)" d="M 4.79903 10.7369 L 2.34449 19.7369 C 2.17099 20.373 2.64988 21 3.30925 21 H 19.2362 C 19.6872 21 20.0823 20.6982 20.201 20.2631 L 22.6555 11.2631 C 22.829 10.627 22.3501 10 21.6908 10 H 5.7638 C 5.31284 10 4.91769 10.3018 4.79903 10.7369 Z" stroke-linecap="round" />
 </g>
 </g>
 </g>
