@@ -31,23 +31,18 @@ protected:
   bool processEvent(QEvent *event);
   virtual void processPan(QPointF delta) = 0;
   virtual void processScaleChanged(qreal scale, QPointF center) = 0;
-  virtual void processLongTap(QTapAndHoldGesture *) = 0;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) = 0;
-  virtual void processSwipe(QSwipeGesture *) = 0;
   virtual void grabWidgetGesture(Qt::GestureType gesture) = 0;
 
 private:
   bool gestureEvent(QGestureEvent *event);
   void panTriggered(QPanGesture *);
   void pinchTriggered(QPinchGesture *);
-  void longTapTriggered(QTapAndHoldGesture *);
-  void swipeTriggered(QSwipeGesture *gesture);
   bool toucheEvent(QTouchEvent *touch);
 
 private:
   bool is_gesture_moving_ = false;
   bool is_zooming_ = false;
-  //  bool is_touch_movng_ = false;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -65,12 +60,9 @@ public:
 
 protected:
   struct PhotoPosition {
-    //   PhotoPosition()
-    //    {};
     std::optional<double> scale;
     std::optional<QPointF> offset;
     std::optional<QPointF> center;
-    //  QRectF dest_rect;
 
     void reset() {
       offset.reset();
@@ -86,7 +78,6 @@ protected:
   QTransform getTransformForWidget(const PhotoPosition &photo_position,
                                    QTransform &transform_offset,
                                    QTransform &transform_scale_rotate);
-  // QTransform getTransformForWidget() const ;
 
 protected:
   QTransform transform_;
@@ -127,6 +118,7 @@ public:
 
 signals:
   void SignalShareImage();
+  void SignalClosed();
 
 public:
   virtual void setVisible(bool visible) override;
@@ -139,9 +131,7 @@ private:
   // GestureProcessor
   virtual void processPan(QPointF delta) override;
   virtual void processScaleChanged(qreal scale, QPointF center) override;
-  virtual void processLongTap(QTapAndHoldGesture *) override;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) override;
-  virtual void processSwipe(QSwipeGesture *) override;
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
 
 protected:
@@ -163,7 +153,6 @@ private:
 private:
   QPixmap image_;
   TouchButton *share_ = nullptr;
-  //  TouchButton *close_ = nullptr;
   QSvgRenderer *background_ = nullptr;
   QPixmap background_image_;
 };

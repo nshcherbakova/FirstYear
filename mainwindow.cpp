@@ -135,6 +135,8 @@ void MainWindow::CreatePreviewWindow() {
   preview_->setGeometry(rect());
   connect(preview_, &Preview::PreviewWidget::SignalShareImage, this,
           [&] { Share(preview_->getImage()); });
+  connect(preview_, &Preview::PreviewWidget::SignalClosed, this,
+          [&] { setEnabledControls(true); });
   preview_->hide();
 }
 

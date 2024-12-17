@@ -12,8 +12,7 @@ void GestureProcessor::Initialise() {
 
   gestures << Qt::PanGesture;
   gestures << Qt::PinchGesture;
-  gestures << Qt::TapAndHoldGesture;
-  // gestures << Qt::SwipeGesture;
+
   grabGestures(gestures);
 }
 
@@ -41,14 +40,10 @@ bool GestureProcessor::processEvent(QEvent *event) {
 }
 
 bool GestureProcessor::gestureEvent(QGestureEvent *event) {
-  if (QGesture *tap_and_hold = event->gesture(Qt::TapAndHoldGesture))
-    longTapTriggered(static_cast<QTapAndHoldGesture *>(tap_and_hold));
   if (QGesture *pan = event->gesture(Qt::PanGesture))
     panTriggered(static_cast<QPanGesture *>(pan));
   if (QGesture *pinch = event->gesture(Qt::PinchGesture))
     pinchTriggered(static_cast<QPinchGesture *>(pinch));
-  if (QGesture *pinch = event->gesture(Qt::SwipeGesture))
-    swipeTriggered(static_cast<QSwipeGesture *>(pinch));
 
   return true;
 }
@@ -86,11 +81,6 @@ void GestureProcessor::panTriggered(QPanGesture *gesture) {
 
 void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
   QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
-  if (changeFlags & QPinchGesture::RotationAngleChanged) {
-    // qreal rotation_delta =
-    //     gesture->rotationAngle() - gesture->lastRotationAngle();
-    // processAngleChanged(rotation_delta, gesture->centerPoint());
-  }
   if (changeFlags & QPinchGesture::ScaleFactorChanged) {
     processScaleChanged(gesture->scaleFactor(), gesture->centerPoint());
   }
@@ -98,17 +88,6 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
 
     processScaleChanged(gesture->scaleFactor() / gesture->lastScaleFactor(),
                         gesture->centerPoint());
-  }
-}
-
-void GestureProcessor::longTapTriggered(QTapAndHoldGesture *gesture) {
-
-  processLongTap(gesture);
-}
-
-void GestureProcessor::swipeTriggered(QSwipeGesture *gesture) {
-  if (gesture->state() == Qt::GestureFinished) {
-    processSwipe(gesture);
   }
 }
 
@@ -260,6 +239,7 @@ void PreviewWidget::setVisible(bool visible) {
   setAttribute(Qt::WA_AcceptTouchEvents, visible);
   if (!visible) {
     photo_data_ = Core::PhotoData::CreateEmptyData();
+    emit SignalClosed();
   }
 }
 
@@ -296,7 +276,6 @@ bool PreviewWidget::event(QEvent *event) {
   if (GestureProcessor::processEvent(event)) {
 
     share_->event(event);
-    //  close_->event(event);
 
     return true;
   }
@@ -367,24 +346,12 @@ bool PreviewWidget::processToucheEvent(const QList<QEventPoint> &points) {
   return false;
 }
 
-void PreviewWidget::processSwipe(QSwipeGesture *gesture) {
-  if (gesture->horizontalDirection() == QSwipeGesture::Right) {
-    //   emit SignalTunePrevImage();
-  }
-}
-
 void PreviewWidget::processPan(QPointF delta) {
   updatePhoto(delta, std::optional<double>(), std::optional<QPointF>());
 }
 
 void PreviewWidget::processScaleChanged(qreal scale, QPointF center) {
   updatePhoto(std::optional<QPointF>(), scale, center);
-}
-
-void PreviewWidget::processLongTap(QTapAndHoldGesture *) {
-
-  // hide();
-  // emit SignalImageTuned();
 }
 
 void PreviewWidget::grabWidgetGesture(Qt::GestureType gesture) {
@@ -394,7 +361,6 @@ void PreviewWidget::grabWidgetGesture(Qt::GestureType gesture) {
 void PreviewWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   QWidget::mouseDoubleClickEvent(event);
   hide();
-  // emit SignalImageTuned();
 }
 
 void PreviewWidget::paintEvent(QPaintEvent *) {
