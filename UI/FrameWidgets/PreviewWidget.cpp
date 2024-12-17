@@ -250,10 +250,6 @@ void PreviewWidget::redrawBackgroundImage() {
 
   const auto size = std::min(width(), height());
   background_->render(&painter, QRect{QPoint{}, QSize{size, size}});
-
-  share_->setGeometry({{width() - share_->width() - height() / 40,
-                        height() - share_->height() - height() / 10},
-                       share_->size()});
 }
 
 void PreviewWidget::resizeEvent(QResizeEvent *e) {
@@ -263,6 +259,10 @@ void PreviewWidget::resizeEvent(QResizeEvent *e) {
   QWidget::resizeEvent(e);
 
   redrawBackgroundImage();
+
+  share_->setGeometry({{width() - share_->width() - height() / 40,
+                        height() - share_->height() - height() / 20},
+                       share_->size()});
 
   updatePhoto(photo_data_);
 }
