@@ -507,6 +507,7 @@ void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
   Frame::init(frame_data, rect());
   updatePhoto(photo);
   text_->setText(text);
+  resizeEvent(nullptr);
 }
 
 void PhotoTuneWidget::updatePhoto(const Core::PhotoDataPtr &photo) {
