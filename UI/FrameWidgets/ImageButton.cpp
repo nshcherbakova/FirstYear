@@ -21,7 +21,7 @@ void ImageButton::UpdateButton() {
   QPainter painter(&buffer_);
   const auto rect = QRect(0, 0, buffer_.width(), buffer_.height());
 
-  painter.setBrush(QColor("#FFFBF2"));
+  painter.setBrush(QColor(c_photo_widget_background_color));
   painter.drawPolygon(rect);
   PhotoPainter::drawPhoto(painter);
   update();

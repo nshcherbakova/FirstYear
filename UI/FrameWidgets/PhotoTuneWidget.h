@@ -199,6 +199,7 @@ private:
   QPixmap background_image_;
 
   TextButton *open_file_ = nullptr;
+  TextButton *close_ = nullptr;
   TextButton *next_ = nullptr;
   TextButton *prev_ = nullptr;
   TouchClickableLabel *text_ = nullptr;

@@ -45,6 +45,8 @@
           <file alias="rattles@2x">resources/Images/rattles.svg</file>
           <file alias="stars2">resources/Images/stars2.svg</file>
           <file alias="stars2@2x">resources/Images/stars2.svg</file>
+          <file alias="open_button">resources/Images/open_button.svg</file>
+          <file alias="open_button@2x">resources/Images/open_button.svg</file>
     </qresource>
     <qresource prefix="/fonts">
         <file alias="header_1_font">resources/Fonts/AntregslapoyRegular-ALpZ2.otf</file>

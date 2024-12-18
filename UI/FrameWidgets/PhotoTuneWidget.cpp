@@ -399,10 +399,18 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
   background_->load(QString(":/images/icons/stars2"));
 
   open_file_ = new TextButton(this, true);
-  open_file_->setText("Open");
-  open_file_->setStyleSheet(c_open_button_style_str);
+  open_file_->setIcon(QIcon(":/images/icons/open_button"));
+  open_file_->setIconSize(QSize(50, 50));
+  open_file_->setSize(QSize(80, 60));
+  open_file_->setStyleSheet(c_open_image_button_style_str);
   connect(open_file_, &QPushButton::clicked, this,
           &PhotoTuneWidget::SignalOpenFile);
+
+  close_ = new TextButton(this, true);
+  close_->setText("Close");
+  close_->setSize(QSize(110, 60));
+  close_->setStyleSheet(c_open_button_style_str);
+  connect(close_, &QPushButton::clicked, this, [&]() { hide(); });
 
   next_ = new TextButton(this, true);
   next_->setIcon(QIcon(":/images/icons/next"));
@@ -459,9 +467,11 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
 
   redrawBackgroundImage();
 
-  open_file_->setGeometry(
-      {{width() - open_file_->width() - height() / 40, height() / 20},
-       open_file_->size()});
+  open_file_->setGeometry({{height() / 40, height() / 20}, open_file_->size()});
+
+  close_->setGeometry(
+      {{width() - close_->width() - height() / 40, height() / 20},
+       close_->size()});
 
   prev_->setGeometry(
       {{height() / 35, height() - height() / 20 - prev_->height()},
@@ -492,6 +502,7 @@ bool PhotoTuneWidget::event(QEvent *event) {
   if (GestureProcessor::processEvent(event)) {
     // close_->event(event);
     open_file_->event(event);
+    close_->event(event);
     next_->event(event);
     prev_->event(event);
     text_->event(event);
