@@ -31,7 +31,7 @@ void ClickableLabel::setText(QString text) {
 void ClickableLabel::setFontSize(int size) {
   font_.setPointSize(size);
   QLabel::setFont(font_);
-  icon_size_ = size;
+  icon_size_ = size * 0.5;
   setText(text_);
 }
 

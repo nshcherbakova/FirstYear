@@ -61,11 +61,11 @@ public slots:
 public:
   QString id() const;
   QSize preferedSize(QSize size) const;
+  FrameParameters frameData(int month);
+  QPixmap renderFrame();
 
 public: // QWidget
   virtual void setVisible(bool visible) override final;
-  FrameParameters frameData(int month);
-  QPixmap renderFrame();
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;

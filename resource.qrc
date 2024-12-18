@@ -46,4 +46,8 @@
           <file alias="stars2">resources/Images/stars2.svg</file>
           <file alias="stars2@2x">resources/Images/stars2.svg</file>
     </qresource>
+    <qresource prefix="/fonts">
+        <file alias="header_1_font">resources/Fonts/AntregslapoyRegular-ALpZ2.otf</file>
+    </qresource>
+
 </RCC>

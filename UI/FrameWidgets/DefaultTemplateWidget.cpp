@@ -49,51 +49,52 @@ private:
 };
 
 static const char *c_title_font_color_str = "#669692";
-
 static const char *c_month_text_font_color_str = "#969692";
 
-static const char *c_title_font_family_str = "Areal";
+static const char *c_title_font_family_str = "Antreg Slapoy";
 static const char *c_month_text_font_family_str = "Areal";
 static const char *c_title_defoult_text_str = "My First Year";
 
-static const int c_title_text_font_size = 30;
+static const int c_title_text_font_size = 80;
 static const int c_month_text_font_size = 20;
 
 DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
                                              Core::FrameControl &control,
                                              bool render_state)
 
-    : TemplateWidgetBase(parent,
-                         {control,
-                          templateId(),
-                          {{40, 5, 600, 15}, Qt::AlignCenter},
-                          {{{35, 160},
-                            {184, 160},
-                            {328, 160},
-                            {476, 160},
-                            {35, 310},
-                            {184, 310},
-                            {328, 310},
-                            {476, 310},
-                            {35, 455},
-                            {184, 455},
-                            {328, 455},
-                            {476, 455}},
-                           Qt::AlignLeft},
-                          {{35, 35, 125, 125},
-                           {184, 35, 125, 125},
-                           {328, 35, 125, 125},
-                           {476, 35, 125, 125},
-                           {35, 185, 125, 125},
-                           {184, 185, 125, 125},
-                           {328, 185, 125, 125},
-                           {476, 185, 125, 125},
-                           {35, 330, 125, 125},
-                           {184, 330, 125, 125},
-                           {328, 330, 125, 125},
-                           {476, 330, 125, 125}},
-                          {{FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}},
-                         render_state) {
+    : TemplateWidgetBase(
+          parent,
+          {control,
+           templateId(),
+           {{105, 25, 387, 75}, Qt::AlignCenter},
+           {{{105, 242}, // month text center or left corner
+             {233, 242},
+             {362, 242},
+             {492, 242},
+             {105, 389},
+             {233, 389},
+             {362, 389},
+             {492, 389},
+             {105, 535},
+             {233, 535},
+             {362, 535},
+             {492, 535}},
+            Qt::AlignCenter},
+           {{48, 122, 114, 114}, // month frame rect
+            {176, 122, 114, 114},
+            {305, 122, 114, 114},
+            {435, 122, 114, 114},
+            {48, 270, 114, 114},
+            {176, 270, 114, 114},
+            {305, 270, 114, 114},
+            {435, 270, 114, 114},
+            {48, 416, 114, 114},
+            {176, 416, 114, 114},
+            {305, 416, 114, 114},
+            {435, 416, 114, 114}},
+           {{FrameParameters::TYPE::RECT,
+             QSizeF{114, 114}}}}, // month frame shape, if all are equal
+          render_state) {
 
   // reload(control);
 }
@@ -393,6 +394,7 @@ void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {
   }
 
   update();
+  qDebug() << "update";
 }
 
 FrameParameters TemplateWidgetBase::frameData(int month) {
