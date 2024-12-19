@@ -16,7 +16,8 @@ class QSvgRenderer;
 
 namespace FirstYear::UI {
 class TouchButton;
-}
+class TextButton;
+} // namespace FirstYear::UI
 
 namespace FirstYear::UI::Preview {
 
@@ -50,6 +51,9 @@ private:
 ///
 
 class PhotoPainter {
+public:
+  PhotoPainter();
+
 public:
   PhotoPainter &operator=(const PhotoPainter &) = delete;
 
@@ -86,6 +90,8 @@ protected:
   double internal_scale_ = 1;
   QRectF boundary_rect_;
   QRectF destanation_rect_;
+
+  const double dpr_;
 };
 /////////////////////////////////////////////////////////////////////////////
 /// \brief The PhotoProcessor class
@@ -153,6 +159,7 @@ private:
 private:
   QPixmap image_;
   TouchButton *share_ = nullptr;
+  TextButton *close_ = nullptr;
   QSvgRenderer *background_ = nullptr;
   QPixmap background_image_;
 };

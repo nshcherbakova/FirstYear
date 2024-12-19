@@ -94,6 +94,10 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 ///
+///
+PhotoPainter::PhotoPainter()
+    : dpr_(QGuiApplication::primaryScreen()->devicePixelRatio()) {}
+
 void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
                         QRectF boundary_rect) {
 
@@ -131,14 +135,13 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
   const auto offset_diff = photo_position.offset.value_or(QPointF(0, 0));
   const auto center = photo_position.center.value_or(QPointF(0, 0));
 
-  const auto dpr = QGuiApplication::primaryScreen()->devicePixelRatio();
-  const qreal iw = photo_data_.image().width() / dpr;
-  const qreal ih = photo_data_.image().height() / dpr;
+  const qreal iw = photo_data_.image().width() / dpr_;
+  const qreal ih = photo_data_.image().height() / dpr_;
   const qreal wh = destanation_rect_.height();
   const qreal ww = destanation_rect_.width();
 
-  QPointF d = {destanation_rect_.left() + ww / 2,
-               destanation_rect_.top() + wh / 2};
+  const QPointF d = {destanation_rect_.left() + ww / 2,
+                     destanation_rect_.top() + wh / 2};
 
   QTransform transform_internal1;
   transform_internal1.translate(d.x(), d.y());
@@ -147,9 +150,10 @@ PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
   transform_offset.translate(offset_diff.x() / internal_scale_,
                              offset_diff.y() / internal_scale_);
 
-  QPointF c = (transform_scale_rotate * transform_offset * transform_internal1)
-                  .inverted()
-                  .map(center);
+  const QPointF c =
+      (transform_scale_rotate * transform_offset * transform_internal1)
+          .inverted()
+          .map(center);
 
   transform_scale_rotate.translate(c.x(), c.y());
   transform_scale_rotate.scale(scale_diff, scale_diff);
@@ -227,9 +231,14 @@ PreviewWidget::PreviewWidget(QWidget &parent)
   background_->load(QString(":/images/icons/rattles"));
 
   share_ = new ShareButton(this, true);
-
   connect(share_, &QPushButton::clicked, this,
           [&]() { emit SignalShareImage(); });
+
+  close_ = new TextButton(this, true);
+  close_->setText("Close");
+  close_->setSize(QSize(110, 60));
+  close_->setStyleSheet(c_close_button_style_str);
+  connect(close_, &QPushButton::clicked, this, [&]() { hide(); });
 
   setGeometry(parent.geometry());
 }
@@ -264,6 +273,10 @@ void PreviewWidget::resizeEvent(QResizeEvent *e) {
                         height() - share_->height() - height() / 20},
                        share_->size()});
 
+  close_->setGeometry(
+      {{width() - close_->width() - height() / 40, height() / 20},
+       close_->size()});
+
   updatePhoto(photo_data_);
 }
 
@@ -276,6 +289,7 @@ bool PreviewWidget::event(QEvent *event) {
   if (GestureProcessor::processEvent(event)) {
 
     share_->event(event);
+    close_->event(event);
 
     return true;
   }

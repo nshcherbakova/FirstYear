@@ -411,8 +411,31 @@ void TemplateWidgetBase::setVisible(bool visible) {
 
 QPixmap TemplateWidgetBase::renderFrame() {
   setGeometry({{0, 0}, foreground_.size()});
+  QPixmap image = grab();
 
-  return grab();
+  const double dpr = QGuiApplication::primaryScreen()->devicePixelRatio();
+  const int frame_with =
+      std::min(image.size().width(), image.size().height()) / dpr / 14;
+  const QSize frame_size{frame_with, frame_with};
+  const QPoint image_top{frame_with, frame_with};
+  const int k = 10;
+  int shadow_with = frame_with / k;
+  const QRect frame_rect = QRect{{}, image.size() / dpr + frame_size * 2};
+
+  QPixmap result_image(frame_rect.size());
+  QPainter painter(&result_image);
+
+  painter.setBrush(QColor("#EBD9C7"));
+  painter.setPen(QPen(QColor("#D7C4B4"), shadow_with / 2));
+
+  painter.drawRect(frame_rect);
+  painter.setPen(QColor("#EBD9C7"));
+  painter.setBrush(QColor("#F2E6D3"));
+  painter.drawRect(QRect{image_top - QPoint{shadow_with, shadow_with},
+                         image.size() / dpr + frame_size * 2 / k});
+  painter.drawPixmap(image_top, image);
+
+  return result_image;
 }
 
 } // namespace FirstYear::UI

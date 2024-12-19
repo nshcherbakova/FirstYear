@@ -80,9 +80,6 @@ static const char *c_open_button_style_str =
 static const char *c_open_image_button_style_str =
     "QPushButton{"
     "background-color: rgba(255, 255, 255, 200);"
-    "color:#83368A; "
-    "font-size: 23px; "
-    "font-family: Typo Round Regular Demo;"
     "border-style: solid;"
     "border-radius: 30;"
     "border-color: #BC9F76;"
@@ -112,7 +109,20 @@ static const char *c_tune_frame_text_color_str = "#53798C";
 
 // Preview Widget styles
 static const char *c_preview_background_color_str = "#DBD5EB";
+static const char *c_close_button_style_str =
+    "QPushButton{"
+    "background-color: rgba(255, 255, 255, 200);"
+    "color:#BC9F76; "
+    "font-size: 23px; "
+    "font-family: Typo Round Regular Demo;"
+    "border-style: solid;"
+    "border-radius: 30;"
+    "border-color: #BC9F76;"
+    "border-width: 3;"
+    "}"
 
+    "QPushButton:pressed {border-color: #C3BED1;}"
+    "QPushButton:pressed{color: #C3BED1;}";
 // Edit window styles
 static const char *c_line_edit_style_str =
     "QLineEdit{"

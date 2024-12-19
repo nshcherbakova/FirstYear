@@ -43,9 +43,16 @@ private:
   TemplateWidgetBase *widget_ = nullptr;
 };
 
+static const char *c_swipe_widget_style_str = "QWidget{"
+                                              "background: transparent;"
+                                              "border: none;"
+                                              "}";
+
 class SwipeWidget final : public QWidget {
 public:
-  SwipeWidget(QWidget *parent) : QWidget(parent) {}
+  SwipeWidget(QWidget *parent) : QWidget(parent) {
+    setStyleSheet(c_swipe_widget_style_str);
+  }
   void addWidgets(std::vector<TemplateWidgetHolder *> frame_widgets) {
     frame_widgets_ = frame_widgets;
   }

@@ -8,7 +8,7 @@ static const char *c_scroll_style_str = "QScrollArea{"
                                         "background: transparent;"
                                         "border: none;"
                                         "}";
-static const char *c_filter_widget_style_str = "QWidget{"
+static const char *c_frames_widget_style_str = "QWidget{"
                                                "background: transparent;"
                                                "border: none;"
                                                "}";
@@ -49,7 +49,7 @@ void SwipeWidgetsList::InitialaizeScroller() {
   properties.setScrollMetric(QScrollerProperties::MousePressEventDelay, 0.5);
 
   QScroller::scroller(this)->setScrollerProperties(properties);
-  QScroller::scroller(this)->setSnapPositionsX(0, width());
+  QScroller::scroller(this)->setSnapPositionsX(0, width() + layout_->spacing());
   QScroller::scroller(this)->scrollTo(QPoint());
 
   grabbed_gesture_ =
@@ -60,7 +60,8 @@ void SwipeWidgetsList::InitialaizeScroller() {
             if (newState == QScroller::Inactive) {
               const auto currant_scroll_pos =
                   QScroller::scroller(this)->finalPosition();
-              current_item_index_ = currant_scroll_pos.x() / width();
+              current_item_index_ =
+                  currant_scroll_pos.x() / (width() + layout_->spacing());
               emit SignalItemChanged(current_item_index_);
             }
           });
@@ -70,26 +71,26 @@ void SwipeWidgetsList::CreateInnerWidget(
     const std::vector<QWidget *> &widgets) {
 
   // buttons widget
-  QWidget *filter_buttons_widget = new QWidget();
-  filter_buttons_widget->setContentsMargins(0, 0, 0, 0);
-  filter_buttons_widget->setStyleSheet(c_filter_widget_style_str);
+  QWidget *frames_widget = new QWidget();
+  frames_widget->setContentsMargins(0, 0, 0, 0);
+  frames_widget->setStyleSheet(c_frames_widget_style_str);
 
   // buttons layout
-  layout_ = new QHBoxLayout(filter_buttons_widget);
+  layout_ = new QHBoxLayout(frames_widget);
   layout_->setContentsMargins(0, 0, 0, 0);
-  layout_->setSpacing(0);
+  layout_->setSpacing(20);
 
   for (auto &widget : widgets) {
-    widget->setParent(filter_buttons_widget);
+    widget->setParent(frames_widget);
     AddWidget(widget);
   }
-  setWidget(filter_buttons_widget);
+  setWidget(frames_widget);
 }
 
 void SwipeWidgetsList::resizeEvent(QResizeEvent *event) {
   QScrollArea::resizeEvent(event);
 
-  QScroller::scroller(this)->setSnapPositionsX(0, width());
+  QScroller::scroller(this)->setSnapPositionsX(0, width() + layout_->spacing());
   layout_->update();
   SetCurrentItem(current_item_index_);
 }
@@ -97,7 +98,8 @@ void SwipeWidgetsList::resizeEvent(QResizeEvent *event) {
 void SwipeWidgetsList::SetCurrentItem(int index) {
   current_item_index_ = index;
   UNI_ASSERT(layout_->count() > index);
-  QScroller::scroller(this)->scrollTo(QPoint(width() * index, 0), 0);
+  QScroller::scroller(this)->scrollTo(
+      QPoint((width() + layout_->spacing()) * index, 0), 0);
 }
 
 int SwipeWidgetsList::CurrentItem() const { return current_item_index_; }

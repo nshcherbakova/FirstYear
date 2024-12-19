@@ -501,7 +501,6 @@ bool PhotoTuneWidget::event(QEvent *event) {
   }
 
   if (GestureProcessor::processEvent(event)) {
-    // close_->event(event);
     open_file_->event(event);
     close_->event(event);
     next_->event(event);
