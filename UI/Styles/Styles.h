@@ -104,10 +104,19 @@ static const char *c_preview_background_color_str = "#DBD5EB";
 
 // Edit window styles
 static const char *c_line_edit_style_str =
-    "QLineEdit{  background-color: #F5F5DF;"
+    "QLineEdit{"
+    "background-color: #F5F5DF;"
     "color: #83368A;  font-family: Typo Round Regular Demo;"
     "border: none;"
     "border-radius: 30;"
+    "}";
+
+// Edit window styles
+static const char *c_clickable_label_style_str =
+    "QLabel{"
+    "background-color: rgba(255, 255, 255, 200);"
+    "border: none;"
+    "border-radius: 20;"
     "}";
 static const QColor c_line_edit_background_color = QColor(164, 166, 151, 200);
 

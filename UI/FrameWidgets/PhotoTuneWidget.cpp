@@ -359,6 +359,7 @@ public:
                       QString font_family)
       : ClickableLabel(parent, font_size, font_color, font_family) {
     setAttribute(Qt::WA_AcceptTouchEvents);
+    setStyleSheet(c_clickable_label_style_str);
   }
   bool event(QEvent *event);
 };

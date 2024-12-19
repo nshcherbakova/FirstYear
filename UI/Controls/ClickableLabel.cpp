@@ -11,10 +11,9 @@ ClickableLabel::ClickableLabel(QWidget *parent, int font_size,
   font_ = QFont(font_family, font_size, QFont::Normal);
   QLabel::setFont(font_);
 
-  styled_text_ = "<a style=text-decoration:none style=color:%1> %2</a>";
+  styled_text_ = "<a style=text-decoration:none style=color:%1>%2   </a>";
   styled_text_ = styled_text_.arg(font_color);
-  icon_text_ =
-      "<html><img src=':images/icons/edit' width='%1' height='%1'></html>";
+  icon_text_ = "  <html><img src=':images/icons/edit' ></html>";
 }
 
 void ClickableLabel::setText(QString text) {
@@ -23,7 +22,7 @@ void ClickableLabel::setText(QString text) {
   if (hide_edit_icon_) {
     QLabel::setText(styled_text_.arg(text));
   } else {
-    QLabel::setText(icon_text_.arg(icon_size_) + styled_text_.arg(text));
+    QLabel::setText(styled_text_.arg(text) + icon_text_.arg(icon_size_));
   }
   // QLabel::adjustSize();
 }
@@ -31,7 +30,7 @@ void ClickableLabel::setText(QString text) {
 void ClickableLabel::setFontSize(int size) {
   font_.setPointSize(size);
   QLabel::setFont(font_);
-  icon_size_ = size * 0.7;
+  icon_size_ = size;
   setText(text_);
 }
 
