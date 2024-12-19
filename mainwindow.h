@@ -62,6 +62,8 @@ private:
   void setEnabledControls(bool enabled);
   QString SelectButtonText(int count);
 
+  void DeletePhoto(int month_index);
+
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
   virtual void closeEvent(QCloseEvent *event) override final;

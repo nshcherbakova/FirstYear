@@ -282,16 +282,7 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
     connect(
         widget->innerWidget(), &TemplateWidgetBase::SignalRemoveButtonClicked,
-        this,
-        [&](int month_index) {
-          auto &month_data =
-              frame_control.CurrentProject()->monthes_[month_index];
-
-          month_data.photo_data->setStubImage(
-              QPixmap(month_data.stub_image_path));
-
-          UpdateFrames(nullptr);
-        },
+        this, [&](int month_index) { DeletePhoto(month_index); },
         Qt::QueuedConnection);
   }
 
@@ -314,6 +305,21 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
 
         TuneNewImage(current_month, next_month, frame_control);
       });
+}
+
+void MainWindow::DeletePhoto(int month_index) {
+  QMessageBox msgBox;
+  msgBox.setWindowTitle("Delete this photo?");
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+  int ret = msgBox.exec();
+
+  if (QMessageBox::Yes == ret) {
+    auto &month_data = project_control_.CurrentProject()->monthes_[month_index];
+
+    month_data.photo_data->setStubImage(QPixmap(month_data.stub_image_path));
+
+    UpdateFrames(nullptr);
+  }
 }
 
 void MainWindow::TuneNewImage(int current_month, int next_month,
