@@ -66,7 +66,7 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
           parent,
           {control,
            templateId(),
-           {{105, 25, 387, 75}, Qt::AlignCenter},
+           {{105, 25, 387, 75}, Qt::AlignCenter, c_title_font_family_str},
            {{{105, 242}, // month text center or left corner
              {233, 242},
              {362, 242},
@@ -79,7 +79,8 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
              {233, 535},
              {362, 535},
              {492, 535}},
-            Qt::AlignCenter},
+            Qt::AlignCenter,
+            ""},
            {{48, 122, 114, 114}, // month frame rect
             {176, 122, 114, 114},
             {305, 122, 114, 114},
@@ -100,9 +101,6 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
 }
 
 QString DefaultTemplateWidget::templateId() { return "1"; }
-QString DefaultTemplateWidget::titleFont() const {
-  return c_title_font_family_str;
-}
 
 ////////////////////////////////////////////////////////////////////
 ///
@@ -174,7 +172,10 @@ TemplateWidgetBase::TemplateWidgetBase(
       // photo_text_aligment_(parameters.photo_text_parameters.aligment),
       photo_text_font_size_real_(c_month_text_font_size),
       frame_data_(std::move(parameters.frame_data)),
-      control_(parameters.control), render_state_(render_state) {
+      control_(parameters.control),
+      title_font_(parameters.title_parameters.font),
+      month_font_(parameters.photo_text_parameters.font),
+      render_state_(render_state) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
@@ -209,14 +210,12 @@ TemplateWidgetBase::TemplateWidgetBase(
   createRemoveButtonWidgets(render_state);
 }
 
-QString TemplateWidgetBase::titleFont() const { return font().defaultFamily(); }
-
 void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment,
                                                bool is_rendering) {
   title_text_widget_ =
       new ClickableLabel(this, c_title_text_font_size, c_title_font_color_str,
-                         titleFont(), is_rendering);
-  qDebug() << titleFont();
+                         title_font_, is_rendering);
+
   title_text_widget_->setAlignment(alignment);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });

@@ -18,11 +18,13 @@ class ClickableLabel;
 struct TitleParameters {
   QRect title_rect;
   Qt::Alignment alignment;
+  QString font;
 };
 
 struct PhotoTextParameters {
   std::vector<QPoint> photo_text_anchors;
   Qt::Alignment alignment;
+  QString font;
 };
 
 struct TemplateWidgetParameters {
@@ -70,9 +72,6 @@ public: // QWidget
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
-protected:
-  virtual QString titleFont() const;
-
 private:
   void load(Core::FrameControl &control);
   void initMonthPhotoWidgets();
@@ -92,6 +91,8 @@ protected:
   std::vector<QPoint> photo_text_anchors_real_;
   int photo_text_font_size_real_ = 20;
   std::vector<FrameParameters> frame_data_;
+  QString title_font_;
+  QString month_font_;
 
 private:
   Core::FrameControl &control_;
@@ -122,9 +123,6 @@ public:
 
 public:
   DefaultTemplateWidget &operator=(const DefaultTemplateWidget &) = delete;
-
-protected:
-  virtual QString titleFont() const override;
 };
 
 class DefaultTemplateWidget2 final : public TemplateWidgetBase {
