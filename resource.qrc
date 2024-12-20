@@ -49,7 +49,7 @@
           <file alias="open_button@2x">resources/Images/open_button.svg</file>
     </qresource>
     <qresource prefix="/fonts">
-        <file alias="header_1_font">resources/Fonts/AntregslapoyRegular-ALpZ2.otf</file>
+        <file alias="header_1_font">resources/Fonts/Bellany.otf</file>
     </qresource>
 
 </RCC>

@@ -103,20 +103,6 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   background_ = new QSvgWidget(":/images/icons/stars", this);
 
-  //  QInputMethod *keyboard = QGuiApplication::inputMethod();
-
-  // connect(keyboard, &QInputMethod::visibleChanged, this, [&] {
-  //     qDebug() << "++++++++++ ";
-  //   if(!QGuiApplication::inputMethod()->isVisible())
-  //        { qDebug() << "%%%%%%%%%%% ";
-  //  resizeEvent(nullptr);
-  //        adjustSize();
-  //       updateGeometry();
-  //   update();
-
-  //     }
-  //  });
-
   CreatePhotoTuneWidget(frame_control);
   CreateFrames(frame_control);
   CreateLineEditWidget(frame_control);

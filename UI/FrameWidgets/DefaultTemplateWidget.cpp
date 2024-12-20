@@ -51,11 +51,11 @@ private:
 static const char *c_title_font_color_str = "#669692";
 static const char *c_month_text_font_color_str = "#969692";
 
-static const char *c_title_font_family_str = "Antreg Slapoy";
+static const char *c_title_font_family_str = "Bellany";
 static const char *c_month_text_font_family_str = "Areal";
 static const char *c_title_defoult_text_str = "My First Year";
 
-static const int c_title_text_font_size = 80;
+static const int c_title_text_font_size = 60;
 static const int c_month_text_font_size = 20;
 
 DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
@@ -66,7 +66,7 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
           parent,
           {control,
            templateId(),
-           {{105, 25, 387, 75}, Qt::AlignCenter, c_title_font_family_str},
+           {{0, 25, 587, 75}, Qt::AlignCenter, c_title_font_family_str},
            {{{105, 242}, // month text center or left corner
              {233, 242},
              {362, 242},
@@ -80,7 +80,7 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
              {362, 535},
              {492, 535}},
             Qt::AlignCenter,
-            ""},
+            c_month_text_font_family_str},
            {{48, 122, 114, 114}, // month frame rect
             {176, 122, 114, 114},
             {305, 122, 114, 114},
@@ -242,9 +242,9 @@ void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
 void TemplateWidgetBase::createPhotoTextWidgets(Qt::Alignment alignment, bool) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    photo_text_widgets_[i] = new ClickableLabel(
-        this, c_month_text_font_size, c_month_text_font_color_str,
-        c_month_text_font_family_str, true);
+    photo_text_widgets_[i] =
+        new ClickableLabel(this, c_month_text_font_size,
+                           c_month_text_font_color_str, month_font_, true);
     photo_text_widgets_[i]->setAlignment(alignment);
 
     //  connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
