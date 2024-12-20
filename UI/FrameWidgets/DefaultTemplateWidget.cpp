@@ -100,6 +100,9 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
 }
 
 QString DefaultTemplateWidget::templateId() { return "1"; }
+QString DefaultTemplateWidget::titleFont() const {
+  return c_title_font_family_str;
+}
 
 ////////////////////////////////////////////////////////////////////
 ///
@@ -206,11 +209,14 @@ TemplateWidgetBase::TemplateWidgetBase(
   createRemoveButtonWidgets(render_state);
 }
 
+QString TemplateWidgetBase::titleFont() const { return font().defaultFamily(); }
+
 void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment,
                                                bool is_rendering) {
   title_text_widget_ =
       new ClickableLabel(this, c_title_text_font_size, c_title_font_color_str,
-                         c_title_font_family_str, is_rendering);
+                         titleFont(), is_rendering);
+  qDebug() << titleFont();
   title_text_widget_->setAlignment(alignment);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });

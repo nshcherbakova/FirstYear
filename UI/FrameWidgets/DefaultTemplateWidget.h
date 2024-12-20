@@ -70,6 +70,9 @@ public: // QWidget
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
 
+protected:
+  virtual QString titleFont() const;
+
 private:
   void load(Core::FrameControl &control);
   void initMonthPhotoWidgets();
@@ -119,7 +122,11 @@ public:
 
 public:
   DefaultTemplateWidget &operator=(const DefaultTemplateWidget &) = delete;
+
+protected:
+  virtual QString titleFont() const override;
 };
+
 class DefaultTemplateWidget2 final : public TemplateWidgetBase {
   Q_OBJECT
 public:

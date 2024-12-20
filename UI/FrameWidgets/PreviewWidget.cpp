@@ -170,6 +170,20 @@ void PhotoPainter::drawPhoto(QPainter &painter) {
   if (photo_data_.image().isNull())
     return;
 
+  const int frame_with = std::min(photo_data_.image().size().width(),
+                                  photo_data_.image().size().height()) /
+                         dpr_ / 50;
+  const QSize frame_with_size{frame_with, frame_with};
+
+  painter.setTransform(transform_);
+  painter.setBrush(QColor(67, 56, 14, 20));
+  painter.setPen(QPen(QColor(0, 0, 0, 0)));
+
+  painter.drawRoundedRect(
+      QRect{{frame_with, frame_with},
+            photo_data_.image().size() / dpr_ + frame_with_size / 4},
+      frame_with / 2, frame_with / 2);
+
   painter.setTransform(transform_);
   painter.drawPixmap(0, 0, photo_data_.image());
   painter.setTransform(QTransform());
