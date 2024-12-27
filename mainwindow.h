@@ -8,6 +8,7 @@
 class QPushButton;
 class QStackedLayout;
 class QSvgWidget;
+class QLabel;
 
 namespace ShareUtils {
 class ShareUtilsCpp;
@@ -41,11 +42,13 @@ private:
   void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateButtons(FirstYear::Core::FrameControl &frame_control);
+  void CreateDragAndDropText(FirstYear::Core::FrameControl &frame_control);
   void CreatePreviewWindow();
 
   void UpdateFrames(TemplateWidgetHolder *exept);
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
   void UpdateSelectionButton(FirstYear::Core::FrameControl &frame_control);
+  int LoadedPhotosCount(FirstYear::Core::FrameControl &frame_control) const;
 
   void TuneImage(int month, FirstYear::Core::FrameControl &frame_control);
   void SaveTunedImage(int month, FirstYear::Core::FrameControl &frame_control);
@@ -85,6 +88,7 @@ private:
   QStackedLayout *stackedLayout = nullptr;
   QSvgWidget *background_ = nullptr;
   QPixmap background_image_;
+  QLabel *drag_and_drop_text_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

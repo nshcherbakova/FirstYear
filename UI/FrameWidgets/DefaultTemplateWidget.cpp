@@ -52,11 +52,11 @@ static const char *c_title_font_color_str = "#669692";
 static const char *c_month_text_font_color_str = "#969692";
 
 static const char *c_title_font_family_str = "Bellany";
-static const char *c_month_text_font_family_str = "Areal";
+static const char *c_month_text_font_family_str = "Bellany";
 static const char *c_title_defoult_text_str = "My First Year";
 
 static const int c_title_text_font_size = 60;
-static const int c_month_text_font_size = 20;
+static const int c_month_text_font_size = 25;
 
 DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
                                              Core::FrameControl &control,
@@ -66,21 +66,27 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
           parent,
           {control,
            templateId(),
-           {{0, 25, 587, 75}, Qt::AlignCenter, c_title_font_family_str},
-           {{{105, 242}, // month text center or left corner
-             {233, 242},
-             {362, 242},
-             {492, 242},
-             {105, 389},
-             {233, 389},
-             {362, 389},
-             {492, 389},
-             {105, 535},
-             {233, 535},
-             {362, 535},
-             {492, 535}},
+           {{0, 25, 587, 75},
             Qt::AlignCenter,
-            c_month_text_font_family_str},
+            c_title_font_family_str,
+            c_title_text_font_size,
+            c_title_font_color_str},
+           {{{105, 238}, // month text center or left corner
+             {233, 238},
+             {362, 238},
+             {492, 238},
+             {105, 385},
+             {233, 385},
+             {362, 385},
+             {492, 385},
+             {105, 531},
+             {233, 531},
+             {362, 531},
+             {492, 531}},
+            Qt::AlignCenter,
+            c_month_text_font_family_str,
+            c_month_text_font_size,
+            c_month_text_font_color_str},
            {{48, 122, 114, 114}, // month frame rect
             {176, 122, 114, 114},
             {305, 122, 114, 114},
@@ -170,12 +176,9 @@ TemplateWidgetBase::TemplateWidgetBase(
       photo_text_anchors_real_(
           std::move(parameters.photo_text_parameters.photo_text_anchors)),
       // photo_text_aligment_(parameters.photo_text_parameters.aligment),
-      photo_text_font_size_real_(c_month_text_font_size),
+      photo_text_font_size_real_(parameters.photo_text_parameters.font_size),
       frame_data_(std::move(parameters.frame_data)),
-      control_(parameters.control),
-      title_font_(parameters.title_parameters.font),
-      month_font_(parameters.photo_text_parameters.font),
-      render_state_(render_state) {
+      control_(parameters.control), render_state_(render_state) {
 
   UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
   UNI_ASSERT(photo_slots_real_.size() == 12);
@@ -204,19 +207,18 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   createForegroundWidget();
 
-  createTitleTextWidget(parameters.title_parameters.alignment, render_state);
-  createPhotoTextWidgets(parameters.photo_text_parameters.alignment,
-                         render_state);
+  createTitleTextWidget(parameters.title_parameters, render_state);
+  createPhotoTextWidgets(parameters.photo_text_parameters, render_state);
   createRemoveButtonWidgets(render_state);
 }
 
-void TemplateWidgetBase::createTitleTextWidget(Qt::Alignment alignment,
-                                               bool is_rendering) {
+void TemplateWidgetBase::createTitleTextWidget(
+    const TitleParameters &parameters, bool is_rendering) {
   title_text_widget_ =
-      new ClickableLabel(this, c_title_text_font_size, c_title_font_color_str,
-                         title_font_, is_rendering);
+      new ClickableLabel(this, parameters.font_size, parameters.font_color,
+                         parameters.font, is_rendering);
 
-  title_text_widget_->setAlignment(alignment);
+  title_text_widget_->setAlignment(parameters.alignment);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
 }
@@ -239,13 +241,14 @@ void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
   }
 }
 
-void TemplateWidgetBase::createPhotoTextWidgets(Qt::Alignment alignment, bool) {
+void TemplateWidgetBase::createPhotoTextWidgets(
+    const PhotoTextParameters &parameters, bool) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_text_widgets_[i] =
-        new ClickableLabel(this, c_month_text_font_size,
-                           c_month_text_font_color_str, month_font_, true);
-    photo_text_widgets_[i]->setAlignment(alignment);
+        new ClickableLabel(this, parameters.font_size, parameters.font_color,
+                           parameters.font, true);
+    photo_text_widgets_[i]->setAlignment(parameters.alignment);
 
     //  connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
     //    emit SignalMonthTextClicked(photo_text_widgets_[i]->text(), i);

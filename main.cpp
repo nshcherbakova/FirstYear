@@ -135,6 +135,7 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
 
   QFontDatabase::addApplicationFont(":/fonts/header_1_font");
+  QFontDatabase::addApplicationFont(":/fonts/text_1_font");
 
   FirstYear::Core::FrameControl frame_control;
   frame_control.LoadProject();

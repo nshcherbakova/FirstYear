@@ -19,12 +19,16 @@ struct TitleParameters {
   QRect title_rect;
   Qt::Alignment alignment;
   QString font;
+  double font_size = 0;
+  QString font_color;
 };
 
 struct PhotoTextParameters {
   std::vector<QPoint> photo_text_anchors;
   Qt::Alignment alignment;
   QString font;
+  double font_size = 0;
+  QString font_color;
 };
 
 struct TemplateWidgetParameters {
@@ -77,8 +81,10 @@ private:
   void initMonthPhotoWidgets();
   void initPhotoTuneWidget(Core::FrameControl &control);
   void createForegroundWidget();
-  void createTitleTextWidget(Qt::Alignment alignment, bool is_rendering);
-  void createPhotoTextWidgets(Qt::Alignment alignment, bool is_rendering);
+  void createTitleTextWidget(const TitleParameters &parameters,
+                             bool is_rendering);
+  void createPhotoTextWidgets(const PhotoTextParameters &parameters,
+                              bool is_rendering);
   void createRemoveButtonWidgets(bool is_rendering);
   void InitPhotos(Core::FrameControl &control);
 
@@ -91,8 +97,6 @@ protected:
   std::vector<QPoint> photo_text_anchors_real_;
   int photo_text_font_size_real_ = 20;
   std::vector<FrameParameters> frame_data_;
-  QString title_font_;
-  QString month_font_;
 
 private:
   Core::FrameControl &control_;

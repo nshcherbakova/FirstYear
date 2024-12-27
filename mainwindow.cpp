@@ -108,6 +108,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
   CreateLineEditWidget(frame_control);
   CreateSwipeWidget(frame_control);
   CreateButtons(frame_control);
+  CreateDragAndDropText(frame_control);
   CreatePreviewWindow();
 
   photo_tune_widget_->raise();
@@ -387,15 +388,23 @@ void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {
   UpdateSelectionButton(project_control_);
 }
 
+int MainWindow::LoadedPhotosCount(
+    FirstYear::Core::FrameControl &frame_control) const {
+  auto project = frame_control.CurrentProject();
+  int count = 0;
+  for (const auto &month_data : project->monthes_) {
+    if (!month_data.photo_data->isStub()) {
+      count++;
+    }
+  }
+  return count;
+}
 void MainWindow::UpdateSelectionButton(
     FirstYear::Core::FrameControl &frame_control) {
   auto project = frame_control.CurrentProject();
-  int empty_slots_count = 0;
-  for (const auto &month_data : project->monthes_) {
-    if (month_data.photo_data->isStub()) {
-      empty_slots_count++;
-    }
-  }
+  int empty_slots_count =
+      project->monthes_.size() - LoadedPhotosCount(frame_control);
+
   if (empty_slots_count) {
     select_images_button_->show();
     select_images_button_->setText(SelectButtonText(empty_slots_count));
@@ -473,6 +482,13 @@ pixmap.save(path);
   });
 
   UpdateSelectionButton(project_control_);
+}
+
+void MainWindow::CreateDragAndDropText(
+    FirstYear::Core::FrameControl &frame_control) {
+  drag_and_drop_text_ = new QLabel(this);
+  drag_and_drop_text_->setText("Drag and drop photos");
+  drag_and_drop_text_->setVisible(LoadedPhotosCount(frame_control) > 0);
 }
 
 void MainWindow::SelectImages(QStringList files) {
