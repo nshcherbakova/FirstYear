@@ -46,6 +46,13 @@ static const char *c_message_box_style_str =
     "border-width: 3;"
     "}";
 
+static const char *c_drag_and_drop_style_str =
+    "QLabel{"
+    "color:#BC9F76; "
+    "font-size: 23px; "
+    "font-family: Typo Round Regular Demo;"
+    "}";
+
 // Tune Widget styles
 static const char *c_dark_button_style_str =
     "QPushButton{"

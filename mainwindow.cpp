@@ -104,11 +104,11 @@ MainWindow::MainWindow(FrameControl &frame_control)
   background_ = new QSvgWidget(":/images/icons/stars", this);
 
   CreatePhotoTuneWidget(frame_control);
+  CreateDragAndDropText(frame_control);
   CreateFrames(frame_control);
   CreateLineEditWidget(frame_control);
   CreateSwipeWidget(frame_control);
   CreateButtons(frame_control);
-  CreateDragAndDropText(frame_control);
   CreatePreviewWindow();
 
   photo_tune_widget_->raise();
@@ -487,6 +487,7 @@ pixmap.save(path);
 void MainWindow::CreateDragAndDropText(
     FirstYear::Core::FrameControl &frame_control) {
   drag_and_drop_text_ = new QLabel(this);
+  drag_and_drop_text_->setStyleSheet(c_drag_and_drop_style_str);
   drag_and_drop_text_->setText("Drag and drop photos");
   drag_and_drop_text_->setVisible(LoadedPhotosCount(frame_control) > 0);
 }
@@ -621,6 +622,14 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (preview_)
     preview_->setGeometry(rect());
 
+  if (drag_and_drop_text_) {
+    const auto drag_and_drop_height =
+        drag_and_drop_text_->heightForWidth(width());
+    drag_and_drop_text_->setGeometry(height() / 50,
+                                     share_button_->geometry().top() -
+                                         drag_and_drop_height - height() / 70,
+                                     width(), drag_and_drop_height);
+  }
   update();
 }
 
