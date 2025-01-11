@@ -49,6 +49,7 @@ private:
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
   void UpdateSelectionButton(FirstYear::Core::FrameControl &frame_control);
   int LoadedPhotosCount(FirstYear::Core::FrameControl &frame_control) const;
+  void UpdateDrugAndDrop();
 
   void TuneImage(int month, FirstYear::Core::FrameControl &frame_control);
   void SaveTunedImage(int month, FirstYear::Core::FrameControl &frame_control);

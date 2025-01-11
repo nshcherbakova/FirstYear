@@ -386,6 +386,7 @@ void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {
   }
 
   UpdateSelectionButton(project_control_);
+  UpdateDrugAndDrop();
 }
 
 int MainWindow::LoadedPhotosCount(
@@ -399,6 +400,7 @@ int MainWindow::LoadedPhotosCount(
   }
   return count;
 }
+
 void MainWindow::UpdateSelectionButton(
     FirstYear::Core::FrameControl &frame_control) {
   auto project = frame_control.CurrentProject();
@@ -410,6 +412,10 @@ void MainWindow::UpdateSelectionButton(
     select_images_button_->setText(SelectButtonText(empty_slots_count));
   } else
     select_images_button_->hide();
+}
+
+void MainWindow::UpdateDrugAndDrop() {
+  drag_and_drop_text_->setVisible(LoadedPhotosCount(project_control_) > 0);
 }
 
 void MainWindow::CreateSwipeWidget(
@@ -482,6 +488,7 @@ pixmap.save(path);
   });
 
   UpdateSelectionButton(project_control_);
+  UpdateDrugAndDrop();
 }
 
 void MainWindow::CreateDragAndDropText(
