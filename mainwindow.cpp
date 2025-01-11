@@ -387,6 +387,7 @@ void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {
 
   UpdateSelectionButton(project_control_);
   UpdateDrugAndDrop();
+  resizeEvent(nullptr);
 }
 
 int MainWindow::LoadedPhotosCount(
