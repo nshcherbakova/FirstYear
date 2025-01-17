@@ -8,6 +8,38 @@ static const char *c_scroll_style_str = "QScrollArea{"
                                         "background: transparent;"
                                         "border: none;"
                                         "}";
+
+static const char *c_scroll_bar_style_str =
+    "::corner {"
+    "    background-color: rgb(58,57,58); /* dark */"
+    "border: none;"
+    "}"
+    "QScrollBar:horizontal {"
+    "    background-color: transparent;"
+    "height: 14px;"
+    "}"
+
+    "QScrollBar::handle:horizontal {"
+    "    background-color: #BC9F76;"
+    "  min-width: 20px;"
+    "margin: 2px;"
+    "    border-radius: 5px;"
+    "    border-width: 1px;"
+    "border: 1px solid #BC9F76;; /* veryDark */"
+    "}"
+
+    "QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {"
+    "border: none;"
+    "background: none;"
+    "}"
+
+    "QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal, "
+    "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {"
+    "border: none;"
+    "background: none;"
+    "color: none;"
+    "}";
+
 static const char *c_frames_widget_style_str = "QWidget{"
                                                "background: transparent;"
                                                "border: none;"
@@ -19,7 +51,9 @@ SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
 
   UNI_ASSERT(widgets.size() > 0);
   setStyleSheet(c_scroll_style_str);
-  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  horizontalScrollBar()->setStyleSheet(c_scroll_bar_style_str);
   setContentsMargins(0, 0, 0, 0);
   setWidgetResizable(true);
   CreateInnerWidget(widgets);

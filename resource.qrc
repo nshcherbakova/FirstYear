@@ -21,36 +21,33 @@
         <file alias="foreground">resources/Images/frame_2/foreground.png</file>
         <file alias="foreground_to_render">resources/Images/frame_2/foreground_to_render.png</file>
     </qresource>
-    <qresource prefix="/images/tune_photo">
-        <file alias="background">resources/Images/tune_photo_background.jpg</file>
-    </qresource>
+    <qresource prefix="/images/tune_photo"/>
     <qresource prefix="/images/icons">
         <file alias="edit">resources/Images/edit.svg</file>
         <file alias="edit@2x">resources/Images/edit.svg</file>
-          <file alias="share">resources/Images/share.svg</file>
-          <file alias="share@2x">resources/Images/share.svg</file>
-          <file alias="remove">resources/Images/remove.svg</file>
-          <file alias="remove@2x">resources/Images/remove.svg</file>
-          <file alias="prev">resources/Images/prev.svg</file>
-          <file alias="prev@2x">resources/Images/prev.svg</file>
-          <file alias="next">resources/Images/next.svg</file>
-          <file alias="next@2x">resources/Images/next.svg</file>
-          <file alias="edit_image">resources/Images/edit_image.svg</file>
-          <file alias="edit_image@2x">resources/Images/edit_image.svg</file>
-          <file alias="open">resources/Images/open.svg</file>
-          <file alias="open@2x">resources/Images/open.svg</file>
-          <file alias="stars">resources/Images/stars.svg</file>
-          <file alias="stars@2x">resources/Images/stars.svg</file>
-          <file alias="rattles">resources/Images/rattles.svg</file>
-          <file alias="rattles@2x">resources/Images/rattles.svg</file>
-          <file alias="stars2">resources/Images/stars2.svg</file>
-          <file alias="stars2@2x">resources/Images/stars2.svg</file>
-          <file alias="open_button">resources/Images/open_button.svg</file>
-          <file alias="open_button@2x">resources/Images/open_button.svg</file>
+        <file alias="share">resources/Images/share.svg</file>
+        <file alias="share@2x">resources/Images/share.svg</file>
+        <file alias="remove">resources/Images/remove.svg</file>
+        <file alias="remove@2x">resources/Images/remove.svg</file>
+        <file alias="prev">resources/Images/prev.svg</file>
+        <file alias="prev@2x">resources/Images/prev.svg</file>
+        <file alias="next">resources/Images/next.svg</file>
+        <file alias="next@2x">resources/Images/next.svg</file>
+        <file alias="edit_image">resources/Images/edit_image.svg</file>
+        <file alias="edit_image@2x">resources/Images/edit_image.svg</file>
+        <file alias="open">resources/Images/open.svg</file>
+        <file alias="open@2x">resources/Images/open.svg</file>
+        <file alias="stars">resources/Images/stars.svg</file>
+        <file alias="stars@2x">resources/Images/stars.svg</file>
+        <file alias="rattles">resources/Images/rattles.svg</file>
+        <file alias="rattles@2x">resources/Images/rattles.svg</file>
+        <file alias="stars2">resources/Images/stars2.svg</file>
+        <file alias="stars2@2x">resources/Images/stars2.svg</file>
+        <file alias="open_button">resources/Images/open_button.svg</file>
+        <file alias="open_button@2x">resources/Images/open_button.svg</file>
     </qresource>
     <qresource prefix="/fonts">
-       <file alias="header_1_font">resources/Fonts/Bellany.otf</file>
-       <file alias="text_1_font">resources/Fonts/MyKidsHandwritten-8MZrn.otf</file>
+        <file alias="header_1_font">resources/Fonts/Bellany.otf</file>
+        <file alias="text_1_font">resources/Fonts/MyKidsHandwritten-8MZrn.otf</file>
     </qresource>
-
 </RCC>

@@ -230,6 +230,12 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
       new TemplateWidgetHolder(
           nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
       new TemplateWidgetHolder(
+          nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
+      new TemplateWidgetHolder(
+          nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
+      new TemplateWidgetHolder(
+          nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
+      new TemplateWidgetHolder(
           nullptr, new DefaultTemplateWidget2(nullptr, frame_control))};
 
   for (auto &widget : frame_widgets_) {
