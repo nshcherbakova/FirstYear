@@ -11,7 +11,12 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 PROJECT_PATH = $$PWD
+!win {
 PROJECT_THIRDPARTY = /Users/nshcherbakova/Documents/dev/Thirdparty
+}
+win {
+PROJECT_THIRDPARTY = C:/Natasha/IE/Master/Thirdparty
+}
 
 INCLUDEPATH +=$$PROJECT_PATH/Core/Gears/StdAfx/ \
 $$PROJECT_PATH/UI/QSwipeView/ \

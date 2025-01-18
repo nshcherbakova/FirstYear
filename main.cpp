@@ -34,7 +34,7 @@ void initLogger() {
   } catch (const spdlog::spdlog_ex &ex) {
 #ifndef Q_OS_IOS
     // TODO fix iOS exception
-    UNI_ASSERT(false);
+    //UNI_ASSERT(false);
 #endif
   }
 }

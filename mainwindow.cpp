@@ -95,7 +95,10 @@ MainWindow::MainWindow(FrameControl &frame_control)
   QSize window_size(9 * 45, 20 * 45);
   setMinimumSize(window_size);
   show();
-
+#else
+    QSize window_size(9 * 30, 20 * 30);
+    setMinimumSize(window_size);
+    show();
 #endif
   setStyleSheet(c_background_str);
 
