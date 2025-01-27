@@ -122,6 +122,14 @@ void SwipeWidgetsList::CreateInnerWidget(
 }
 
 void SwipeWidgetsList::resizeEvent(QResizeEvent *event) {
+  for (auto &frame_widget : frame_widgets_) {
+    frame_widget->setGeometry(QRect{{}, event->size()});
+    frame_widget->setMinimumWidth(event->size().width());
+    frame_widget->setMinimumHeight(event->size().height());
+    frame_widget->setMaximumWidth(event->size().width());
+    frame_widget->setMaximumHeight(event->size().height());
+  }
+
   QScrollArea::resizeEvent(event);
 
   QScroller::scroller(this)->setSnapPositionsX(0, width() + layout_->spacing());
@@ -142,5 +150,6 @@ void SwipeWidgetsList::AddWidget(QWidget *widget) {
 
   widget->show();
   layout_->addWidget(widget);
+  frame_widgets_.push_back(widget);
 }
 } // namespace FirstYear::UI

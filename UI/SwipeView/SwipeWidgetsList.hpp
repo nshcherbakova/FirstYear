@@ -31,5 +31,6 @@ private:
   QHBoxLayout *layout_ = nullptr;
   Qt::GestureType grabbed_gesture_;
   int current_item_index_ = 0;
+  std::vector<QWidget *> frame_widgets_;
 };
 } // namespace FirstYear::UI

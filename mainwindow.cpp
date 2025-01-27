@@ -57,19 +57,20 @@ public:
     frame_widgets_ = frame_widgets;
   }
 
-  void addSwipeView(QWidget *swipe_widget) { swipe_widget_ = swipe_widget; }
+  void addSwipeView(QScrollArea *swipe_widget) { swipe_widget_ = swipe_widget; }
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final {
     QWidget::resizeEvent(event);
 
+    /*
     for (auto &frame_widget : frame_widgets_) {
       frame_widget->setGeometry(rect());
       frame_widget->setMinimumWidth(width());
       frame_widget->setMinimumHeight(height());
       frame_widget->setMaximumWidth(width());
       frame_widget->setMaximumHeight(height());
-    }
+    }*/
 
     if (swipe_widget_) {
       swipe_widget_->setGeometry(rect());
@@ -77,7 +78,7 @@ protected:
   }
 
 private:
-  QWidget *swipe_widget_ = nullptr;
+  QScrollArea *swipe_widget_ = nullptr;
   std::vector<TemplateWidgetHolder *> frame_widgets_;
 };
 
@@ -96,9 +97,9 @@ MainWindow::MainWindow(FrameControl &frame_control)
   setMinimumSize(window_size);
   show();
 #else
-    QSize window_size(9 * 30, 20 * 30);
-    setMinimumSize(window_size);
-    show();
+  QSize window_size(9 * 30, 20 * 30);
+  setMinimumSize(window_size);
+  show();
 #endif
   setStyleSheet(c_background_str);
 
