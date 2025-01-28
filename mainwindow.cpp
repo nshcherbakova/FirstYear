@@ -505,6 +505,7 @@ pixmap.save(path);
 void MainWindow::CreateDragAndDropText(
     FirstYear::Core::FrameControl &frame_control) {
   drag_and_drop_text_ = new QLabel(this);
+  drag_and_drop_text_->setWordWrap(true);
   drag_and_drop_text_->setStyleSheet(c_drag_and_drop_style_str);
   drag_and_drop_text_->setText("Drag and drop photos");
   drag_and_drop_text_->setVisible(LoadedPhotosCount(frame_control) > 0);
@@ -640,13 +641,27 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (preview_)
     preview_->setGeometry(rect());
 
+#ifdef Q_OS_ANDROID
+  bool is_portrait = QGuiApplication::primaryScreen()->orientation() ==
+                     Qt::PortraitOrientation;
+#else
+  bool is_portrait = width() < height();
+#endif
+
+  int drag_and_drop_width = 0;
   if (drag_and_drop_text_) {
-    const auto drag_and_drop_height =
-        drag_and_drop_text_->heightForWidth(width());
+    if (is_portrait) {
+      drag_and_drop_width = width();
+    } else {
+      drag_and_drop_width = width() / 3.5;
+    }
+    const int drag_and_drop_height =
+        drag_and_drop_text_->heightForWidth(drag_and_drop_width);
+
     drag_and_drop_text_->setGeometry(height() / 50,
                                      share_button_->geometry().top() -
                                          drag_and_drop_height - height() / 70,
-                                     width(), drag_and_drop_height);
+                                     drag_and_drop_width, drag_and_drop_height);
   }
   update();
 }
