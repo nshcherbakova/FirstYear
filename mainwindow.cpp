@@ -53,24 +53,12 @@ public:
   SwipeWidget(QWidget *parent) : QWidget(parent) {
     setStyleSheet(c_swipe_widget_style_str);
   }
-  void addWidgets(std::vector<TemplateWidgetHolder *> frame_widgets) {
-    frame_widgets_ = frame_widgets;
-  }
 
   void addSwipeView(QScrollArea *swipe_widget) { swipe_widget_ = swipe_widget; }
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final {
     QWidget::resizeEvent(event);
-
-    /*
-    for (auto &frame_widget : frame_widgets_) {
-      frame_widget->setGeometry(rect());
-      frame_widget->setMinimumWidth(width());
-      frame_widget->setMinimumHeight(height());
-      frame_widget->setMaximumWidth(width());
-      frame_widget->setMaximumHeight(height());
-    }*/
 
     if (swipe_widget_) {
       swipe_widget_->setGeometry(rect());
@@ -79,7 +67,6 @@ protected:
 
 private:
   QScrollArea *swipe_widget_ = nullptr;
-  std::vector<TemplateWidgetHolder *> frame_widgets_;
 };
 
 MainWindow::MainWindow(FrameControl &frame_control)
@@ -435,7 +422,6 @@ void MainWindow::CreateSwipeWidget(
   swipe_view_ = new SwipeWidgetsList(
       swipe_widget_, {frame_widgets_.begin(), frame_widgets_.end()});
   swipe_widget_->addSwipeView(swipe_view_);
-  swipe_widget_->addWidgets(frame_widgets_);
   swipe_widget_->setGeometry(rect());
 
   connect(swipe_view_, &SwipeWidgetsList::SignalItemChanged, this,
