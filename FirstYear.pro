@@ -45,6 +45,9 @@ SOURCES += \
     UI/FrameWidgets/PhotoTuneWidget.cpp \
     UI/FrameWidgets/PhotoWidget.cpp \
     UI/FrameWidgets/PreviewWidget.cpp \
+    UI/FrameWidgets/Touch/GestureProcessor.cpp \
+    UI/FrameWidgets/Touch/doubletap.cpp \
+    UI/FrameWidgets/Touch/touch_helper.cpp \
     UI/FrameWidgets/TouchButton.cpp \
     UI/SwipeView/SwipeWidgetsList.cpp \
     UI/Utility.cpp \
@@ -74,6 +77,9 @@ HEADERS += \
     UI/FrameWidgets/PhotoTuneWidget.h \
     UI/FrameWidgets/PhotoWidget.h \
     UI/FrameWidgets/PreviewWidget.h \
+    UI/FrameWidgets/Touch/GestureProcessor.h \
+    UI/FrameWidgets/Touch/doubletap.h \
+    UI/FrameWidgets/Touch/touch_helper.h \
     UI/FrameWidgets/TouchButton.h \
     UI/Styles/Styles.h \
     UI/SwipeView/SwipeWidgetsList.hpp \

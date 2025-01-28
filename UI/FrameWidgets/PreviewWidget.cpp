@@ -6,95 +6,8 @@ const double MIN_SIZE_K = 0.7;
 const double MAX_SIZE_K = 15.0;
 const double INITIAL_SCALE_FACTOR = 1.3;
 const double ZOOM_STEP = 1.10;
+const double DOUBLE_TAP_SCALE_STEP = 1.3;
 
-void GestureProcessor::Initialise() {
-  QList<Qt::GestureType> gestures;
-
-  gestures << Qt::PanGesture;
-  gestures << Qt::PinchGesture;
-
-  grabGestures(gestures);
-}
-
-void GestureProcessor::grabGestures(const QList<Qt::GestureType> &gestures) {
-  for (Qt::GestureType gesture : gestures)
-    grabWidgetGesture(gesture);
-}
-
-bool GestureProcessor::processEvent(QEvent *event) {
-
-  switch (event->type()) {
-  case QEvent::Gesture: {
-    return gestureEvent(static_cast<QGestureEvent *>(event));
-  }
-  case QEvent::TouchBegin:
-  case QEvent::TouchUpdate:
-  case QEvent::TouchEnd: {
-
-    toucheEvent(static_cast<QTouchEvent *>(event));
-    return true;
-  }
-  default:
-    return false;
-  }
-}
-
-bool GestureProcessor::gestureEvent(QGestureEvent *event) {
-  if (QGesture *pan = event->gesture(Qt::PanGesture))
-    panTriggered(static_cast<QPanGesture *>(pan));
-  if (QGesture *pinch = event->gesture(Qt::PinchGesture))
-    pinchTriggered(static_cast<QPinchGesture *>(pinch));
-
-  return true;
-}
-
-bool GestureProcessor::toucheEvent(QTouchEvent *touch) {
-
-  if (is_zooming_ || is_gesture_moving_) {
-    return false;
-  }
-  touch->accept();
-  const auto touchPoints = touch->points();
-
-  return processToucheEvent(touchPoints);
-}
-
-void GestureProcessor::panTriggered(QPanGesture *gesture) {
-#ifndef QT_NO_CURSOR
-  switch (gesture->state()) {
-  case Qt::GestureStarted:
-  case Qt::GestureUpdated:
-    is_gesture_moving_ = true;
-    break;
-  case Qt::GestureFinished:
-  case Qt::GestureCanceled:
-    is_gesture_moving_ = false;
-    break;
-  default:
-    is_gesture_moving_ = false;
-  }
-#endif
-
-  QPointF delta = gesture->delta();
-  processPan(delta);
-}
-
-void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
-  QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
-  if (changeFlags & QPinchGesture::ScaleFactorChanged) {
-    processScaleChanged(gesture->scaleFactor(), gesture->centerPoint());
-  }
-  if (gesture->state() == Qt::GestureFinished) {
-
-    processScaleChanged(gesture->scaleFactor() / gesture->lastScaleFactor(),
-                        gesture->centerPoint());
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-///
-///
 PhotoPainter::PhotoPainter()
     : dpr_(QGuiApplication::primaryScreen()->devicePixelRatio()) {}
 
@@ -238,8 +151,16 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
 ///
 PreviewWidget::PreviewWidget(QWidget &parent)
     : QWidget(&parent) /*, background_(c_background_str)*/ {
-  GestureProcessor::Initialise();
+
   setAttribute(Qt::WA_AcceptTouchEvents);
+
+  QList<Qt::GestureType> gestures;
+
+  gestures << Qt::PanGesture;
+  gestures << Qt::PinchGesture;
+  gestures << DoubleTapGestureType;
+
+  grabGestures(gestures);
 
   background_ = new QSvgRenderer(this);
   background_->load(QString(":/images/icons/rattles"));
@@ -384,6 +305,14 @@ void PreviewWidget::processScaleChanged(qreal scale, QPointF center) {
 
 void PreviewWidget::grabWidgetGesture(Qt::GestureType gesture) {
   QWidget::grabGesture(gesture);
+}
+
+void PreviewWidget::processAngleChanged(qreal, QPointF) {}
+
+void PreviewWidget::processSwipe(QSwipeGesture *) {}
+
+void PreviewWidget::processDoubleTap(QPointF center) {
+  updatePhoto(std::optional<QPointF>(), DOUBLE_TAP_SCALE_STEP, center);
 }
 
 void PreviewWidget::mouseDoubleClickEvent(QMouseEvent *event) {

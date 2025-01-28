@@ -4,13 +4,8 @@
 #include <Core/Project/Project.h>
 #include <QPixmap>
 #include <QWidget>
+#include <UI/FrameWidgets/Touch/GestureProcessor.h>
 
-class QGestureEvent;
-class QPanGesture;
-class QPinchGesture;
-class QSwipeGesture;
-class QTapAndHoldGesture;
-class QTouchEvent;
 class QEventPoint;
 class QSvgRenderer;
 
@@ -20,31 +15,6 @@ class TextButton;
 } // namespace FirstYear::UI
 
 namespace FirstYear::UI::Preview {
-
-class GestureProcessor {
-
-protected:
-  void Initialise();
-  GestureProcessor &operator=(const GestureProcessor &) = delete;
-  void grabGestures(const QList<Qt::GestureType> &gestures);
-
-protected:
-  bool processEvent(QEvent *event);
-  virtual void processPan(QPointF delta) = 0;
-  virtual void processScaleChanged(qreal scale, QPointF center) = 0;
-  virtual bool processToucheEvent(const QList<QEventPoint> &points) = 0;
-  virtual void grabWidgetGesture(Qt::GestureType gesture) = 0;
-
-private:
-  bool gestureEvent(QGestureEvent *event);
-  void panTriggered(QPanGesture *);
-  void pinchTriggered(QPinchGesture *);
-  bool toucheEvent(QTouchEvent *touch);
-
-private:
-  bool is_gesture_moving_ = false;
-  bool is_zooming_ = false;
-};
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief The PhotoPainter class
@@ -139,6 +109,10 @@ private:
   virtual void processScaleChanged(qreal scale, QPointF center) override;
   virtual bool processToucheEvent(const QList<QEventPoint> &points) override;
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
+  virtual void processDoubleTap(QPointF center) override;
+  virtual void processAngleChanged(qreal rotation_delta,
+                                   QPointF center) override;
+  virtual void processSwipe(QSwipeGesture *) override;
 
 protected:
   // QWidget
@@ -149,7 +123,6 @@ protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private:
-  void grabGestures(const QList<Qt::GestureType> &gestures);
   void updatePhoto(const Core::PhotoData &photo);
   void updatePhoto(std::optional<QPointF> pos_delta,
                    std::optional<double> scale_factor,

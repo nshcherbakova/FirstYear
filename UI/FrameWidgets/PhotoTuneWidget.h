@@ -4,50 +4,16 @@
 #include <Core/Project/Project.h>
 #include <QPixmap>
 #include <QWidget>
+#include <UI/FrameWidgets/Touch/GestureProcessor.h>
 #include <UI/Utility.h>
 
 QT_BEGIN_NAMESPACE
-class QGestureEvent;
-class QPanGesture;
-class QPinchGesture;
-class QSwipeGesture;
-class QTapAndHoldGesture;
-class QTouchEvent;
 class QEventPoint;
 class QSvgRenderer;
 
 QT_END_NAMESPACE
 
 namespace FirstYear::UI {
-
-class GestureProcessor {
-
-protected:
-  void Initialise();
-  GestureProcessor &operator=(const GestureProcessor &) = delete;
-  void grabGestures(const QList<Qt::GestureType> &gestures);
-
-protected:
-  bool processEvent(QEvent *event);
-  virtual void processPan(QPointF delta) = 0;
-  virtual void processAngleChanged(qreal rotation_delta, QPointF center) = 0;
-  virtual void processScaleChanged(qreal scale, QPointF center) = 0;
-  virtual bool processToucheEvent(const QList<QEventPoint> &points) = 0;
-  virtual void processSwipe(QSwipeGesture *) = 0;
-  virtual void grabWidgetGesture(Qt::GestureType gesture) = 0;
-
-private:
-  bool gestureEvent(QGestureEvent *event);
-  void panTriggered(QPanGesture *);
-  void pinchTriggered(QPinchGesture *);
-  void swipeTriggered(QSwipeGesture *gesture);
-  bool toucheEvent(QTouchEvent *touch);
-
-private:
-  bool is_gesture_moving_ = false;
-  bool is_zooming_ = false;
-  //  bool is_touch_movng_ = false;
-};
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief The PhotoPainter class
@@ -174,6 +140,7 @@ private:
   virtual bool processToucheEvent(const QList<QEventPoint> &points) override;
   virtual void processSwipe(QSwipeGesture *) override;
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
+  virtual void processDoubleTap(QPointF center) override;
 
 protected:
   // QWidget
@@ -185,7 +152,6 @@ protected:
   virtual void setVisible(bool visible) override;
 
 private:
-  void grabGestures(const QList<Qt::GestureType> &gestures);
   void updatePhoto(std::optional<QPointF> pos_delta,
                    std::optional<double> scale_factor,
                    std::optional<double> angle_delta,
