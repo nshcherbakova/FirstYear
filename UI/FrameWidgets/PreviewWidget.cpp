@@ -2,153 +2,11 @@
 #include <stdafx.h>
 
 namespace FirstYear::UI::Preview {
-const double MIN_SIZE_K = 0.7;
-const double MAX_SIZE_K = 15.0;
+
 const double INITIAL_SCALE_FACTOR = 1.3;
 const double ZOOM_STEP = 1.10;
-const double DOUBLE_TAP_SCALE_STEP = 1.3;
+const double DOUBLE_TAP_SCALE_STEP = 1.4;
 
-PhotoPainter::PhotoPainter()
-    : dpr_(QGuiApplication::primaryScreen()->devicePixelRatio()) {}
-
-void PhotoPainter::init(const Core::PhotoData &photo, QRectF destanation_rect,
-                        QRectF boundary_rect) {
-
-  photo_data_ = Core::PhotoData::CreateCopy(photo);
-  boundary_rect_ = boundary_rect;
-  destanation_rect_ = destanation_rect;
-
-  const QRectF photo_rect = {
-      QPointF(0, 0), photo_data_.image().size() /
-                         QGuiApplication::primaryScreen()->devicePixelRatio()};
-  double k1 = photo_rect.width() / photo_rect.height();
-  double k2 = destanation_rect_.width() / destanation_rect_.height();
-
-  if (k1 < k2) {
-    internal_scale_ =
-        ((double)destanation_rect_.height() / photo_rect.height()) *
-        INITIAL_SCALE_FACTOR;
-  } else {
-    internal_scale_ = ((double)destanation_rect_.width() / photo_rect.width()) *
-                      INITIAL_SCALE_FACTOR;
-  }
-
-  transform_ = getTransformForWidget(
-      {std::optional<double>(), std::optional<QPointF>(),
-       std::optional<QPointF>()},
-      photo_data_.transformOffsetRef(), photo_data_.transformScaleRotateRef());
-}
-
-QTransform
-PhotoPainter::getTransformForWidget(const PhotoPosition &photo_position,
-                                    QTransform &transform_offset,
-                                    QTransform &transform_scale_rotate) {
-  // spdlog::info("a {}, s {},  ", photo_position_.angle, photo_.scale);
-  const auto scale_diff = photo_position.scale.value_or(1);
-  const auto offset_diff = photo_position.offset.value_or(QPointF(0, 0));
-  const auto center = photo_position.center.value_or(QPointF(0, 0));
-
-  const qreal iw = photo_data_.image().width() / dpr_;
-  const qreal ih = photo_data_.image().height() / dpr_;
-  const qreal wh = destanation_rect_.height();
-  const qreal ww = destanation_rect_.width();
-
-  const QPointF d = {destanation_rect_.left() + ww / 2,
-                     destanation_rect_.top() + wh / 2};
-
-  QTransform transform_internal1;
-  transform_internal1.translate(d.x(), d.y());
-  transform_internal1.scale(internal_scale_, internal_scale_);
-
-  transform_offset.translate(offset_diff.x() / internal_scale_,
-                             offset_diff.y() / internal_scale_);
-
-  const QPointF c =
-      (transform_scale_rotate * transform_offset * transform_internal1)
-          .inverted()
-          .map(center);
-
-  transform_scale_rotate.translate(c.x(), c.y());
-  transform_scale_rotate.scale(scale_diff, scale_diff);
-  transform_scale_rotate.translate(-c.x(), -c.y());
-
-  QTransform transform_internal2;
-  transform_internal2.translate(-iw / 2, -ih / 2);
-
-  return transform_internal2 * transform_scale_rotate * transform_offset *
-         transform_internal1;
-}
-
-void PhotoPainter::drawPhoto(QPainter &painter) {
-  if (photo_data_.image().isNull())
-    return;
-
-  const int frame_with = std::min(photo_data_.image().size().width(),
-                                  photo_data_.image().size().height()) /
-                         dpr_ / 50;
-  const QSize frame_with_size{frame_with, frame_with};
-
-  painter.setTransform(transform_);
-  painter.setBrush(QColor(67, 56, 14, 20));
-  painter.setPen(QPen(QColor(0, 0, 0, 0)));
-
-  painter.drawRoundedRect(
-      QRect{{frame_with, frame_with},
-            photo_data_.image().size() / dpr_ + frame_with_size / 4},
-      frame_with / 2, frame_with / 2);
-
-  painter.setTransform(transform_);
-  painter.drawPixmap(0, 0, photo_data_.image());
-  painter.setTransform(QTransform());
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-///
-///
-bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
-
-  const QRectF image_rect = {
-      QPointF(0, 0), photo_data_.image().size() /
-                         QGuiApplication::primaryScreen()->devicePixelRatio()};
-
-  auto translated_image_rect = transform.mapRect(image_rect);
-
-  if (translated_image_rect.width() < boundary_rect_.width() * MIN_SIZE_K ||
-      translated_image_rect.height() < boundary_rect_.height() * MIN_SIZE_K) {
-    return false;
-  }
-
-  if (translated_image_rect.width() > boundary_rect_.width() * MAX_SIZE_K ||
-      translated_image_rect.height() > boundary_rect_.height() * MAX_SIZE_K) {
-    return false;
-  }
-
-  if (!translated_image_rect.intersects(boundary_rect_))
-    return false;
-
-  return true;
-}
-
-void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
-                                         std::optional<double> scale_factor,
-                                         std::optional<QPointF> center) {
-  auto scale_rotate = photo_data_.transformScaleRotate();
-  auto translate = photo_data_.transformOffset();
-  auto transform = getTransformForWidget({scale_factor, pos_delta, center},
-                                         translate, scale_rotate);
-
-  if (checkBoundares(transform)) {
-    transform_ = transform;
-    photo_data_.setTransforms(std::move(scale_rotate), std::move(translate));
-  }
-}
-
-/////////////////////////////////////////////////////////
-/// \brief PhotoTuneWidget::PhotoTuneWidget
-/// \param parent
-///
-///
 PreviewWidget::PreviewWidget(QWidget &parent)
     : QWidget(&parent) /*, background_(c_background_str)*/ {
 
@@ -182,7 +40,7 @@ void PreviewWidget::setVisible(bool visible) {
   QWidget::setVisible(visible);
   setAttribute(Qt::WA_AcceptTouchEvents, visible);
   if (!visible) {
-    photo_data_ = Core::PhotoData::CreateEmptyData();
+    photo_data_.reset();
     emit SignalClosed();
   }
 }
@@ -235,12 +93,12 @@ void PreviewWidget::setImage(QPixmap photo) {
 
   Core::PhotoData photo_data = Core::PhotoData::CreateNewData(photo, false);
 
-  updatePhoto(photo_data);
+  updatePhoto(std::make_shared<Core::PhotoData>(std::move(photo_data)));
 }
 
-void PreviewWidget::updatePhoto(const Core::PhotoData &photo) {
+void PreviewWidget::updatePhoto(const Core::PhotoDataPtr &photo) {
 
-  if (photo.image().isNull())
+  if (!photo || photo->image().isNull())
     return;
 
   auto boundary_rect = rect();
@@ -253,12 +111,15 @@ void PreviewWidget::updatePhoto(const Core::PhotoData &photo) {
   update();
 }
 
-QPixmap PreviewWidget::getImage() const { return photo_data_.image(); }
+QPixmap PreviewWidget::getImage() const {
+  UNI_ASSERT(photo_data_);
+  return photo_data_->image();
+}
 
 void PreviewWidget::updatePhoto(std::optional<QPointF> pos_delta,
                                 std::optional<double> scale_factor,
                                 std::optional<QPointF> center) {
-  PhotoProcessor::updatePhotoPosition(pos_delta, scale_factor, center);
+  PhotoProcessor::updatePhotoPosition(pos_delta, scale_factor, {}, center);
   update();
 }
 
@@ -320,6 +181,29 @@ void PreviewWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   hide();
 }
 
+double PreviewWidget::initialScaleFactor() const {
+  return INITIAL_SCALE_FACTOR;
+}
+
+void PreviewWidget::drawFrame(QPainter &painter) {
+  UNI_ASSERT(photo_data_);
+
+  const int frame_with = std::min(photo_data_->image().size().width(),
+                                  photo_data_->image().size().height()) /
+                         dpr_ / 50;
+  const QSize frame_with_size{frame_with, frame_with};
+
+  painter.setTransform(transform_);
+  painter.setBrush(QColor(67, 56, 14, 20));
+  painter.setPen(QPen(QColor(0, 0, 0, 0)));
+
+  painter.drawRoundedRect(
+      QRect{{frame_with, frame_with},
+            photo_data_->image().size() / dpr_ + frame_with_size / 4},
+      frame_with / 2, frame_with / 2);
+}
+
+QRectF PreviewWidget::scaleRefRect() const { return destanation_rect_; }
 void PreviewWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
 

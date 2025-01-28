@@ -4,6 +4,7 @@
 #include <Core/Project/Project.h>
 #include <QPixmap>
 #include <QWidget>
+#include <UI/FrameWidgets/Photo/PhotoProcessor.h>
 #include <UI/FrameWidgets/Touch/GestureProcessor.h>
 #include <UI/Utility.h>
 
@@ -14,76 +15,6 @@ class QSvgRenderer;
 QT_END_NAMESPACE
 
 namespace FirstYear::UI {
-
-/////////////////////////////////////////////////////////////////////////////
-/// \brief The PhotoPainter class
-///
-
-class PhotoPainter {
-public:
-  PhotoPainter &operator=(const PhotoPainter &) = delete;
-
-public:
-  void init(const Core::PhotoDataPtr &photo, QRectF destanation_rect,
-            QRectF boundary_rect);
-  void drawPhoto(QPainter &);
-
-protected:
-  struct PhotoPosition {
-    //   PhotoPosition()
-    //    {};
-    std::optional<double> angle;
-    std::optional<double> scale;
-    std::optional<QPointF> offset;
-    std::optional<QPointF> center;
-    //  QRectF dest_rect;
-
-    void reset() {
-      offset.reset();
-      scale.reset();
-      angle.reset();
-      center.reset();
-    }
-
-    void reset_exept_center() {
-      offset.reset();
-      scale.reset();
-      angle.reset();
-    }
-  };
-  QTransform
-  getTransformForWidget(const PhotoPosition &photo_position,
-                        Core::PhotoTransform &transform_offset,
-                        Core::PhotoTransform &transform_scale_rotate);
-  // QTransform getTransformForWidget() const ;
-  void drawFrame();
-
-protected:
-  QTransform transform_;
-  Core::PhotoDataPtr photo_data_;
-  QPixmap frame_;
-
-  double internal_scale_ = 1;
-  QRectF boundary_rect_;
-  QRectF destanation_rect_;
-};
-/////////////////////////////////////////////////////////////////////////////
-/// \brief The PhotoProcessor class
-///
-
-class PhotoProcessor : protected PhotoPainter {
-public:
-  PhotoProcessor &operator=(const PhotoProcessor &) = delete;
-
-protected:
-  void updatePhotoPosition(std::optional<QPointF> pos_delta,
-                           std::optional<double> scale_factor,
-                           std::optional<double> angle_delta,
-                           std::optional<QPointF> center);
-
-private:
-  bool checkBoundares(const QTransform &transform) const;
-};
 
 class Frame {
 public:
@@ -141,6 +72,10 @@ private:
   virtual void processSwipe(QSwipeGesture *) override;
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
   virtual void processDoubleTap(QPointF center) override;
+
+private:
+  // PhotoProcessor
+  virtual double initialScaleFactor() const override;
 
 protected:
   // QWidget

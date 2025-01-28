@@ -3,7 +3,7 @@
 #define FIRSTYEAR_UI_IMAGE_BUTTON_H
 #include <Core/Project/Project.h>
 #include <QPushButton>
-#include <UI/FrameWidgets/PhotoTuneWidget.h>
+#include <UI/FrameWidgets/Photo/PhotoProcessor.h>
 
 namespace FirstYear::UI {
 

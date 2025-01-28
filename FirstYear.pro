@@ -42,6 +42,7 @@ SOURCES += \
     UI/FileDialog/FileDialog.cpp \
     UI/FrameWidgets/DefaultTemplateWidget.cpp \
     UI/FrameWidgets/ImageButton.cpp \
+    UI/FrameWidgets/Photo/PhotoProcessor.cpp \
     UI/FrameWidgets/PhotoTuneWidget.cpp \
     UI/FrameWidgets/PhotoWidget.cpp \
     UI/FrameWidgets/PreviewWidget.cpp \
@@ -74,6 +75,7 @@ HEADERS += \
     UI/FrameWidgets/DefaultTemplateWidget.h \
     UI/FrameWidgets/ImageButton.h \
     UI/FrameWidgets/Photo.h \
+    UI/FrameWidgets/Photo/PhotoProcessor.h \
     UI/FrameWidgets/PhotoTuneWidget.h \
     UI/FrameWidgets/PhotoWidget.h \
     UI/FrameWidgets/PreviewWidget.h \

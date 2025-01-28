@@ -4,6 +4,7 @@
 #include <Core/Project/Project.h>
 #include <QPixmap>
 #include <QWidget>
+#include <UI/FrameWidgets/Photo/PhotoProcessor.h>
 #include <UI/FrameWidgets/Touch/GestureProcessor.h>
 
 class QEventPoint;
@@ -15,74 +16,6 @@ class TextButton;
 } // namespace FirstYear::UI
 
 namespace FirstYear::UI::Preview {
-
-/////////////////////////////////////////////////////////////////////////////
-/// \brief The PhotoPainter class
-///
-
-class PhotoPainter {
-public:
-  PhotoPainter();
-
-public:
-  PhotoPainter &operator=(const PhotoPainter &) = delete;
-
-public:
-  void init(const Core::PhotoData &photo, QRectF destanation_rect,
-            QRectF boundary_rect);
-  void drawPhoto(QPainter &);
-
-protected:
-  struct PhotoPosition {
-    std::optional<double> scale;
-    std::optional<QPointF> offset;
-    std::optional<QPointF> center;
-
-    void reset() {
-      offset.reset();
-      scale.reset();
-      center.reset();
-    }
-
-    void reset_exept_center() {
-      offset.reset();
-      scale.reset();
-    }
-  };
-  QTransform getTransformForWidget(const PhotoPosition &photo_position,
-                                   QTransform &transform_offset,
-                                   QTransform &transform_scale_rotate);
-
-protected:
-  QTransform transform_;
-  Core::PhotoData photo_data_;
-
-  double internal_scale_ = 1;
-  QRectF boundary_rect_;
-  QRectF destanation_rect_;
-
-  const double dpr_;
-};
-/////////////////////////////////////////////////////////////////////////////
-/// \brief The PhotoProcessor class
-///
-
-class PhotoProcessor : protected PhotoPainter {
-public:
-  PhotoProcessor &operator=(const PhotoProcessor &) = delete;
-
-protected:
-  void updatePhotoPosition(std::optional<QPointF> pos_delta,
-                           std::optional<double> scale_factor,
-                           std::optional<QPointF> center);
-
-private:
-  bool checkBoundares(const QTransform &transform) const;
-};
-
-/////////////////////////////////////////////////////////////////////////////
-/// \brief The PhotoTuneWidget class
-///
 
 class PreviewWidget final : public QWidget,
                             public GestureProcessor,
@@ -122,8 +55,14 @@ protected:
   virtual void resizeEvent(QResizeEvent *event) override;
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
 
+protected:
+  // PhotoProcessor
+  virtual double initialScaleFactor() const override;
+  virtual void drawFrame(QPainter &painter) override;
+  virtual QRectF scaleRefRect() const override;
+
 private:
-  void updatePhoto(const Core::PhotoData &photo);
+  void updatePhoto(const Core::PhotoDataPtr &photo);
   void updatePhoto(std::optional<QPointF> pos_delta,
                    std::optional<double> scale_factor,
                    std::optional<QPointF> center);
