@@ -627,26 +627,27 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (preview_)
     preview_->setGeometry(rect());
 
-#ifdef Q_OS_ANDROID
-  bool is_portrait = QGuiApplication::primaryScreen()->orientation() ==
-                     Qt::PortraitOrientation;
-#else
+  // #ifdef Q_OS_ANDROID
+  //  bool is_portrait = QGuiApplication::primaryScreen()->orientation() ==
+  //                    Qt::PortraitOrientation;
+  // #else
   bool is_portrait = width() < height();
-#endif
+  // #endif
 
   int drag_and_drop_width = 0;
+  int drag_and_drop_top = 0;
   if (drag_and_drop_text_) {
     if (is_portrait) {
       drag_and_drop_width = width();
+      drag_and_drop_top = height() / 6;
     } else {
       drag_and_drop_width = width() / 3.5;
+      drag_and_drop_top = select_images_button_->geometry().top();
     }
     const int drag_and_drop_height =
         drag_and_drop_text_->heightForWidth(drag_and_drop_width);
 
-    drag_and_drop_text_->setGeometry(height() / 50,
-                                     share_button_->geometry().top() -
-                                         drag_and_drop_height - height() / 70,
+    drag_and_drop_text_->setGeometry(height() / 50, drag_and_drop_top,
                                      drag_and_drop_width, drag_and_drop_height);
   }
   update();
