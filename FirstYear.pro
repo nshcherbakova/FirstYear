@@ -28,6 +28,7 @@ PRECOMPILED_HEADER = Core/Gears/StdAfx/stdafx.h
 
 SOURCES += \
     Core/FrameControl/FrameControl.cpp \
+    Core/Gears/Json/Json.cpp \
     Core/Gears/StdAfx/stdafx.cpp \
     Core/Project/FileSystemProjectLoader.cpp \
     Core/Project/FileSystemProjectWriter.cpp \
@@ -58,6 +59,7 @@ SOURCES += \
 
 HEADERS += \
     Core/FrameControl/FrameControl.h \
+    Core/Gears/Json/Json.h \
     Core/Gears/StdAfx/stdafx.h \
     Core/Project/Constants.h \
     Core/Project/FileSystemProjectLoader.h \
