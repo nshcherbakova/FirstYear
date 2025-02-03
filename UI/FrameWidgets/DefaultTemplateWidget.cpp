@@ -5,9 +5,9 @@
 
 namespace FirstYear::UI {
 
-static const char *c_foreground_str = ":images/frame_%1/foreground";
+static const char *c_foreground_str = ":frames/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
-    ":images/frame_%1/foreground_to_render";
+    ":frames/frame_%1/foreground_to_render";
 // static const int c_max_title_lengh = 20;
 
 class ForegroundWidget final : public QWidget {

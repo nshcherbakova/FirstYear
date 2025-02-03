@@ -1,7 +1,7 @@
 #include "FrameDataReader.h"
 #include <stdafx.h>
 
-static const char *c_foreground_parameters_str = ":images/frame_%1/%1";
+static const char *c_foreground_parameters_str = ":frames/frame_%1/%1";
 
 namespace FirstYear::UI {
 
