@@ -5,6 +5,7 @@
 #include <Core/Project/Project.h>
 
 #include <Types.h>
+#include <UI/FrameData/PhotoFrameParameters.h>
 #include <UI/Utility.h>
 
 #include <QWidget>
@@ -15,7 +16,7 @@ namespace FirstYear::UI {
 
 class ClickableLabel;
 
-struct TextParameters {
+/*struct TextParameters {
   Qt::Alignment alignment;
   QString font;
   double font_size = 0;
@@ -47,7 +48,7 @@ struct TemplateWidgetParameters {
   Core::FrameControl &control;
   QString id;
 };
-
+*/
 class ForegroundWidget;
 
 class TemplateWidgetBase : public QWidget {

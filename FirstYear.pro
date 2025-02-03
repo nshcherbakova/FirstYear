@@ -40,6 +40,7 @@ SOURCES += \
     UI/Controls/LineEdit.cpp \
     UI/FileDialog/AndroidFileDialog.cpp \
     UI/FileDialog/FileDialog.cpp \
+    UI/FrameData/FrameDataReader.cpp \
     UI/FrameWidgets/DefaultTemplateWidget.cpp \
     UI/FrameWidgets/ImageButton.cpp \
     UI/FrameWidgets/Photo/PhotoProcessor.cpp \
@@ -72,6 +73,8 @@ HEADERS += \
     UI/Controls/LineEdit.h \
     UI/FileDialog/AndroidFileDialog.h \
     UI/FileDialog/FileDialog.h \
+    UI/FrameData/FrameDataReader.h \
+    UI/FrameData/PhotoFrameParameters.h \
     UI/FrameWidgets/DefaultTemplateWidget.h \
     UI/FrameWidgets/ImageButton.h \
     UI/FrameWidgets/Photo.h \

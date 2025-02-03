@@ -1,10 +1,10 @@
 #include "DefaultTemplateWidget.h"
 #include "PhotoWidget.h"
-#include <UI/FrameData/FrameDataReader.h>
 #include <stdafx.h>
 
 namespace FirstYear::UI {
 
+static const char *c_foreground_parameters_str = ":images/frame_%1/%1";
 static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
@@ -82,6 +82,286 @@ QString DefaultTemplateWidget2::templateId() { return "2"; }
 ///
 ///
 
+void writeRect(QJsonObject &obj, QString name, QRect rect) {
+  QJsonObject rect_obj;
+  obj.insert(name, rect_obj);
+  rect_obj.insert("left", rect.left());
+  rect_obj.insert("top", rect.top());
+  rect_obj.insert("right", rect.right());
+  rect_obj.insert("bottom", rect.bottom());
+}
+
+void writeRect(QJsonObject &obj, QString name, QRectF rect) {
+  QJsonObject rect_obj;
+
+  rect_obj.insert("left", rect.left());
+  rect_obj.insert("top", rect.top());
+  rect_obj.insert("right", rect.right());
+  rect_obj.insert("bottom", rect.bottom());
+  obj.insert(name, rect_obj);
+}
+
+void writeJson(const TemplateWidgetParameters &) {
+  /*   QJsonObject frame;
+     QJsonObject title;
+     QJsonObject mothes;
+     QJsonObject rect;
+
+     writeRect(title, "rect", parameters.title_parameters.title_rect);
+     title.insert("alignment", (short)parameters.title_parameters.alignment);
+     title.insert("font", parameters.title_parameters.font);
+     title.insert("font_size", parameters.title_parameters.font_size);
+     title.insert("font_color", parameters.title_parameters.font_color);
+
+     for (int i = 0; i < 12; ++i) {
+         QJsonObject month;
+
+         QJsonObject text;
+         text.insert("alignment",
+     (short)parameters.photo_text_parameters.alignment); text.insert("font",
+     parameters.photo_text_parameters.font); text.insert("font_size",
+     parameters.photo_text_parameters.font_size); text.insert("font_color",
+     parameters.photo_text_parameters.font_color); month.insert("text", text);
+
+         QJsonObject anchor;
+         anchor.insert("x",
+     parameters.photo_text_parameters.photo_text_anchors[i].x());
+         anchor.insert("y",
+     parameters.photo_text_parameters.photo_text_anchors[i].y());
+         month.insert("anchor",  anchor);
+
+         QJsonObject slot;
+         writeRect(slot, "rect", parameters.photo_slots[i]);
+         month.insert("slot",  slot);
+
+         QJsonObject frame_data;
+
+         const  FrameParameters& params = parameters.frame_data.size() > 1?
+     parameters.frame_data[i] : parameters.frame_data[0];
+         frame_data.insert("type", (int)params.type);
+         month.insert("frame_data",  frame_data);
+
+         QJsonObject data;
+         month.insert("data", params.data.toJsonValue());
+         mothes.insert(QString("%1").arg(i),  month);
+
+     }
+     frame.insert("id",  parameters.id);
+     frame.insert("title",  title);
+     frame.insert("mothes",  mothes);
+     QJsonDocument project_metadata_document(frame);
+
+     QFile file
+     (QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+
+     "/FirstYear/FrameData/"+parameters.id); file.open(QIODevice::WriteOnly);
+     file.write(project_metadata_document.toJson());
+     file.close();*/
+}
+
+bool ReadString(const QJsonObject &json, QString key, QString &value) {
+  if (const QJsonValue json_value = json[key]; json_value.isString()) {
+    value = json_value.toString();
+    return true;
+  }
+
+  spdlog::error("Error while reading a string from json. {}",
+                key.toStdString());
+  return false;
+}
+
+bool ReadInt(const QJsonObject &json, QString key, int &value) {
+  if (const QJsonValue json_value = json[key]; json_value.isDouble()) {
+    value = json_value.toInt();
+    return true;
+  }
+
+  spdlog::error("Error while reading an int from json. {}", key.toStdString());
+  return false;
+}
+
+bool ReadDouble(const QJsonObject &json, QString key, double &value) {
+  if (const QJsonValue json_value = json[key]; json_value.isDouble()) {
+    value = json_value.toDouble();
+    return true;
+  }
+
+  spdlog::error("Error while reading a double from json. {}",
+                key.toStdString());
+  return false;
+}
+
+bool ReadSizeF(const QJsonObject &json, QString key, QSizeF &value) {
+  if (const auto data = json[key]; data.isObject()) {
+    const auto object = data.toObject();
+    bool result = ReadDouble(object, "width", value.rwidth());
+    result = result && ReadDouble(object, "height", value.rheight());
+    return result;
+  }
+
+  spdlog::error("Error while reading an QSizeF from json. {}",
+                key.toStdString());
+  return false;
+}
+
+bool ReadPoint(const QJsonObject &json, QString key, QPoint &value) {
+  if (const auto data = json[key]; data.isObject()) {
+    const auto object = data.toObject();
+    bool result = ReadInt(object, "x", value.rx());
+    result = result && ReadInt(object, "y", value.ry());
+    return result;
+  }
+
+  spdlog::error("Error while reading an QPoint from json. {}",
+                key.toStdString());
+  return false;
+}
+
+bool ReadRect(const QJsonObject &obj, QString name, QRect &rect) {
+  bool result = true;
+  if (const auto data = obj[name]; data.isObject()) {
+    const auto rect_obj = data.toObject();
+
+    int left = 0;
+    result = result && ReadInt(rect_obj, "left", left);
+    int top = 0;
+    result = result && ReadInt(rect_obj, "top", top);
+    int right = 0;
+    result = result && ReadInt(rect_obj, "right", right);
+    int bottom = 0;
+    result = result && ReadInt(rect_obj, "bottom", bottom);
+
+    rect.setBottomRight({right, bottom});
+    rect.setTopLeft({left, top});
+    return result;
+  }
+  return false;
+}
+
+bool ReadRectF(const QJsonObject &obj, QString name, QRectF &rect) {
+  bool result = true;
+  if (const auto data = obj[name]; data.isObject()) {
+    const auto rect_obj = data.toObject();
+
+    double left = 0;
+    result = result && ReadDouble(rect_obj, "left", left);
+    double top = 0;
+    result = result && ReadDouble(rect_obj, "top", top);
+    double right = 0;
+    result = result && ReadDouble(rect_obj, "right", right);
+    double bottom = 0;
+    result = result && ReadDouble(rect_obj, "bottom", bottom);
+
+    rect.setBottomRight({right, bottom});
+    rect.setTopLeft({left, top});
+    return result;
+  }
+  return false;
+}
+
+bool ReadTextParameters(const QJsonObject &object, TextParameters &parameters) {
+  bool result = true;
+
+  int alignment = 0;
+  result = result && ReadInt(object, "alignment", alignment);
+  parameters.alignment = (Qt::Alignment)alignment;
+
+  result = result && ReadString(object, "font", parameters.font);
+
+  result = result && ReadDouble(object, "font_size", parameters.font_size);
+
+  result = result && ReadString(object, "font_color", parameters.font_color);
+
+  return result;
+}
+
+bool readTitle(const QJsonObject &json, QString name,
+               TitleParameters &parameters) {
+  if (const auto data = json[name]; data.isObject()) {
+    const auto object = data.toObject();
+
+    bool result = true;
+
+    result = result && ReadRect(object, "rect", parameters.title_rect);
+
+    result = result && ReadTextParameters(object, parameters.text_parameters);
+
+    return result;
+  }
+  return false;
+}
+
+bool ReadPhotoTextParameters(const QJsonObject &json,
+                             PhotoTextParameters &parameters) {
+  bool result = true;
+
+  result = result && ReadPoint(json, "anchor", parameters.text_anchor);
+
+  if (const auto data = json["text"]; data.isObject()) {
+    const auto object = data.toObject();
+    result = result && ReadTextParameters(object, parameters.text_parameters);
+  }
+  return result;
+}
+
+bool readMonth(const QJsonObject &json, QString name,
+               MonthParameters &parameters) {
+  if (const auto data = json[name]; data.isObject()) {
+    const auto object = data.toObject();
+
+    bool result = true;
+
+    result =
+        result && ReadPhotoTextParameters(object, parameters.text_parameters);
+    result = result && ReadRectF(object, "slot", parameters.photo_slot);
+
+    if (const auto frame_data = object["frame_data"]; frame_data.isObject()) {
+      const auto frame_data_object = frame_data.toObject();
+      int type = 0;
+      result = result && ReadInt(frame_data_object, "type", type);
+      parameters.frame_data.type = (FrameParameters::TYPE)type;
+
+      if (parameters.frame_data.type == FrameParameters::TYPE::RECT ||
+          parameters.frame_data.type == FrameParameters::TYPE::ROUND) {
+        QSizeF size;
+        result = result && ReadSizeF(frame_data_object, "data", size);
+        parameters.frame_data.data = size;
+      }
+    }
+
+    return result;
+  }
+  return false;
+}
+
+bool readJson(const QString &id, PhotoFrameParameters &parameters) {
+
+  QFile file(QString(c_foreground_parameters_str).arg(id));
+  if (!file.open(QIODevice::ReadOnly)) {
+    spdlog::error("Couldn't open file {0}.", file.fileName().toStdString());
+    return false;
+  }
+  const QByteArray data = file.readAll();
+  file.close();
+
+  const QJsonDocument document(QJsonDocument::fromJson(data));
+
+  auto json = document.object();
+
+  readTitle(json, "title", parameters.title_parameters);
+
+  bool result = true;
+  if (const auto data = json["mothes"]; data.isObject()) {
+    const auto object = data.toObject();
+
+    parameters.months_parameters.resize(12);
+    for (int i = 0; i < 12; ++i) {
+      result = result && readMonth(object, QString::number(i),
+                                   parameters.months_parameters[i]);
+    }
+  }
+  return result;
+}
+
 void TemplateWidgetBase::fillParameters(
     const PhotoFrameParameters &parameters) {
   UNI_ASSERT(parameters.months_parameters.size() == 12);
@@ -114,7 +394,7 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   PhotoFrameParameters parameters;
 
-  FrameDataReader::readJson(widget_parameters.id, parameters);
+  readJson(widget_parameters.id, parameters);
   fillParameters(parameters);
 
   setContentsMargins(0, 0, 0, 0);
