@@ -1,0 +1,317 @@
+{
+    "id": "1",
+    "mothes": {
+        "0": {
+            "anchor": {
+                "x": 105,
+                "y": 238
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 236,
+                    "left": 48,
+                    "right": 162,
+                    "top": 122
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "1": {
+            "anchor": {
+                "x": 233,
+                "y": 238
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 236,
+                    "left": 176,
+                    "right": 290,
+                    "top": 122
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "10": {
+            "anchor": {
+                "x": 362,
+                "y": 531
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 530,
+                    "left": 305,
+                    "right": 419,
+                    "top": 416
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "11": {
+            "anchor": {
+                "x": 492,
+                "y": 531
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 530,
+                    "left": 435,
+                    "right": 549,
+                    "top": 416
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "2": {
+            "anchor": {
+                "x": 362,
+                "y": 238
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 236,
+                    "left": 305,
+                    "right": 419,
+                    "top": 122
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "3": {
+            "anchor": {
+                "x": 492,
+                "y": 238
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 236,
+                    "left": 435,
+                    "right": 549,
+                    "top": 122
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "4": {
+            "anchor": {
+                "x": 105,
+                "y": 385
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 384,
+                    "left": 48,
+                    "right": 162,
+                    "top": 270
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "5": {
+            "anchor": {
+                "x": 233,
+                "y": 385
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 384,
+                    "left": 176,
+                    "right": 290,
+                    "top": 270
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "6": {
+            "anchor": {
+                "x": 362,
+                "y": 385
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 384,
+                    "left": 305,
+                    "right": 419,
+                    "top": 270
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "7": {
+            "anchor": {
+                "x": 492,
+                "y": 385
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 384,
+                    "left": 435,
+                    "right": 549,
+                    "top": 270
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "8": {
+            "anchor": {
+                "x": 105,
+                "y": 531
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 530,
+                    "left": 48,
+                    "right": 162,
+                    "top": 416
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        },
+        "9": {
+            "anchor": {
+                "x": 233,
+                "y": 531
+            },
+            "frame_data": {
+                "type": 1,
+                "data": {
+                    "width": 114,
+                    "height": 114
+                }
+            },
+            "slot": {
+                    "bottom": 530,
+                    "left": 176,
+                    "right": 290,
+                    "top": 416
+            },
+            "text": {
+                "alignment": 132,
+                "font": "Bellany",
+                "font_color": "#969692",
+                "font_size": 25
+            }
+        }
+    },
+    "title": {
+        "alignment": 132,
+        "font": "Bellany",
+        "font_color": "#669692",
+        "font_size": 60,
+        "rect": {
+            "bottom": 100,
+            "left": 0,
+            "right": 587,
+            "top": 25
+        }
+    }
+}

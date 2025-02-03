@@ -120,13 +120,13 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   QFile month_metadata_file(month_metadata_path_template_.arg(month_number));
 
   if (!month_metadata_file.open(QIODevice::ReadOnly)) {
-    spdlog::error(
-        "Couldn't open file {0}.",
-        month_metadata_path_template_.arg(month_number).toStdString());
+    spdlog::error("Couldn't open file {0}.",
+                  month_metadata_file.fileName().toStdString());
     //  return false;
   }
 
   const QByteArray month_metadata = month_metadata_file.readAll();
+  month_metadata_file.close();
 
   const QJsonDocument month_json_document(
       QJsonDocument::fromJson(month_metadata));

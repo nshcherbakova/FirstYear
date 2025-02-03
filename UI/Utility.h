@@ -10,8 +10,8 @@
 
 namespace FirstYear::UI {
 struct FrameParameters {
-  enum class TYPE {
-    ROUND,
+  enum class TYPE : int {
+    ROUND = 0,
     RECT,
   };
   TYPE type;

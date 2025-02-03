@@ -15,31 +15,37 @@ namespace FirstYear::UI {
 
 class ClickableLabel;
 
-struct TitleParameters {
-  QRect title_rect;
+struct TextParameters {
   Qt::Alignment alignment;
   QString font;
   double font_size = 0;
   QString font_color;
 };
 
+struct TitleParameters {
+  QRect title_rect;
+  TextParameters text_parameters;
+};
+
 struct PhotoTextParameters {
-  std::vector<QPoint> photo_text_anchors;
-  Qt::Alignment alignment;
-  QString font;
-  double font_size = 0;
-  QString font_color;
+  QPoint text_anchor;
+  TextParameters text_parameters;
+};
+
+struct MonthParameters {
+  PhotoTextParameters text_parameters;
+  QRectF photo_slot;
+  FrameParameters frame_data;
+};
+
+struct PhotoFrameParameters {
+  TitleParameters title_parameters;
+  std::vector<MonthParameters> months_parameters;
 };
 
 struct TemplateWidgetParameters {
   Core::FrameControl &control;
   QString id;
-  TitleParameters title_parameters;
-  PhotoTextParameters photo_text_parameters;
-  std::vector<QRectF> photo_slots;
-
-  // std::vector<QRectF> photo_text_slots;
-  std::vector<FrameParameters> frame_data;
 };
 
 class ForegroundWidget;
@@ -81,12 +87,14 @@ private:
   void initMonthPhotoWidgets();
   void initPhotoTuneWidget(Core::FrameControl &control);
   void createForegroundWidget();
-  void createTitleTextWidget(const TitleParameters &parameters,
+  void createTitleTextWidget(const TextParameters &parameters,
                              bool is_rendering);
-  void createPhotoTextWidgets(const PhotoTextParameters &parameters,
+  void createPhotoTextWidgets(const TextParameters &parameters,
                               bool is_rendering);
   void createRemoveButtonWidgets(bool is_rendering);
   void InitPhotos(Core::FrameControl &control);
+
+  void fillParameters(const PhotoFrameParameters &parameters);
 
 protected:
   QString id_;

@@ -4,6 +4,7 @@
 
 namespace FirstYear::UI {
 
+static const char *c_foreground_parameters_str = ":images/frame_%1/%1";
 static const char *c_foreground_str = ":images/frame_%1/foreground";
 static const char *c_foreground_to_render_str =
     ":images/frame_%1/foreground_to_render";
@@ -48,15 +49,7 @@ private:
   QPixmap image_to_paint_;
 };
 
-static const char *c_title_font_color_str = "#669692";
-static const char *c_month_text_font_color_str = "#969692";
-
-static const char *c_title_font_family_str = "Bellany";
-static const char *c_month_text_font_family_str = "Bellany";
 static const char *c_title_defoult_text_str = "My First Year";
-
-static const int c_title_text_font_size = 60;
-static const int c_month_text_font_size = 25;
 
 DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
                                              Core::FrameControl &control,
@@ -64,43 +57,7 @@ DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
 
     : TemplateWidgetBase(
           parent,
-          {control,
-           templateId(),
-           {{0, 25, 587, 75},
-            Qt::AlignCenter,
-            c_title_font_family_str,
-            c_title_text_font_size,
-            c_title_font_color_str},
-           {{{105, 238}, // month text center or left corner
-             {233, 238},
-             {362, 238},
-             {492, 238},
-             {105, 385},
-             {233, 385},
-             {362, 385},
-             {492, 385},
-             {105, 531},
-             {233, 531},
-             {362, 531},
-             {492, 531}},
-            Qt::AlignCenter,
-            c_month_text_font_family_str,
-            c_month_text_font_size,
-            c_month_text_font_color_str},
-           {{48, 122, 114, 114}, // month frame rect
-            {176, 122, 114, 114},
-            {305, 122, 114, 114},
-            {435, 122, 114, 114},
-            {48, 270, 114, 114},
-            {176, 270, 114, 114},
-            {305, 270, 114, 114},
-            {435, 270, 114, 114},
-            {48, 416, 114, 114},
-            {176, 416, 114, 114},
-            {305, 416, 114, 114},
-            {435, 416, 114, 114}},
-           {{FrameParameters::TYPE::RECT,
-             QSizeF{114, 114}}}}, // month frame shape, if all are equal
+          {control, templateId()}, // month frame shape, if all are equal
           render_state) {
 
   // reload(control);
@@ -114,50 +71,7 @@ DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
                                                Core::FrameControl &control,
                                                bool render_state)
 
-    : TemplateWidgetBase(parent,
-                         {control,
-                          templateId(),
-                          {{40, 5, 600, 15}, Qt::AlignCenter},
-                          {{{97, 160},
-                            {246, 160},
-                            {390, 160},
-                            {538, 160},
-                            {97, 310},
-                            {246, 310},
-                            {390, 310},
-                            {538, 310},
-                            {97, 455},
-                            {246, 455},
-                            {390, 455},
-                            {538, 455}},
-                           Qt::AlignCenter},
-
-                          {{35, 35, 125, 125},
-                           {184, 35, 125, 125},
-                           {328, 35, 125, 125},
-                           {476, 35, 125, 125},
-                           {35, 185, 125, 125},
-                           {184, 185, 125, 125},
-                           {328, 185, 125, 125},
-                           {476, 185, 125, 125},
-                           {35, 330, 125, 125},
-                           {184, 330, 125, 125},
-                           {328, 330, 125, 125},
-                           {476, 330, 125, 125}},
-
-                          {{FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::RECT, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}},
-                           {FrameParameters::TYPE::ROUND, QSizeF{125, 125}}}},
-                         render_state) {
+    : TemplateWidgetBase(parent, {control, templateId()}, render_state) {
 
   // reload(control);
 }
@@ -166,35 +80,329 @@ QString DefaultTemplateWidget2::templateId() { return "2"; }
 
 ////////////////////////////////////////////////////////////////////
 ///
-TemplateWidgetBase::TemplateWidgetBase(
-    QWidget *parent, const TemplateWidgetParameters &parameters,
-    bool render_state)
-    : QWidget(parent), id_(parameters.id),
-      title_slot_real_(std::move(parameters.title_parameters.title_rect)),
-      title_text_font_size_real_(c_title_text_font_size),
-      photo_slots_real_(std::move(parameters.photo_slots)),
-      photo_text_anchors_real_(
-          std::move(parameters.photo_text_parameters.photo_text_anchors)),
-      // photo_text_aligment_(parameters.photo_text_parameters.aligment),
-      photo_text_font_size_real_(parameters.photo_text_parameters.font_size),
-      frame_data_(std::move(parameters.frame_data)),
-      control_(parameters.control), render_state_(render_state) {
+///
 
-  UNI_ASSERT(frame_data_.size() == 1 || frame_data_.size() == 12);
-  UNI_ASSERT(photo_slots_real_.size() == 12);
-  UNI_ASSERT(photo_text_anchors_real_.size() == 12);
+void writeRect(QJsonObject &obj, QString name, QRect rect) {
+  QJsonObject rect_obj;
+  obj.insert(name, rect_obj);
+  rect_obj.insert("left", rect.left());
+  rect_obj.insert("top", rect.top());
+  rect_obj.insert("right", rect.right());
+  rect_obj.insert("bottom", rect.bottom());
+}
+
+void writeRect(QJsonObject &obj, QString name, QRectF rect) {
+  QJsonObject rect_obj;
+
+  rect_obj.insert("left", rect.left());
+  rect_obj.insert("top", rect.top());
+  rect_obj.insert("right", rect.right());
+  rect_obj.insert("bottom", rect.bottom());
+  obj.insert(name, rect_obj);
+}
+
+void writeJson(const TemplateWidgetParameters &) {
+  /*   QJsonObject frame;
+     QJsonObject title;
+     QJsonObject mothes;
+     QJsonObject rect;
+
+     writeRect(title, "rect", parameters.title_parameters.title_rect);
+     title.insert("alignment", (short)parameters.title_parameters.alignment);
+     title.insert("font", parameters.title_parameters.font);
+     title.insert("font_size", parameters.title_parameters.font_size);
+     title.insert("font_color", parameters.title_parameters.font_color);
+
+     for (int i = 0; i < 12; ++i) {
+         QJsonObject month;
+
+         QJsonObject text;
+         text.insert("alignment",
+     (short)parameters.photo_text_parameters.alignment); text.insert("font",
+     parameters.photo_text_parameters.font); text.insert("font_size",
+     parameters.photo_text_parameters.font_size); text.insert("font_color",
+     parameters.photo_text_parameters.font_color); month.insert("text", text);
+
+         QJsonObject anchor;
+         anchor.insert("x",
+     parameters.photo_text_parameters.photo_text_anchors[i].x());
+         anchor.insert("y",
+     parameters.photo_text_parameters.photo_text_anchors[i].y());
+         month.insert("anchor",  anchor);
+
+         QJsonObject slot;
+         writeRect(slot, "rect", parameters.photo_slots[i]);
+         month.insert("slot",  slot);
+
+         QJsonObject frame_data;
+
+         const  FrameParameters& params = parameters.frame_data.size() > 1?
+     parameters.frame_data[i] : parameters.frame_data[0];
+         frame_data.insert("type", (int)params.type);
+         month.insert("frame_data",  frame_data);
+
+         QJsonObject data;
+         month.insert("data", params.data.toJsonValue());
+         mothes.insert(QString("%1").arg(i),  month);
+
+     }
+     frame.insert("id",  parameters.id);
+     frame.insert("title",  title);
+     frame.insert("mothes",  mothes);
+     QJsonDocument project_metadata_document(frame);
+
+     QFile file
+     (QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+
+     "/FirstYear/FrameData/"+parameters.id); file.open(QIODevice::WriteOnly);
+     file.write(project_metadata_document.toJson());
+     file.close();*/
+}
+
+bool ReadString(const QJsonObject &json, QString key, QString &value) {
+  if (const QJsonValue json_value = json[key]; json_value.isString()) {
+    value = json_value.toString();
+    return true;
+  }
+
+  spdlog::error("Error while reading a string from json. {}",
+                key.toStdString());
+  return false;
+}
+
+bool ReadInt(const QJsonObject &json, QString key, int &value) {
+  if (const QJsonValue json_value = json[key]; json_value.isDouble()) {
+    value = json_value.toInt();
+    return true;
+  }
+
+  spdlog::error("Error while reading an int from json. {}", key.toStdString());
+  return false;
+}
+
+bool ReadDouble(const QJsonObject &json, QString key, double &value) {
+  if (const QJsonValue json_value = json[key]; json_value.isDouble()) {
+    value = json_value.toDouble();
+    return true;
+  }
+
+  spdlog::error("Error while reading a double from json. {}",
+                key.toStdString());
+  return false;
+}
+
+bool ReadSizeF(const QJsonObject &json, QString key, QSizeF &value) {
+  if (const auto data = json[key]; data.isObject()) {
+    const auto object = data.toObject();
+    bool result = ReadDouble(object, "width", value.rwidth());
+    result = result && ReadDouble(object, "height", value.rheight());
+    return result;
+  }
+
+  spdlog::error("Error while reading an QSizeF from json. {}",
+                key.toStdString());
+  return false;
+}
+
+bool ReadPoint(const QJsonObject &json, QString key, QPoint &value) {
+  if (const auto data = json[key]; data.isObject()) {
+    const auto object = data.toObject();
+    bool result = ReadInt(object, "x", value.rx());
+    result = result && ReadInt(object, "y", value.ry());
+    return result;
+  }
+
+  spdlog::error("Error while reading an QPoint from json. {}",
+                key.toStdString());
+  return false;
+}
+
+bool ReadRect(const QJsonObject &obj, QString name, QRect &rect) {
+  bool result = true;
+  if (const auto data = obj[name]; data.isObject()) {
+    const auto rect_obj = data.toObject();
+
+    int left = 0;
+    result = result && ReadInt(rect_obj, "left", left);
+    int top = 0;
+    result = result && ReadInt(rect_obj, "top", top);
+    int right = 0;
+    result = result && ReadInt(rect_obj, "right", right);
+    int bottom = 0;
+    result = result && ReadInt(rect_obj, "bottom", bottom);
+
+    rect.setBottomRight({right, bottom});
+    rect.setTopLeft({left, top});
+    return result;
+  }
+  return false;
+}
+
+bool ReadRectF(const QJsonObject &obj, QString name, QRectF &rect) {
+  bool result = true;
+  if (const auto data = obj[name]; data.isObject()) {
+    const auto rect_obj = data.toObject();
+
+    double left = 0;
+    result = result && ReadDouble(rect_obj, "left", left);
+    double top = 0;
+    result = result && ReadDouble(rect_obj, "top", top);
+    double right = 0;
+    result = result && ReadDouble(rect_obj, "right", right);
+    double bottom = 0;
+    result = result && ReadDouble(rect_obj, "bottom", bottom);
+
+    rect.setBottomRight({right, bottom});
+    rect.setTopLeft({left, top});
+    return result;
+  }
+  return false;
+}
+
+bool ReadTextParameters(const QJsonObject &object, TextParameters &parameters) {
+  bool result = true;
+
+  int alignment = 0;
+  result = result && ReadInt(object, "alignment", alignment);
+  parameters.alignment = (Qt::Alignment)alignment;
+
+  result = result && ReadString(object, "font", parameters.font);
+
+  result = result && ReadDouble(object, "font_size", parameters.font_size);
+
+  result = result && ReadString(object, "font_color", parameters.font_color);
+
+  return result;
+}
+
+bool readTitle(const QJsonObject &json, QString name,
+               TitleParameters &parameters) {
+  if (const auto data = json[name]; data.isObject()) {
+    const auto object = data.toObject();
+
+    bool result = true;
+
+    result = result && ReadRect(object, "rect", parameters.title_rect);
+
+    result = result && ReadTextParameters(object, parameters.text_parameters);
+
+    return result;
+  }
+  return false;
+}
+
+bool ReadPhotoTextParameters(const QJsonObject &json,
+                             PhotoTextParameters &parameters) {
+  bool result = true;
+
+  result = result && ReadPoint(json, "anchor", parameters.text_anchor);
+
+  if (const auto data = json["text"]; data.isObject()) {
+    const auto object = data.toObject();
+    result = result && ReadTextParameters(object, parameters.text_parameters);
+  }
+  return result;
+}
+
+bool readMonth(const QJsonObject &json, QString name,
+               MonthParameters &parameters) {
+  if (const auto data = json[name]; data.isObject()) {
+    const auto object = data.toObject();
+
+    bool result = true;
+
+    result =
+        result && ReadPhotoTextParameters(object, parameters.text_parameters);
+    result = result && ReadRectF(object, "slot", parameters.photo_slot);
+
+    if (const auto frame_data = object["frame_data"]; frame_data.isObject()) {
+      const auto frame_data_object = frame_data.toObject();
+      int type = 0;
+      result = result && ReadInt(frame_data_object, "type", type);
+      parameters.frame_data.type = (FrameParameters::TYPE)type;
+
+      if (parameters.frame_data.type == FrameParameters::TYPE::RECT ||
+          parameters.frame_data.type == FrameParameters::TYPE::ROUND) {
+        QSizeF size;
+        result = result && ReadSizeF(frame_data_object, "data", size);
+        parameters.frame_data.data = size;
+      }
+    }
+
+    return result;
+  }
+  return false;
+}
+
+bool readJson(const QString &id, PhotoFrameParameters &parameters) {
+
+  QFile file(QString(c_foreground_parameters_str).arg(id));
+  if (!file.open(QIODevice::ReadOnly)) {
+    spdlog::error("Couldn't open file {0}.", file.fileName().toStdString());
+    return false;
+  }
+  const QByteArray data = file.readAll();
+  file.close();
+
+  const QJsonDocument document(QJsonDocument::fromJson(data));
+
+  auto json = document.object();
+
+  readTitle(json, "title", parameters.title_parameters);
+
+  bool result = true;
+  if (const auto data = json["mothes"]; data.isObject()) {
+    const auto object = data.toObject();
+
+    parameters.months_parameters.resize(12);
+    for (int i = 0; i < 12; ++i) {
+      result = result && readMonth(object, QString::number(i),
+                                   parameters.months_parameters[i]);
+    }
+  }
+  return result;
+}
+
+void TemplateWidgetBase::fillParameters(
+    const PhotoFrameParameters &parameters) {
+  UNI_ASSERT(parameters.months_parameters.size() == 12);
+
+  title_slot_real_ = std::move(parameters.title_parameters.title_rect);
+  title_text_font_size_real_ =
+      parameters.title_parameters.text_parameters.font_size;
+
+  photo_text_font_size_real_ =
+      parameters.months_parameters[0].text_parameters.text_parameters.font_size;
+
+  photo_slots_real_.resize(12);
+  frame_data_.resize(12);
+  photo_text_anchors_real_.resize(12);
+  for (int i = 0; i < 12; i++) {
+    const auto &months_parameters = parameters.months_parameters[i];
+
+    photo_slots_real_[i] = months_parameters.photo_slot;
+    frame_data_[i] = months_parameters.frame_data;
+    photo_text_anchors_real_[i] = months_parameters.text_parameters.text_anchor;
+  }
+}
+TemplateWidgetBase::TemplateWidgetBase(
+    QWidget *parent, const TemplateWidgetParameters &widget_parameters,
+    bool render_state)
+    : QWidget(parent), id_(widget_parameters.id),
+      control_(widget_parameters.control), render_state_(render_state) {
+
   UNI_ASSERT(!id_.isEmpty());
+
+  PhotoFrameParameters parameters;
+
+  readJson(widget_parameters.id, parameters);
+  fillParameters(parameters);
 
   setContentsMargins(0, 0, 0, 0);
   setAutoFillBackground(true);
 
-  foreground_ = QPixmap(
-      render_state ? QString(c_foreground_to_render_str).arg(parameters.id)
-                   : QString(c_foreground_str).arg(parameters.id));
-
-  if (frame_data_.size() == 1) {
-    frame_data_.resize(12, frame_data_[0]);
-  }
+  foreground_ =
+      QPixmap(render_state ? QString(c_foreground_to_render_str).arg(id_)
+                           : QString(c_foreground_str).arg(id_));
 
   photo_slots_.resize(12);
 
@@ -207,13 +415,16 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   createForegroundWidget();
 
-  createTitleTextWidget(parameters.title_parameters, render_state);
-  createPhotoTextWidgets(parameters.photo_text_parameters, render_state);
+  createTitleTextWidget(parameters.title_parameters.text_parameters,
+                        render_state);
+  createPhotoTextWidgets(
+      parameters.months_parameters[0].text_parameters.text_parameters,
+      render_state);
   createRemoveButtonWidgets(render_state);
 }
 
-void TemplateWidgetBase::createTitleTextWidget(
-    const TitleParameters &parameters, bool is_rendering) {
+void TemplateWidgetBase::createTitleTextWidget(const TextParameters &parameters,
+                                               bool is_rendering) {
   title_text_widget_ =
       new ClickableLabel(this, parameters.font_size, parameters.font_color,
                          parameters.font, is_rendering);
@@ -242,7 +453,7 @@ void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
 }
 
 void TemplateWidgetBase::createPhotoTextWidgets(
-    const PhotoTextParameters &parameters, bool) {
+    const TextParameters &parameters, bool) {
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_text_widgets_[i] =
@@ -441,6 +652,11 @@ QPixmap TemplateWidgetBase::renderFrame() {
   painter.setBrush(QColor("#F2E6D3"));
   painter.drawRect(QRect{image_top - QPoint{shadow_with, shadow_with},
                          image.size() / dpr + frame_size * 2 / k});
+
+  auto svg = new QSvgRenderer(this);
+  svg->load(QString(":/images/icons/wood"));
+  svg->render(&painter, frame_rect);
+
   painter.drawPixmap(image_top, image);
 
   return result_image;

@@ -101,7 +101,7 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project) {
             return false;
           }
           const auto data = project_metadata_document.toJson();
-          const auto res_size = file.write(project_metadata_document.toJson());
+          const auto res_size = file.write(data);
           if (res_size != data.size()) {
             return false;
           }

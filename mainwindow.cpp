@@ -221,12 +221,6 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
       new TemplateWidgetHolder(
           nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
       new TemplateWidgetHolder(
-          nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
-      new TemplateWidgetHolder(
-          nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
-      new TemplateWidgetHolder(
-          nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
-      new TemplateWidgetHolder(
           nullptr, new DefaultTemplateWidget2(nullptr, frame_control))};
 
   for (auto &widget : frame_widgets_) {
@@ -627,16 +621,11 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (preview_)
     preview_->setGeometry(rect());
 
-  // #ifdef Q_OS_ANDROID
-  //  bool is_portrait = QGuiApplication::primaryScreen()->orientation() ==
-  //                    Qt::PortraitOrientation;
-  // #else
-  bool is_portrait = width() < height();
-  // #endif
-
-  int drag_and_drop_width = 0;
-  int drag_and_drop_top = 0;
   if (drag_and_drop_text_) {
+    bool is_portrait = width() < height();
+    int drag_and_drop_width = 0;
+    int drag_and_drop_top = 0;
+
     if (is_portrait) {
       drag_and_drop_width = width();
       drag_and_drop_top = height() / 6;

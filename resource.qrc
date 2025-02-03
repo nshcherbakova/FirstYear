@@ -12,17 +12,34 @@
         <file alias="month_stub_9">resources/Images/month_stubs/month_image_stub.svg</file>
         <file alias="month_stub_10">resources/Images/month_stubs/month_image_stub.svg</file>
         <file alias="month_stub_11">resources/Images/month_stubs/month_image_stub.svg</file>
+
+<file alias="month_stub_0@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_1@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_2@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_3@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_4@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_5@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_6@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_7@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_8@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_9@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_10@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_11@2x">resources/Images/month_stubs/month_image_stub.svg</file>
     </qresource>
     <qresource prefix="/images/frame_1">
         <file alias="foreground">resources/Images/frame_1/foreground.png</file>
         <file alias="foreground_to_render">resources/Images/frame_1/foreground_to_render.png</file>
+        <file alias="1">resources/Images/frame_1/1</file>
     </qresource>
     <qresource prefix="/images/frame_2">
         <file alias="foreground">resources/Images/frame_2/foreground.png</file>
         <file alias="foreground_to_render">resources/Images/frame_2/foreground_to_render.png</file>
+          <file alias="2">resources/Images/frame_2/2</file>
     </qresource>
     <qresource prefix="/images/tune_photo"/>
     <qresource prefix="/images/icons">
+    <file alias="wood">resources/Images/wood.svg</file>
+    <file alias="wood@2x">resources/Images/wood.svg</file>
         <file alias="edit">resources/Images/edit.svg</file>
         <file alias="edit@2x">resources/Images/edit.svg</file>
         <file alias="share">resources/Images/share.svg</file>
