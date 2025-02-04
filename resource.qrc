@@ -56,15 +56,21 @@
     <qresource prefix="/fonts">
         <file alias="header_1_font">resources/Fonts/Bellany.otf</file>
         <file alias="text_1_font">resources/Fonts/MyKidsHandwritten-8MZrn.otf</file>
+        <file alias="header_2_font">resources/Fonts/Timeburner-xJB8.ttf</file>
     </qresource>
-    <qresource prefix="/frames/frame_1">
-        <file alias="foreground">resources/Frames/frame_1/foreground.png</file>
-        <file alias="foreground_to_render">resources/Frames/frame_1/foreground_to_render.png</file>
-        <file alias="1">resources/Frames/frame_1/1.json</file>
+    <qresource prefix="/frames/1">
+        <file alias="foreground">resources/Frames/1/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/1/foreground_to_render.png</file>
+        <file alias="properties">resources/Frames/1/properties.json</file>
     </qresource>
-    <qresource prefix="/frames/frame_2">
-        <file alias="foreground">resources/Frames/frame_2/foreground.png</file>
-        <file alias="foreground_to_render">resources/Frames/frame_2/foreground_to_render.png</file>
-          <file alias="2">resources/Frames/frame_2/2.json</file>
+    <qresource prefix="/frames/2">
+        <file alias="foreground">resources/Frames/2/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/2/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/2/properties.json</file>
+    </qresource>
+    <qresource prefix="/frames/colors">
+        <file alias="foreground">resources/Frames/colors/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/colors/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/colors/properties.json</file>
     </qresource>
 </RCC>

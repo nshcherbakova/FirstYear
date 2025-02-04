@@ -30,7 +30,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  MainWindow(Core::FrameControl &frame_control);
+  MainWindow(Core::FrameControl &frame_control, const QStringList &frames);
   ~MainWindow();
 
 signals:
@@ -38,7 +38,8 @@ signals:
 
 private:
   void CreatePhotoTuneWidget(Core::FrameControl &frame_control);
-  void CreateFrames(Core::FrameControl &frame_control);
+  void CreateFrames(Core::FrameControl &frame_control,
+                    const QStringList &frames);
   void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateButtons(FirstYear::Core::FrameControl &frame_control);

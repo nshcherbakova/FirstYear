@@ -1,0 +1,317 @@
+{
+    "id": "colors",
+    "mothes": {
+        "0": {
+            "anchor": {
+                "x": 30,
+                "y": 121
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 240,
+                    "left": 30,
+                    "right": 149,
+                    "top": 121
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "1": {
+            "anchor": {
+                "x": 169,
+                "y": 121
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 240,
+                    "left": 169,
+                    "right": 289,
+                    "top": 121
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "10": {
+            "anchor": {
+                "x": 309,
+                "y": 441
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 559,
+                    "left": 309,
+                    "right": 429,
+                    "top": 441
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "11": {
+            "anchor": {
+                "x": 449,
+                "y": 441
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 559,
+                    "left": 449,
+                    "right": 569,
+                    "top": 440
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "2": {
+            "anchor": {
+                "x": 309,
+                "y": 121
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 240,
+                    "left": 309,
+                    "right": 428,
+                    "top": 121
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "3": {
+            "anchor": {
+                "x": 449,
+                "y": 121
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 240,
+                    "left": 449,
+                    "right": 570,
+                    "top": 121
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "4": {
+            "anchor": {
+                "x": 30,
+                "y": 280
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 399,
+                    "left": 30,
+                    "right": 151,
+                    "top": 280
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "5": {
+            "anchor": {
+                "x": 170,
+                "y": 280
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 399,
+                    "left": 170,
+                    "right": 288,
+                    "top": 280
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "6": {
+            "anchor": {
+                "x": 309,
+                "y": 280
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 399,
+                    "left": 309,
+                    "right": 428,
+                    "top": 280
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "7": {
+            "anchor": {
+                "x": 449,
+                "y": 280
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 400,
+                    "left": 449,
+                    "right": 569,
+                    "top": 280
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "8": {
+            "anchor": {
+                "x": 30,
+                "y": 440
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 559,
+                    "left": 30,
+                    "right": 151,
+                    "top": 440
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        },
+        "9": {
+            "anchor": {
+                "x": 170,
+                "y": 440
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 120,
+                    "height": 120
+                }
+            },
+            "slot": {
+                    "bottom": 559,
+                    "left": 170,
+                    "right": 289,
+                    "top": 440
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#000000",
+                "font_size": 25
+            }
+        }
+    },
+    "title": {
+        "alignment": 132,
+        "font": "Timeburner",
+        "font_color": "#000000",
+        "font_size": 60,
+        "rect": {
+            "bottom": 100,
+            "left": 0,
+            "right": 587,
+            "top": 25
+        }
+    }
+}

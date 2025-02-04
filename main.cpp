@@ -5,6 +5,8 @@ static const char *c_org_str = "natshch";
 static const char *c_app_str = "FirstYear";
 static const char *c_log_str = "/logs/FirstYearLog.txt";
 static const char *c_logger_str = "logger";
+static const char *c_fonts_dir_str = ":/fonts";
+static const QStringList frames = {"1", "2", "colors"};
 
 void initLogger() {
   try {
@@ -34,7 +36,7 @@ void initLogger() {
   } catch (const spdlog::spdlog_ex &ex) {
 #ifndef Q_OS_IOS
     // TODO fix iOS exception
-    //UNI_ASSERT(false);
+    // UNI_ASSERT(false);
 #endif
   }
 }
@@ -134,13 +136,17 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents);
   QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
 
-  QFontDatabase::addApplicationFont(":/fonts/header_1_font");
-  QFontDatabase::addApplicationFont(":/fonts/text_1_font");
+  QDirIterator it(c_fonts_dir_str);
+  while (it.hasNext()) {
+    const QString fn = it.nextFileInfo().fileName();
+    QFontDatabase::addApplicationFont(QString(c_fonts_dir_str) + "/" + fn);
+    qDebug() << "Font file: " << fn;
+  }
 
   FirstYear::Core::FrameControl frame_control;
   frame_control.LoadProject();
 
-  FirstYear::UI::MainWindow w(frame_control);
+  FirstYear::UI::MainWindow w(frame_control, frames);
   // todo list of farmes and registration system
 
   w.show();

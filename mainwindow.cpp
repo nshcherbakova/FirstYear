@@ -69,7 +69,7 @@ private:
   QScrollArea *swipe_widget_ = nullptr;
 };
 
-MainWindow::MainWindow(FrameControl &frame_control)
+MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
     : QMainWindow(), project_control_(frame_control) {
 
 #ifdef Q_OS_ANDROID
@@ -96,7 +96,7 @@ MainWindow::MainWindow(FrameControl &frame_control)
 
   CreatePhotoTuneWidget(frame_control);
   CreateDragAndDropText(frame_control);
-  CreateFrames(frame_control);
+  CreateFrames(frame_control, frames);
   CreateLineEditWidget(frame_control);
   CreateSwipeWidget(frame_control);
   CreateButtons(frame_control);
@@ -215,13 +215,14 @@ void MainWindow::CreatePhotoTuneWidget(
           });
 }
 
-void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control) {
+void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
+                              const QStringList &frames) {
 
-  frame_widgets_ = std::vector<TemplateWidgetHolder *>{
-      new TemplateWidgetHolder(
-          nullptr, new DefaultTemplateWidget(nullptr, frame_control)),
-      new TemplateWidgetHolder(
-          nullptr, new DefaultTemplateWidget2(nullptr, frame_control))};
+  auto widgets = FrameWidgetsFactory::createWidgets(frames, frame_control);
+
+  for (const auto &widget : widgets) {
+    frame_widgets_.push_back(new TemplateWidgetHolder(nullptr, widget));
+  }
 
   for (auto &widget : frame_widgets_) {
     widget->setGeometry(rect());
@@ -565,13 +566,8 @@ void MainWindow::Share(const QPixmap &pixmap) const {
 }
 
 QPixmap MainWindow::Render(Core::FrameControl &control) {
-  if (control.CurrentProject()->frame_id_ ==
-      DefaultTemplateWidget::templateId())
-    return DefaultTemplateWidget(this, control, true).renderFrame();
-  else if (control.CurrentProject()->frame_id_ ==
-           DefaultTemplateWidget2::templateId())
-    return DefaultTemplateWidget2(this, control, true).renderFrame();
-  return DefaultTemplateWidget(this, control, true).renderFrame();
+  return FrameWidgetsFactory::renderWidget(control.CurrentProject()->frame_id_,
+                                           this, control);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e) {

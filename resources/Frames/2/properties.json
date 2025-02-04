@@ -20,8 +20,8 @@
                     "top": 121
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -45,8 +45,8 @@
                     "top": 121
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -70,8 +70,8 @@
                     "top": 441
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -95,8 +95,8 @@
                     "top": 440
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -120,8 +120,8 @@
                     "top": 121
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -145,8 +145,8 @@
                     "top": 121
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -170,8 +170,8 @@
                     "top": 280
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -195,8 +195,8 @@
                     "top": 280
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -220,8 +220,8 @@
                     "top": 280
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -245,8 +245,8 @@
                     "top": 280
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -270,8 +270,8 @@
                     "top": 440
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -295,8 +295,8 @@
                     "top": 440
             },
             "text": {
-                "alignment": 132,
-                "font": "Bellany",
+                "alignment": 1,
+                "font": "Timeburner",
                 "font_color": "#000000",
                 "font_size": 25
             }
@@ -304,8 +304,8 @@
     },
     "title": {
         "alignment": 132,
-        "font": "Bellany",
-        "font_color": "#669692",
+        "font": "Timeburner",
+        "font_color": "#000000",
         "font_size": 60,
         "rect": {
             "bottom": 100,

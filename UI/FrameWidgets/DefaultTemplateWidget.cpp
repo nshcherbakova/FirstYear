@@ -5,9 +5,9 @@
 
 namespace FirstYear::UI {
 
-static const char *c_foreground_str = ":frames/frame_%1/foreground";
+static const char *c_foreground_str = ":frames/%1/foreground";
 static const char *c_foreground_to_render_str =
-    ":frames/frame_%1/foreground_to_render";
+    ":frames/%1/foreground_to_render";
 // static const int c_max_title_lengh = 20;
 
 class ForegroundWidget final : public QWidget {
@@ -51,59 +51,28 @@ private:
 
 static const char *c_title_defoult_text_str = "My First Year";
 
-DefaultTemplateWidget::DefaultTemplateWidget(QWidget *parent,
-                                             Core::FrameControl &control,
-                                             bool render_state)
-
-    : TemplateWidgetBase(
-          parent,
-          {control, templateId()}, // month frame shape, if all are equal
-          render_state) {
-
-  // reload(control);
-}
-
-QString DefaultTemplateWidget::templateId() { return "1"; }
-
-////////////////////////////////////////////////////////////////////
-///
-DefaultTemplateWidget2::DefaultTemplateWidget2(QWidget *parent,
-                                               Core::FrameControl &control,
-                                               bool render_state)
-
-    : TemplateWidgetBase(parent, {control, templateId()}, render_state) {
-
-  // reload(control);
-}
-
-QString DefaultTemplateWidget2::templateId() { return "2"; }
-
 ////////////////////////////////////////////////////////////////////
 ///
 ///
+///
+/// class FrameWidgetsFactory
 
-void TemplateWidgetBase::fillParameters(
-    const PhotoFrameParameters &parameters) {
-  UNI_ASSERT(parameters.months_parameters.size() == 12);
-
-  title_slot_real_ = std::move(parameters.title_parameters.title_rect);
-  title_text_font_size_real_ =
-      parameters.title_parameters.text_parameters.font_size;
-
-  photo_text_font_size_real_ =
-      parameters.months_parameters[0].text_parameters.text_parameters.font_size;
-
-  photo_slots_real_.resize(12);
-  frame_data_.resize(12);
-  photo_text_anchors_real_.resize(12);
-  for (int i = 0; i < 12; i++) {
-    const auto &months_parameters = parameters.months_parameters[i];
-
-    photo_slots_real_[i] = months_parameters.photo_slot;
-    frame_data_[i] = months_parameters.frame_data;
-    photo_text_anchors_real_[i] = months_parameters.text_parameters.text_anchor;
+std::vector<TemplateWidgetBase *>
+FrameWidgetsFactory::createWidgets(const QStringList &ids,
+                                   Core::FrameControl &control) {
+  std::vector<TemplateWidgetBase *> widgets;
+  widgets.reserve(ids.size());
+  for (const auto &id : ids) {
+    widgets.push_back(new TemplateWidgetBase(nullptr, {control, id}));
   }
+  return widgets;
 }
+
+QPixmap FrameWidgetsFactory::renderWidget(const QString &id, QWidget *parent,
+                                          Core::FrameControl &control) {
+  return TemplateWidgetBase(parent, {control, id}, true).renderFrame();
+}
+
 TemplateWidgetBase::TemplateWidgetBase(
     QWidget *parent, const TemplateWidgetParameters &widget_parameters,
     bool render_state)
@@ -141,6 +110,29 @@ TemplateWidgetBase::TemplateWidgetBase(
       parameters.months_parameters[0].text_parameters.text_parameters,
       render_state);
   createRemoveButtonWidgets(render_state);
+}
+
+void TemplateWidgetBase::fillParameters(
+    const PhotoFrameParameters &parameters) {
+  UNI_ASSERT(parameters.months_parameters.size() == 12);
+
+  title_slot_real_ = std::move(parameters.title_parameters.title_rect);
+  title_text_font_size_real_ =
+      parameters.title_parameters.text_parameters.font_size;
+
+  photo_text_font_size_real_ =
+      parameters.months_parameters[0].text_parameters.text_parameters.font_size;
+
+  photo_slots_real_.resize(12);
+  frame_data_.resize(12);
+  photo_text_anchors_real_.resize(12);
+  for (int i = 0; i < 12; i++) {
+    const auto &months_parameters = parameters.months_parameters[i];
+
+    photo_slots_real_[i] = months_parameters.photo_slot;
+    frame_data_[i] = months_parameters.frame_data;
+    photo_text_anchors_real_[i] = months_parameters.text_parameters.text_anchor;
+  }
 }
 
 void TemplateWidgetBase::createTitleTextWidget(const TextParameters &parameters,
