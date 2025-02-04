@@ -8,6 +8,9 @@
 constexpr const char *DEF_PROGECT_NAME = "Frame";
 constexpr const char *c_stub_month_photo_template_str =
     ":images/month_stubs/month_stub_%1";
+static const QStringList monthes = {"one",  "two", "three",  "four",
+                                    "five", "six", "seven",  "eight",
+                                    "nine", "ten", "eleven", "twelve"};
 
 namespace FirstYear::Core {
 
@@ -53,14 +56,11 @@ QString FrameControl::LastProjectName() const { return DEF_PROGECT_NAME; }
 void FrameControl::CreateNewProject() {
   current_project_ = std::make_shared<Project>();
   current_project_->monthes_.resize(12);
+
   for (int month_number = 0;
        month_number < (int)current_project_->monthes_.size(); month_number++) {
     auto &month = current_project_->monthes_[month_number];
-    if (month_number > 0) {
-      month.text = QString("%1 months").arg(month_number + 1);
-    } else {
-      month.text = QString("1 month");
-    }
+    month.text = monthes[month_number];
   }
 }
 } // namespace FirstYear::Core

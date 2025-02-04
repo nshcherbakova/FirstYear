@@ -6,7 +6,7 @@ static const char *c_app_str = "FirstYear";
 static const char *c_log_str = "/logs/FirstYearLog.txt";
 static const char *c_logger_str = "logger";
 static const char *c_fonts_dir_str = ":/fonts";
-static const QStringList frames = {"1", "2", "colors"};
+static const char *c_frames_dir_str = ":/frames";
 
 void initLogger() {
   try {
@@ -116,6 +116,26 @@ void setScreenOrientation() {
 
 #endif
 
+QStringList collectFrames() {
+  QStringList frames;
+  QDirIterator it(c_frames_dir_str);
+  while (it.hasNext()) {
+    const auto fn = it.nextFileInfo();
+    qDebug() << fn.fileName();
+    frames << fn.fileName();
+  }
+  return frames;
+}
+
+void loadFonts() {
+  QDirIterator it(c_fonts_dir_str);
+  while (it.hasNext()) {
+    const QString fn = it.nextFileInfo().fileName();
+    QFontDatabase::addApplicationFont(QString(c_fonts_dir_str) + "/" + fn);
+    qDebug() << "Font file: " << fn;
+  }
+}
+
 int main(int argc, char *argv[]) {
 
 #ifdef Q_OS_ANDROID
@@ -136,15 +156,12 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents);
   QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
 
-  QDirIterator it(c_fonts_dir_str);
-  while (it.hasNext()) {
-    const QString fn = it.nextFileInfo().fileName();
-    QFontDatabase::addApplicationFont(QString(c_fonts_dir_str) + "/" + fn);
-    qDebug() << "Font file: " << fn;
-  }
+  loadFonts();
 
   FirstYear::Core::FrameControl frame_control;
   frame_control.LoadProject();
+
+  const auto frames = collectFrames();
 
   FirstYear::UI::MainWindow w(frame_control, frames);
   // todo list of farmes and registration system
