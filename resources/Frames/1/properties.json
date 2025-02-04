@@ -17,7 +17,10 @@
                     "bottom": 236,
                     "left": 48,
                     "right": 162,
-                    "top": 122
+                    "top": 122,
+                    "width": 114,
+                    "height": 114
+
             },
             "text": {
                 "alignment": 132,
@@ -42,7 +45,9 @@
                     "bottom": 236,
                     "left": 176,
                     "right": 290,
-                    "top": 122
+                    "top": 122,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -67,7 +72,9 @@
                     "bottom": 530,
                     "left": 305,
                     "right": 419,
-                    "top": 416
+                    "top": 416,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -92,7 +99,9 @@
                     "bottom": 530,
                     "left": 435,
                     "right": 549,
-                    "top": 416
+                    "top": 416,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -117,7 +126,9 @@
                     "bottom": 236,
                     "left": 305,
                     "right": 419,
-                    "top": 122
+                    "top": 122,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -142,7 +153,9 @@
                     "bottom": 236,
                     "left": 435,
                     "right": 549,
-                    "top": 122
+                    "top": 122,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -167,7 +180,9 @@
                     "bottom": 384,
                     "left": 48,
                     "right": 162,
-                    "top": 270
+                    "top": 270,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -192,7 +207,9 @@
                     "bottom": 384,
                     "left": 176,
                     "right": 290,
-                    "top": 270
+                    "top": 270,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -217,7 +234,9 @@
                     "bottom": 384,
                     "left": 305,
                     "right": 419,
-                    "top": 270
+                    "top": 270,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -242,7 +261,9 @@
                     "bottom": 384,
                     "left": 435,
                     "right": 549,
-                    "top": 270
+                    "top": 270,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -267,7 +288,9 @@
                     "bottom": 530,
                     "left": 48,
                     "right": 162,
-                    "top": 416
+                    "top": 416,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -292,7 +315,9 @@
                     "bottom": 530,
                     "left": 176,
                     "right": 290,
-                    "top": 416
+                    "top": 416,
+                    "width": 114,
+                    "height": 114
             },
             "text": {
                 "alignment": 132,
@@ -311,7 +336,9 @@
             "bottom": 100,
             "left": 0,
             "right": 587,
-            "top": 25
+            "top": 25,
+            "width": 587,
+            "height": 75
         }
     }
 }

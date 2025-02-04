@@ -9,15 +9,15 @@
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 120,
-                    "height": 120
+                    "width": 122,
+                    "height": 122
                 }
             },
             "slot": {
-                    "bottom": 240,
                     "left": 30,
-                    "right": 149,
-                    "top": 121
+                    "top": 121,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -42,7 +42,9 @@
                     "bottom": 240,
                     "left": 169,
                     "right": 289,
-                    "top": 121
+                    "top": 121,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -67,7 +69,9 @@
                     "bottom": 559,
                     "left": 309,
                     "right": 429,
-                    "top": 441
+                    "top": 441,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -92,7 +96,9 @@
                     "bottom": 559,
                     "left": 449,
                     "right": 569,
-                    "top": 440
+                    "top": 440,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -117,7 +123,9 @@
                     "bottom": 240,
                     "left": 309,
                     "right": 428,
-                    "top": 121
+                    "top": 121,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -142,7 +150,9 @@
                     "bottom": 240,
                     "left": 449,
                     "right": 570,
-                    "top": 121
+                    "top": 121,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -167,7 +177,9 @@
                     "bottom": 399,
                     "left": 30,
                     "right": 151,
-                    "top": 280
+                    "top": 280,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -192,7 +204,9 @@
                     "bottom": 399,
                     "left": 170,
                     "right": 288,
-                    "top": 280
+                    "top": 280,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -217,7 +231,9 @@
                     "bottom": 399,
                     "left": 309,
                     "right": 428,
-                    "top": 280
+                    "top": 280,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -242,7 +258,9 @@
                     "bottom": 400,
                     "left": 449,
                     "right": 569,
-                    "top": 280
+                    "top": 280,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -267,7 +285,9 @@
                     "bottom": 559,
                     "left": 30,
                     "right": 151,
-                    "top": 440
+                    "top": 440,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -292,7 +312,9 @@
                     "bottom": 559,
                     "left": 170,
                     "right": 289,
-                    "top": 440
+                    "top": 440,
+                    "width": 122,
+                    "height": 122
             },
             "text": {
                 "alignment": 1,
@@ -311,7 +333,9 @@
             "bottom": 100,
             "left": 0,
             "right": 587,
-            "top": 25
+            "top": 25,
+            "width": 587,
+            "height": 75
         }
     }
 }

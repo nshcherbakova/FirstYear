@@ -70,13 +70,13 @@ bool ReadRect(const QJsonObject &obj, QString name, QRect &rect) {
     result = result && ReadInt(rect_obj, "left", left);
     int top = 0;
     result = result && ReadInt(rect_obj, "top", top);
-    int right = 0;
-    result = result && ReadInt(rect_obj, "right", right);
-    int bottom = 0;
-    result = result && ReadInt(rect_obj, "bottom", bottom);
+    int width = 0;
+    result = result && ReadInt(rect_obj, "width", width);
+    int height = 0;
+    result = result && ReadInt(rect_obj, "height", height);
 
-    rect.setBottomRight({right, bottom});
     rect.setTopLeft({left, top});
+    rect.setSize({width, height});
     return result;
   }
   return false;
@@ -91,13 +91,13 @@ bool ReadRectF(const QJsonObject &obj, QString name, QRectF &rect) {
     result = result && ReadDouble(rect_obj, "left", left);
     double top = 0;
     result = result && ReadDouble(rect_obj, "top", top);
-    double right = 0;
-    result = result && ReadDouble(rect_obj, "right", right);
-    double bottom = 0;
-    result = result && ReadDouble(rect_obj, "bottom", bottom);
+    double width = 0;
+    result = result && ReadDouble(rect_obj, "width", width);
+    double height = 0;
+    result = result && ReadDouble(rect_obj, "height", height);
 
-    rect.setBottomRight({right, bottom});
     rect.setTopLeft({left, top});
+    rect.setSize({width, height});
     return result;
   }
   return false;
