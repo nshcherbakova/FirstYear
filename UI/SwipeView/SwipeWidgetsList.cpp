@@ -51,7 +51,7 @@ SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
 
   UNI_ASSERT(widgets.size() > 0);
   setStyleSheet(c_scroll_style_str);
-  setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   horizontalScrollBar()->setStyleSheet(c_scroll_bar_style_str);
   setContentsMargins(0, 0, 0, 0);
