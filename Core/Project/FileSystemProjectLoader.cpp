@@ -8,11 +8,12 @@ ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
   project->monthes_.resize(12);
 
   QFile project_metadata_file(project_metadata_path_);
+  qDebug() << "Load project: " << project_metadata_path_;
 
   if (!project_metadata_file.open(QIODevice::ReadOnly)) {
     spdlog::info("Couldn't open file {0}.",
                  project_metadata_path_.toStdString());
-    // return nullptr;
+    return nullptr;
   }
 
   const QByteArray project_metadata = project_metadata_file.readAll();

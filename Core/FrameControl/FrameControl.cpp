@@ -57,10 +57,11 @@ void FrameControl::CreateNewProject() {
   current_project_ = std::make_shared<Project>();
   current_project_->monthes_.resize(12);
 
-  for (int month_number = 0;
-       month_number < (int)current_project_->monthes_.size(); month_number++) {
+  for (int month_number = 0; month_number < (int)monthes.size();
+       month_number++) {
     auto &month = current_project_->monthes_[month_number];
     month.text = monthes[month_number];
+    month.photo_data = std::make_shared<PhotoData>();
   }
 }
 } // namespace FirstYear::Core
