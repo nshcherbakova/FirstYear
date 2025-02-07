@@ -3,327 +3,303 @@
     "mothes": {
         "0": {
             "anchor": {
-                "x": 105,
-                "y": 238
+                "x": 210,
+                "y": 476
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 236,
-                    "left": 48,
-                    "right": 162,
-                    "top": 122,
-                    "width": 114,
-                    "height": 114
+                    "left": 96,
+                    "top": 244,
+                    "width": 228,
+                    "height": 228
 
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "1": {
             "anchor": {
-                "x": 233,
-                "y": 238
+                "x": 466,
+                "y": 476
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 236,
-                    "left": 176,
-                    "right": 290,
-                    "top": 122,
-                    "width": 114,
-                    "height": 114
+                    "left": 352,
+                    "top": 244,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "10": {
             "anchor": {
-                "x": 362,
-                "y": 531
+                "x": 724,
+                "y": 1062
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 530,
-                    "left": 305,
-                    "right": 419,
-                    "top": 416,
-                    "width": 114,
-                    "height": 114
+                    "left": 610,
+                    "top": 832,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "11": {
             "anchor": {
-                "x": 492,
-                "y": 531
+                "x": 984,
+                "y": 1062
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 530,
-                    "left": 435,
-                    "right": 549,
-                    "top": 416,
-                    "width": 114,
-                    "height": 114
+                    "left": 870,
+                    "top": 832,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "2": {
             "anchor": {
-                "x": 362,
-                "y": 238
+                "x": 724,
+                "y": 476
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 236,
-                    "left": 305,
-                    "right": 419,
-                    "top": 122,
-                    "width": 114,
-                    "height": 114
+                    "left": 610,
+                    "top": 244,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "3": {
             "anchor": {
-                "x": 492,
-                "y": 238
+                "x": 984,
+                "y": 476
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 236,
-                    "left": 435,
-                    "right": 549,
-                    "top": 122,
-                    "width": 114,
-                    "height": 114
+                    "left": 870,
+                    "top": 244,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "4": {
             "anchor": {
-                "x": 105,
-                "y": 385
+                "x": 210,
+                "y": 770
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 384,
-                    "left": 48,
-                    "right": 162,
-                    "top": 270,
-                    "width": 114,
-                    "height": 114
+                    "left": 96,
+                    "top": 540,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "5": {
             "anchor": {
-                "x": 233,
-                "y": 385
+                "x": 466,
+                "y": 770
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 384,
-                    "left": 176,
-                    "right": 290,
-                    "top": 270,
-                    "width": 114,
-                    "height": 114
+                    "left": 352,
+                    "top": 540,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "6": {
             "anchor": {
-                "x": 362,
-                "y": 385
+                "x": 724,
+                "y": 770
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 384,
-                    "left": 305,
-                    "right": 419,
-                    "top": 270,
-                    "width": 114,
-                    "height": 114
+                    "left": 610,
+                    "top": 540,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "7": {
             "anchor": {
-                "x": 492,
-                "y": 385
+                "x": 984,
+                "y": 770
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 384,
-                    "left": 435,
-                    "right": 549,
-                    "top": 270,
-                    "width": 114,
-                    "height": 114
+                    "left": 870,
+                    "top": 540,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "8": {
             "anchor": {
-                "x": 105,
-                "y": 531
+                "x": 210,
+                "y": 1062
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 530,
-                    "left": 48,
-                    "right": 162,
-                    "top": 416,
-                    "width": 114,
-                    "height": 114
+                    "left": 96,
+                    "top": 832,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         },
         "9": {
             "anchor": {
-                "x": 233,
-                "y": 531
+                "x": 466,
+                "y": 1062
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 114,
-                    "height": 114
+                    "width": 228,
+                    "height": 228
                 }
             },
             "slot": {
-                    "bottom": 530,
-                    "left": 176,
-                    "right": 290,
-                    "top": 416,
-                    "width": 114,
-                    "height": 114
+                    "left": 352,
+                    "top": 832,
+                    "width": 228,
+                    "height": 228
             },
             "text": {
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 25
+                "font_size": 50
             }
         }
     },
@@ -331,14 +307,12 @@
         "alignment": 132,
         "font": "Bellany",
         "font_color": "#669692",
-        "font_size": 60,
+        "font_size": 120,
         "rect": {
-            "bottom": 100,
             "left": 0,
-            "right": 587,
-            "top": 25,
-            "width": 587,
-            "height": 75
+            "top": 50,
+            "width": 1174,
+            "height": 150
         }
     }
 }

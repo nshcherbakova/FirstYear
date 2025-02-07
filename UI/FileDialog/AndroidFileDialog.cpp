@@ -119,7 +119,11 @@ bool AndroidFileDialog::show(bool multiple_files) {
                             ACTION_OPEN_DOCUMENT.object<jstring>());
     intent.callObjectMethod(
         "setType", "(Ljava/lang/String;)Landroid/content/Intent;",
-        QJniObject::fromString("image/*").object<jstring>());
+        QJniObject::fromString("image/jpeg;image/png").object<jstring>());
+
+    // intent.callObjectMethod(
+    //    "setType", "(Ljava/lang/String;)Landroid/content/Intent;",
+    //      QJniObject::fromString("image/png").object<jstring>());
 
     intent.callObjectMethod(
         "putExtra", "(Ljava/lang/String;Z)Landroid/content/Intent;",

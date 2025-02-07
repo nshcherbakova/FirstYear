@@ -3,302 +3,302 @@
     "mothes": {
         "0": {
             "anchor": {
-                "x": 74,
-                "y": 260
+                "x": 37,
+                "y": 130
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 84,
-                    "top": 310,
-                    "width": 230,
-                    "height": 228
+                    "left": 42,
+                    "top": 155,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "1": {
             "anchor": {
-                "x": 344,
-                "y": 260
+                "x": 172,
+                "y": 130
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 354,
-                    "top": 310,
-                    "width": 230,
-                    "height": 228
+                    "left": 177,
+                    "top": 155,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "10": {
             "anchor": {
-                "x": 602,
-                "y": 794
+                "x": 301,
+                "y": 397
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 612,
-                    "top": 844,
-                    "width": 230,
-                    "height": 228
+                    "left": 306,
+                    "top": 422,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "11": {
             "anchor": {
-                "x": 884,
-                "y": 794
+                "x": 437,
+                "y": 397
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 884,
-                    "top": 844,
-                    "width": 230,
-                    "height": 228
+                    "left": 442,
+                    "top": 422,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "2": {
             "anchor": {
-                "x": 602,
-                "y": 260
+                "x": 301,
+                "y": 130
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 612,
-                    "top": 310,
-                    "width": 230,
-                    "height": 228
+                    "left": 306,
+                    "top": 155,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "3": {
             "anchor": {
-                "x": 884,
-                "y": 260
+                "x": 444,
+                "y": 130
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 884,
-                    "top": 310,
-                    "width": 230,
-                    "height": 228
+                    "left": 442,
+                    "top": 155,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "4": {
             "anchor": {
-                "x": 74,
-                "y": 528
+                "x": 37,
+                "y": 264
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 84,
-                    "top": 578,
-                    "width": 230,
-                    "height": 228
+                    "left": 42,
+                    "top": 289,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "5": {
             "anchor": {
-                "x": 344,
-                "y": 528
+                "x": 172,
+                "y": 264
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 354,
-                    "top": 578,
-                    "width": 230,
-                    "height": 228
+                    "left": 177,
+                    "top": 289,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "6": {
             "anchor": {
-                "x": 602,
-                "y": 528
+                "x": 301,
+                "y": 264
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 612,
-                    "top": 578,
-                    "width": 230,
-                    "height": 228
+                    "left": 306,
+                    "top": 289,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "7": {
             "anchor": {
-                "x": 884,
-                "y": 528
+                "x": 437,
+                "y": 264
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 884,
-                    "top": 578,
-                    "width": 230,
-                    "height": 228
+                    "left": 442,
+                    "top": 289,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "8": {
             "anchor": {
-                "x": 74,
-                "y": 794
+                "x": 37,
+                "y": 397
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 84,
-                    "top": 844,
-                    "width": 230,
-                    "height": 228
+                    "left": 42,
+                    "top": 422,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         },
         "9": {
             "anchor": {
-                "x": 344,
-                "y": 794
+                "x": 172,
+                "y": 397
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 230,
-                    "height": 228
+                    "width": 115,
+                    "height": 114
                 }
             },
             "slot": {
-                    "left": 354,
-                    "top": 844,
-                    "width": 230,
-                    "height": 228
+                    "left": 177,
+                    "top": 422,
+                    "width": 115,
+                    "height": 114
             },
             "text": {
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 25
             }
         }
     },
@@ -306,14 +306,14 @@
         "alignment": 132,
         "font": "Timeburner",
         "font_color": "#000000",
-        "font_size": 120,
+        "font_size": 60,
         "rect": {
             "bottom": 100,
             "left": 0,
-            "right": 1174,
-            "top": 50,
-            "width": 1174,
-            "height": 150
+            "right": 587,
+            "top": 25,
+            "width": 587,
+            "height": 75
         }
     }
 }
