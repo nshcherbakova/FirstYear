@@ -3,21 +3,21 @@
     "mothes": {
         "0": {
             "anchor": {
-                "x": 120,
-                "y": 310
+                "x": 74,
+                "y": 241
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 247,
+                    "height": 244
                 }
             },
             "slot": {
-                    "left": 80,
-                    "top": 306,
-                    "width": 238,
-                    "height": 236
+                    "left": 58,
+                    "top": 240,
+                    "width": 247,
+                    "height": 244
             },
             "text": {
                 "alignment": 1,
@@ -28,21 +28,21 @@
         },
         "1": {
             "anchor": {
-                "x": 390,
-                "y": 310
+                "x": 352,
+                "y": 240
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 241,
+                    "height": 406
                 }
             },
             "slot": {
-                    "left": 350,
-                    "top": 306,
-                    "width": 238,
-                    "height": 236
+                    "left": 338,
+                    "top": 240,
+                    "width": 241,
+                    "height": 406
             },
             "text": {
                 "alignment": 1,
@@ -53,21 +53,21 @@
         },
         "10": {
             "anchor": {
-                "x": 648,
-                "y": 844
+                "x": 620,
+                "y": 879
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 246,
+                    "height": 322
                 }
             },
             "slot": {
-                    "left": 608,
-                    "top": 840,
-                    "width": 238,
-                    "height": 236
+                    "left": 616,
+                    "top": 879,
+                    "width": 246,
+                    "height": 322
             },
             "text": {
                 "alignment": 1,
@@ -78,21 +78,21 @@
         },
         "11": {
             "anchor": {
-                "x": 920,
-                "y": 844
+                "x": 911,
+                "y": 958
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 246,
+                    "height": 243
                 }
             },
             "slot": {
-                    "left": 880,
-                    "top": 840,
-                    "width": 238,
-                    "height": 236
+                    "left": 897,
+                    "top": 958,
+                    "width": 246,
+                    "height": 243
             },
             "text": {
                 "alignment": 1,
@@ -103,46 +103,21 @@
         },
         "2": {
             "anchor": {
-                "x": 648,
-                "y": 310
+                "x": 630,
+                "y": 240
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 246,
+                    "height": 278
                 }
             },
             "slot": {
-                    "left": 608,
-                    "top": 306,
-                    "width": 238,
-                    "height": 236
-            },
-            "text": {
-                "alignment": 1,
-                "font": "Timeburner",
-                "font_color": "#ffffff",
-                "font_size": 50
-            }
-        },
-        "3": {
-            "anchor": {
-                "x": 920,
-                "y": 310
-            },
-            "frame_data": {
-                "type": 1,
-                "data": {
-                    "width": 238,
-                    "height": 236
-                }
-            },
-            "slot": {
-                    "left": 880,
-                    "top": 306,
-                    "width": 238,
-                    "height": 236
+                    "left": 616,
+                    "top": 240,
+                    "width": 246,
+                    "height": 278
             },
             "text": {
                 "alignment": 1,
@@ -153,21 +128,21 @@
         },
         "4": {
             "anchor": {
-                "x": 120,
-                "y": 578
+                "x": 72,
+                "y": 559
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 246,
+                    "height": 244
                 }
             },
             "slot": {
-                    "left": 80,
-                    "top": 574,
-                    "width": 238,
-                    "height": 236
+                    "left": 58,
+                    "top": 559,
+                    "width": 246,
+                    "height": 244
             },
             "text": {
                 "alignment": 1,
@@ -178,21 +153,46 @@
         },
         "5": {
             "anchor": {
-                "x": 390,
-                "y": 578
+                "x": 343,
+                "y": 684
             },
             "frame_data": {
-                "type": 1,
+                "type": 0,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 243,
+                    "height": 246
                 }
             },
             "slot": {
-                    "left": 350,
-                    "top": 574,
-                    "width": 238,
-                    "height": 236
+                    "left": 339,
+                    "top": 684,
+                    "width": 243,
+                    "height": 246
+            },
+            "text": {
+                "alignment": 1,
+                "font": "Timeburner",
+                "font_color": "#ffffff",
+                "font_size": 50
+            }
+        },
+        "3": {
+            "anchor": {
+                "x": 902,
+                "y": 240
+            },
+            "frame_data": {
+                "type": 0,
+                "data": {
+                    "width": 246,
+                    "height": 245
+                }
+            },
+            "slot": {
+                    "left": 898,
+                    "top": 240,
+                    "width": 246,
+                    "height": 245
             },
             "text": {
                 "alignment": 1,
@@ -203,21 +203,21 @@
         },
         "6": {
             "anchor": {
-                "x": 648,
-                "y": 578
+                "x": 630,
+                "y": 594
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 246,
+                    "height": 248
                 }
             },
             "slot": {
-                    "left": 608,
-                    "top": 574,
-                    "width": 238,
-                    "height": 236
+                    "left": 616,
+                    "top": 594,
+                    "width": 246,
+                    "height": 248
             },
             "text": {
                 "alignment": 1,
@@ -228,21 +228,21 @@
         },
         "7": {
             "anchor": {
-                "x": 920,
-                "y": 578
+                "x": 912,
+                "y": 538
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 246,
+                    "height": 359
                 }
             },
             "slot": {
-                    "left": 880,
-                    "top": 574,
-                    "width": 238,
-                    "height": 236
+                    "left": 897,
+                    "top": 538,
+                    "width": 246,
+                    "height": 359
             },
             "text": {
                 "alignment": 1,
@@ -253,21 +253,21 @@
         },
         "8": {
             "anchor": {
-                "x": 120,
-                "y": 844
+                "x": 72,
+                "y": 879
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 246,
+                    "height": 322
                 }
             },
             "slot": {
-                    "left": 80,
-                    "top": 840,
-                    "width": 238,
-                    "height": 236
+                    "left": 58,
+                    "top": 879,
+                    "width": 246,
+                    "height": 322
             },
             "text": {
                 "alignment": 1,
@@ -278,21 +278,21 @@
         },
         "9": {
             "anchor": {
-                "x": 390,
-                "y": 844
+                "x": 352,
+                "y": 985
             },
             "frame_data": {
                 "type": 1,
                 "data": {
-                    "width": 238,
-                    "height": 236
+                    "width": 243,
+                    "height": 217
                 }
             },
             "slot": {
-                    "left": 350,
-                    "top": 840,
-                    "width": 238,
-                    "height": 236
+                    "left": 338,
+                    "top": 985,
+                    "width": 243,
+                    "height": 217
             },
             "text": {
                 "alignment": 1,
