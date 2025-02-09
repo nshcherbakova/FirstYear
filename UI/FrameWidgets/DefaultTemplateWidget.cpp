@@ -12,19 +12,23 @@ static const char *c_foreground_to_render_str =
 
 class ForegroundWidget final : public QWidget {
 public:
-  ForegroundWidget(QWidget *parent, QPixmap image)
+  ForegroundWidget(QWidget *parent, QPixmap &image)
       : QWidget(parent), image_(image) {}
 
 public:
   virtual void paintEvent(QPaintEvent *) override final {
     QPainter painter(this);
 
-    painter.drawPixmap(rect(), image_to_paint_, rect());
+    painter.drawPixmap(rect(), image_to_paint_);
   }
 
   virtual void resizeEvent(QResizeEvent *e) override final {
     QWidget::resizeEvent(e);
-    image_to_paint_ = image_.scaledToWidth(width(), Qt::SmoothTransformation);
+    static const double dpr =
+        QGuiApplication::primaryScreen()->devicePixelRatio();
+
+    image_to_paint_ =
+        image_.scaledToWidth(width() * dpr, Qt::SmoothTransformation);
   }
 
   QSize preferedSize(QSize size) const {
@@ -45,7 +49,7 @@ public:
   }
 
 private:
-  QPixmap image_;
+  QPixmap &image_;
   QPixmap image_to_paint_;
 };
 
@@ -92,6 +96,10 @@ TemplateWidgetBase::TemplateWidgetBase(
   foreground_ =
       QPixmap(render_state ? QString(c_foreground_to_render_str).arg(id_)
                            : QString(c_foreground_str).arg(id_));
+
+  static const double dpr =
+      QGuiApplication::primaryScreen()->devicePixelRatio();
+  foreground_.setDevicePixelRatio(dpr);
 
   photo_slots_.resize(12);
 

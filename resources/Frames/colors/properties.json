@@ -7,7 +7,7 @@
                 "y": 310
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -32,7 +32,7 @@
                 "y": 310
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -57,7 +57,7 @@
                 "y": 844
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -82,7 +82,7 @@
                 "y": 844
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -107,7 +107,7 @@
                 "y": 310
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -132,7 +132,7 @@
                 "y": 310
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -157,7 +157,7 @@
                 "y": 578
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -182,7 +182,7 @@
                 "y": 578
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -207,7 +207,7 @@
                 "y": 578
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -232,7 +232,7 @@
                 "y": 578
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -257,7 +257,7 @@
                 "y": 844
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
@@ -282,7 +282,7 @@
                 "y": 844
             },
             "frame_data": {
-                "type": 0,
+                "type": 1,
                 "data": {
                     "width": 238,
                     "height": 236
