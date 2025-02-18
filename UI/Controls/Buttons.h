@@ -4,6 +4,7 @@
 
 #include <UI/FrameWidgets/TouchButton.h>
 
+class QSvgWidget;
 namespace FirstYear::UI {
 
 class TouchebleButton : public TouchButton {
@@ -18,12 +19,10 @@ protected:
 class ShareButton : public TouchebleButton {
 public:
   ShareButton(QWidget *parent, bool accept_touch = false);
+
+private:
+  QSvgWidget *background_svg_ = nullptr;
 };
-/*
-class TextButton : public TouchebleButton {
-public:
-    TextButton(QWidget *parent,  bool accept_touch  =false);
-};*/
 
 class TextButton : public TouchebleButton {
 public:
@@ -35,10 +34,5 @@ public:
 public:
   virtual void resizeEvent(QResizeEvent *event) override;
 };
-/*
-class PreviewButton : public TouchebleButton {
-public:
-    PreviewButton(QWidget *parent,  bool accept_touch  =false);
-};*/
 } // namespace FirstYear::UI
 #endif // FE_SHARE_BUTTON_H

@@ -467,7 +467,7 @@ pixmap.save(path);
   });
 
   share_button_ = new ShareButton(this);
-  share_button_->setVisible(false);
+  // share_button_->setVisible(false);
   connect(share_button_, &QPushButton::clicked, this, [&] {
     const QPixmap pixmap = Render(control);
     Share(pixmap);

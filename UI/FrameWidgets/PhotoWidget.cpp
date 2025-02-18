@@ -44,10 +44,12 @@ PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
     drag->exec(Qt::CopyAction);
   });
 
-  svg_render_open_ = new QSvgRenderer(this);
-  svg_render_open_->load(QString(":/images/icons/open"));
-  svg_render_edit_image_ = new QSvgRenderer(this);
-  svg_render_edit_image_->load(QString(":/images/icons/edit_image"));
+  if (!render_state) {
+    svg_render_open_ = new QSvgRenderer(this);
+    svg_render_open_->load(QString(":/images/icons/open"));
+    svg_render_edit_image_ = new QSvgRenderer(this);
+    svg_render_edit_image_->load(QString(":/images/icons/edit_image"));
+  }
 }
 
 void PhotoWidget::resizeEvent(QResizeEvent *event) {
@@ -71,25 +73,22 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
   id_ = id;
 
   ImageButton::setPhoto(photo);
-  if (!render_state_) {
-    photo_scaled_ = ImageButton::grab();
-  }
 }
 
 void PhotoWidget::OnUpdateImageBuffer(QPixmap &buffer) {
 
   if (!render_state_) {
     photo_scaled_ = buffer;
+
+    QPainter painter(&buffer);
+    QSvgRenderer *render =
+        photo_data_->isStub() ? svg_render_open_ : svg_render_edit_image_;
+
+    const auto size = parentWidget()->size().width() / 16;
+    render->render(&painter,
+                   QRect{rect().bottomRight() - QPoint{size, size} * 1.1,
+                         QSize{size, size}});
   }
-
-  QPainter painter(&buffer);
-  QSvgRenderer *render =
-      photo_data_->isStub() ? svg_render_open_ : svg_render_edit_image_;
-
-  const auto size = parentWidget()->size().width() / 16;
-  render->render(&painter,
-                 QRect{rect().bottomRight() - QPoint{size, size} * 1.1,
-                       QSize{size, size}});
 }
 
 void PhotoWidget::setText(QString text) { text_widget_.setText(text); }
