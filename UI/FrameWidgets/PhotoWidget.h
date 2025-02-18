@@ -11,6 +11,7 @@
 QT_BEGIN_NAMESPACE
 class QDragEnterEvent;
 class QDropEvent;
+class QSvgRenderer;
 QT_END_NAMESPACE
 
 namespace FirstYear::UI {
@@ -40,6 +41,9 @@ signals:
   void SignalImagePressed();
   void SignalImageDroped(int);
 
+protected:
+  virtual void OnUpdateImageBuffer(QPixmap &) override;
+
 private:
   QLabel text_widget_;
   bool render_state_ = false;
@@ -48,6 +52,9 @@ private:
   QTimer timer_;
   int id_ = 0;
   bool drag_enter_ = false;
+  QSvgRenderer *svg_render_edit_image_ = nullptr;
+  QSvgRenderer *svg_render_open_ = nullptr;
+  QPixmap icon_buffer_;
 };
 
 } // namespace FirstYear::UI

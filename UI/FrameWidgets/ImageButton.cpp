@@ -17,13 +17,16 @@ void ImageButton::UpdateButton() {
     buffer_ = QPixmap(rect().size() * devicePixelRatio());
     buffer_.setDevicePixelRatio(devicePixelRatio());
   }
+  {
+    QPainter painter(&buffer_);
+    const auto rect = QRect(0, 0, buffer_.width(), buffer_.height());
 
-  QPainter painter(&buffer_);
-  const auto rect = QRect(0, 0, buffer_.width(), buffer_.height());
+    painter.setBrush(QColor(c_photo_widget_background_color));
+    painter.drawPolygon(rect);
 
-  painter.setBrush(QColor(c_photo_widget_background_color));
-  painter.drawPolygon(rect);
-  PhotoPainter::drawPhoto(painter);
+    PhotoPainter::drawPhoto(painter);
+  }
+  OnUpdateImageBuffer(buffer_);
   update();
 }
 
@@ -35,8 +38,6 @@ void ImageButton::resizeEvent(QResizeEvent *e) {
 void ImageButton::paintEvent(QPaintEvent *) {
 
   QPainter painter(this);
-  // painter.begin();
   painter.drawPixmap(0, 0, buffer_);
-  //  painter.end();
 }
 } // namespace FirstYear::UI

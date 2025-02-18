@@ -30,24 +30,24 @@ PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
   connect(&timer_, &QTimer::timeout, this, [&] {
     QByteArray itemData;
     QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-    dataStream << id_; // << QPoint(event->position().toPoint() - pos());
-    //! [1]
+    dataStream << id_;
 
-    //! [2]
     QMimeData *mimeData = new QMimeData;
     mimeData->setData("application/x-dnditemdata", itemData);
-    //! [2]
 
-    //! [3]
     QDrag *drag = new QDrag(this);
     drag->setMimeData(mimeData);
 
     drag->setPixmap(photo_scaled_);
     drag->setHotSpot({size().width() / 2, size().height() / 2});
-    //! [3]
 
     drag->exec(Qt::CopyAction);
   });
+
+  svg_render_open_ = new QSvgRenderer(this);
+  svg_render_open_->load(QString(":/images/icons/open"));
+  svg_render_edit_image_ = new QSvgRenderer(this);
+  svg_render_edit_image_->load(QString(":/images/icons/edit_image"));
 }
 
 void PhotoWidget::resizeEvent(QResizeEvent *event) {
@@ -74,15 +74,22 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
   if (!render_state_) {
     photo_scaled_ = ImageButton::grab();
   }
+}
 
-  if (photo->isStub()) {
-    setIcon(QIcon(":/images/icons/open"));
-    //  setText("Open Image");
-  } else {
-    setIcon(QIcon(":/images/icons/edit_image"));
-    //  setText("Edit");
+void PhotoWidget::OnUpdateImageBuffer(QPixmap &buffer) {
+
+  if (!render_state_) {
+    photo_scaled_ = buffer;
   }
-  setIconSize(size() * 0.7);
+
+  QPainter painter(&buffer);
+  QSvgRenderer *render =
+      photo_data_->isStub() ? svg_render_open_ : svg_render_edit_image_;
+
+  const auto size = parentWidget()->size().width() / 16;
+  render->render(&painter,
+                 QRect{rect().bottomRight() - QPoint{size, size} * 1.1,
+                       QSize{size, size}});
 }
 
 void PhotoWidget::setText(QString text) { text_widget_.setText(text); }
@@ -91,8 +98,6 @@ void PhotoWidget::dragEnterEvent(QDragEnterEvent *event) {
   if (isVisible() &&
       event->mimeData()->hasFormat("application/x-dnditemdata")) {
     if (event->source() == this) {
-      //  event->setDropAction(Qt::MoveAction);
-      //  event->accept();
       event->ignore();
     } else {
       event->acceptProposedAction();
@@ -114,7 +119,6 @@ void PhotoWidget::dragMoveEvent(QDragMoveEvent *event) {
   if (isVisible() &&
       event->mimeData()->hasFormat("application/x-dnditemdata")) {
     if (event->source() == this) {
-      //   event->setDropAction(Qt::MoveAction);
       event->ignore();
     } else {
       event->acceptProposedAction();
@@ -127,9 +131,8 @@ void PhotoWidget::dragMoveEvent(QDragMoveEvent *event) {
 
 void PhotoWidget::dropEvent(QDropEvent *event) {
   drag_enter_ = false;
-  // update();
+
   if (event->source() == this) {
-    // event->setDropAction(Qt::MoveAction);
     event->ignore();
     return;
   }
@@ -143,7 +146,6 @@ void PhotoWidget::dropEvent(QDropEvent *event) {
     emit SignalImageDroped(id);
 
     if (event->source() == this) {
-      // event->setDropAction(Qt::MoveAction);
       event->ignore();
     } else {
       event->acceptProposedAction();

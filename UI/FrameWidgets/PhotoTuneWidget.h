@@ -104,6 +104,8 @@ private:
   TextButton *next_ = nullptr;
   TextButton *prev_ = nullptr;
   TouchClickableLabel *text_ = nullptr;
+
+  const double dpr_;
 };
 
 } // namespace FirstYear::UI

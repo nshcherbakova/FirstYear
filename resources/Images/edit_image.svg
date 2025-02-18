@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="840" height="840" viewBox="0 0 840 840" xml:space="preserve">
-<desc>Created with Fabric.js 3.6.6</desc>
-<defs>
-</defs>
-<g transform="matrix(13.07 0 0 13.07 660.63 658.63)"  >
-<path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(219, 213, 235); fill-rule: evenodd; opacity: 1;"  transform=" translate(-11.95, -11.95)" d="M 20.8477 1.87868 C 19.6761 0.707109 17.7766 0.707105 16.605 1.87868 L 2.44744 16.0363 C 2.02864 16.4551 1.74317 16.9885 1.62702 17.5692 L 1.03995 20.5046 C 0.760062 21.904 1.9939 23.1379 3.39334 22.858 L 6.32868 22.2709 C 6.90945 22.1548 7.44285 21.8693 7.86165 21.4505 L 22.0192 7.29289 C 23.1908 6.12132 23.1908 4.22183 22.0192 3.05025 L 20.8477 1.87868 Z M 18.0192 3.29289 C 18.4098 2.90237 19.0429 2.90237 19.4335 3.29289 L 20.605 4.46447 C 20.9956 4.85499 20.9956 5.48815 20.605 5.87868 L 17.9334 8.55027 L 15.3477 5.96448 L 18.0192 3.29289 Z M 13.9334 7.3787 L 3.86165 17.4505 C 3.72205 17.5901 3.6269 17.7679 3.58818 17.9615 L 3.00111 20.8968 L 5.93645 20.3097 C 6.13004 20.271 6.30784 20.1759 6.44744 20.0363 L 16.5192 9.96448 L 13.9334 7.3787 Z" stroke-linecap="round" />
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" viewBox="468 468 372 372" width="372" height="372">
+	<title>edit_image</title>
+	<style>
+		.s0 { fill: #dbd5eb } 
+	</style>
+	<g>
+		<path fill-rule="evenodd" class="s0" d="m778.8 525.6c-15.4-15.3-40.2-15.3-55.5 0l-185 185.1c-5.5 5.4-9.2 12.4-10.8 20l-7.6 38.4c-3.7 18.3 12.4 34.4 30.7 30.7l38.4-7.6c7.6-1.6 14.6-5.3 20-10.8l185.1-185c15.3-15.3 15.3-40.1 0-55.5zm-37 18.5c5.1-5.1 13.4-5.1 18.5 0l15.3 15.3c5.1 5.1 5.1 13.4 0 18.5l-34.9 34.9-33.8-33.8zm-53.4 53.4l-131.7 131.7c-1.8 1.8-3 4.1-3.5 6.7l-7.7 38.3 38.4-7.7c2.5-0.5 4.8-1.7 6.6-3.5l131.7-131.7z" fill="#dbd5eb"/>
+	</g>
 </svg>

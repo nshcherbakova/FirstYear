@@ -9,6 +9,7 @@ class QPushButton;
 class QStackedLayout;
 class QSvgWidget;
 class QLabel;
+class QSvgRenderer;
 
 namespace ShareUtils {
 class ShareUtilsCpp;
@@ -88,8 +89,7 @@ private:
   QPushButton *share_button_ = nullptr;
   QPushButton *select_images_button_ = nullptr;
   QStackedLayout *stackedLayout = nullptr;
-  QSvgWidget *background_ = nullptr;
-  QPixmap background_image_;
+  QSvgWidget *background_svg_ = nullptr;
   QLabel *drag_and_drop_text_ = nullptr;
 };
 } // namespace FirstYear::UI

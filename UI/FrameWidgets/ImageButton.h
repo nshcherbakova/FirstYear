@@ -15,11 +15,14 @@ public:
 
 public:
   void setPhoto(const Core::PhotoDataPtr &photo);
-  void UpdateButton();
 
 public:
   virtual void paintEvent(QPaintEvent *) override;
   virtual void resizeEvent(QResizeEvent *) override;
+
+protected:
+  virtual void UpdateButton();
+  virtual void OnUpdateImageBuffer(QPixmap &buffer) = 0;
 
 private:
   Core::PhotoDataPtr photo_data_;

@@ -112,7 +112,9 @@ bool TouchClickableLabel::event(QEvent *event) {
 /// \brief PhotoTuneWidget::PhotoTuneWidget
 /// \param parent
 
-PhotoTuneWidget::PhotoTuneWidget(QWidget &parent) : QWidget(&parent) {
+PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
+    : QWidget(&parent),
+      dpr_(QGuiApplication::primaryScreen()->devicePixelRatio()) {
 
   QList<Qt::GestureType> gestures;
 
@@ -173,7 +175,9 @@ void PhotoTuneWidget::setVisible(bool visible) {
 }
 
 void PhotoTuneWidget::redrawBackgroundImage() {
-  background_image_ = QPixmap(size());
+
+  background_image_ = QPixmap(size() * dpr_);
+  background_image_.setDevicePixelRatio(dpr_);
 
   QPainter painter(&background_image_);
 
@@ -355,7 +359,8 @@ double PhotoTuneWidget::initialScaleFactor() const {
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
 
-  painter.drawPixmap(rect(), background_image_, rect());
+  painter.drawPixmap(rect(), background_image_,
+                     QRect{{0, 0}, rect().size() * dpr_});
 
   PhotoProcessor::drawPhoto(painter);
   Frame::drawFrame(painter);

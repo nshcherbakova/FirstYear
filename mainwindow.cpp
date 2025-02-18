@@ -92,7 +92,7 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
-  background_ = new QSvgWidget(":/images/icons/stars", this);
+  background_svg_ = new QSvgWidget(":/images/icons/stars", this);
 
   CreatePhotoTuneWidget(frame_control);
   CreateDragAndDropText(frame_control);
@@ -446,6 +446,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
   preview_button_->setStyleSheet(c_white_button_style_str);
   preview_button_->setSize(QSize(120, 60));
   preview_button_->setText("Preview");
+  //  preview_button_->setVisible(false);
 
   connect(preview_button_, &QPushButton::clicked, this, [&] {
     QPixmap pixmap = Render(control);
@@ -466,6 +467,7 @@ pixmap.save(path);
   });
 
   share_button_ = new ShareButton(this);
+  share_button_->setVisible(false);
   connect(share_button_, &QPushButton::clicked, this, [&] {
     const QPixmap pixmap = Render(control);
     Share(pixmap);
@@ -488,7 +490,7 @@ void MainWindow::CreateDragAndDropText(
   drag_and_drop_text_ = new QLabel(this);
   drag_and_drop_text_->setWordWrap(true);
   drag_and_drop_text_->setStyleSheet(c_drag_and_drop_style_str);
-  drag_and_drop_text_->setText("Drag and drop photos");
+  // drag_and_drop_text_->setText("Drag and drop photos");
   drag_and_drop_text_->setVisible(LoadedPhotosCount(frame_control) > 0);
 }
 
@@ -572,16 +574,15 @@ QPixmap MainWindow::Render(Core::FrameControl &control) {
 
 void MainWindow::resizeEvent(QResizeEvent *e) {
   if (e) {
-    // qDebug() << "MainWindow *** " << e->size();
     if (!e->size().isValid() || e->size().isEmpty()) {
       return;
     }
     QMainWindow::resizeEvent(e);
   }
-  // qDebug() << "MainWindow *** " << size();
-  if (background_) {
+
+  if (background_svg_) {
     const int size = std::max(width(), height());
-    background_->setGeometry(QRect{QPoint{0, 0}, QSize{size, size}});
+    background_svg_->setGeometry(QRect{QPoint{0, 0}, QSize{size, size}});
   }
 
   if (swipe_widget_) {
@@ -635,6 +636,7 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     drag_and_drop_text_->setGeometry(height() / 50, drag_and_drop_top,
                                      drag_and_drop_width, drag_and_drop_height);
   }
+
   update();
 }
 
@@ -694,8 +696,8 @@ void MainWindow::setEnabledControls(bool enabled) {
   swipe_widget_->setUpdatesEnabled(enabled);
   swipe_widget_->setEnabled(enabled);
 
-  background_->setUpdatesEnabled(enabled);
-  background_->setEnabled(enabled);
+  background_svg_->setUpdatesEnabled(enabled);
+  background_svg_->setEnabled(enabled);
 
   preview_button_->setUpdatesEnabled(enabled);
   preview_button_->setEnabled(enabled);

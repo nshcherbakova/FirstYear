@@ -59,6 +59,12 @@ SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
   CreateInnerWidget(widgets);
   InitialaizeScroller();
   spdlog::info("FiltersScrollWidget UI created");
+
+  timer.setInterval(500);
+  connect(&timer, &QTimer::timeout, this, [&]() { onFpsTimeout(); });
+  timer.start();
+
+  QTimer::singleShot(2 * 1000, this, [&]() { onAnimationTimeout(); });
 }
 
 void SwipeWidgetsList::InitialaizeScroller() {
@@ -151,5 +157,57 @@ void SwipeWidgetsList::AddWidget(QWidget *widget) {
   widget->show();
   layout_->addWidget(widget);
   frame_widgets_.push_back(widget);
+}
+
+void SwipeWidgetsList::paintEvent(QPaintEvent *painter) {
+
+  QScrollArea::paintEvent(painter);
+  const auto current_time = QDateTime::currentDateTime().toMSecsSinceEpoch();
+  const auto current = current_time - old_time;
+  float smoothing = 0.9; // larger=more smoothing
+  measurement = (measurement * smoothing) + (current * (1.0 - smoothing));
+  old_time = current_time;
+}
+
+void SwipeWidgetsList::onAnimationTimeout() {
+  static int count = 1;
+  static bool front = true;
+  static int duration = 10000;
+
+  animation = new QPropertyAnimation(horizontalScrollBar(), "value", this);
+  animation->setDuration(duration);
+
+  connect(animation, &QPropertyAnimation::finished, this, [&]() {
+    if (count <= 5) {
+      animation->state();
+      onAnimationTimeout();
+    } else {
+      timer.stop();
+    }
+  });
+
+  if (front) {
+    animation->setStartValue(0);
+    animation->setEndValue(horizontalScrollBar()->maximum());
+  } else {
+
+    animation->setEndValue(0);
+    animation->setStartValue(horizontalScrollBar()->maximum());
+  }
+  animation->start();
+
+  front = !front;
+  count++;
+  duration = duration / 2;
+}
+
+void SwipeWidgetsList::onFpsTimeout() {
+  qDebug() << "Fps: " << 1000.0 / measurement;
+}
+
+void SwipeWidgetsList::mouseReleaseEvent(QMouseEvent *event) {
+  QScrollArea::mouseReleaseEvent(event);
+  animation->stop();
+  timer.stop();
 }
 } // namespace FirstYear::UI

@@ -204,6 +204,7 @@ void PreviewWidget::drawFrame(QPainter &painter) {
 }
 
 QRectF PreviewWidget::scaleRefRect() const { return destanation_rect_; }
+
 void PreviewWidget::paintEvent(QPaintEvent *) {
   QPainter painter(this);
 
