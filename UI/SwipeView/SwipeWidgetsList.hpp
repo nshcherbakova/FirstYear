@@ -23,26 +23,31 @@ signals:
 protected:
   // virtual bool event(QEvent *event) override;
   virtual void resizeEvent(QResizeEvent *event) override final;
+#ifdef FE_PROFILING
   virtual void paintEvent(QPaintEvent *) override final;
   virtual void mouseReleaseEvent(QMouseEvent *) override final;
+#endif
 
 private:
   void InitialaizeScroller();
   void CreateInnerWidget(const std::vector<QWidget *> &widgets);
   void AddWidget(QWidget *widget);
 
+#ifdef FE_PROFILING
   void onFpsTimeout();
   void onAnimationTimeout();
-
+#endif
 private:
   QHBoxLayout *layout_ = nullptr;
   Qt::GestureType grabbed_gesture_;
   int current_item_index_ = 0;
   std::vector<QWidget *> frame_widgets_;
 
+#ifdef FE_PROFILING
   QTimer timer;
   double measurement = 0;
   qint64 old_time = 0;
   QPropertyAnimation *animation = nullptr;
+#endif
 };
 } // namespace FirstYear::UI

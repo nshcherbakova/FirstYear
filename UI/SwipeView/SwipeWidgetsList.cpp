@@ -53,6 +53,7 @@ SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
   setStyleSheet(c_scroll_style_str);
   setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
   horizontalScrollBar()->setStyleSheet(c_scroll_bar_style_str);
   setContentsMargins(0, 0, 0, 0);
   setWidgetResizable(true);
@@ -60,11 +61,13 @@ SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
   InitialaizeScroller();
   spdlog::info("FiltersScrollWidget UI created");
 
+#ifdef FE_PROFILING
   timer.setInterval(500);
   connect(&timer, &QTimer::timeout, this, [&]() { onFpsTimeout(); });
   timer.start();
 
   QTimer::singleShot(2 * 1000, this, [&]() { onAnimationTimeout(); });
+#endif
 }
 
 void SwipeWidgetsList::InitialaizeScroller() {
@@ -159,6 +162,7 @@ void SwipeWidgetsList::AddWidget(QWidget *widget) {
   frame_widgets_.push_back(widget);
 }
 
+#ifdef FE_PROFILING
 void SwipeWidgetsList::paintEvent(QPaintEvent *painter) {
 
   QScrollArea::paintEvent(painter);
@@ -210,4 +214,5 @@ void SwipeWidgetsList::mouseReleaseEvent(QMouseEvent *event) {
   animation->stop();
   timer.stop();
 }
+#endif
 } // namespace FirstYear::UI
