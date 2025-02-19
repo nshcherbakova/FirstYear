@@ -57,6 +57,15 @@
         <file alias="header_1_font">resources/Fonts/Bellany.otf</file>
         <file alias="text_1_font">resources/Fonts/MyKidsHandwritten-8MZrn.otf</file>
         <file alias="header_2_font">resources/Fonts/Timeburner-xJB8.ttf</file>
+        <file alias="header_3_font">resources/Fonts/Apalu.ttf</file>
+        <file alias="header_4_font">resources/Fonts/VanillaExtractRegular.ttf</file>
+        <file alias="header_5_font">resources/Fonts/Anisa Sans.ttf</file>
+        <file alias="header_6_font">resources/Fonts/SmoochesOfYou.ttf</file>
+        <file alias="header_7_font">resources/Fonts/Minimal.ttf</file>
+             <file alias="header_8_font">resources/Fonts/Rounded Elegance.ttf</file>
+                  <file alias="header_9_font">resources/Fonts/Walkway.ttf</file>
+ <file alias="header_10_font">resources/Fonts/Walkway Bold.ttf</file>
+                   <file alias="header_11_font">resources/Fonts/Walkway rounded.ttf</file>
     </qresource>
     <qresource prefix="/frames/1">
         <file alias="foreground">resources/Frames/1/foreground.png</file>

@@ -65,7 +65,7 @@ private:
   void createForegroundWidget();
   void createTitleTextWidget(const TextParameters &parameters,
                              bool is_rendering);
-  void createPhotoTextWidgets(const TextParameters &parameters,
+  void createPhotoTextWidgets(const std::vector<MonthParameters> &parameters,
                               bool is_rendering);
   void createRemoveButtonWidgets(bool is_rendering);
   void InitPhotos(Core::FrameControl &control);

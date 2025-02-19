@@ -21,7 +21,7 @@
             },
             "text": {
                 "alignment": 1,
-                "font": "Timeburner",
+                "font": "Rounded Elegance",
                 "font_color": "#ffffff",
                 "font_size": 50
             }
@@ -53,8 +53,8 @@
         },
         "10": {
             "anchor": {
-                "x": 620,
-                "y": 879
+                "x": 739,
+                "y": 884
             },
             "frame_data": {
                 "type": 1,
@@ -70,7 +70,7 @@
                     "height": 322
             },
             "text": {
-                "alignment": 1,
+                "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
                 "font_size": 50
@@ -153,8 +153,8 @@
         },
         "5": {
             "anchor": {
-                "x": 343,
-                "y": 684
+                "x": 461,
+                "y": 689
             },
             "frame_data": {
                 "type": 0,
@@ -170,7 +170,7 @@
                     "height": 246
             },
             "text": {
-                "alignment": 1,
+                "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
                 "font_size": 50
@@ -178,8 +178,8 @@
         },
         "3": {
             "anchor": {
-                "x": 902,
-                "y": 240
+                "x": 1021,
+                "y": 245
             },
             "frame_data": {
                 "type": 0,
@@ -195,7 +195,7 @@
                     "height": 245
             },
             "text": {
-                "alignment": 1,
+                "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
                 "font_size": 50
@@ -304,16 +304,14 @@
     },
     "title": {
         "alignment": 132,
-        "font": "Timeburner",
-        "font_color": "#000000",
-        "font_size": 120,
+        "font": "Anisa Sans",
+        "font_color": "#337187",
+        "font_size": 130,
         "rect": {
-            "bottom": 100,
             "left": 0,
-            "right": 1174,
-            "top": 50,
+            "top": 40,
             "width": 1174,
-            "height": 150
+            "height": 250
         }
     }
 }

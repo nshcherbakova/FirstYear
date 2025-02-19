@@ -3,8 +3,8 @@
     "mothes": {
         "0": {
             "anchor": {
-                "x": 120,
-                "y": 310
+                "x": 100,
+                "y": 315
             },
             "frame_data": {
                 "type": 1,
@@ -21,15 +21,15 @@
             },
             "text": {
                 "alignment": 1,
-                "font": "Timeburner",
+                "font": "Rounded Elegance",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 40
             }
         },
         "1": {
             "anchor": {
-                "x": 390,
-                "y": 310
+                "x": 370,
+                "y": 315
             },
             "frame_data": {
                 "type": 1,
@@ -53,8 +53,8 @@
         },
         "10": {
             "anchor": {
-                "x": 648,
-                "y": 844
+                "x": 628,
+                "y": 849
             },
             "frame_data": {
                 "type": 1,
@@ -78,8 +78,8 @@
         },
         "11": {
             "anchor": {
-                "x": 920,
-                "y": 844
+                "x": 900,
+                "y": 849
             },
             "frame_data": {
                 "type": 1,
@@ -103,8 +103,8 @@
         },
         "2": {
             "anchor": {
-                "x": 648,
-                "y": 310
+                "x": 628,
+                "y": 315
             },
             "frame_data": {
                 "type": 1,
@@ -128,8 +128,8 @@
         },
         "3": {
             "anchor": {
-                "x": 920,
-                "y": 310
+                "x": 900,
+                "y": 315
             },
             "frame_data": {
                 "type": 1,
@@ -153,8 +153,8 @@
         },
         "4": {
             "anchor": {
-                "x": 120,
-                "y": 578
+                "x": 100,
+                "y": 583
             },
             "frame_data": {
                 "type": 1,
@@ -178,8 +178,8 @@
         },
         "5": {
             "anchor": {
-                "x": 390,
-                "y": 578
+                "x": 370,
+                "y": 583
             },
             "frame_data": {
                 "type": 1,
@@ -203,8 +203,8 @@
         },
         "6": {
             "anchor": {
-                "x": 648,
-                "y": 578
+                "x": 628,
+                "y": 583
             },
             "frame_data": {
                 "type": 1,
@@ -228,8 +228,8 @@
         },
         "7": {
             "anchor": {
-                "x": 920,
-                "y": 578
+                "x": 900,
+                "y": 583
             },
             "frame_data": {
                 "type": 1,
@@ -253,8 +253,8 @@
         },
         "8": {
             "anchor": {
-                "x": 120,
-                "y": 844
+                "x": 100,
+                "y": 849
             },
             "frame_data": {
                 "type": 1,
@@ -278,8 +278,8 @@
         },
         "9": {
             "anchor": {
-                "x": 390,
-                "y": 844
+                "x": 370,
+                "y": 849
             },
             "frame_data": {
                 "type": 1,
@@ -296,7 +296,7 @@
             },
             "text": {
                 "alignment": 1,
-                "font": "Timeburner",
+                "font": "Rounded Elegance",
                 "font_color": "#ffffff",
                 "font_size": 50
             }
@@ -304,9 +304,9 @@
     },
     "title": {
         "alignment": 132,
-        "font": "Timeburner",
-        "font_color": "#000000",
-        "font_size": 120,
+        "font": "Walkway Bold",
+        "font_color": "#4f4019",
+        "font_size": 140,
         "rect": {
             "bottom": 100,
             "left": 0,

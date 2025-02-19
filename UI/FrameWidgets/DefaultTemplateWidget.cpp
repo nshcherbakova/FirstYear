@@ -114,9 +114,7 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   createTitleTextWidget(parameters.title_parameters.text_parameters,
                         render_state);
-  createPhotoTextWidgets(
-      parameters.months_parameters[0].text_parameters.text_parameters,
-      render_state);
+  createPhotoTextWidgets(parameters.months_parameters, render_state);
   createRemoveButtonWidgets(render_state);
 }
 
@@ -175,12 +173,18 @@ void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
 }
 
 void TemplateWidgetBase::createPhotoTextWidgets(
-    const TextParameters &parameters, bool) {
+    const std::vector<MonthParameters> &month_parameters, bool) {
+  const auto &parameters_fixed =
+      month_parameters[0].text_parameters.text_parameters;
+
   photo_text_widgets_.resize(12);
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    photo_text_widgets_[i] =
-        new ClickableLabel(this, parameters.font_size, parameters.font_color,
-                           parameters.font, true);
+    const auto &parameters =
+        month_parameters[i].text_parameters.text_parameters;
+
+    photo_text_widgets_[i] = new ClickableLabel(
+        this, parameters_fixed.font_size, parameters_fixed.font_color,
+        parameters_fixed.font, true);
     photo_text_widgets_[i]->setAlignment(parameters.alignment);
 
     //  connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {

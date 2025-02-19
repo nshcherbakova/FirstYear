@@ -305,8 +305,8 @@
     },
     "title": {
         "alignment": 132,
-        "font": "SmoochesOfYou",
-        "font_color": "#86a350",
+        "font": "Vanilla Extract",
+        "font_color": "#adbf80",
         "font_size": 80,
         "rect": {
             "bottom": 90,
