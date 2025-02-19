@@ -60,14 +60,14 @@ SwipeWidgetsList::SwipeWidgetsList(QWidget *parent,
   CreateInnerWidget(widgets);
   InitialaizeScroller();
   spdlog::info("FiltersScrollWidget UI created");
+  /*
+  #ifdef FIRSTYEAR_PROFILING
+    timer.setInterval(500);
+    connect(&timer, &QTimer::timeout, this, [&]() { onFpsTimeout(); });
+    timer.start();
 
-#ifdef FE_PROFILING
-  timer.setInterval(500);
-  connect(&timer, &QTimer::timeout, this, [&]() { onFpsTimeout(); });
-  timer.start();
-
-  QTimer::singleShot(2 * 1000, this, [&]() { onAnimationTimeout(); });
-#endif
+    QTimer::singleShot(2 * 1000, this, [&]() { onAnimationTimeout(); });
+  #endif*/
 }
 
 void SwipeWidgetsList::InitialaizeScroller() {
@@ -162,7 +162,7 @@ void SwipeWidgetsList::AddWidget(QWidget *widget) {
   frame_widgets_.push_back(widget);
 }
 
-#ifdef FE_PROFILING
+/*#ifdef FIRSTYEAR_PROFILING
 void SwipeWidgetsList::paintEvent(QPaintEvent *painter) {
 
   QScrollArea::paintEvent(painter);
@@ -214,5 +214,5 @@ void SwipeWidgetsList::mouseReleaseEvent(QMouseEvent *event) {
   animation->stop();
   timer.stop();
 }
-#endif
+#endif*/
 } // namespace FirstYear::UI

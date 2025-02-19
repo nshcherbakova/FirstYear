@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include <stdafx.h>
 
-// #define FE_PROFILING
-
 static const char *c_org_str = "natshch";
 static const char *c_app_str = "FirstYear";
 static const char *c_log_str = "/logs/FirstYearLog.txt";

@@ -23,7 +23,6 @@ public:
   PhotoWidget &operator=(const PhotoWidget &) = delete;
 
 public:
-  void setText(QString text);
   void setPhoto(const Core::PhotoDataPtr &photo, int id);
   Core::PhotoData getPhoto();
 
@@ -45,7 +44,6 @@ protected:
   virtual void OnUpdateImageBuffer(QPixmap &) override;
 
 private:
-  QLabel text_widget_;
   bool render_state_ = false;
   Core::PhotoDataPtr photo_data_;
   QPixmap photo_scaled_;

@@ -490,7 +490,7 @@ void MainWindow::CreateDragAndDropText(
   drag_and_drop_text_ = new QLabel(this);
   drag_and_drop_text_->setWordWrap(true);
   drag_and_drop_text_->setStyleSheet(c_drag_and_drop_style_str);
-  // drag_and_drop_text_->setText("Drag and drop photos");
+  drag_and_drop_text_->setText("Drag and drop photos");
   drag_and_drop_text_->setVisible(LoadedPhotosCount(frame_control) > 0);
 }
 

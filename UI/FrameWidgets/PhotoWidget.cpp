@@ -7,11 +7,8 @@ static const char *c_image_widget_button_style_str =
     "QPushButton{ background: transparent;"
     "}";
 
-static const char *c_text_widget_style_str =
-    "QLabel{ background-color: rgba(255, 255, 255, 0);}";
-
 PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
-    : ImageButton(parent), text_widget_(this), render_state_(render_state) {
+    : ImageButton(parent), render_state_(render_state) {
 
   if (!render_state) {
     setAcceptDrops(true);
@@ -19,10 +16,6 @@ PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
   setContentsMargins(0, 0, 0, 0);
   setStyleSheet(c_image_widget_button_style_str);
   connect(this, &QPushButton::clicked, this, &PhotoWidget::SignalImagePressed);
-
-  text_widget_.setStyleSheet(c_text_widget_style_str);
-  text_widget_.setAlignment(Qt::AlignCenter);
-  text_widget_.setVisible(!render_state_);
 
   timer_.setInterval(200);
   timer_.setSingleShot(true);
@@ -55,15 +48,6 @@ PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
 void PhotoWidget::resizeEvent(QResizeEvent *event) {
   ImageButton::resizeEvent(event);
 
-  QFont font = text_widget_.font();
-  font.setPointSizeF(size().height() / 7.0);
-  text_widget_.setFont(font);
-  text_widget_.adjustSize();
-
-  text_widget_.setGeometry(
-      {0, (int)(size().height() / 1.5) - text_widget_.height(), size().width(),
-       text_widget_.height()});
-
   update();
 }
 
@@ -88,10 +72,15 @@ void PhotoWidget::OnUpdateImageBuffer(QPixmap &buffer) {
     render->render(&painter,
                    QRect{rect().bottomRight() - QPoint{size, size} * 1.1,
                          QSize{size, size}});
+
+    auto gradient_height = this->parentWidget()->size().height() / 20.0;
+    QLinearGradient gradient(0, -10, 0, gradient_height);
+    gradient.setColorAt(0.0, QColor(76, 82, 32, 150));
+    gradient.setColorAt(1.0, QColor(76, 82, 32, 0));
+
+    painter.fillRect(QRect(0, 0, width(), gradient_height), gradient);
   }
 }
-
-void PhotoWidget::setText(QString text) { text_widget_.setText(text); }
 
 void PhotoWidget::dragEnterEvent(QDragEnterEvent *event) {
   if (isVisible() &&

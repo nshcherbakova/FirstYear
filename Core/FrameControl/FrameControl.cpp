@@ -61,7 +61,10 @@ void FrameControl::CreateNewProject() {
        month_number++) {
     auto &month = current_project_->monthes_[month_number];
     month.text = monthes[month_number];
+    month.state |= (short)Core::MonthItem::STATE::TEXT_CHANGED;
     month.photo_data = std::make_shared<PhotoData>();
   }
+
+  SaveProject();
 }
 } // namespace FirstYear::Core
