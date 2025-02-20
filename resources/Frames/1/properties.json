@@ -304,15 +304,15 @@
         }
     },
     "title": {
-        "alignment": 132,
+        "alignment": 36,
         "font": "Bellany",
         "font_color": "#669692",
         "font_size": 120,
         "rect": {
-            "left": 0,
+            "left": 40,
             "top": 50,
-            "width": 1190,
-            "height": 150
+            "width": 1150,
+            "height": 300
         }
     }
 }

@@ -303,15 +303,15 @@
         }
     },
     "title": {
-        "alignment": 132,
+        "alignment": 36,
         "font": "Walkway Bold",
         "font_color": "#4f4019",
         "font_size": 140,
         "rect": {
-            "left": 0,
+            "left": 40,
             "top": 50,
-            "width": 1200,
-            "height": 150
+            "width": 1160,
+            "height": 300
         }
     }
 }

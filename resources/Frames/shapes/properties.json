@@ -303,15 +303,15 @@
         }
     },
     "title": {
-        "alignment": 132,
+        "alignment": 36,
         "font": "Anisa Sans",
         "font_color": "#337187",
         "font_size": 130,
         "rect": {
-            "left": 0,
+            "left": 40,
             "top": 40,
-            "width": 1200,
-            "height": 250
+            "width": 1160,
+            "height": 300
         }
     }
 }

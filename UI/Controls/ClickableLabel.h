@@ -13,7 +13,8 @@ class ClickableLabel : public QLabel {
 
 public:
   explicit ClickableLabel(QWidget *parent, int font_size, QString font_color,
-                          QString font_family, bool hide_edit_icon = false);
+                          QString font_family, bool hide_edit_icon = false,
+                          bool ajust_text = false);
 
   void setText(QString text);
   void setFontSize(int size);
@@ -22,10 +23,13 @@ public:
 
 signals:
   void clicked();
-  void SignalTextUpdated();
 
 protected:
-  void mouseReleaseEvent(QMouseEvent *event);
+  virtual void mouseReleaseEvent(QMouseEvent *event) override final;
+  virtual void resizeEvent(QResizeEvent *event) override final;
+
+private:
+  void updateFontSize();
 
 private:
   QFont font_;
@@ -34,6 +38,7 @@ private:
   QString text_;
   int icon_size_ = 10;
   bool hide_edit_icon_ = false;
+  bool ajust_text_ = false;
 };
 
 } // namespace FirstYear::UI

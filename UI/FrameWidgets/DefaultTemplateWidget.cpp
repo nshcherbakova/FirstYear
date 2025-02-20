@@ -145,27 +145,11 @@ void TemplateWidgetBase::createTitleTextWidget(const TextParameters &parameters,
                                                bool is_rendering) {
   title_text_widget_ =
       new ClickableLabel(this, parameters.font_size, parameters.font_color,
-                         parameters.font, is_rendering);
+                         parameters.font, is_rendering, true);
 
   title_text_widget_->setAlignment(parameters.alignment);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
-
-  connect(title_text_widget_, &ClickableLabel::SignalTextUpdated, this, [&] {
-    const auto old_with = width();
-    qDebug() << "old_with " << old_with;
-    title_text_widget_->adjustSize();
-    const auto new_with = title_text_widget_->width();
-    qDebug() << "new  " << new_with;
-
-    if (new_with > old_with) {
-      double koef = (double)new_with / (double)width();
-      qDebug() << "koef  " << koef;
-      title_text_widget_->setFontSize(
-          (int)(title_text_widget_->font().pointSize() / koef));
-    }
-  });
-  // title_text_widget_->setVisible(false);
 }
 
 void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
@@ -193,7 +177,7 @@ void TemplateWidgetBase::createPhotoTextWidgets(
       month_parameters[0].text_parameters.text_parameters;
 
   photo_text_widgets_.resize(12);
-  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+  for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
     const auto &parameters =
         month_parameters[i].text_parameters.text_parameters;
 
@@ -241,14 +225,12 @@ void TemplateWidgetBase::createForegroundWidget() {
 void TemplateWidgetBase::Update() {
 
   foreground_widget_->setGeometry(rect());
-
-  load(control_);
+  title_text_widget_->setGeometry(title_slot_.left(), title_slot_.top(),
+                                  title_slot_.width(), title_slot_.height());
 
   title_text_widget_->setFontSize(title_text_font_size_);
 
-  title_text_widget_->setGeometry(
-      title_slot_.left(), title_slot_.top(), title_slot_.width(),
-      title_text_widget_->heightForWidth(title_text_widget_->width()));
+  load(control_);
 
   for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
 
@@ -354,7 +336,6 @@ void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {
   }
 
   update();
-  qDebug() << "update";
 }
 
 FrameParameters TemplateWidgetBase::frameData(int month) {

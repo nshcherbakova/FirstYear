@@ -304,15 +304,15 @@
         }
     },
     "title": {
-        "alignment": 132,
+        "alignment": 36,
         "font": "Vanilla Extract",
         "font_color": "#adbf80",
         "font_size": 80,
         "rect": {
-            "left": 0,
+            "left": 40,
             "top": 30,
-            "width": 1200,
-            "height": 150
+            "width": 1160,
+            "height": 300
         }
     }
 }
