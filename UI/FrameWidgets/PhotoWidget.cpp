@@ -61,10 +61,11 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
 
 void PhotoWidget::OnUpdateImageBuffer(QPixmap &buffer) {
 
+  QPainter painter(&buffer);
+
   if (!render_state_) {
     photo_scaled_ = buffer;
 
-    QPainter painter(&buffer);
     QSvgRenderer *render =
         photo_data_->isStub() ? svg_render_open_ : svg_render_edit_image_;
 
@@ -72,14 +73,13 @@ void PhotoWidget::OnUpdateImageBuffer(QPixmap &buffer) {
     render->render(&painter,
                    QRect{rect().bottomRight() - QPoint{size, size} * 1.1,
                          QSize{size, size}});
-
-    auto gradient_height = this->parentWidget()->size().height() / 20.0;
-    QLinearGradient gradient(0, -10, 0, gradient_height);
-    gradient.setColorAt(0.0, QColor(76, 82, 32, 150));
-    gradient.setColorAt(1.0, QColor(76, 82, 32, 0));
-
-    painter.fillRect(QRect(0, 0, width(), gradient_height), gradient);
   }
+  auto gradient_height = this->parentWidget()->size().height() / 15.0;
+  QLinearGradient gradient(0, -10, 0, gradient_height);
+  gradient.setColorAt(0.0, QColor(76, 82, 32, 200));
+  gradient.setColorAt(1.0, QColor(76, 82, 32, 0));
+
+  painter.fillRect(QRect(0, 0, width(), gradient_height), gradient);
 }
 
 void PhotoWidget::dragEnterEvent(QDragEnterEvent *event) {

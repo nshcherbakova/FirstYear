@@ -4,7 +4,7 @@
         "0": {
             "anchor": {
                 "x": 74,
-                "y": 241
+                "y": 246
             },
             "frame_data": {
                 "type": 1,
@@ -23,13 +23,13 @@
                 "alignment": 1,
                 "font": "Rounded Elegance",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "1": {
             "anchor": {
                 "x": 352,
-                "y": 240
+                "y": 245
             },
             "frame_data": {
                 "type": 1,
@@ -48,13 +48,13 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "10": {
             "anchor": {
                 "x": 739,
-                "y": 884
+                "y": 889
             },
             "frame_data": {
                 "type": 1,
@@ -73,13 +73,13 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "11": {
             "anchor": {
                 "x": 911,
-                "y": 958
+                "y": 963
             },
             "frame_data": {
                 "type": 1,
@@ -98,13 +98,13 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "2": {
             "anchor": {
                 "x": 630,
-                "y": 240
+                "y": 245
             },
             "frame_data": {
                 "type": 1,
@@ -123,13 +123,13 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "4": {
             "anchor": {
                 "x": 72,
-                "y": 559
+                "y": 564
             },
             "frame_data": {
                 "type": 1,
@@ -148,13 +148,13 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "5": {
             "anchor": {
                 "x": 461,
-                "y": 689
+                "y": 694
             },
             "frame_data": {
                 "type": 0,
@@ -173,13 +173,13 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "3": {
             "anchor": {
                 "x": 1021,
-                "y": 245
+                "y": 250
             },
             "frame_data": {
                 "type": 0,
@@ -198,13 +198,13 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "6": {
             "anchor": {
                 "x": 630,
-                "y": 594
+                "y": 599
             },
             "frame_data": {
                 "type": 1,
@@ -223,13 +223,13 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "7": {
             "anchor": {
                 "x": 912,
-                "y": 538
+                "y": 543
             },
             "frame_data": {
                 "type": 1,
@@ -248,13 +248,13 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "8": {
             "anchor": {
                 "x": 72,
-                "y": 879
+                "y": 874
             },
             "frame_data": {
                 "type": 1,
@@ -273,13 +273,13 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         },
         "9": {
             "anchor": {
                 "x": 352,
-                "y": 985
+                "y": 990
             },
             "frame_data": {
                 "type": 1,
@@ -298,7 +298,7 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 50
+                "font_size": 45
             }
         }
     },
@@ -310,7 +310,7 @@
         "rect": {
             "left": 0,
             "top": 40,
-            "width": 1174,
+            "width": 1200,
             "height": 250
         }
     }

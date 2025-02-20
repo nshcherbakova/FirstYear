@@ -61,7 +61,7 @@
         <file alias="header_5_font">resources/Fonts/Anisa Sans.ttf</file>
              <file alias="header_8_font">resources/Fonts/Rounded Elegance.ttf</file>
  <file alias="header_10_font">resources/Fonts/Walkway Bold.ttf</file>
-             <file alias="header_11_font">resources/Fonts/Typo_Round_Regular_Demo.otf</file>
+             <!--file alias="header_11_font">resources/Fonts/Typo_Round_Regular_Demo.otf</file-->
     </qresource>
     <qresource prefix="/frames/1">
         <file alias="foreground">resources/Frames/1/foreground.png</file>

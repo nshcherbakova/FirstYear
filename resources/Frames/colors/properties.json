@@ -308,11 +308,9 @@
         "font_color": "#4f4019",
         "font_size": 170,
         "rect": {
-            "bottom": 100,
             "left": 0,
-            "right": 1174,
             "top": 50,
-            "width": 1174,
+            "width": 1200,
             "height": 150
         }
     }

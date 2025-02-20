@@ -1,7 +1,7 @@
 #include "LineEdit.h"
 #include <stdafx.h>
 
-static const int c_max_month_lengh = 20;
+static const int c_max_month_lengh = 30;
 
 namespace FirstYear::UI {
 

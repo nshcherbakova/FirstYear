@@ -25,6 +25,7 @@ void ClickableLabel::setText(QString text) {
   } else {
     QLabel::setText(styled_text_.arg(text) + icon_text_.arg(icon_size_));
   }
+  emit SignalTextUpdated();
   // QLabel::adjustSize();
 }
 
@@ -32,6 +33,12 @@ void ClickableLabel::setFontSize(int size) {
   font_.setPointSize(size);
   QLabel::setFont(font_);
   icon_size_ = size;
+
+  /*if (!hide_edit_icon_) {
+      QLabel::setText(styled_text_.arg(text));
+  } else {
+      QLabel::setText(styled_text_.arg(text) + icon_text_.arg(icon_size_));
+  }*/
   setText(text_);
 }
 

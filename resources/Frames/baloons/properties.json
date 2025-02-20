@@ -146,7 +146,7 @@
                     "height": 233
             },
             "text": {
-                "alignment": 123,
+                "alignment": 132,
                 "font": "Rounded Elegance",
                 "font_color": "#ffffff",
                 "font_size": 35
@@ -279,21 +279,21 @@
         },
         "11": {
             "anchor": {
-                "x": 896,
-                "y": 650
+                "x": 888,
+                "y": 669
             },
             "frame_data": {
                 "type": 0,
                 "data": {
-                    "width": 170,
-                    "height": 237
+                    "width": 160,
+                    "height": 233
                 }
             },
             "slot": {
-                    "left": 807,
-                    "top": 629,
-                    "width": 170,
-                    "height": 237
+                    "left": 805,
+                    "top": 635,
+                    "width": 160,
+                    "height": 233
             },
             "text": {
                 "alignment": 132,
@@ -309,11 +309,9 @@
         "font_color": "#adbf80",
         "font_size": 80,
         "rect": {
-            "bottom": 90,
             "left": 0,
-            "right": 1174,
-            "top": 40,
-            "width": 1174,
+            "top": 30,
+            "width": 1200,
             "height": 150
         }
     }

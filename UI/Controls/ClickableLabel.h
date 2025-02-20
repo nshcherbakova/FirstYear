@@ -19,8 +19,10 @@ public:
   void setFontSize(int size);
 
   QString text() const;
+
 signals:
   void clicked();
+  void SignalTextUpdated();
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);

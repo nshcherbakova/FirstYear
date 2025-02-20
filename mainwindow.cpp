@@ -625,7 +625,10 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
 
     if (is_portrait) {
       drag_and_drop_width = width();
-      drag_and_drop_top = height() / 6;
+      drag_and_drop_top =
+          share_button_->geometry().top() -
+          drag_and_drop_text_->heightForWidth(drag_and_drop_width) -
+          height() / 70;
     } else {
       drag_and_drop_width = width() / 3.5;
       drag_and_drop_top = select_images_button_->geometry().top();

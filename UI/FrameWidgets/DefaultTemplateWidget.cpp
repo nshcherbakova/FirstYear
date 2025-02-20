@@ -150,6 +150,21 @@ void TemplateWidgetBase::createTitleTextWidget(const TextParameters &parameters,
   title_text_widget_->setAlignment(parameters.alignment);
   connect(title_text_widget_, &ClickableLabel::clicked, this,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
+
+  connect(title_text_widget_, &ClickableLabel::SignalTextUpdated, this, [&] {
+    const auto old_with = width();
+    qDebug() << "old_with " << old_with;
+    title_text_widget_->adjustSize();
+    const auto new_with = title_text_widget_->width();
+    qDebug() << "new  " << new_with;
+
+    if (new_with > old_with) {
+      double koef = (double)new_with / (double)width();
+      qDebug() << "koef  " << koef;
+      title_text_widget_->setFontSize(
+          (int)(title_text_widget_->font().pointSize() / koef));
+    }
+  });
   // title_text_widget_->setVisible(false);
 }
 
