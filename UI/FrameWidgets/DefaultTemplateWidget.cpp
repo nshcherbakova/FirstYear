@@ -181,11 +181,13 @@ void TemplateWidgetBase::createPhotoTextWidgets(
     const auto &parameters =
         month_parameters[i].text_parameters.text_parameters;
 
-    photo_text_widgets_[i] = new ClickableLabel(
-        this, parameters_fixed.font_size, parameters_fixed.font_color,
-        parameters_fixed.font, true);
-    photo_text_widgets_[i]->setAlignment(parameters.alignment);
+    auto &widget = photo_text_widgets_[i];
 
+    widget = new ClickableLabel(this, parameters_fixed.font_size,
+                                parameters_fixed.font_color,
+                                parameters_fixed.font, true);
+    widget->setAlignment(parameters.alignment);
+    widget->setAttribute(Qt::WA_TransparentForMouseEvents);
     //  connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
     //    emit SignalMonthTextClicked(photo_text_widgets_[i]->text(), i);
     //  });
