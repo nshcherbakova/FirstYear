@@ -43,8 +43,14 @@ void ClickableLabel::updateFontSize() {
   }
 
   QLabel::setFont(font_);
-  const double new_with = sizeHint().width();
+  qDebug() << icon_size_;
+  qDebug() << "font size " << font_.pointSize();
+  qDebug() << "width() " << width();
 
+  const double new_with = sizeHint().width();
+  qDebug() << "sizeHint() " << new_with;
+
+  qDebug() << "  ";
   if (new_with > width()) {
     const auto koef = new_with / width();
     auto font = QLabel::font();

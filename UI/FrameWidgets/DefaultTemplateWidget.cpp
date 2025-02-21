@@ -224,13 +224,13 @@ void TemplateWidgetBase::createForegroundWidget() {
 
 void TemplateWidgetBase::Update() {
 
+  load(control_);
+
   foreground_widget_->setGeometry(rect());
   title_text_widget_->setGeometry(title_slot_.left(), title_slot_.top(),
                                   title_slot_.width(), title_slot_.height());
 
   title_text_widget_->setFontSize(title_text_font_size_);
-
-  load(control_);
 
   for (int i = 0; i < (int)photo_text_widgets_.size(); i++) {
 
