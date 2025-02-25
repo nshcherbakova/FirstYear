@@ -115,6 +115,10 @@ RESOURCES += \
     resource.qrc
 
 android {
+
+ANDROID_VERSION_NAME = "1.0"
+ANDROID_VERSION_CODE = "06401"
+
 DISTFILES += \
 android/AndroidManifest.xml \
     android/build.gradle \

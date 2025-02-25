@@ -81,6 +81,7 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
 #elif defined Q_OS_MACOS
 
   QSize window_size(9 * 45, 20 * 45);
+  //    QSize window_size(16 * 80, 9 * 80);
   setMinimumSize(window_size);
   show();
 #else
