@@ -54,7 +54,8 @@ PhotoData PhotoData::CreateStubData(QPixmap image) {
 }
 PhotoData PhotoData::CreateNewData(QPixmap image, bool scaled) {
   PhotoData data;
-  data.fillImage(image, image.isNull(), scaled);
+  const bool is_stub = image.isNull();
+  data.fillImage(std::move(image), is_stub, scaled);
   return data;
 }
 PhotoData PhotoData::CreateCopy(const PhotoData &source) { return source; }

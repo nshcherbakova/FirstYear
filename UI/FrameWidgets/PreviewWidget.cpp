@@ -91,7 +91,8 @@ bool PreviewWidget::event(QEvent *event) {
 
 void PreviewWidget::setImage(QPixmap photo) {
 
-  Core::PhotoData photo_data = Core::PhotoData::CreateNewData(photo, false);
+  Core::PhotoData photo_data =
+      Core::PhotoData::CreateNewData(std::move(photo), false);
 
   updatePhoto(std::make_shared<Core::PhotoData>(std::move(photo_data)));
 }

@@ -328,17 +328,20 @@ void PhotoTuneWidget::processSwipe(QSwipeGesture *gesture) {
 }
 
 void PhotoTuneWidget::processPan(QPointF delta) {
+  qDebug() << "delta " << delta;
   updatePhoto(delta, std::optional<double>(), std::optional<double>(),
               std::optional<QPointF>());
 }
 
 void PhotoTuneWidget::processAngleChanged(qreal rotation_delta,
                                           QPointF center) {
+  qDebug() << "rotation_delta " << rotation_delta * 180.0 / 3.14;
   updatePhoto(std::optional<QPointF>(), std::optional<double>(), rotation_delta,
               center);
 }
 
 void PhotoTuneWidget::processScaleChanged(qreal scale, QPointF center) {
+  qDebug() << "scale " << scale;
   updatePhoto(std::optional<QPointF>(), scale, std::optional<double>(), center);
 }
 

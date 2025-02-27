@@ -3,6 +3,9 @@
 #include <stdafx.h>
 
 namespace FirstYear::UI {
+static const double c_zoom_max = 0.2;
+static const double c_pos_chenge_max = 20;
+static const double c_angle_change_max = 30;
 
 GestureProcessor::GestureProcessor() {
 
@@ -50,7 +53,7 @@ bool GestureProcessor::gestureEvent(QGestureEvent *event) {
 
 bool GestureProcessor::toucheEvent(QTouchEvent *touch) {
 
-  if (is_zooming_ || is_gesture_moving_) {
+  if (is_gesture_moving_) {
     return false;
   }
   touch->accept();
@@ -76,6 +79,9 @@ void GestureProcessor::panTriggered(QPanGesture *gesture) {
 #endif
 
   QPointF delta = gesture->delta();
+  if (delta.manhattanLength() > c_pos_chenge_max) {
+    delta = QPoint(0, 0);
+  }
   processPan(delta);
 }
 
@@ -84,10 +90,19 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
   if (changeFlags & QPinchGesture::RotationAngleChanged) {
     qreal rotation_delta =
         gesture->rotationAngle() - gesture->lastRotationAngle();
+    if (abs(rotation_delta) >= c_angle_change_max) {
+      rotation_delta = 0.0;
+    }
+
     processAngleChanged(rotation_delta, gesture->centerPoint());
   }
   if (changeFlags & QPinchGesture::ScaleFactorChanged) {
-    processScaleChanged(gesture->scaleFactor(), gesture->centerPoint());
+
+    const auto scale = fabs(gesture->scaleFactor() - 1.0) > c_zoom_max
+                           ? 1.0
+                           : gesture->scaleFactor();
+
+    processScaleChanged(scale, gesture->centerPoint());
   }
   if (gesture->state() == Qt::GestureFinished) {
 

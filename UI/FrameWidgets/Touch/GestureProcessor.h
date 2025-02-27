@@ -49,7 +49,6 @@ private:
 
 private:
   bool is_gesture_moving_ = false;
-  bool is_zooming_ = false;
   DoubleTapRecognizer *double_tap_recognizer_ = nullptr;
 
   //  bool is_touch_movng_ = false;
