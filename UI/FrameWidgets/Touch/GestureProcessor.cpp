@@ -56,6 +56,7 @@ bool GestureProcessor::toucheEvent(QTouchEvent *touch) {
   if (is_gesture_moving_) {
     return false;
   }
+  qDebug() << "tttttt";
   touch->accept();
   const auto touchPoints = touch->points();
 
@@ -73,14 +74,19 @@ void GestureProcessor::panTriggered(QPanGesture *gesture) {
   case Qt::GestureCanceled:
     is_gesture_moving_ = false;
     break;
-  default:
+  default: {
+    qDebug() << "******";
     is_gesture_moving_ = false;
+  }
   }
 #endif
 
   QPointF delta = gesture->delta();
   if (delta.manhattanLength() > c_pos_chenge_max) {
     delta = QPoint(0, 0);
+  }
+  if (delta.manhattanLength() > c_pos_chenge_max / 2) {
+    delta = delta / 2.0;
   }
   processPan(delta);
 }
