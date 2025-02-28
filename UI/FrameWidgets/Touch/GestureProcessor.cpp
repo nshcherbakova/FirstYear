@@ -56,11 +56,37 @@ bool GestureProcessor::toucheEvent(QTouchEvent *touch) {
   if (is_gesture_moving_) {
     return false;
   }
-  qDebug() << "tttttt";
   touch->accept();
-  const auto touchPoints = touch->points();
+  const auto points = touch->points();
 
-  return processToucheEvent(touchPoints);
+  QPointF delta;
+  int count = 0;
+
+  QPointF point;
+  for (const QTouchEvent::TouchPoint &touchPoint : points) {
+    switch (touchPoint.state()) {
+    case QEventPoint::Stationary:
+    case QEventPoint::Released:
+    case QEventPoint::Pressed:
+
+      // don't do anything if this touch point hasn't moved or has been released
+      continue;
+    default: {
+
+      delta += touchPoint.position() - touchPoint.lastPosition();
+      point += touchPoint.position();
+    }
+    }
+    count += 1;
+  }
+  if (count > 0) {
+    delta /= count;
+
+    processToucheEvent(delta,
+                       points.isEmpty() ? std::optional<QPointF>() : (point));
+    return true;
+  }
+  return false;
 }
 
 void GestureProcessor::panTriggered(QPanGesture *gesture) {
@@ -75,20 +101,20 @@ void GestureProcessor::panTriggered(QPanGesture *gesture) {
     is_gesture_moving_ = false;
     break;
   default: {
-    qDebug() << "******";
     is_gesture_moving_ = false;
   }
   }
 #endif
 
   QPointF delta = gesture->delta();
+
   if (delta.manhattanLength() > c_pos_chenge_max) {
     delta = QPoint(0, 0);
   }
   if (delta.manhattanLength() > c_pos_chenge_max / 2) {
     delta = delta / 2.0;
   }
-  processPan(delta);
+  processPan(delta, gesture->hotSpot());
 }
 
 void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {

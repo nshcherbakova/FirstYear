@@ -295,30 +295,11 @@ void PhotoTuneWidget::wheelEvent(QWheelEvent *event) {
   }
 }
 
-bool PhotoTuneWidget::processToucheEvent(const QList<QEventPoint> &points) {
-  QPointF delta;
-  int count = 0;
+void PhotoTuneWidget::processToucheEvent(
+    QPointF delta, const std::optional<QPointF> &touch_point) {
 
-  for (const QTouchEvent::TouchPoint &touchPoint : points) {
-    switch (touchPoint.state()) {
-    case QEventPoint::Stationary:
-    case QEventPoint::Released:
-      // don't do anything if this touch point hasn't moved or has been released
-      continue;
-    default: {
-
-      delta += touchPoint.position() - touchPoint.lastPosition();
-    }
-    }
-    count += 1;
-  }
-  if (count > 0) {
-    delta /= count;
-    updatePhoto(delta, std::optional<double>(), std::optional<double>(),
-                std::optional<QPointF>());
-    return true;
-  }
-  return false;
+  updatePhoto(delta, std::optional<double>(), std::optional<double>(),
+              touch_point);
 }
 
 void PhotoTuneWidget::processSwipe(QSwipeGesture *gesture) {
@@ -327,21 +308,18 @@ void PhotoTuneWidget::processSwipe(QSwipeGesture *gesture) {
   }
 }
 
-void PhotoTuneWidget::processPan(QPointF delta) {
-  qDebug() << "delta " << delta;
+void PhotoTuneWidget::processPan(QPointF delta, QPointF global_point) {
   updatePhoto(delta, std::optional<double>(), std::optional<double>(),
-              std::optional<QPointF>());
+              mapFromGlobal(global_point));
 }
 
 void PhotoTuneWidget::processAngleChanged(qreal rotation_delta,
                                           QPointF center) {
-  qDebug() << "rotation_delta " << rotation_delta * 180.0 / 3.14;
   updatePhoto(std::optional<QPointF>(), std::optional<double>(), rotation_delta,
               center);
 }
 
 void PhotoTuneWidget::processScaleChanged(qreal scale, QPointF center) {
-  qDebug() << "scale " << scale;
   updatePhoto(std::optional<QPointF>(), scale, std::optional<double>(), center);
 }
 

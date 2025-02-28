@@ -132,33 +132,14 @@ void PreviewWidget::wheelEvent(QWheelEvent *event) {
   }
 }
 
-bool PreviewWidget::processToucheEvent(const QList<QEventPoint> &points) {
-  QPointF delta;
-  int count = 0;
+void PreviewWidget::processToucheEvent(
+    QPointF delta, const std::optional<QPointF> &touch_point) {
 
-  for (const QTouchEvent::TouchPoint &touchPoint : points) {
-    switch (touchPoint.state()) {
-    case QEventPoint::Stationary:
-    case QEventPoint::Released:
-      // don't do anything if this touch point hasn't moved or has been released
-      continue;
-    default: {
-
-      delta += touchPoint.position() - touchPoint.lastPosition();
-    }
-    }
-    count += 1;
-  }
-  if (count > 0) {
-    delta /= count;
-    updatePhoto(delta, std::optional<double>(), std::optional<QPointF>());
-    return true;
-  }
-  return false;
+  updatePhoto(delta, std::optional<double>(), touch_point);
 }
 
-void PreviewWidget::processPan(QPointF delta) {
-  updatePhoto(delta, std::optional<double>(), std::optional<QPointF>());
+void PreviewWidget::processPan(QPointF delta, QPointF global_point) {
+  updatePhoto(delta, std::optional<double>(), mapFromGlobal(global_point));
 }
 
 void PreviewWidget::processScaleChanged(qreal scale, QPointF center) {

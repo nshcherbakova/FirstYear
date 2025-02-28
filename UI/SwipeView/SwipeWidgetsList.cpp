@@ -76,11 +76,11 @@ void SwipeWidgetsList::InitialaizeScroller() {
   properties.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy,
                              QScrollerProperties::OvershootAlwaysOff);
   properties.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy,
-                             QScrollerProperties::OvershootAlwaysOff);
+                             QScrollerProperties::OvershootAlwaysOn);
   properties.setScrollMetric(QScrollerProperties::DragVelocitySmoothingFactor,
-                             0.6);
+                             0.2);
   properties.setScrollMetric(QScrollerProperties::MinimumVelocity, 0.0);
-  properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.5);
+  properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.2);
   properties.setScrollMetric(QScrollerProperties::AcceleratingFlickMaximumTime,
                              0.4);
   properties.setScrollMetric(
@@ -90,6 +90,8 @@ void SwipeWidgetsList::InitialaizeScroller() {
                              0);
   properties.setScrollMetric(QScrollerProperties::DragStartDistance, 0.001);
   properties.setScrollMetric(QScrollerProperties::MousePressEventDelay, 0.5);
+  // properties.setScrollMetric(QScrollerProperties::ScrollingCurve,
+  // QEasingCurve::OutCubic);
 
   QScroller::scroller(this)->setScrollerProperties(properties);
   QScroller::scroller(this)->setSnapPositionsX(0, width() + layout_->spacing());

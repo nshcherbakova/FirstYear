@@ -81,7 +81,8 @@ protected:
                            std::optional<QPointF> center);
 
 private:
-  bool checkBoundares(const QTransform &transform) const;
+  bool checkBoundares(const QTransform &transform,
+                      const std::optional<QPointF> &center) const;
 };
 
 } // namespace FirstYear::UI

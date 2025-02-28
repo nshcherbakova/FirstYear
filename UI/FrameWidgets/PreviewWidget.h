@@ -38,9 +38,11 @@ public:
 
 private:
   // GestureProcessor
-  virtual void processPan(QPointF delta) override;
+  virtual void processPan(QPointF delta, QPointF global_point) override;
   virtual void processScaleChanged(qreal scale, QPointF center) override;
-  virtual bool processToucheEvent(const QList<QEventPoint> &points) override;
+  virtual void
+  processToucheEvent(QPointF delta,
+                     const std::optional<QPointF> &touch_point) override;
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
   virtual void processDoubleTap(QPointF center) override;
   virtual void processAngleChanged(qreal rotation_delta,

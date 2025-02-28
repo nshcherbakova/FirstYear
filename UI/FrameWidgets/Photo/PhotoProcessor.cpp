@@ -126,9 +126,19 @@ void PhotoPainter::drawFrame(QPainter &) {
 //////////////////////////////////////////////////////////////////////////////////////
 ///
 ///
-bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
+bool PhotoProcessor::checkBoundares(
+    const QTransform &transform, const std::optional<QPointF> &center) const {
 
   const QRectF image_rect = {QPointF(0, 0), photo_data_->image().size() / dpr_};
+  const auto dx = image_rect.width() / 4;
+  const auto dy = image_rect.height() / 4;
+  const QRectF image_rect_extended = image_rect.adjusted(-dx, -dy, dx, dy);
+
+  const auto translated_image_polygon =
+      transform.map(QPolygonF(image_rect_extended));
+  if (center &&
+      !translated_image_polygon.containsPoint(*center, Qt::WindingFill))
+    return false;
 
   const auto translated_image_rect = transform.mapRect(image_rect);
 
@@ -140,7 +150,7 @@ bool PhotoProcessor::checkBoundares(const QTransform &transform) const {
       translated_image_rect.height() > boundary_rect_.height() * MAX_SIZE_K)
     return false;
 
-  if (!translated_image_rect.intersects(boundary_rect_))
+  if (!translated_image_polygon.intersects(boundary_rect_))
     return false;
 
   return true;
@@ -155,7 +165,7 @@ void PhotoProcessor::updatePhotoPosition(std::optional<QPointF> pos_delta,
   auto transform = getTransformForWidget(
       {angle_delta, scale_factor, pos_delta, center}, translate, scale_rotate);
 
-  if (checkBoundares(transform)) {
+  if (checkBoundares(transform, center)) {
     transform_ = transform;
     photo_data_->setTransforms(std::move(scale_rotate), std::move(translate));
   }

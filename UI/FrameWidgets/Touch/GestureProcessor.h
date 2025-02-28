@@ -31,10 +31,12 @@ protected:
 
   void grabGestures(const QList<Qt::GestureType> &gestures);
   bool processEvent(QEvent *event);
-  virtual void processPan(QPointF delta) = 0;
+  virtual void processPan(QPointF delta, QPointF global_point) = 0;
   virtual void processAngleChanged(qreal rotation_delta, QPointF center) = 0;
   virtual void processScaleChanged(qreal scale, QPointF center) = 0;
-  virtual bool processToucheEvent(const QList<QEventPoint> &points) = 0;
+  virtual void
+  processToucheEvent(QPointF delta,
+                     const std::optional<QPointF> &touch_point) = 0;
   virtual void processSwipe(QSwipeGesture *) = 0;
   virtual void processDoubleTap(QPointF center) = 0;
   virtual void grabWidgetGesture(Qt::GestureType gesture) = 0;
