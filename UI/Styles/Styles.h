@@ -46,11 +46,17 @@ static const char *c_message_box_style_str =
     "border-width: 3;"
     "}";
 
-static const char *c_drag_and_drop_style_str =
-    "QLabel{"
+static const char *c_rearrange_button_str =
+    "QPushButton#Rearrange{"
     "color:#BC9F76; "
     "font-size: 23px; "
+    "border-width: 3;"
+    "background-color: transparent;"
     //    "font-family: Typo Round Regular Demo;"
+    "}"
+    "QPushButton#Rearrange:pressed {"
+    "border-color: #C3BED1;"
+    "border-radius: 10;"
     "}";
 
 // Tune Widget styles
@@ -131,14 +137,14 @@ static const char *c_close_button_style_str =
     "QPushButton:pressed {border-color: #C3BED1;}"
     "QPushButton:pressed{color: #C3BED1;}";
 // Edit window styles
-static const char
-    *c_line_edit_style_str = "QLineEdit{"
-                             "background-color: #F5F5DF;"
-                             "color: #83368A;"
-                             //" font-family: Typo Round Regular Demo;"
-                             "border: none;"
-                             "border-radius: 30;"
-                             "}";
+static const char *c_line_edit_style_str =
+    "QLineEdit{"
+    "background-color: #F5F5DF;"
+    "color: #83368A;"
+    //" font-family: Typo Round Regular Demo;"
+    "border: none;"
+    "border-radius: 30;"
+    "}";
 
 // Edit window styles
 static const char *c_clickable_label_style_str =

@@ -24,14 +24,22 @@ public:
   createWidgets(const QStringList &ids, Core::FrameControl &control);
   static QPixmap renderWidget(const QString &id, QWidget *parent,
                               Core::FrameControl &control);
+  static TemplateWidgetBase *createRearrangeWidget(Core::FrameControl &control);
 };
 
 class TemplateWidgetBase : public QWidget {
   Q_OBJECT
 public:
+  enum class State {
+    FRAME = 0,
+    RENDER_FRAME,
+  };
+
   explicit TemplateWidgetBase(QWidget *parent,
                               const TemplateWidgetParameters &frame_widget_data,
-                              bool render_state = false);
+                              State render_state = State::FRAME);
+  explicit TemplateWidgetBase(QWidget *parent, Core::FrameControl &control);
+
   TemplateWidgetBase &operator=(const TemplateWidgetBase &) = delete;
   virtual ~TemplateWidgetBase(){};
 
@@ -40,8 +48,6 @@ signals:
   void SignalTextChanged();
   void SignalTitleClicked(QString text);
   void SignalMonthTextClicked(QString text, int month);
-  void SignalRemoveButtonClicked(int month);
-  void SignalImageDroped(int from_id, int to_id);
 
 public slots:
   void Update();
@@ -65,9 +71,7 @@ private:
   void createForegroundWidget();
   void createTitleTextWidget(const TextParameters &parameters,
                              bool is_rendering);
-  void createPhotoTextWidgets(const std::vector<MonthParameters> &parameters,
-                              bool is_rendering);
-  void createRemoveButtonWidgets(bool is_rendering);
+  void createPhotoTextWidgets(const std::vector<MonthParameters> &parameters);
   void InitPhotos(Core::FrameControl &control);
 
   void fillParameters(const PhotoFrameParameters &parameters);
@@ -86,7 +90,6 @@ private:
   Core::FrameControl &control_;
   std::vector<PhotoWidget *> photo_widgets_;
   std::vector<ClickableLabel *> photo_text_widgets_;
-  std::vector<QPushButton *> remove_buttons_;
 
   ForegroundWidget *foreground_widget_ = nullptr;
   QRectF title_slot_;
@@ -97,7 +100,8 @@ private:
   int photo_text_font_size_ = 20;
 
   ClickableLabel *title_text_widget_ = nullptr;
-  bool render_state_ = false;
+
+  State render_state_;
 };
 
 } // namespace FirstYear::UI

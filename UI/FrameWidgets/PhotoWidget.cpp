@@ -7,10 +7,10 @@ static const char *c_image_widget_button_style_str =
     "QPushButton{ background: transparent;"
     "}";
 
-PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
-    : ImageButton(parent), render_state_(render_state) {
+PhotoWidget::PhotoWidget(QWidget &parent, Parameters parameters)
+    : ImageButton(parent), parameters_(parameters) {
 
-  if (!render_state) {
+  if (parameters.accept_drops) {
     setAcceptDrops(true);
   }
   setContentsMargins(0, 0, 0, 0);
@@ -37,9 +37,11 @@ PhotoWidget::PhotoWidget(QWidget &parent, bool render_state)
     drag->exec(Qt::CopyAction);
   });
 
-  if (!render_state) {
+  if (parameters.show_open_icon) {
     svg_render_open_ = new QSvgRenderer(this);
     svg_render_open_->load(QString(":/images/icons/open"));
+  }
+  if (parameters.show_edit_icon) {
     svg_render_edit_image_ = new QSvgRenderer(this);
     svg_render_edit_image_->load(QString(":/images/icons/edit_image"));
   }
@@ -62,24 +64,32 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
 void PhotoWidget::OnUpdateImageBuffer(QPixmap &buffer) {
 
   QPainter painter(&buffer);
+  photo_scaled_ = buffer;
 
-  if (!render_state_) {
-    photo_scaled_ = buffer;
-
-    QSvgRenderer *render =
-        photo_data_->isStub() ? svg_render_open_ : svg_render_edit_image_;
+  if (parameters_.show_open_icon && photo_data_->isStub()) {
 
     const auto size = parentWidget()->size().width() / 16;
-    render->render(&painter,
-                   QRect{rect().bottomRight() - QPoint{size, size} * 1.1,
-                         QSize{size, size}});
+    svg_render_open_->render(
+        &painter, QRect{rect().bottomRight() - QPoint{size, size} * 1.1,
+                        QSize{size, size}});
   }
-  auto gradient_height = this->parentWidget()->size().height() / 15.0;
-  QLinearGradient gradient(0, -10, 0, gradient_height);
-  gradient.setColorAt(0.0, QColor(76, 82, 32, 200));
-  gradient.setColorAt(1.0, QColor(76, 82, 32, 0));
 
-  painter.fillRect(QRect(0, 0, width(), gradient_height), gradient);
+  if (parameters_.show_edit_icon && !photo_data_->isStub()) {
+
+    const auto size = parentWidget()->size().width() / 16;
+    svg_render_edit_image_->render(
+        &painter, QRect{rect().bottomRight() - QPoint{size, size} * 1.1,
+                        QSize{size, size}});
+  }
+
+  if (parameters_.show_shadow) {
+    auto gradient_height = this->parentWidget()->size().height() / 15.0;
+    QLinearGradient gradient(0, -10, 0, gradient_height);
+    gradient.setColorAt(0.0, QColor(76, 82, 32, 200));
+    gradient.setColorAt(1.0, QColor(76, 82, 32, 0));
+
+    painter.fillRect(QRect(0, 0, width(), gradient_height), gradient);
+  }
 }
 
 void PhotoWidget::dragEnterEvent(QDragEnterEvent *event) {
@@ -145,14 +155,14 @@ void PhotoWidget::dropEvent(QDropEvent *event) {
 
 //! [1]
 void PhotoWidget::mousePressEvent(QMouseEvent *event) {
-  if (isVisible() && !render_state_) {
+  if (isVisible() && parameters_.accept_drops) {
     timer_.start();
   }
   ImageButton::mousePressEvent(event);
 }
 
 void PhotoWidget::mouseReleaseEvent(QMouseEvent *event) {
-  if (!render_state_) {
+  if (parameters_.accept_drops) {
     timer_.stop();
   }
   ImageButton::mouseReleaseEvent(event);
@@ -161,12 +171,12 @@ void PhotoWidget::mouseReleaseEvent(QMouseEvent *event) {
 void PhotoWidget::paintEvent(QPaintEvent *e) {
 
   ImageButton::paintEvent(e);
-  if (!render_state_ && drag_enter_) {
+  if (parameters_.accept_drops && drag_enter_) {
     QPainter painter(this);
     painter.fillRect(rect(), QColor(200, 200, 200, 200));
 
-  } else if (!render_state_) {
-    QPushButton::paintEvent(e);
-  }
+  } // else if (!render_state_) {
+  QPushButton::paintEvent(e);
+  // }
 }
 } // namespace FirstYear::UI

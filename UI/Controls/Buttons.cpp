@@ -6,6 +6,7 @@ namespace FirstYear::UI {
 TouchebleButton::TouchebleButton(QWidget *parent, bool accept_touch)
     : TouchButton(parent), accept_touch_(accept_touch) {
   setContentsMargins(0, 0, 0, 0);
+  setAttribute(Qt::WA_AcceptTouchEvents, accept_touch_);
 }
 
 bool TouchebleButton::event(QEvent *event) {

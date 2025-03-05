@@ -3,6 +3,7 @@
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 #include <UI/FrameWidgets/PhotoTuneWidget.h>
 #include <UI/FrameWidgets/PreviewWidget.h>
+#include <UI/FrameWidgets/RearrangeWidget.h>
 #include <UI/SwipeView/SwipeWidgetsList.hpp>
 #include <stdafx.h>
 
@@ -96,12 +97,13 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
   background_svg_ = new QSvgWidget(":/images/icons/stars", this);
 
   CreatePhotoTuneWidget(frame_control);
-  CreateDragAndDropText(frame_control);
+  // CreateDragAndDropText(frame_control);
   CreateFrames(frame_control, frames);
   CreateLineEditWidget(frame_control);
   CreateSwipeWidget(frame_control);
   CreateButtons(frame_control);
   CreatePreviewWindow();
+  CreateRearrangeWidget(frame_control);
 
   photo_tune_widget_->raise();
 
@@ -216,6 +218,42 @@ void MainWindow::CreatePhotoTuneWidget(
           });
 }
 
+void MainWindow::CreateRearrangeWidget(
+    FirstYear::Core::FrameControl &frame_control) {
+  rearrange_ = new RearrangeWidget(this, frame_control);
+  rearrange_->hide();
+
+  connect(
+      rearrange_, &RearrangeWidget::SignalImageDroped, this,
+      [&](int from_index, int to_index) {
+        auto &monthes = frame_control.CurrentProject()->monthes_;
+
+        auto month_from_photo_data = monthes[from_index].photo_data;
+        auto &month_to = monthes[to_index];
+
+        monthes[from_index].photo_data = month_to.photo_data;
+        month_to.photo_data = month_from_photo_data;
+
+        monthes[from_index].photo_data->setState(
+            ((short)PhotoData::STATE::IMAGE_CHANGED |
+             (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+             (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
+
+        monthes[to_index].photo_data->setState(
+            (short)PhotoData::STATE::IMAGE_CHANGED |
+            (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+            (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+
+        UpdateFrames(nullptr);
+        frame_control.SaveProject();
+      },
+      Qt::QueuedConnection);
+
+  connect(
+      rearrange_, &RearrangeWidget::SignalRemoveButtonClicked, this,
+      [&](int month_index) { DeletePhoto(month_index); }, Qt::QueuedConnection);
+}
+
 void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
                               const QStringList &frames) {
 
@@ -233,32 +271,6 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
     widget->setMaximumHeight(height());
 
     connect(
-        widget->innerWidget(), &TemplateWidgetBase::SignalImageDroped, this,
-        [&](int from_index, int to_index) {
-          auto &monthes = frame_control.CurrentProject()->monthes_;
-
-          auto month_from_photo_data = monthes[from_index].photo_data;
-          auto &month_to = monthes[to_index];
-
-          monthes[from_index].photo_data = month_to.photo_data;
-          month_to.photo_data = month_from_photo_data;
-
-          monthes[from_index].photo_data->setState(
-              ((short)PhotoData::STATE::IMAGE_CHANGED |
-               (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-               (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
-
-          monthes[to_index].photo_data->setState(
-              (short)PhotoData::STATE::IMAGE_CHANGED |
-              (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-              (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
-
-          UpdateFrames(nullptr);
-          frame_control.SaveProject();
-        },
-        Qt::QueuedConnection);
-
-    connect(
         widget->innerWidget(), &TemplateWidgetBase::SignalTunePhoto, this,
         [&](int month_index) { TuneImage(month_index, project_control_); },
         Qt::QueuedConnection);
@@ -266,11 +278,6 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
     connect(
         widget->innerWidget(), &TemplateWidgetBase::SignalTextChanged, this,
         [&]() { UpdateFrames(nullptr); }, Qt::QueuedConnection);
-
-    connect(
-        widget->innerWidget(), &TemplateWidgetBase::SignalRemoveButtonClicked,
-        this, [&](int month_index) { DeletePhoto(month_index); },
-        Qt::QueuedConnection);
   }
 
   connect(
@@ -377,9 +384,11 @@ void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {
       widget->innerWidget()->Update();
     }
   }
+  rearrange_->Update();
 
   UpdateSelectionButton(project_control_);
-  UpdateDrugAndDrop();
+  UpdateRearrangeButton();
+  // UpdateDrugAndDrop();
   resizeEvent(nullptr);
 }
 
@@ -408,9 +417,13 @@ void MainWindow::UpdateSelectionButton(
     select_images_button_->hide();
 }
 
-void MainWindow::UpdateDrugAndDrop() {
-  drag_and_drop_text_->setVisible(LoadedPhotosCount(project_control_) > 0);
+void MainWindow::UpdateRearrangeButton() {
+  rearrange_button_->setVisible(LoadedPhotosCount(project_control_) > 0);
 }
+
+// void MainWindow::UpdateDrugAndDrop() {
+//   drag_and_drop_text_->setVisible(LoadedPhotosCount(project_control_) > 0);
+// }
 
 void MainWindow::CreateSwipeWidget(
     FirstYear::Core::FrameControl &frame_control) {
@@ -483,17 +496,28 @@ pixmap.save(path);
   });
 
   UpdateSelectionButton(project_control_);
-  UpdateDrugAndDrop();
-}
+  // UpdateDrugAndDrop();
 
+  rearrange_button_ = new TextButton(this);
+  rearrange_button_->setStyleSheet(c_rearrange_button_str);
+  rearrange_button_->setText("Rearrange");
+  rearrange_button_->setObjectName("Rearrange");
+  rearrange_button_->setVisible(LoadedPhotosCount(control) > 0);
+
+  connect(rearrange_button_, &QPushButton::clicked, this,
+          [&] { rearrange_->show(); });
+
+  UpdateRearrangeButton();
+}
+/*
 void MainWindow::CreateDragAndDropText(
     FirstYear::Core::FrameControl &frame_control) {
   drag_and_drop_text_ = new QLabel(this);
   drag_and_drop_text_->setWordWrap(true);
-  drag_and_drop_text_->setStyleSheet(c_drag_and_drop_style_str);
+  //drag_and_drop_text_->setStyleSheet(c_drag_and_drop_style_str);
   drag_and_drop_text_->setText("Drag and drop photos");
   drag_and_drop_text_->setVisible(LoadedPhotosCount(frame_control) > 0);
-}
+}*/
 
 void MainWindow::SelectImages(QStringList files) {
   QProgressDialog progress("Loading photos...", "", 0, files.size(), this);
@@ -593,6 +617,9 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (photo_tune_widget_)
     photo_tune_widget_->setGeometry(rect());
 
+  if (rearrange_)
+    rearrange_->setGeometry(rect());
+
   if (line_edit_)
     line_edit_->setGeometry(rect());
 
@@ -616,29 +643,36 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
           height() / 20},
          select_images_button_->size()});
 
+  /*  if (rearrange_button_)
+        rearrange_button_->setGeometry(
+            {{height() / 50,
+              height() / 20},
+             rearrange_button_->size()});*/
+
   if (preview_)
     preview_->setGeometry(rect());
 
-  if (drag_and_drop_text_) {
+  if (rearrange_button_) {
     bool is_portrait = width() < height();
-    int drag_and_drop_width = 0;
-    int drag_and_drop_top = 0;
+    int rearrange_button_width = 0;
+    int rearrange_button_top = 0;
 
     if (is_portrait) {
-      drag_and_drop_width = width();
-      drag_and_drop_top =
+      rearrange_button_width = width();
+      rearrange_button_top =
           share_button_->geometry().top() -
-          drag_and_drop_text_->heightForWidth(drag_and_drop_width) -
+          60 - // rearrange_button_->heightForWidth(rearrange_button_width) -
           height() / 70;
     } else {
-      drag_and_drop_width = width() / 3.5;
-      drag_and_drop_top = select_images_button_->geometry().top();
+      rearrange_button_width = width() / 3.5;
+      rearrange_button_top = select_images_button_->geometry().top();
     }
-    const int drag_and_drop_height =
-        drag_and_drop_text_->heightForWidth(drag_and_drop_width);
+    const int drag_and_drop_height = 60;
+    //   rearrange_button_->heightForWidth(rearrange_button_width);
 
-    drag_and_drop_text_->setGeometry(height() / 50, drag_and_drop_top,
-                                     drag_and_drop_width, drag_and_drop_height);
+    rearrange_button_->setGeometry(height() / 50, rearrange_button_top,
+                                   rearrange_button_width,
+                                   drag_and_drop_height);
   }
 
   update();
@@ -691,6 +725,12 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     setEnabledControls(true);
 
     event->ignore();
+  } else if (rearrange_->isVisible()) {
+    rearrange_->hide();
+
+    setEnabledControls(true);
+
+    event->ignore();
   } else {
     QMainWindow::closeEvent(event);
   }
@@ -711,6 +751,9 @@ void MainWindow::setEnabledControls(bool enabled) {
 
   select_images_button_->setUpdatesEnabled(enabled);
   select_images_button_->setEnabled(enabled);
+
+  rearrange_button_->setUpdatesEnabled(enabled);
+  rearrange_button_->setEnabled(enabled);
 }
 
 MainWindow::~MainWindow() {}

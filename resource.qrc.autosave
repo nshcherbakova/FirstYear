@@ -1,0 +1,99 @@
+<RCC>
+    <qresource prefix="/images/month_stubs">
+        <file alias="month_stub_0">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_1">resources/Images/month_stubs/month_image_stub1.svg</file>
+        <file alias="month_stub_2">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_3">resources/Images/month_stubs/month_image_stub1.svg</file>
+        <file alias="month_stub_4">resources/Images/month_stubs/month_image_stub1.svg</file>
+        <file alias="month_stub_5">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_6">resources/Images/month_stubs/month_image_stub1.svg</file>
+        <file alias="month_stub_7">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_8">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_9">resources/Images/month_stubs/month_image_stub1.svg</file>
+        <file alias="month_stub_10">resources/Images/month_stubs/month_image_stub.svg</file>
+        <file alias="month_stub_11">resources/Images/month_stubs/month_image_stub1.svg</file>
+
+<file alias="month_stub_0@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_1@2x">resources/Images/month_stubs/month_image_stub1.svg</file>
+<file alias="month_stub_2@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_3@2x">resources/Images/month_stubs/month_image_stub1.svg</file>
+<file alias="month_stub_4@2x">resources/Images/month_stubs/month_image_stub1.svg</file>
+<file alias="month_stub_5@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_6@2x">resources/Images/month_stubs/month_image_stub1.svg</file>
+<file alias="month_stub_7@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_8@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_9@2x">resources/Images/month_stubs/month_image_stub1.svg</file>
+<file alias="month_stub_10@2x">resources/Images/month_stubs/month_image_stub.svg</file>
+<file alias="month_stub_11@2x">resources/Images/month_stubs/month_image_stub1.svg</file>
+    </qresource>
+    <qresource prefix="/images/tune_photo"/>
+    <qresource prefix="/images/icons">
+    <file alias="wood">resources/Images/wood.svg</file>
+    <file alias="wood@2x">resources/Images/wood.svg</file>
+        <file alias="edit">resources/Images/edit.svg</file>
+        <file alias="edit@2x">resources/Images/edit.svg</file>
+        <file alias="share">resources/Images/share.svg</file>
+        <file alias="share@2x">resources/Images/share.svg</file>
+        <file alias="remove">resources/Images/remove.svg</file>
+        <file alias="remove@2x">resources/Images/remove.svg</file>
+        <file alias="prev">resources/Images/prev.svg</file>
+        <file alias="prev@2x">resources/Images/prev.svg</file>
+        <file alias="next">resources/Images/next.svg</file>
+        <file alias="next@2x">resources/Images/next.svg</file>
+        <file alias="edit_image">resources/Images/edit_image.svg</file>
+        <file alias="edit_image@2x">resources/Images/edit_image.svg</file>
+        <file alias="open">resources/Images/open.svg</file>
+        <file alias="open@2x">resources/Images/open.svg</file>
+        <file alias="stars">resources/Images/stars.svg</file>
+        <file alias="stars@2x">resources/Images/stars.svg</file>
+        <file alias="rattles">resources/Images/rattles.svg</file>
+        <file alias="rattles@2x">resources/Images/rattles.svg</file>
+        <file alias="stars2">resources/Images/stars2.svg</file>
+        <file alias="stars2@2x">resources/Images/stars2.svg</file>
+        <file alias="open_button">resources/Images/open_button.svg</file>
+        <file alias="open_button@2x">resources/Images/open_button.svg</file>
+    </qresource>
+    <qresource prefix="/fonts">
+        <file alias="header_1_font">resources/Fonts/Bellany.otf</file>
+        <file alias="header_2_font">resources/Fonts/Timeburner-xJB8.ttf</file>
+        <file alias="header_3_font">resources/Fonts/Apalu.ttf</file>
+        <file alias="header_4_font">resources/Fonts/VanillaExtractRegular.ttf</file>
+        <file alias="header_5_font">resources/Fonts/Anisa Sans.ttf</file>
+             <file alias="header_8_font">resources/Fonts/Rounded Elegance.ttf</file>
+ <file alias="header_10_font">resources/Fonts/Walkway Bold.ttf</file>
+             <!--file alias="header_11_font">resources/Fonts/Typo_Round_Regular_Demo.otf</file-->
+    </qresource>
+    <qresource prefix="/frames/1">
+        <file alias="foreground">resources/Frames/1/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/1/foreground_to_render.png</file>
+        <file alias="properties">resources/Frames/1/properties.json</file>
+    </qresource>
+    <qresource prefix="/frames/2">
+        <file alias="foreground">resources/Frames/2/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/2/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/2/properties.json</file>
+    </qresource>
+    <qresource prefix="/frames/colors">
+        <file alias="foreground">resources/Frames/colors/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/colors/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/colors/properties.json</file>
+    </qresource>
+    <qresource prefix="/frames/stars">
+        <file alias="foreground">resources/Frames/stars/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/stars/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/stars/properties.json</file>
+    </qresource>
+    <qresource prefix="/frames/baloons">
+        <file alias="foreground">resources/Frames/baloons/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/baloons/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/baloons/properties.json</file>
+    </qresource>
+    <qresource prefix="/frames/shapes">
+        <file alias="foreground">resources/Frames/shapes/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/shapes/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/shapes/properties.json</file>
+    </qresource>
+    <qresource prefix="/frames/Rearrange">
+          <file alias="properties">resources/Frames/shapes/properties.json</file>
+    </qresource>
+</RCC>

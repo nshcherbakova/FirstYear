@@ -22,6 +22,7 @@ class SwipeWidget;
 class TemplateWidgetHolder;
 class LineEditWidget;
 class TextButton;
+class RearrangeWidget;
 
 namespace Preview {
 class PreviewWidget;
@@ -44,14 +45,16 @@ private:
   void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateButtons(FirstYear::Core::FrameControl &frame_control);
-  void CreateDragAndDropText(FirstYear::Core::FrameControl &frame_control);
+  // void CreateDragAndDropText(FirstYear::Core::FrameControl &frame_control);
   void CreatePreviewWindow();
+  void CreateRearrangeWidget(Core::FrameControl &frame_control);
 
   void UpdateFrames(TemplateWidgetHolder *exept);
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
   void UpdateSelectionButton(FirstYear::Core::FrameControl &frame_control);
   int LoadedPhotosCount(FirstYear::Core::FrameControl &frame_control) const;
-  void UpdateDrugAndDrop();
+  // void UpdateDrugAndDrop();
+  void UpdateRearrangeButton();
 
   void TuneImage(int month, FirstYear::Core::FrameControl &frame_control);
   void SaveTunedImage(int month, FirstYear::Core::FrameControl &frame_control);
@@ -90,7 +93,8 @@ private:
   QPushButton *select_images_button_ = nullptr;
   QStackedLayout *stackedLayout = nullptr;
   QSvgWidget *background_svg_ = nullptr;
-  QLabel *drag_and_drop_text_ = nullptr;
+  QPushButton *rearrange_button_ = nullptr;
+  RearrangeWidget *rearrange_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

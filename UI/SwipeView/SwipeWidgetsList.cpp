@@ -90,6 +90,9 @@ void SwipeWidgetsList::InitialaizeScroller() {
                              0);
   properties.setScrollMetric(QScrollerProperties::DragStartDistance, 0.001);
   properties.setScrollMetric(QScrollerProperties::MousePressEventDelay, 0.5);
+  // properties.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.1);
+  //  properties.setScrollMetric(QScrollerProperties::FrameRate,
+  //  QScrollerProperties::Fps30);
   // properties.setScrollMetric(QScrollerProperties::ScrollingCurve,
   // QEasingCurve::OutCubic);
 

@@ -72,14 +72,20 @@ FrameWidgetsFactory::createWidgets(const QStringList &ids,
   return widgets;
 }
 
+TemplateWidgetBase *
+FrameWidgetsFactory::createRearrangeWidget(Core::FrameControl &control) {
+  return new TemplateWidgetBase(nullptr, {control, "Rearrange"});
+}
 QPixmap FrameWidgetsFactory::renderWidget(const QString &id, QWidget *parent,
                                           Core::FrameControl &control) {
-  return TemplateWidgetBase(parent, {control, id}, true).renderFrame();
+  return TemplateWidgetBase(parent, {control, id},
+                            TemplateWidgetBase::State::RENDER_FRAME)
+      .renderFrame();
 }
 
 TemplateWidgetBase::TemplateWidgetBase(
     QWidget *parent, const TemplateWidgetParameters &widget_parameters,
-    bool render_state)
+    State render_state)
     : QWidget(parent), id_(widget_parameters.id),
       control_(widget_parameters.control), render_state_(render_state) {
 
@@ -93,29 +99,30 @@ TemplateWidgetBase::TemplateWidgetBase(
   setContentsMargins(0, 0, 0, 0);
   setAutoFillBackground(true);
 
-  foreground_ =
-      QPixmap(render_state ? QString(c_foreground_to_render_str).arg(id_)
-                           : QString(c_foreground_str).arg(id_));
+  foreground_ = QPixmap(render_state_ == State::RENDER_FRAME
+                            ? QString(c_foreground_to_render_str).arg(id_)
+                            : QString(c_foreground_str).arg(id_));
 
   static const double dpr =
       QGuiApplication::primaryScreen()->devicePixelRatio();
   foreground_.setDevicePixelRatio(dpr);
 
   photo_slots_.resize(12);
-
   photo_widgets_.resize(12);
+
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    photo_widgets_[i] = new PhotoWidget(*this, render_state_);
+    photo_widgets_[i] =
+        new PhotoWidget(*this, {false, false, render_state_ == State::FRAME,
+                                render_state_ == State::FRAME, true});
   }
 
   initMonthPhotoWidgets();
 
   createForegroundWidget();
-
   createTitleTextWidget(parameters.title_parameters.text_parameters,
-                        render_state);
-  createPhotoTextWidgets(parameters.months_parameters, render_state);
-  createRemoveButtonWidgets(render_state);
+                        render_state_ == State::RENDER_FRAME);
+
+  createPhotoTextWidgets(parameters.months_parameters);
 }
 
 void TemplateWidgetBase::fillParameters(
@@ -152,27 +159,8 @@ void TemplateWidgetBase::createTitleTextWidget(const TextParameters &parameters,
           [&] { emit SignalTitleClicked(title_text_widget_->text()); });
 }
 
-void TemplateWidgetBase::createRemoveButtonWidgets(bool is_rendering) {
-
-  if (is_rendering) {
-    return;
-  }
-
-  remove_buttons_.resize(12);
-  for (int i = 0; i < (int)remove_buttons_.size(); i++) {
-    remove_buttons_[i] = new QPushButton(this);
-    remove_buttons_[i]->setIconSize({40, 40});
-    remove_buttons_[i]->setIcon(QIcon(c_remove_image_str));
-    remove_buttons_[i]->setAttribute(Qt::WA_TranslucentBackground);
-    remove_buttons_[i]->setObjectName("RemoveuButton");
-
-    connect(remove_buttons_[i], &ImageButton::clicked, this,
-            [&, i] { emit SignalRemoveButtonClicked(i); });
-  }
-}
-
 void TemplateWidgetBase::createPhotoTextWidgets(
-    const std::vector<MonthParameters> &month_parameters, bool) {
+    const std::vector<MonthParameters> &month_parameters) {
   const auto &parameters_fixed =
       month_parameters[0].text_parameters.text_parameters;
 
@@ -188,13 +176,11 @@ void TemplateWidgetBase::createPhotoTextWidgets(
                                 parameters_fixed.font, true);
     widget->setAlignment(parameters.alignment);
     widget->setAttribute(Qt::WA_TransparentForMouseEvents);
-    //  connect(photo_text_widgets_[i], &ClickableLabel::clicked, this, [&, i] {
-    //    emit SignalMonthTextClicked(photo_text_widgets_[i]->text(), i);
-    //  });
   }
 }
 
 QString TemplateWidgetBase::id() const { return id_; }
+
 QSize TemplateWidgetBase::preferedSize(QSize size) const {
   if (foreground_widget_) {
     return foreground_widget_->preferedSize(size);
@@ -205,10 +191,6 @@ QSize TemplateWidgetBase::preferedSize(QSize size) const {
 
 void TemplateWidgetBase::initMonthPhotoWidgets() {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
-    connect(photo_widgets_[i], &PhotoWidget::SignalImageDroped, this,
-            [&, i](int dropped_index) {
-              emit SignalImageDroped(dropped_index, i);
-            });
 
     connect(photo_widgets_[i], &PhotoWidget::SignalImagePressed, this,
             [&, i] { emit SignalTunePhoto(i); });
@@ -266,7 +248,7 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
 
   double k = (double)width() / (double)foreground_.width();
 
-  if (render_state_) {
+  if (render_state_ == State::RENDER_FRAME) {
     auto base_size = QImageReader(QString(c_foreground_str).arg(id_)).size();
     k *= (double)foreground_.width() / (double)base_size.width();
   }
@@ -299,24 +281,6 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
   auto project = control.CurrentProject();
   title_text_widget_->setText(
       project->title_.isEmpty() ? c_title_defoult_text_str : project->title_);
-
-  if (!render_state_) {
-    UNI_ASSERT(remove_buttons_.size() == photo_slots_.size());
-    for (int i = 0; i < (int)photo_slots_.size(); i++) {
-      QRect new_rect;
-      new_rect.setTopLeft(photo_slots_[i].topLeft().toPoint() -
-                          QPoint(15.0, 15.0) * k);
-      new_rect.setSize(QSize{(int)(70 * k), (int)(70 * k)});
-
-      if (!project->monthes_[i].photo_data->isStub()) {
-        remove_buttons_[i]->show();
-        remove_buttons_[i]->setGeometry(new_rect);
-        remove_buttons_[i]->setIconSize(new_rect.size());
-      } else {
-        remove_buttons_[i]->hide();
-      }
-    }
-  }
 }
 
 void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {

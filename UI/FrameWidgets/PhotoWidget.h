@@ -19,7 +19,15 @@ namespace FirstYear::UI {
 class PhotoWidget final : public ImageButton {
   Q_OBJECT
 public:
-  explicit PhotoWidget(QWidget &parent, bool render_state);
+  struct Parameters {
+    bool accept_drops = false;
+    bool show_mons_number = false;
+    bool show_edit_icon = false;
+    bool show_open_icon = false;
+    bool show_shadow = false;
+  };
+
+  explicit PhotoWidget(QWidget &parent, Parameters parameters);
   PhotoWidget &operator=(const PhotoWidget &) = delete;
 
 public:
@@ -44,7 +52,7 @@ protected:
   virtual void OnUpdateImageBuffer(QPixmap &) override;
 
 private:
-  bool render_state_ = false;
+  Parameters parameters_;
   Core::PhotoDataPtr photo_data_;
   QPixmap photo_scaled_;
   QTimer timer_;
