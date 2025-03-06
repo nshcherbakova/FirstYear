@@ -6,13 +6,6 @@
 namespace FirstYear::UI {
 
 static const char *c_title_defoult_text_str = "Rearrange";
-static const char *c_remove_button_style_str =
-    "QPushButton#Remove{background-color: transparent;background: transparent; "
-    "border: 0px}"
-    "QPushButton#Remove:pressed {"
-    "background-color: rgba(255, 255, 255, 200);"
-    "border-radius: 20;"
-    "}";
 
 RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
     : QWidget(parent), control_(control) {
@@ -24,7 +17,6 @@ RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
 
   createTitleTextWidget();
   createMonthPhotoWidgets();
-  // createRemoveButtonWidgets();
   createPhotoTextWidgets();
 
   close_ = new TextButton(this);
@@ -47,6 +39,7 @@ RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
     }
     emit SignalDeleteButtonClicked(remive_ids);
   });
+  delete_->hide();
 }
 
 void RearrangeWidget::createTitleTextWidget() {
@@ -55,22 +48,6 @@ void RearrangeWidget::createTitleTextWidget() {
   title_text_widget_->setStyleSheet(
       "background-color: transparent; color:#555C24; ");
   title_text_widget_->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-}
-
-void RearrangeWidget::createRemoveButtonWidgets() {
-  remove_buttons_.resize(12);
-
-  for (int i = 0; i < (int)remove_buttons_.size(); i++) {
-    remove_buttons_[i] = new QPushButton(this);
-    remove_buttons_[i]->setAttribute(Qt::WA_NoSystemBackground);
-    remove_buttons_[i]->setObjectName("Remove");
-    remove_buttons_[i]->setStyleSheet(c_remove_button_style_str);
-    remove_buttons_[i]->setIconSize({40, 40});
-    remove_buttons_[i]->setIcon(QIcon(c_remove_image_str));
-
-    connect(remove_buttons_[i], &ImageButton::clicked, this,
-            [&, i] { emit SignalRemoveButtonClicked(i); });
-  }
 }
 
 void RearrangeWidget::createPhotoTextWidgets() {
@@ -97,6 +74,9 @@ void RearrangeWidget::createMonthPhotoWidgets() {
             [&, i](int dropped_index) {
               emit SignalImageDroped(dropped_index, i);
             });
+
+    connect(photo_widgets_[i], &PhotoWidget::toggled, this,
+            [&]() { delete_->setVisible(arePhotosSelected()); });
   }
 }
 
@@ -131,17 +111,19 @@ void RearrangeWidget::resizeEvent(QResizeEvent *e) {
 
 void RearrangeWidget::load(Core::FrameControl &control) {
 
+  const bool vertical_orientation = width() < height();
+
   std::vector<QRect> photo_slots(12);
   int top_margin = height() / 5;
   int side_margins = width() / 20;
   int wmargins = width() / 20;
   int hmargins = height() / 20;
 
-  int count_in_line = width() < height() ? 4 : 6;
+  int count_in_line = vertical_orientation ? 4 : 6;
   int photo_width = 0;
   int photo_height = 0;
 
-  if (width() < height()) {
+  if (vertical_orientation) {
     top_margin = height() / 4;
     photo_width =
         (width() - 2 * side_margins - (count_in_line - 1) * wmargins) /
@@ -178,36 +160,21 @@ void RearrangeWidget::load(Core::FrameControl &control) {
     photo_text_widget->setText(month.text);
 
     QRect rect = {photo_slots[i].left(), photo_slots[i].bottom(),
-                  photo_slots[i].width(), hmargins};
+                  photo_slots[i].width(),
+                  vertical_orientation ? int(hmargins * 2.0 / 3.0) : hmargins};
 
     photo_text_widget->setGeometry(rect);
     auto font = photo_text_widget->font();
-    font.setPointSize(width() < height() ? hmargins * 0.4 : hmargins * 0.8);
+    font.setPointSize(vertical_orientation ? hmargins * 0.4 : hmargins * 0.8);
     photo_text_widget->setFont(font);
   }
 
-  delete_->setSize(width() > height() ? QSize(80, 40) : QSize(110, 60));
+  delete_->setSize(!vertical_orientation ? QSize(80, 40) : QSize(110, 60));
   const int delete_top =
-      (width() < height() ? height() - delete_->height() - hmargins * 1.4
-                          : height() - delete_->height() - hmargins / 2);
+      (vertical_orientation ? height() - delete_->height() - hmargins * 1.4
+                            : height() - delete_->height() - hmargins / 2);
 
   delete_->setGeometry({{side_margins, delete_top}, delete_->size()});
-
-  for (int i = 0; i < (int)remove_buttons_.size(); i++) {
-    QRect new_rect;
-    new_rect.setTopLeft(
-        photo_slots[i].topLeft() -
-        QPoint(photo_slots[i].width() / 5.0, photo_slots[i].width() / 5.0));
-    new_rect.setSize({40, 40});
-
-    if (!project->monthes_[i].photo_data->isStub()) {
-      remove_buttons_[i]->show();
-      remove_buttons_[i]->setGeometry(new_rect);
-      remove_buttons_[i]->setIconSize(new_rect.size());
-    } else {
-      remove_buttons_[i]->hide();
-    }
-  }
 }
 
 void RearrangeWidget::InitPhotos(Core::FrameControl &control,
@@ -236,5 +203,15 @@ void RearrangeWidget::clearChecked() {
   for (int i = 0; i < (int)photo_widgets_.size(); i++) {
     photo_widgets_[i]->setChecked(false);
   }
+}
+
+bool RearrangeWidget::arePhotosSelected() const {
+
+  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    if (photo_widgets_[i]->isChecked()) {
+      return true;
+    }
+  }
+  return false;
 }
 } // namespace FirstYear::UI

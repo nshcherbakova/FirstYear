@@ -46,17 +46,16 @@ private:
   void createMonthPhotoWidgets();
   void createTitleTextWidget();
   void createPhotoTextWidgets();
-  void createRemoveButtonWidgets();
   void InitPhotos(Core::FrameControl &control,
                   const std::vector<QRect> &photo_slots);
   void load(Core::FrameControl &control);
   void clearChecked();
+  bool arePhotosSelected() const;
 
 private:
   Core::FrameControl &control_;
   std::vector<PhotoWidget *> photo_widgets_;
   std::vector<QLabel *> photo_text_widgets_;
-  std::vector<QPushButton *> remove_buttons_;
   QLabel *title_text_widget_ = nullptr;
   QSvgWidget *background_svg_ = nullptr;
   TextButton *close_ = nullptr;

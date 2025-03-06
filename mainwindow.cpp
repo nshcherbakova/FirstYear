@@ -660,7 +660,7 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (rearrange_button_) {
     bool is_portrait = width() < height();
     const int rearrange_button_width = 160;
-    const int rearrange_button_height = 60;
+    const int rearrange_button_height = 50;
     int rearrange_button_top = 0;
 
     if (is_portrait) {
