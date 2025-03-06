@@ -28,6 +28,7 @@ public:
 signals:
   void SignalRemoveButtonClicked(int month);
   void SignalImageDroped(int from_id, int to_id);
+  void SignalDeleteButtonClicked(std::vector<int> monthes);
 
 public slots:
   void Update();
@@ -49,6 +50,7 @@ private:
   void InitPhotos(Core::FrameControl &control,
                   const std::vector<QRect> &photo_slots);
   void load(Core::FrameControl &control);
+  void clearChecked();
 
 private:
   Core::FrameControl &control_;
@@ -58,6 +60,7 @@ private:
   QLabel *title_text_widget_ = nullptr;
   QSvgWidget *background_svg_ = nullptr;
   TextButton *close_ = nullptr;
+  TextButton *delete_ = nullptr;
 };
 
 } // namespace FirstYear::UI

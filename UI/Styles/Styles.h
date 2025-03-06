@@ -49,7 +49,7 @@ static const char *c_message_box_style_str =
 static const char *c_rearrange_button_str =
     "QPushButton#Rearrange{"
     "background-color: transparent;"
-    "color:#BC9F76; "
+    "color:#9B8463; "
     "font-size: 30px; "
     //   "font-family: Typo Round Regular Demo;"
     "border-radius: 10;"
@@ -97,9 +97,22 @@ static const char *c_light_image_button_style_str =
     "border-color: #BC9F76;"
     "border-width: 3;"
     "}"
-
     "QPushButton#LightImageButton:pressed {border-color: #C3BED1;}"
     "QPushButton#LightImageButton:pressed{color: #C3BED1;}";
+
+static const char *c_delete_button_style_str =
+    "QPushButton#Delete{"
+    "background-color: rgba(255, 255, 255, 200);"
+    "border-style: solid;"
+    "border-radius: 0;"
+    "border-color: #BC9F76;"
+    "border-width: 3;"
+    "color:#BC9F76; "
+    "font-size: 23px; "
+    "}"
+
+    "QPushButton#Delete:pressed {border-color: #C3BED1;}"
+    "QPushButton#Delete:pressed{color: #C3BED1;}";
 
 static const char *c_select_button_style_str =
     "QPushButton#Select{"

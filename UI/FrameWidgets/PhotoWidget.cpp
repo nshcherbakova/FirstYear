@@ -15,12 +15,13 @@ PhotoWidget::PhotoWidget(QWidget &parent, Parameters parameters)
   if (parameters.accept_drops) {
     setAcceptDrops(true);
   }
+
   setContentsMargins(0, 0, 0, 0);
   setObjectName("PhotoWidget");
   setStyleSheet(c_photo_widget_button_str);
   connect(this, &QPushButton::clicked, this, &PhotoWidget::SignalImagePressed);
 
-  timer_.setInterval(100);
+  timer_.setInterval(200);
   timer_.setSingleShot(true);
 
   connect(&timer_, &QTimer::timeout, this, [&] {
@@ -62,6 +63,7 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
   id_ = id;
 
   ImageButton::setPhoto(photo);
+  setCheckable(!photo_data_->isStub() && parameters_.accept_drops);
 }
 
 void PhotoWidget::OnUpdateImageBuffer(QPixmap &buffer) {
@@ -158,7 +160,7 @@ void PhotoWidget::dropEvent(QDropEvent *event) {
 
 //! [1]
 void PhotoWidget::mousePressEvent(QMouseEvent *event) {
-  if (isVisible() && parameters_.accept_drops) {
+  if (isVisible() && parameters_.accept_drops && !photo_data_->isStub()) {
     timer_.start();
   }
   ImageButton::mousePressEvent(event);
@@ -182,9 +184,14 @@ void PhotoWidget::paintEvent(QPaintEvent *e) {
     painter.drawRect(rect());
 
   } else if (parameters_.accept_drops) {
+
     QPainter painter(this);
     painter.setBrush(Qt::transparent);
-    painter.setPen(QPen(QColor(200, 200, 200), 5));
+    if (isChecked()) {
+      painter.setPen(QPen(QColor("#D69C4A"), 9));
+    } else {
+      painter.setPen(QPen(QColor(250, 250, 250), 5));
+    }
     painter.drawRect(rect());
   } // else if (!render_state_) {
   QPushButton::paintEvent(e);

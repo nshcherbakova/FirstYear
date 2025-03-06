@@ -73,6 +73,7 @@ private:
   QString SelectButtonText(int count);
 
   void DeletePhoto(int month_index);
+  void DeletePhotos(std::vector<int> month_indexes);
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;

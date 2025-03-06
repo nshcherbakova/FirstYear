@@ -251,6 +251,11 @@ void MainWindow::CreateRearrangeWidget(
   connect(
       rearrange_, &RearrangeWidget::SignalRemoveButtonClicked, this,
       [&](int month_index) { DeletePhoto(month_index); }, Qt::QueuedConnection);
+
+  connect(
+      rearrange_, &RearrangeWidget::SignalDeleteButtonClicked, this,
+      [&](std::vector<int> month_indexes) { DeletePhotos(month_indexes); },
+      Qt::QueuedConnection);
 }
 
 void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
@@ -311,6 +316,24 @@ void MainWindow::DeletePhoto(int month_index) {
 
     month_data.photo_data->setStubImage(QPixmap(month_data.stub_image_path));
 
+    UpdateFrames(nullptr);
+  }
+}
+
+void MainWindow::DeletePhotos(std::vector<int> month_indexes) {
+  QMessageBox msgBox;
+  msgBox.setWindowTitle(month_indexes.size() == 1 ? "Delete this photo?"
+                                                  : "Delete this photos?");
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+  int ret = msgBox.exec();
+
+  if (QMessageBox::Yes == ret) {
+    for (const auto &month_index : month_indexes) {
+      auto &month_data =
+          project_control_.CurrentProject()->monthes_[month_index];
+
+      month_data.photo_data->setStubImage(QPixmap(month_data.stub_image_path));
+    }
     UpdateFrames(nullptr);
   }
 }
@@ -484,17 +507,6 @@ pixmap.save(path);
     Share(pixmap);
   });
 
-  select_images_button_ = new TextButton(this);
-  select_images_button_->setObjectName("Select");
-  select_images_button_->setStyleSheet(c_select_button_style_str);
-
-  connect(select_images_button_, &QPushButton::clicked, this, [&] {
-    const auto files = FileDialog::getOpenFileNames();
-    MainWindow::SelectImages(files);
-  });
-
-  UpdateSelectionButton(project_control_);
-
   rearrange_button_ = new QPushButton(this);
   rearrange_button_->setObjectName("Rearrange");
   rearrange_button_->setStyleSheet(c_rearrange_button_str);
@@ -504,6 +516,18 @@ pixmap.save(path);
           [&] { rearrange_->show(); });
 
   UpdateRearrangeButton();
+
+  select_images_button_ = new TextButton(this);
+  select_images_button_->setObjectName("Select");
+  select_images_button_->setStyleSheet(c_select_button_style_str);
+
+  connect(select_images_button_, &QPushButton::clicked, this, [&] {
+    const auto files = FileDialog::getOpenFileNames();
+    MainWindow::SelectImages(files);
+    rearrange_->show();
+  });
+
+  UpdateSelectionButton(project_control_);
 }
 
 void MainWindow::SelectImages(QStringList files) {
@@ -636,7 +660,7 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (rearrange_button_) {
     bool is_portrait = width() < height();
     const int rearrange_button_width = 160;
-    const int rearrange_button_height = 40;
+    const int rearrange_button_height = 60;
     int rearrange_button_top = 0;
 
     if (is_portrait) {

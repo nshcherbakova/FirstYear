@@ -24,7 +24,7 @@ RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
 
   createTitleTextWidget();
   createMonthPhotoWidgets();
-  createRemoveButtonWidgets();
+  // createRemoveButtonWidgets();
   createPhotoTextWidgets();
 
   close_ = new TextButton(this);
@@ -33,6 +33,20 @@ RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
   close_->setObjectName("LightButton");
   close_->setStyleSheet(c_light_button_style_str);
   connect(close_, &QPushButton::clicked, this, [&]() { hide(); });
+
+  delete_ = new TextButton(this);
+  delete_->setText("Delete");
+  delete_->setObjectName("Delete");
+  delete_->setStyleSheet(c_delete_button_style_str);
+  connect(delete_, &QPushButton::clicked, this, [&]() {
+    std::vector<int> remive_ids;
+    for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+      if (photo_widgets_[i]->isChecked()) {
+        remive_ids.push_back(i);
+      }
+    }
+    emit SignalDeleteButtonClicked(remive_ids);
+  });
 }
 
 void RearrangeWidget::createTitleTextWidget() {
@@ -86,14 +100,17 @@ void RearrangeWidget::createMonthPhotoWidgets() {
   }
 }
 
-void RearrangeWidget::Update() { load(control_); }
+void RearrangeWidget::Update() {
+  load(control_);
+  clearChecked();
+}
 
 void RearrangeWidget::resizeEvent(QResizeEvent *e) {
   QWidget::resizeEvent(e);
   Update();
 
   int top_margin = height() / 5;
-  int side_margins = width() / 30;
+  int side_margins = width() / 20;
   QRect rect = {side_margins, 0, width() - 2 * side_margins, top_margin};
   title_text_widget_->setGeometry(rect);
   title_text_widget_->setText(c_title_defoult_text_str);
@@ -116,7 +133,7 @@ void RearrangeWidget::load(Core::FrameControl &control) {
 
   std::vector<QRect> photo_slots(12);
   int top_margin = height() / 5;
-  int side_margins = width() / 30;
+  int side_margins = width() / 20;
   int wmargins = width() / 20;
   int hmargins = height() / 20;
 
@@ -125,6 +142,7 @@ void RearrangeWidget::load(Core::FrameControl &control) {
   int photo_height = 0;
 
   if (width() < height()) {
+    top_margin = height() / 4;
     photo_width =
         (width() - 2 * side_margins - (count_in_line - 1) * wmargins) /
         count_in_line;
@@ -168,6 +186,13 @@ void RearrangeWidget::load(Core::FrameControl &control) {
     photo_text_widget->setFont(font);
   }
 
+  delete_->setSize(width() > height() ? QSize(80, 40) : QSize(110, 60));
+  const int delete_top =
+      (width() < height() ? height() - delete_->height() - hmargins * 1.4
+                          : height() - delete_->height() - hmargins / 2);
+
+  delete_->setGeometry({{side_margins, delete_top}, delete_->size()});
+
   for (int i = 0; i < (int)remove_buttons_.size(); i++) {
     QRect new_rect;
     new_rect.setTopLeft(
@@ -201,9 +226,15 @@ void RearrangeWidget::InitPhotos(Core::FrameControl &control,
 
 void RearrangeWidget::setVisible(bool visible) {
   if (visible) {
-    load(control_);
+    Update();
   }
   QWidget::setVisible(visible);
 }
 
+void RearrangeWidget::clearChecked() {
+
+  for (int i = 0; i < (int)photo_widgets_.size(); i++) {
+    photo_widgets_[i]->setChecked(false);
+  }
+}
 } // namespace FirstYear::UI
