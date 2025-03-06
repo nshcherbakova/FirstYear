@@ -97,7 +97,6 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
   background_svg_ = new QSvgWidget(":/images/icons/stars", this);
 
   CreatePhotoTuneWidget(frame_control);
-  // CreateDragAndDropText(frame_control);
   CreateFrames(frame_control, frames);
   CreateLineEditWidget(frame_control);
   CreateSwipeWidget(frame_control);
@@ -421,10 +420,6 @@ void MainWindow::UpdateRearrangeButton() {
   rearrange_button_->setVisible(LoadedPhotosCount(project_control_) > 0);
 }
 
-// void MainWindow::UpdateDrugAndDrop() {
-//   drag_and_drop_text_->setVisible(LoadedPhotosCount(project_control_) > 0);
-// }
-
 void MainWindow::CreateSwipeWidget(
     FirstYear::Core::FrameControl &frame_control) {
   swipe_widget_ = new SwipeWidget(this);
@@ -457,7 +452,9 @@ QString MainWindow::SelectButtonText(int count) {
 void MainWindow::CreateButtons(Core::FrameControl &control) {
 
   preview_button_ = new TextButton(this);
+  preview_button_->setObjectName("White");
   preview_button_->setStyleSheet(c_white_button_style_str);
+
   preview_button_->setSize(QSize(120, 60));
   preview_button_->setText("Preview");
   //  preview_button_->setVisible(false);
@@ -488,6 +485,7 @@ pixmap.save(path);
   });
 
   select_images_button_ = new TextButton(this);
+  select_images_button_->setObjectName("Select");
   select_images_button_->setStyleSheet(c_select_button_style_str);
 
   connect(select_images_button_, &QPushButton::clicked, this, [&] {
@@ -496,28 +494,17 @@ pixmap.save(path);
   });
 
   UpdateSelectionButton(project_control_);
-  // UpdateDrugAndDrop();
 
-  rearrange_button_ = new TextButton(this);
+  rearrange_button_ = new QPushButton(this);
+  rearrange_button_->setObjectName("Rearrange");
   rearrange_button_->setStyleSheet(c_rearrange_button_str);
   rearrange_button_->setText("Rearrange");
-  rearrange_button_->setObjectName("Rearrange");
-  rearrange_button_->setVisible(LoadedPhotosCount(control) > 0);
 
   connect(rearrange_button_, &QPushButton::clicked, this,
           [&] { rearrange_->show(); });
 
   UpdateRearrangeButton();
 }
-/*
-void MainWindow::CreateDragAndDropText(
-    FirstYear::Core::FrameControl &frame_control) {
-  drag_and_drop_text_ = new QLabel(this);
-  drag_and_drop_text_->setWordWrap(true);
-  //drag_and_drop_text_->setStyleSheet(c_drag_and_drop_style_str);
-  drag_and_drop_text_->setText("Drag and drop photos");
-  drag_and_drop_text_->setVisible(LoadedPhotosCount(frame_control) > 0);
-}*/
 
 void MainWindow::SelectImages(QStringList files) {
   QProgressDialog progress("Loading photos...", "", 0, files.size(), this);
@@ -643,36 +630,24 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
           height() / 20},
          select_images_button_->size()});
 
-  /*  if (rearrange_button_)
-        rearrange_button_->setGeometry(
-            {{height() / 50,
-              height() / 20},
-             rearrange_button_->size()});*/
-
   if (preview_)
     preview_->setGeometry(rect());
 
   if (rearrange_button_) {
     bool is_portrait = width() < height();
-    int rearrange_button_width = 0;
+    const int rearrange_button_width = 160;
+    const int rearrange_button_height = 40;
     int rearrange_button_top = 0;
 
     if (is_portrait) {
-      rearrange_button_width = width();
-      rearrange_button_top =
-          share_button_->geometry().top() -
-          60 - // rearrange_button_->heightForWidth(rearrange_button_width) -
-          height() / 70;
+      rearrange_button_top = share_button_->geometry().top() - height() / 15;
     } else {
-      rearrange_button_width = width() / 3.5;
       rearrange_button_top = select_images_button_->geometry().top();
     }
-    const int drag_and_drop_height = 60;
-    //   rearrange_button_->heightForWidth(rearrange_button_width);
 
-    rearrange_button_->setGeometry(height() / 50, rearrange_button_top,
+    rearrange_button_->setGeometry(height() / 60, rearrange_button_top,
                                    rearrange_button_width,
-                                   drag_and_drop_height);
+                                   rearrange_button_height);
   }
 
   update();

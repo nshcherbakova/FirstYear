@@ -3,9 +3,11 @@
 
 namespace FirstYear::UI {
 
-static const char *c_image_widget_button_style_str =
-    "QPushButton{ background: transparent;"
-    "}";
+static const char *c_photo_widget_button_str = "QPushButton#PhotoWidget{"
+                                               "background-color: transparent;"
+                                               "border-radius: 0;"
+                                               "border-width: 0;"
+                                               "}";
 
 PhotoWidget::PhotoWidget(QWidget &parent, Parameters parameters)
     : ImageButton(parent), parameters_(parameters) {
@@ -14,10 +16,11 @@ PhotoWidget::PhotoWidget(QWidget &parent, Parameters parameters)
     setAcceptDrops(true);
   }
   setContentsMargins(0, 0, 0, 0);
-  setStyleSheet(c_image_widget_button_style_str);
+  setObjectName("PhotoWidget");
+  setStyleSheet(c_photo_widget_button_str);
   connect(this, &QPushButton::clicked, this, &PhotoWidget::SignalImagePressed);
 
-  timer_.setInterval(200);
+  timer_.setInterval(100);
   timer_.setSingleShot(true);
 
   connect(&timer_, &QTimer::timeout, this, [&] {
@@ -174,7 +177,15 @@ void PhotoWidget::paintEvent(QPaintEvent *e) {
   if (parameters_.accept_drops && drag_enter_) {
     QPainter painter(this);
     painter.fillRect(rect(), QColor(200, 200, 200, 200));
+    painter.setBrush(Qt::transparent);
+    painter.setPen(QPen(Qt::white, 10));
+    painter.drawRect(rect());
 
+  } else if (parameters_.accept_drops) {
+    QPainter painter(this);
+    painter.setBrush(Qt::transparent);
+    painter.setPen(QPen(QColor(200, 200, 200), 5));
+    painter.drawRect(rect());
   } // else if (!render_state_) {
   QPushButton::paintEvent(e);
   // }

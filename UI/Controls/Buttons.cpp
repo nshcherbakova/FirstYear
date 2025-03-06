@@ -23,6 +23,7 @@ ShareButton::ShareButton(QWidget *parent, bool accept_touch)
   QSize size(90, 90);
 
   setContentsMargins(0, 0, 0, 0);
+  setObjectName("Share");
   setStyleSheet(
       QString(c_share_button_style_template_str).arg(size.width() / 2));
 

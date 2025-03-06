@@ -10,7 +10,7 @@ static const char *c_background_str = "QMainWindow{"
                                       "}";
 
 static const char *c_white_button_style_str =
-    "QPushButton{"
+    "QPushButton#White{"
     "background-color: rgba(207, 209, 191, 200);"
     "color:white; "
     "font-size: 23px; "
@@ -21,8 +21,8 @@ static const char *c_white_button_style_str =
     "border-width: 3;"
     "}"
 
-    "QPushButton:pressed {border-color: #C3BED1;}"
-    "QPushButton:pressed{color: #C3BED1;}";
+    "QPushButton#White:pressed {border-color: #C3BED1;}"
+    "QPushButton#White:pressed{color: #C3BED1;}";
 
 static const char *c_progress_dialog_style_str =
     "QProgressDialog{"
@@ -48,20 +48,19 @@ static const char *c_message_box_style_str =
 
 static const char *c_rearrange_button_str =
     "QPushButton#Rearrange{"
-    "color:#BC9F76; "
-    "font-size: 23px; "
-    "border-width: 3;"
     "background-color: transparent;"
-    //    "font-family: Typo Round Regular Demo;"
-    "}"
-    "QPushButton#Rearrange:pressed {"
-    "border-color: #C3BED1;"
+    "color:#BC9F76; "
+    "font-size: 30px; "
+    //   "font-family: Typo Round Regular Demo;"
     "border-radius: 10;"
-    "}";
+    "border-width: 0;"
+    "}"
+    "QPushButton#Rearrange:pressed {background-color: rgba(255, 255, 255, "
+    "200);}";
 
 // Tune Widget styles
 static const char *c_dark_button_style_str =
-    "QPushButton{"
+    "QPushButton#Darkbutton{"
     "background-color: rgba(255, 255, 255, 200);"
     "color:#555C24; "
     "font-size: 23px; "
@@ -72,11 +71,11 @@ static const char *c_dark_button_style_str =
     "border-width: 3;"
     "}"
 
-    "QPushButton:pressed {border-color: #C3BED1;}"
-    "QPushButton:pressed{color: #C3BED1;}";
+    "QPushButton#Darkbutton:pressed {border-color: #C3BED1;}"
+    "QPushButton#Darkbutton:pressed{color: #C3BED1;}";
 
-static const char *c_open_button_style_str =
-    "QPushButton{"
+static const char *c_light_button_style_str =
+    "QPushButton#LightButton{"
     "background-color: rgba(255, 255, 255, 200);"
     "color:#83368A; "
     "font-size: 23px; "
@@ -87,11 +86,11 @@ static const char *c_open_button_style_str =
     "border-width: 3;"
     "}"
 
-    "QPushButton:pressed {border-color: #C3BED1;}"
-    "QPushButton:pressed{color: #C3BED1;}";
+    "QPushButton#LightButton:pressed {border-color: #C3BED1;}"
+    "QPushButton#LightButton:pressed{color: #C3BED1;}";
 
-static const char *c_open_image_button_style_str =
-    "QPushButton{"
+static const char *c_light_image_button_style_str =
+    "QPushButton#LightImageButton{"
     "background-color: rgba(255, 255, 255, 200);"
     "border-style: solid;"
     "border-radius: 30;"
@@ -99,11 +98,11 @@ static const char *c_open_image_button_style_str =
     "border-width: 3;"
     "}"
 
-    "QPushButton:pressed {border-color: #C3BED1;}"
-    "QPushButton:pressed{color: #C3BED1;}";
+    "QPushButton#LightImageButton:pressed {border-color: #C3BED1;}"
+    "QPushButton#LightImageButton:pressed{color: #C3BED1;}";
 
 static const char *c_select_button_style_str =
-    "QPushButton{"
+    "QPushButton#Select{"
     "background-color: rgba(207, 209, 191, 200);"
     "color:#83368A; "
     "font-size: 23px; "
@@ -113,8 +112,8 @@ static const char *c_select_button_style_str =
     "border-color: #83368A;"
     "border-width: 3;"
     "}"
-    "QPushButton:pressed {border-color: #C3BED1;}"
-    "QPushButton:pressed{color: #C3BED1;}";
+    "QPushButton#Select:pressed {border-color: #C3BED1;}"
+    "QPushButton#Select:pressed{color: #C3BED1;}";
 
 static const char *c_tune_frame_light_color_str = "#E9D5EB";
 static const char *c_tune_frame_dark_color_str = "#555C24";
@@ -123,7 +122,7 @@ static const char *c_tune_frame_text_color_str = "#53798C";
 // Preview Widget styles
 static const char *c_preview_background_color_str = "#DBD5EB";
 static const char *c_close_button_style_str =
-    "QPushButton{"
+    "QPushButton#Close{"
     "background-color: rgba(255, 255, 255, 200);"
     "color:#BC9F76; "
     "font-size: 23px; "
@@ -134,8 +133,8 @@ static const char *c_close_button_style_str =
     "border-width: 3;"
     "}"
 
-    "QPushButton:pressed {border-color: #C3BED1;}"
-    "QPushButton:pressed{color: #C3BED1;}";
+    "QPushButton#Close:pressed {border-color: #C3BED1;}"
+    "QPushButton#Close:pressed{color: #C3BED1;}";
 // Edit window styles
 static const char *c_line_edit_style_str =
     "QLineEdit{"
@@ -161,14 +160,14 @@ static const char *c_remove_image_str = ":/images/icons/remove";
 // General
 static const char *c_share_image_str = ":/images/icons/share";
 static const char *c_share_button_style_template_str =
-    "QPushButton{"
+    "QPushButton#Share{"
     "background-color: #4C5220;"
     "border-radius: %1;"
     "border:none;"
     "}"
 
     //  "QPushButton:pressed {border-color: #1C2247);}"
-    "QPushButton:pressed {background-color:#2D2052;}";
+    "QPushButton#Share:pressed {background-color:#2D2052;}";
 
 // Photo widget
 static const char *c_photo_widget_background_color = "#FFFBF2";

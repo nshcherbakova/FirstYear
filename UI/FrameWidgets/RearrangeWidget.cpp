@@ -7,7 +7,8 @@ namespace FirstYear::UI {
 
 static const char *c_title_defoult_text_str = "Rearrange";
 static const char *c_remove_button_style_str =
-    "QPushButton#Remove{background-color: transparent; border: 0px}"
+    "QPushButton#Remove{background-color: transparent;background: transparent; "
+    "border: 0px}"
     "QPushButton#Remove:pressed {"
     "background-color: rgba(255, 255, 255, 200);"
     "border-radius: 20;"
@@ -29,7 +30,8 @@ RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
   close_ = new TextButton(this);
   close_->setText("Back");
   close_->setSize(QSize(110, 60));
-  close_->setStyleSheet(c_open_button_style_str);
+  close_->setObjectName("LightButton");
+  close_->setStyleSheet(c_light_button_style_str);
   connect(close_, &QPushButton::clicked, this, [&]() { hide(); });
 }
 

@@ -131,20 +131,23 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   open_file_->setIcon(QIcon(":/images/icons/open_button"));
   open_file_->setIconSize(QSize(50, 50));
   open_file_->setSize(QSize(80, 60));
-  open_file_->setStyleSheet(c_open_image_button_style_str);
+  open_file_->setObjectName("LightImageButton");
+  open_file_->setStyleSheet(c_light_image_button_style_str);
   connect(open_file_, &QPushButton::clicked, this,
           &PhotoTuneWidget::SignalOpenFile);
 
   close_ = new TextButton(this, true);
   close_->setText("Back");
   close_->setSize(QSize(110, 60));
-  close_->setStyleSheet(c_open_button_style_str);
+  close_->setObjectName("LightButton");
+  close_->setStyleSheet(c_light_button_style_str);
   connect(close_, &QPushButton::clicked, this, [&]() { hide(); });
 
   next_ = new TextButton(this, true);
   next_->setIcon(QIcon(":/images/icons/next"));
   next_->setIconSize(QSize(40, 40));
   next_->setSize(QSize(80, 60));
+  next_->setObjectName("Darkbutton");
   next_->setStyleSheet(c_dark_button_style_str);
   connect(next_, &QPushButton::clicked, this,
           [&]() { emit SignalTuneNextImage(); });
@@ -153,6 +156,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   prev_->setIcon(QIcon(":/images/icons/prev"));
   prev_->setIconSize(QSize(40, 40));
   prev_->setSize(QSize(80, 60));
+  prev_->setObjectName("Darkbutton");
   prev_->setStyleSheet(c_dark_button_style_str);
   connect(prev_, &QPushButton::clicked, this,
           [&]() { emit SignalTunePrevImage(); });

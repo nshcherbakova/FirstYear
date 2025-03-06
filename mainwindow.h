@@ -23,6 +23,7 @@ class TemplateWidgetHolder;
 class LineEditWidget;
 class TextButton;
 class RearrangeWidget;
+class ClickableLabel;
 
 namespace Preview {
 class PreviewWidget;
