@@ -180,7 +180,7 @@ void PhotoWidget::paintEvent(QPaintEvent *e) {
     QPainter painter(this);
     painter.fillRect(rect(), QColor(200, 200, 200, 200));
     painter.setBrush(Qt::transparent);
-    painter.setPen(QPen(Qt::white, 10));
+    painter.setPen(QPen(Qt::white, 16));
     painter.drawRect(rect());
 
   } else if (parameters_.accept_drops) {
@@ -190,7 +190,7 @@ void PhotoWidget::paintEvent(QPaintEvent *e) {
     if (isChecked()) {
       painter.setPen(QPen(QColor("#D69C4A"), 9));
     } else {
-      painter.setPen(QPen(QColor(250, 250, 250), 5));
+      painter.setPen(QPen(Qt::white, 5));
     }
     painter.drawRect(rect());
   } // else if (!render_state_) {
