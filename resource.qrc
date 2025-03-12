@@ -78,6 +78,11 @@
         <file alias="foreground_to_render">resources/Frames/colors/foreground_to_render.png</file>
           <file alias="properties">resources/Frames/colors/properties.json</file>
     </qresource>
+    <qresource prefix="/frames/giraffe">
+        <file alias="foreground">resources/Frames/giraffe/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/giraffe/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/giraffe/properties.json</file>
+    </qresource>
     <qresource prefix="/frames/stars">
         <file alias="foreground">resources/Frames/stars/foreground.png</file>
         <file alias="foreground_to_render">resources/Frames/stars/foreground_to_render.png</file>
