@@ -4,7 +4,7 @@
         "0": {
             "anchor": {
                 "x": 200,
-                "y": 340
+                "y": 325
             },
             "frame_data": {
                 "type": 0,
@@ -29,7 +29,7 @@
         "1": {
             "anchor": {
                 "x": 469,
-                "y": 340
+                "y": 325
             },
             "frame_data": {
                 "type": 0,
@@ -54,7 +54,7 @@
         "10": {
             "anchor": {
                 "x": 727,
-                "y": 874
+                "y": 860
             },
             "frame_data": {
                 "type": 0,
@@ -79,7 +79,7 @@
         "11": {
             "anchor": {
                 "x": 1004,
-                "y": 874
+                "y": 860
             },
             "frame_data": {
                 "type": 0,
@@ -104,7 +104,7 @@
         "2": {
             "anchor": {
                 "x": 727,
-                "y": 340
+                "y": 325
             },
             "frame_data": {
                 "type": 0,
@@ -129,7 +129,7 @@
         "3": {
             "anchor": {
                 "x": 1009,
-                "y": 340
+                "y": 325
             },
             "frame_data": {
                 "type": 0,
@@ -154,7 +154,7 @@
         "4": {
             "anchor": {
                 "x": 200,
-                "y": 608
+                "y": 593
             },
             "frame_data": {
                 "type": 0,
@@ -179,7 +179,7 @@
         "5": {
             "anchor": {
                 "x": 469,
-                "y": 608
+                "y": 593
             },
             "frame_data": {
                 "type": 0,
@@ -204,7 +204,7 @@
         "6": {
             "anchor": {
                 "x": 727,
-                "y": 608
+                "y": 593
             },
             "frame_data": {
                 "type": 0,
@@ -229,7 +229,7 @@
         "7": {
             "anchor": {
                 "x": 1004,
-                "y": 608
+                "y": 593
             },
             "frame_data": {
                 "type": 0,
@@ -254,7 +254,7 @@
         "8": {
             "anchor": {
                 "x": 200,
-                "y": 874
+                "y": 860
             },
             "frame_data": {
                 "type": 0,
@@ -279,7 +279,7 @@
         "9": {
             "anchor": {
                 "x": 469,
-                "y": 874
+                "y": 860
             },
             "frame_data": {
                 "type": 0,
@@ -304,14 +304,14 @@
     },
     "title": {
         "alignment": 36,
-        "font": "Timeburner",
-        "font_color": "#000000",
-        "font_size": 120,
+        "font": "Anisa Sans",
+        "font_color": "#337187",
+        "font_size": 130,
         "rect": {
             "left": 40,
-            "top": 50,
+            "top": 40,
             "width": 1160,
-            "height": 255
+            "height": 195
         }
     }
 }
