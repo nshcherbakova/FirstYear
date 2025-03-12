@@ -67,7 +67,7 @@ private:
   void Share(const QPixmap &pixmap) const;
 
   void OnImagePicked(QString file, int month);
-  void SelectImages(QStringList files);
+  bool SelectImages(QStringList files);
 
   void setEnabledControls(bool enabled);
   QString SelectButtonText(int count);

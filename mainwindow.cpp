@@ -523,14 +523,15 @@ pixmap.save(path);
 
   connect(select_images_button_, &QPushButton::clicked, this, [&] {
     const auto files = FileDialog::getOpenFileNames();
-    MainWindow::SelectImages(files);
-    rearrange_->show();
+    if (MainWindow::SelectImages(files)) {
+      rearrange_->show();
+    }
   });
 
   UpdateSelectionButton(project_control_);
 }
 
-void MainWindow::SelectImages(QStringList files) {
+bool MainWindow::SelectImages(QStringList files) {
   QProgressDialog progress("Loading photos...", "", 0, files.size(), this);
   progress.setStyleSheet(c_progress_dialog_style_str);
   progress.setMinimumDuration(500);
@@ -587,6 +588,8 @@ void MainWindow::SelectImages(QStringList files) {
   UpdateFrames(nullptr);
   project_control_.SaveProject();
   progress.setValue(files.size());
+
+  return !files.isEmpty();
 }
 
 void MainWindow::Share(const QPixmap &pixmap) const {
