@@ -20,7 +20,7 @@ RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
   createPhotoTextWidgets();
 
   close_ = new TextButton(this);
-  close_->setText("Back");
+  close_->setText("Ok");
   close_->setSize(QSize(110, 60));
   close_->setObjectName("LightButton");
   close_->setStyleSheet(c_light_button_style_str);
@@ -39,7 +39,7 @@ RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
     }
     emit SignalDeleteButtonClicked(remive_ids);
   });
-  delete_->hide();
+  delete_->setDisabled(true);
 }
 
 void RearrangeWidget::createTitleTextWidget() {
@@ -76,13 +76,14 @@ void RearrangeWidget::createMonthPhotoWidgets() {
             });
 
     connect(photo_widgets_[i], &PhotoWidget::toggled, this,
-            [&]() { delete_->setVisible(arePhotosSelected()); });
+            [&]() { delete_->setEnabled(arePhotosSelected()); });
   }
 }
 
 void RearrangeWidget::Update() {
   load(control_);
   clearChecked();
+  delete_->setDisabled(true);
 }
 
 void RearrangeWidget::resizeEvent(QResizeEvent *e) {

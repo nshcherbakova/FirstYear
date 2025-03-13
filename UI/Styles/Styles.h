@@ -112,7 +112,9 @@ static const char *c_delete_button_style_str =
     "}"
 
     "QPushButton#Delete:pressed {border-color: #C3BED1;}"
-    "QPushButton#Delete:pressed{color: #C3BED1;}";
+    "QPushButton#Delete:pressed{color: #C3BED1;}"
+    "QPushButton#Delete:disabled {border-color: #C3BED1;}"
+    "QPushButton#Delete:disabled{color: #C3BED1;}";
 
 static const char *c_select_button_style_str =
     "QPushButton#Select{"
@@ -126,7 +128,9 @@ static const char *c_select_button_style_str =
     "border-width: 3;"
     "}"
     "QPushButton#Select:pressed {border-color: #C3BED1;}"
-    "QPushButton#Select:pressed{color: #C3BED1;}";
+    "QPushButton#Select:pressed{color: #C3BED1;}"
+    "QPushButton#Select:disabled {border-color: #C3BED1;}"
+    "QPushButton#Select:disabled{color: #C3BED1;}";
 
 static const char *c_tune_frame_light_color_str = "#E9D5EB";
 static const char *c_tune_frame_dark_color_str = "#555C24";

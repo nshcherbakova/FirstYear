@@ -429,14 +429,11 @@ int MainWindow::LoadedPhotosCount(
 void MainWindow::UpdateSelectionButton(
     FirstYear::Core::FrameControl &frame_control) {
   auto project = frame_control.CurrentProject();
-  int empty_slots_count =
+  const int empty_slots_count =
       project->monthes_.size() - LoadedPhotosCount(frame_control);
 
-  if (empty_slots_count) {
-    select_images_button_->show();
-    select_images_button_->setText(SelectButtonText(empty_slots_count));
-  } else
-    select_images_button_->hide();
+  select_images_button_->setEnabled(empty_slots_count > 0);
+  select_images_button_->setText(SelectButtonText(empty_slots_count));
 }
 
 void MainWindow::UpdateRearrangeButton() {
@@ -464,7 +461,7 @@ void MainWindow::CreateSwipeWidget(
 }
 
 QString MainWindow::SelectButtonText(int count) {
-  if (count == 12) {
+  if (count == 12 || count == 0) {
     return "Load photos";
   } else if (count != 1) {
     return QString("Load %1 photos").arg(count);
@@ -756,6 +753,10 @@ void MainWindow::setEnabledControls(bool enabled) {
 
   rearrange_button_->setUpdatesEnabled(enabled);
   rearrange_button_->setEnabled(enabled);
+
+  if (enabled) {
+    UpdateSelectionButton(project_control_);
+  }
 }
 
 MainWindow::~MainWindow() {}
