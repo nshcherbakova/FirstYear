@@ -101,6 +101,7 @@ bool FrameDataReader::readJson(const QString &id,
 
   auto json = document.object();
 
+  Core::Json::ReadString(json, "position", parameters.position);
   readTitle(json, "title", parameters.title_parameters);
 
   bool result = true;

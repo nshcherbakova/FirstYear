@@ -129,6 +129,8 @@ void TemplateWidgetBase::fillParameters(
     const PhotoFrameParameters &parameters) {
   UNI_ASSERT(parameters.months_parameters.size() == 12);
 
+  position_ = parameters.position;
+
   title_slot_real_ = std::move(parameters.title_parameters.title_rect);
   title_text_font_size_real_ =
       parameters.title_parameters.text_parameters.font_size;
@@ -180,6 +182,8 @@ void TemplateWidgetBase::createPhotoTextWidgets(
 }
 
 QString TemplateWidgetBase::id() const { return id_; }
+
+QString TemplateWidgetBase::position() const { return position_; }
 
 QSize TemplateWidgetBase::preferedSize(QSize size) const {
   if (foreground_widget_) {

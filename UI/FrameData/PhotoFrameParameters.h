@@ -34,6 +34,7 @@ struct MonthParameters {
 };
 
 struct PhotoFrameParameters {
+  QString position;
   TitleParameters title_parameters;
   std::vector<MonthParameters> months_parameters;
 };

@@ -54,6 +54,7 @@ public slots:
 
 public:
   QString id() const;
+  QString position() const;
   QSize preferedSize(QSize size) const;
   FrameParameters frameData(int month);
   QPixmap renderFrame();
@@ -78,6 +79,7 @@ private:
 
 protected:
   QString id_;
+  QString position_;
   QPixmap foreground_;
   QRectF title_slot_real_;
   int title_text_font_size_real_ = 20;
