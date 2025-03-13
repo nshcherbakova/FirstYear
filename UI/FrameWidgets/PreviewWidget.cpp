@@ -177,6 +177,7 @@ void PreviewWidget::drawFrame(QPainter &painter) {
   const QSize frame_with_size{frame_with, frame_with};
 
   painter.setTransform(transform_);
+  // shadow
   painter.setBrush(QColor(67, 56, 14, 20));
   painter.setPen(QPen(QColor(0, 0, 0, 0)));
 
