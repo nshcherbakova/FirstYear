@@ -735,6 +735,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
     event->ignore();
   } else {
+    project_control_.SaveProject();
     QMainWindow::closeEvent(event);
   }
 }

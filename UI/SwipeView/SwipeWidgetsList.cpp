@@ -80,7 +80,7 @@ void SwipeWidgetsList::InitialaizeScroller() {
   properties.setScrollMetric(QScrollerProperties::DragVelocitySmoothingFactor,
                              0.2);
   properties.setScrollMetric(QScrollerProperties::MinimumVelocity, 0.0);
-  properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.2);
+  properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.1);
   properties.setScrollMetric(QScrollerProperties::AcceleratingFlickMaximumTime,
                              0.4);
   properties.setScrollMetric(
