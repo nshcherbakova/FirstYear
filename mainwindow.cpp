@@ -95,12 +95,14 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
   background_svg_ = new QSvgWidget(":/images/icons/stars", this);
+  controls_.push_back(background_svg_);
 
   CreatePhotoTuneWidget(frame_control);
   CreateFrames(frame_control, frames);
   CreateLineEditWidget(frame_control);
   CreateSwipeWidget(frame_control);
   CreateButtons(frame_control);
+  CreateTapText();
   CreatePreviewWindow();
   CreateRearrangeWidget(frame_control);
 
@@ -120,11 +122,11 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
 void MainWindow::CreatePreviewWindow() {
   preview_ = new Preview::PreviewWidget(*this);
   preview_->setGeometry(rect());
+  preview_->hide();
   connect(preview_, &Preview::PreviewWidget::SignalShareImage, this,
           [&] { Share(preview_->getImage()); });
   connect(preview_, &Preview::PreviewWidget::SignalClosed, this,
           [&] { setEnabledControls(true); });
-  preview_->hide();
 }
 
 int MainWindow::CurrentTemplateIndex(
@@ -414,7 +416,7 @@ void MainWindow::UpdateFrames(TemplateWidgetHolder *exept) {
 
   UpdateSelectionButton(project_control_);
   UpdateRearrangeButton();
-  // UpdateDrugAndDrop();
+  UpdateTapText();
   resizeEvent(nullptr);
 }
 
@@ -444,6 +446,10 @@ void MainWindow::UpdateRearrangeButton() {
   rearrange_button_->setVisible(LoadedPhotosCount(project_control_) > 0);
 }
 
+void MainWindow::UpdateTapText() {
+  tap_text_->setVisible(LoadedPhotosCount(project_control_) > 0);
+}
+
 void MainWindow::CreateSwipeWidget(
     FirstYear::Core::FrameControl &frame_control) {
   swipe_widget_ = new SwipeWidget(this);
@@ -462,6 +468,8 @@ void MainWindow::CreateSwipeWidget(
               frame_control.SaveProject();
             }
           });
+
+  controls_.push_back(swipe_widget_);
 }
 
 QString MainWindow::SelectButtonText(int count) {
@@ -482,6 +490,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
   preview_button_->setSize(QSize(120, 60));
   preview_button_->setText("Preview");
   //  preview_button_->setVisible(false);
+  controls_.push_back(preview_button_);
 
   connect(preview_button_, &QPushButton::clicked, this, [&] {
     QPixmap pixmap = Render(control);
@@ -508,6 +517,8 @@ pixmap.save(path);
     Share(pixmap);
   });
 
+  controls_.push_back(share_button_);
+
   rearrange_button_ = new QPushButton(this);
   rearrange_button_->setObjectName("Rearrange");
   rearrange_button_->setStyleSheet(c_rearrange_button_str);
@@ -515,6 +526,8 @@ pixmap.save(path);
 
   connect(rearrange_button_, &QPushButton::clicked, this,
           [&] { rearrange_->show(); });
+
+  controls_.push_back(rearrange_button_);
 
   UpdateRearrangeButton();
 
@@ -529,7 +542,19 @@ pixmap.save(path);
     }
   });
 
+  controls_.push_back(select_images_button_);
+
   UpdateSelectionButton(project_control_);
+}
+
+void MainWindow::CreateTapText() {
+  tap_text_ = new QLabel(this);
+  tap_text_->setObjectName("TapText");
+  tap_text_->setStyleSheet(c_tap_text_style_str);
+  tap_text_->setText("tap photo to edit");
+  tap_text_->setWordWrap(true);
+
+  controls_.push_back(tap_text_);
 }
 
 bool MainWindow::SelectImages(QStringList files) {
@@ -620,6 +645,8 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     QMainWindow::resizeEvent(e);
   }
 
+  const bool is_portrait = width() < height();
+
   if (background_svg_) {
     const int size = std::max(width(), height());
     background_svg_->setGeometry(QRect{QPoint{0, 0}, QSize{size, size}});
@@ -646,27 +673,29 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
          preview_button_->size()});
   }
 
-  if (share_button_)
+  int share_button_top = 0;
+  if (share_button_) {
+    share_button_top = height() - share_button_->height() - height() / 20;
     share_button_->setGeometry(
-        {{width() - share_button_->width() - height() / 40,
-          height() - share_button_->height() - height() / 20},
+        {{width() - share_button_->width() - height() / 40, share_button_top},
          share_button_->size()});
+  }
 
-  if (select_images_button_)
+  int select_button_left = 0;
+  if (select_images_button_) {
+    select_button_left =
+        width() - select_images_button_->width() - height() / 40;
     select_images_button_->setGeometry(
-        {{width() - select_images_button_->width() - height() / 40,
-          height() / 20},
-         select_images_button_->size()});
+        {{select_button_left, height() / 20}, select_images_button_->size()});
+  }
 
   if (preview_)
     preview_->setGeometry(rect());
 
+  const int rearrange_button_width = 160;
+  const int rearrange_button_height = 50;
+  int rearrange_button_top = 0;
   if (rearrange_button_) {
-    bool is_portrait = width() < height();
-    const int rearrange_button_width = 160;
-    const int rearrange_button_height = 50;
-    int rearrange_button_top = 0;
-
     if (is_portrait) {
       rearrange_button_top = share_button_->geometry().top() - height() / 15;
     } else {
@@ -676,6 +705,31 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     rearrange_button_->setGeometry(height() / 60, rearrange_button_top,
                                    rearrange_button_width,
                                    rearrange_button_height);
+  }
+
+  if (tap_text_) {
+
+    int tap_text_width = 0;
+    int tap_text_top = 0;
+    int tap_text_left = 0;
+    int tap_text_height = 0;
+
+    tap_text_->adjustSize();
+
+    if (is_portrait) {
+      tap_text_width = width() - height() / 60;
+      tap_text_top = height() / 5;
+      tap_text_left = height() / 40;
+      tap_text_height = tap_text_->heightForWidth(tap_text_width);
+    } else {
+      tap_text_width = 180;
+      tap_text_left = width() - tap_text_width;
+      tap_text_height = tap_text_->heightForWidth(tap_text_width);
+      tap_text_top = share_button_top - tap_text_height * 1.5;
+    }
+
+    tap_text_->setGeometry(tap_text_left, tap_text_top, tap_text_width,
+                           tap_text_height);
   }
 
   update();
@@ -741,23 +795,10 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 void MainWindow::setEnabledControls(bool enabled) {
-  swipe_widget_->setUpdatesEnabled(enabled);
-  swipe_widget_->setEnabled(enabled);
-
-  background_svg_->setUpdatesEnabled(enabled);
-  background_svg_->setEnabled(enabled);
-
-  preview_button_->setUpdatesEnabled(enabled);
-  preview_button_->setEnabled(enabled);
-
-  share_button_->setUpdatesEnabled(enabled);
-  share_button_->setEnabled(enabled);
-
-  select_images_button_->setUpdatesEnabled(enabled);
-  select_images_button_->setEnabled(enabled);
-
-  rearrange_button_->setUpdatesEnabled(enabled);
-  rearrange_button_->setEnabled(enabled);
+  for (auto &widgets : controls_) {
+    widgets->setUpdatesEnabled(enabled);
+    widgets->setEnabled(enabled);
+  }
 
   if (enabled) {
     UpdateSelectionButton(project_control_);

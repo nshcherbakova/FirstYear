@@ -46,7 +46,7 @@ private:
   void CreateSwipeWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateLineEditWidget(FirstYear::Core::FrameControl &frame_control);
   void CreateButtons(FirstYear::Core::FrameControl &frame_control);
-  // void CreateDragAndDropText(FirstYear::Core::FrameControl &frame_control);
+  void CreateTapText();
   void CreatePreviewWindow();
   void CreateRearrangeWidget(Core::FrameControl &frame_control);
 
@@ -54,7 +54,7 @@ private:
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
   void UpdateSelectionButton(FirstYear::Core::FrameControl &frame_control);
   int LoadedPhotosCount(FirstYear::Core::FrameControl &frame_control) const;
-  // void UpdateDrugAndDrop();
+  void UpdateTapText();
   void UpdateRearrangeButton();
 
   void TuneImage(int month, FirstYear::Core::FrameControl &frame_control);
@@ -84,6 +84,7 @@ private:
   FirstYear::Core::FrameControl &project_control_;
   mutable std::shared_ptr<ShareUtils::ShareUtilsCpp> share_utiles_;
   std::vector<TemplateWidgetHolder *> frame_widgets_;
+  std::vector<QWidget *> controls_;
   SwipeWidgetsList *swipe_view_ = nullptr;
   SwipeWidget *swipe_widget_ = nullptr;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;
@@ -97,6 +98,7 @@ private:
   QSvgWidget *background_svg_ = nullptr;
   QPushButton *rearrange_button_ = nullptr;
   RearrangeWidget *rearrange_ = nullptr;
+  QLabel *tap_text_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

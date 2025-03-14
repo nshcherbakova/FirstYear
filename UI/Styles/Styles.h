@@ -48,7 +48,7 @@ static const char *c_message_box_style_str =
 
 static const char *c_rearrange_button_str =
     "QPushButton#Rearrange{"
-    "background-color: transparent;"
+    "background-color: rgba(255, 255, 255,250);"
     "color:#9B8463; "
     "font-size: 30px; "
     //   "font-family: Typo Round Regular Demo;"
@@ -56,7 +56,7 @@ static const char *c_rearrange_button_str =
     "border-width: 0;"
     "}"
     "QPushButton#Rearrange:pressed {background-color: rgba(255, 255, 255, "
-    "200);}";
+    "150);}";
 
 // Tune Widget styles
 static const char *c_dark_button_style_str =
@@ -169,6 +169,13 @@ static const char *c_clickable_label_style_str =
     "border: none;"
     "border-radius: 20;"
     "}";
+
+static const char *c_tap_text_style_str = "QLabel{"
+                                          "background-color: transparent;"
+                                          "font-size: 23px; "
+                                          "border: none;"
+                                          "color:#A98653; "
+                                          "}";
 static const QColor c_line_edit_background_color = QColor(164, 166, 151, 200);
 
 // Frame

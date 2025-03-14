@@ -5,7 +5,7 @@
 
 namespace FirstYear::UI {
 
-static const char *c_title_defoult_text_str = "Rearrange";
+static const char *c_title_defoult_text_str = "Rearrange photos";
 
 RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
     : QWidget(parent), control_(control) {
@@ -90,14 +90,18 @@ void RearrangeWidget::resizeEvent(QResizeEvent *e) {
   QWidget::resizeEvent(e);
   Update();
 
-  int top_margin = height() / 5;
+  const auto portrait = width() < height();
+
+  int text_width = height() / 5;
+  int top_margins = portrait ? 50 : 0;
   int side_margins = width() / 20;
-  QRect rect = {side_margins, 0, width() - 2 * side_margins, top_margin};
+  QRect rect = {side_margins, top_margins, width() - 2 * side_margins,
+                text_width};
   title_text_widget_->setGeometry(rect);
   title_text_widget_->setText(c_title_defoult_text_str);
 
   auto font = title_text_widget_->font();
-  font.setPointSize(width() < height() ? top_margin / 4 : top_margin / 2);
+  font.setPointSize(portrait ? text_width / 6 : text_width / 2);
   title_text_widget_->setFont(font);
 
   if (c_background_str) {
