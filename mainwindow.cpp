@@ -693,11 +693,11 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     preview_->setGeometry(rect());
 
   const int rearrange_button_width = 160;
-  const int rearrange_button_height = 50;
+  const int rearrange_button_height = 45;
   int rearrange_button_top = 0;
   if (rearrange_button_) {
     if (is_portrait) {
-      rearrange_button_top = share_button_->geometry().top() - height() / 15;
+      rearrange_button_top = share_button_->geometry().top() - height() / 17;
     } else {
       rearrange_button_top = select_images_button_->geometry().top();
     }
