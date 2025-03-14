@@ -718,7 +718,7 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
 
     if (is_portrait) {
       tap_text_width = width() - height() / 60;
-      tap_text_top = height() / 5;
+      tap_text_top = height() / 5.5;
       tap_text_left = height() / 40;
       tap_text_height = tap_text_->heightForWidth(tap_text_width);
     } else {
