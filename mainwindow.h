@@ -75,6 +75,8 @@ private:
   void DeletePhoto(int month_index);
   void DeletePhotos(std::vector<int> month_indexes);
 
+  void ShowLoadingDialogStub(std::function<void()> f);
+
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
   virtual void closeEvent(QCloseEvent *event) override final;

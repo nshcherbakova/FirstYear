@@ -123,8 +123,13 @@ void MainWindow::CreatePreviewWindow() {
   preview_ = new Preview::PreviewWidget(*this);
   preview_->setGeometry(rect());
   preview_->hide();
-  connect(preview_, &Preview::PreviewWidget::SignalShareImage, this,
-          [&] { Share(preview_->getImage()); });
+  connect(preview_, &Preview::PreviewWidget::SignalShareImage, this, [&] {
+    auto f = [&]() {
+      QMetaObject::invokeMethod(
+          this, [&]() { Share(preview_->getImage()); }, Qt::QueuedConnection);
+    };
+    ShowLoadingDialogStub(f);
+  });
   connect(preview_, &Preview::PreviewWidget::SignalClosed, this,
           [&] { setEnabledControls(true); });
 }
@@ -493,28 +498,44 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
   controls_.push_back(preview_button_);
 
   connect(preview_button_, &QPushButton::clicked, this, [&] {
-    QPixmap pixmap = Render(control);
-    pixmap.setDevicePixelRatio(devicePixelRatio());
+    auto f = [&]() {
+      QMetaObject::invokeMethod(
+          this,
+          [&]() {
+            QPixmap pixmap = Render(control);
+            pixmap.setDevicePixelRatio(devicePixelRatio());
 #ifdef Q_OS_ANDROID
-    // QString path =
-    //     QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)
-    //     + "/test.png";
+        // QString path =
+        //     QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)
+        //     + "/test.png";
 #else
-    QString path ="/Users/nshcherbakova/Desktop/FirstYear/test1.png";
-pixmap.save(path);
+                        QString path ="/Users/nshcherbakova/Desktop/FirstYear/test1.png";
+                    pixmap.save(path);
 #endif
 
-    preview_->setImage(std::move(pixmap));
-    preview_->show();
+            preview_->setImage(std::move(pixmap));
+          },
+          Qt::QueuedConnection);
+    };
+    ShowLoadingDialogStub(f);
 
+    preview_->show();
     setEnabledControls(false);
   });
 
   share_button_ = new ShareButton(this);
   // share_button_->setVisible(false);
   connect(share_button_, &QPushButton::clicked, this, [&] {
-    const QPixmap pixmap = Render(control);
-    Share(pixmap);
+    auto f = [&]() {
+      QMetaObject::invokeMethod(
+          this,
+          [&]() {
+            const QPixmap pixmap = Render(control);
+            Share(pixmap);
+          },
+          Qt::QueuedConnection);
+    };
+    ShowLoadingDialogStub(f);
   });
 
   controls_.push_back(share_button_);
@@ -545,6 +566,20 @@ pixmap.save(path);
   controls_.push_back(select_images_button_);
 
   UpdateSelectionButton(project_control_);
+}
+
+void MainWindow::ShowLoadingDialogStub(std::function<void()> f) {
+  QProgressDialog progress("Loading...", "", 0, 100, this);
+  progress.setStyleSheet(c_progress_dialog_style_str);
+  progress.setMinimumDuration(1);
+  progress.setCancelButton(nullptr);
+  progress.setWindowModality(Qt::ApplicationModal);
+  progress.show();
+  progress.setValue(10);
+
+  f();
+
+  progress.setValue(50);
 }
 
 void MainWindow::CreateTapText() {
@@ -619,6 +654,7 @@ bool MainWindow::SelectImages(QStringList files) {
 }
 
 void MainWindow::Share(const QPixmap &pixmap) const {
+
   if (!share_utiles_) {
     share_utiles_ = std::make_shared<ShareUtils::ShareUtilsCpp>();
   }

@@ -50,7 +50,7 @@ static const char *c_rearrange_button_str =
     "QPushButton#Rearrange{"
     "background-color: rgba(255, 255, 255,250);"
     "color:#9B8463; "
-    "font-size: 27px; "
+    "font-size: 25px; "
     //   "font-family: Typo Round Regular Demo;"
     "border-radius: 10;"
     "border-width: 0;"
