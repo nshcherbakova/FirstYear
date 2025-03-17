@@ -28,7 +28,7 @@
 #include <QPixmap>
 #include <QPolygon>
 #include <QPushButton>
-// #include <QRandomGenerator>
+#include <QRandomGenerator>
 #include <QSettings>
 #include <QSplashScreen>
 #include <QStandardPaths>

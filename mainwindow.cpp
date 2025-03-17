@@ -569,6 +569,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
 }
 
 void MainWindow::ShowLoadingDialogStub(std::function<void()> f) {
+
   QProgressDialog progress("Loading...", "", 0, 100, this);
   progress.setStyleSheet(c_progress_dialog_style_str);
   progress.setMinimumDuration(1);
@@ -579,7 +580,7 @@ void MainWindow::ShowLoadingDialogStub(std::function<void()> f) {
 
   f();
 
-  progress.setValue(50);
+  progress.setValue(10 * QRandomGenerator::global()->bounded(4, 9));
 }
 
 void MainWindow::CreateTapText() {
