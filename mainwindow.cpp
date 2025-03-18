@@ -8,7 +8,7 @@
 #include <stdafx.h>
 
 static const int TITLE_ID = -1;
-static const char *c_share_image_tmp_name_str = "/ie_tmp.jpg";
+static const char *c_share_image_tmp_name_str = "/FirstYear.jpg";
 static const char *c_save_share_image_format_str = "JPG";
 // static const char *c_share_image_extension_str = "jpg";
 static const char *c_share_image_mime_type_str = "image/jpeg";
@@ -398,11 +398,20 @@ void MainWindow::OpenImage(int month) {
 }
 
 void MainWindow::OnImagePicked(QString file, int month) {
+  auto photo = QPixmap(file);
+  if (photo.isNull()) {
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Can't open image");
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
+    return;
+  }
+
   auto project = project_control_.CurrentProject();
 
   auto &month_data = project->monthes_[month];
   if (!file.isNull()) {
-    month_data.photo_data->resetData(QPixmap(file), true);
+    month_data.photo_data->resetData(std::move(photo), true);
 
     TuneImage(month, project_control_);
 
