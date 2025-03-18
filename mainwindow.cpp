@@ -10,7 +10,6 @@
 static const int TITLE_ID = -1;
 static const char *c_share_image_tmp_name_str = "/FirstYear.jpg";
 static const char *c_save_share_image_format_str = "JPG";
-// static const char *c_share_image_extension_str = "jpg";
 static const char *c_share_image_mime_type_str = "image/jpeg";
 
 using namespace FirstYear::Core;
@@ -247,14 +246,14 @@ void MainWindow::CreateRearrangeWidget(
             cur_month.photo_data = tmp_photodata;
             tmp_photodata = new_tmp_photodata;
 
-            if (index == from_index || tmp_photodata->isStub()) {
-              break;
-            }
-
             monthes[index].photo_data->setState(
                 (short)PhotoData::STATE::IMAGE_CHANGED |
                 (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
                 (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+
+            if (index == from_index || tmp_photodata->isStub()) {
+              break;
+            }
 
             index = (index + 1) % (monthes.size());
           }

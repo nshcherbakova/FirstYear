@@ -246,6 +246,16 @@ void TemplateWidgetBase::Update() {
 void TemplateWidgetBase::resizeEvent(QResizeEvent *e) {
   QWidget::resizeEvent(e);
   Update();
+
+  auto new_size = e->size();
+  QMetaObject::invokeMethod(
+      this,
+      [&, new_size]() {
+        if (new_size != image_buffer_.size()) {
+          image_buffer_ = grab();
+        }
+      },
+      Qt::QueuedConnection);
 }
 
 void TemplateWidgetBase::load(Core::FrameControl &control) {
@@ -355,6 +365,15 @@ QPixmap TemplateWidgetBase::renderFrame() {
   painter.drawPixmap(image_top, image);
 
   return result_image;
+}
+
+void TemplateWidgetBase::paintEvent(QPaintEvent *e) {
+
+  // QWidget::paintEvent(e);
+  // return;
+  QPainter painter(this);
+
+  painter.drawPixmap(rect(), image_buffer_);
 }
 
 } // namespace FirstYear::UI

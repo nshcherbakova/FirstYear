@@ -64,6 +64,7 @@ public: // QWidget
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final;
+  virtual void paintEvent(QPaintEvent *) override;
 
 private:
   void load(Core::FrameControl &control);
@@ -104,6 +105,8 @@ private:
   ClickableLabel *title_text_widget_ = nullptr;
 
   State render_state_;
+
+  QPixmap image_buffer_;
 };
 
 } // namespace FirstYear::UI

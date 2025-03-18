@@ -111,10 +111,14 @@ void PhotoWidget::dragEnterEvent(QDragEnterEvent *event) {
     event->ignore();
     drag_enter_ = false;
   }
+  QWidget::dragEnterEvent(event);
 }
 
-void PhotoWidget::dragLeaveEvent(QDragLeaveEvent *) {
+void PhotoWidget::dragLeaveEvent(QDragLeaveEvent *event) {
   drag_enter_ = false;
+  event->ignore();
+  QWidget::dragLeaveEvent(event);
+
   update();
 }
 
@@ -130,6 +134,7 @@ void PhotoWidget::dragMoveEvent(QDragMoveEvent *event) {
     drag_enter_ = false;
     event->ignore();
   }
+  QWidget::dragMoveEvent(event);
 }
 
 void PhotoWidget::dropEvent(QDropEvent *event) {
@@ -156,6 +161,10 @@ void PhotoWidget::dropEvent(QDropEvent *event) {
   } else {
     event->ignore();
   }
+
+  QWidget::dropEvent(event);
+  update();
+  repaint();
 }
 
 //! [1]
@@ -164,6 +173,8 @@ void PhotoWidget::mousePressEvent(QMouseEvent *event) {
     timer_.start();
   }
   ImageButton::mousePressEvent(event);
+  update();
+  repaint();
 }
 
 void PhotoWidget::mouseReleaseEvent(QMouseEvent *event) {
@@ -171,30 +182,41 @@ void PhotoWidget::mouseReleaseEvent(QMouseEvent *event) {
     timer_.stop();
   }
   ImageButton::mouseReleaseEvent(event);
+  update();
+  repaint();
 }
 
 void PhotoWidget::paintEvent(QPaintEvent *e) {
 
   ImageButton::paintEvent(e);
-  if (parameters_.accept_drops && drag_enter_) {
-    QPainter painter(this);
-    painter.fillRect(rect(), QColor(200, 200, 200, 200));
-    painter.setBrush(Qt::transparent);
-    painter.setPen(QPen(Qt::white, 16));
-    painter.drawRect(rect());
 
-  } else if (parameters_.accept_drops) {
-
+  if (parameters_.accept_drops) {
     QPainter painter(this);
-    painter.setBrush(Qt::transparent);
-    if (isChecked()) {
-      painter.setPen(QPen(QColor("#D69C4A"), 9));
+    if (drag_enter_) {
+
+      painter.fillRect(rect(), QColor(200, 200, 200, 200));
+      painter.setBrush(Qt::transparent);
+      painter.setPen(QPen(Qt::white, 16));
+      painter.drawRect(rect());
+
     } else {
-      painter.setPen(QPen(Qt::white, 5));
+      painter.setBrush(Qt::transparent);
+      if (isChecked()) {
+        painter.setPen(QPen(QColor("#D69C4A"), 9));
+      } else {
+        painter.setPen(QPen(Qt::white, 5));
+      }
+      painter.drawRect(rect());
+    } // else if (!render_state_) {
+
+  } else {
+    QPainter painter(this);
+    if (QPushButton::isDown()) {
+      painter.fillRect(rect(), QColor(200, 200, 200, 200));
     }
-    painter.drawRect(rect());
-  } // else if (!render_state_) {
-  QPushButton::paintEvent(e);
+  }
+  // QPushButton::paintEvent(e);
+
   // }
 }
 } // namespace FirstYear::UI
