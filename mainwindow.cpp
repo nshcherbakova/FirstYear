@@ -328,25 +328,30 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
         [&]() { UpdateFrames(nullptr); }, Qt::QueuedConnection);
   }
 
-  connect(
-      photo_tune_widget_, &PhotoTuneWidget::SignalTuneNextImage, this, [&]() {
-        const auto project = frame_control.CurrentProject();
-        int current_month = photo_tune_widget_->getPhotoId();
-        int next_month = (current_month + 1) % ((int)project->monthes_.size());
+  connect(photo_tune_widget_, &PhotoTuneWidget::SignalTuneNextImage, this,
+          [&]() {
+            const auto project = frame_control.CurrentProject();
+            int current_month = photo_tune_widget_->getPhotoId();
+            int next_month = current_month;
+            do {
+              next_month = (next_month + 1) % ((int)project->monthes_.size());
+            } while (project->monthes_[next_month].photo_data->isStub());
 
-        TuneNewImage(current_month, next_month, frame_control);
-      });
+            TuneNewImage(current_month, next_month, frame_control);
+          });
 
-  connect(
-      photo_tune_widget_, &PhotoTuneWidget::SignalTunePrevImage, this, [&]() {
-        const auto project = frame_control.CurrentProject();
-        int current_month = photo_tune_widget_->getPhotoId();
-        int next_month = (current_month - 1) % ((int)project->monthes_.size());
-        next_month = next_month < 0 ? (int)project->monthes_.size() + next_month
-                                    : next_month;
+  connect(photo_tune_widget_, &PhotoTuneWidget::SignalTunePrevImage, this,
+          [&]() {
+            const auto project = frame_control.CurrentProject();
+            int current_month = photo_tune_widget_->getPhotoId();
+            int next_month = current_month;
+            do {
+              next_month = next_month == 0 ? (int)project->monthes_.size() - 1
+                                           : next_month - 1;
+            } while (project->monthes_[next_month].photo_data->isStub());
 
-        TuneNewImage(current_month, next_month, frame_control);
-      });
+            TuneNewImage(current_month, next_month, frame_control);
+          });
 }
 
 void MainWindow::DeletePhoto(int month_index) {
