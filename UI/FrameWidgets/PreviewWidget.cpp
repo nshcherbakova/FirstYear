@@ -94,7 +94,6 @@ void PreviewWidget::setImage(QPixmap photo) {
 
   Core::PhotoData photo_data =
       Core::PhotoData::CreateNewData(std::move(photo), false);
-
   updatePhoto(std::make_shared<Core::PhotoData>(std::move(photo_data)));
 }
 
@@ -194,6 +193,7 @@ void PreviewWidget::paintEvent(QPaintEvent *) {
 
   painter.drawPixmap(rect(), background_image_, rect());
 
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
   PhotoProcessor::drawPhoto(painter);
 }
 } // namespace FirstYear::UI::Preview
