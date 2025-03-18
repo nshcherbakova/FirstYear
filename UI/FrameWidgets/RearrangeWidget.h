@@ -26,9 +26,10 @@ public:
   virtual ~RearrangeWidget(){};
 
 signals:
-  void SignalRemoveButtonClicked(int month);
+  // void SignalRemoveButtonClicked(int month);
   void SignalImageDroped(int from_id, int to_id);
   void SignalDeleteButtonClicked(std::vector<int> monthes);
+  void SignalHide();
 
 public slots:
   void Update();

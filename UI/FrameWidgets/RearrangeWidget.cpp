@@ -199,6 +199,8 @@ void RearrangeWidget::InitPhotos(Core::FrameControl &control,
 void RearrangeWidget::setVisible(bool visible) {
   if (visible) {
     Update();
+  } else {
+    emit SignalHide();
   }
   QWidget::setVisible(visible);
 }

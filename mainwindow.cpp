@@ -234,10 +234,38 @@ void MainWindow::CreateRearrangeWidget(
       [&](int from_index, int to_index) {
         auto &monthes = frame_control.CurrentProject()->monthes_;
 
-        auto month_from_photo_data = monthes[from_index].photo_data;
         auto &month_to = monthes[to_index];
+        auto month_from_photo_data = monthes[from_index].photo_data;
 
-        monthes[from_index].photo_data = month_to.photo_data;
+        if (!month_to.photo_data->isStub()) {
+          int index = (to_index + 1) % (monthes.size());
+          PhotoDataPtr tmp_photodata = month_to.photo_data;
+          while (true) {
+            auto &cur_month = monthes[index];
+
+            auto new_tmp_photodata = cur_month.photo_data;
+            cur_month.photo_data = tmp_photodata;
+            tmp_photodata = new_tmp_photodata;
+
+            if (index == from_index || tmp_photodata->isStub()) {
+              break;
+            }
+
+            monthes[index].photo_data->setState(
+                (short)PhotoData::STATE::IMAGE_CHANGED |
+                (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+                (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+
+            index = (index + 1) % (monthes.size());
+          }
+
+          if (tmp_photodata->isStub()) {
+            monthes[from_index].photo_data = tmp_photodata;
+          }
+        } else {
+          monthes[from_index].photo_data = month_to.photo_data;
+        }
+
         month_to.photo_data = month_from_photo_data;
 
         monthes[from_index].photo_data->setState(
@@ -246,18 +274,23 @@ void MainWindow::CreateRearrangeWidget(
              (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
 
         monthes[to_index].photo_data->setState(
-            (short)PhotoData::STATE::IMAGE_CHANGED |
-            (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-            (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+            ((short)PhotoData::STATE::IMAGE_CHANGED |
+             (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
+             (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
 
-        UpdateFrames(nullptr);
-        frame_control.SaveProject();
+        rearrange_->Update();
       },
       Qt::QueuedConnection);
 
-  connect(
-      rearrange_, &RearrangeWidget::SignalRemoveButtonClicked, this,
-      [&](int month_index) { DeletePhoto(month_index); }, Qt::QueuedConnection);
+  connect(rearrange_, &RearrangeWidget::SignalHide, this, [&]() {
+    UpdateFrames(nullptr);
+    frame_control.SaveProject();
+  });
+
+  // connect(
+  //     rearrange_, &RearrangeWidget::SignalRemoveButtonClicked, this,
+  //     [&](int month_index) { DeletePhoto(month_index); },
+  //     Qt::QueuedConnection);
 
   connect(
       rearrange_, &RearrangeWidget::SignalDeleteButtonClicked, this,
@@ -558,9 +591,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
 
   connect(select_images_button_, &QPushButton::clicked, this, [&] {
     const auto files = FileDialog::getOpenFileNames();
-    if (MainWindow::SelectImages(files)) {
-      rearrange_->show();
-    }
+    MainWindow::SelectImages(files);
   });
 
   controls_.push_back(select_images_button_);
