@@ -398,19 +398,20 @@ void MainWindow::OpenImage(int month) {
 }
 
 void MainWindow::OnImagePicked(QString file, int month) {
-  auto photo = QPixmap(file);
-  if (photo.isNull()) {
-    QMessageBox msgBox;
-    msgBox.setWindowTitle("Can't open image");
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.exec();
-    return;
-  }
-
   auto project = project_control_.CurrentProject();
 
   auto &month_data = project->monthes_[month];
   if (!file.isNull()) {
+
+    auto photo = QPixmap(file);
+    if (photo.isNull()) {
+      QMessageBox msgBox;
+      msgBox.setWindowTitle("Can't open image");
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.exec();
+      return;
+    }
+
     month_data.photo_data->resetData(std::move(photo), true);
 
     TuneImage(month, project_control_);
