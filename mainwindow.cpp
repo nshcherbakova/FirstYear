@@ -237,7 +237,7 @@ void MainWindow::CreateRearrangeWidget(
         auto month_from_photo_data = monthes[from_index].photo_data;
 
         if (!month_to.photo_data->isStub()) {
-          int index = (to_index + 1) % (monthes.size());
+          int index = from_index > to_index ? (to_index + 1) : (to_index - 1);
           PhotoDataPtr tmp_photodata = month_to.photo_data;
           while (true) {
             auto &cur_month = monthes[index];
@@ -255,7 +255,7 @@ void MainWindow::CreateRearrangeWidget(
               break;
             }
 
-            index = (index + 1) % (monthes.size());
+            index = from_index > to_index ? (index + 1) : (index - 1);
           }
 
           if (tmp_photodata->isStub()) {
