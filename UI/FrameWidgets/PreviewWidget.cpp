@@ -49,7 +49,7 @@ void PreviewWidget::setVisible(bool visible) {
 void PreviewWidget::redrawBackgroundImage() {
   background_image_ = QPixmap(size());
   QPainter painter(&background_image_);
-  painter.fillRect(rect(), QColor(c_preview_background_color_str));
+  painter.fillRect(rect(), QColor("#e7e5ce"));
 
   const auto size = std::min(width(), height());
   background_->render(&painter, QRect{QPoint{}, QSize{size, size}});

@@ -336,31 +336,31 @@ QPixmap TemplateWidgetBase::renderFrame() {
 
   const double dpr = QGuiApplication::primaryScreen()->devicePixelRatio();
   const int frame_with =
-      std::min(image.size().width(), image.size().height()) / dpr / 14;
+      std::min(image.size().width(), image.size().height()) / dpr / 25;
   const QSize frame_size{frame_with, frame_with};
   const QPoint image_top{frame_with, frame_with};
   const int k = 10;
-  int shadow_with = frame_with / k;
+  int shadow_with = frame_with / k / 2;
   const QRect frame_rect = QRect{{}, image.size() / dpr + frame_size * 2};
 
   QPixmap result_image(frame_rect.size());
   QPainter painter(&result_image);
 
   // frame
-  painter.setBrush(QColor("#EBD9C7"));
-  painter.setPen(QPen(QColor("#D7C4B4"), shadow_with / 2));
+  painter.setBrush(QColor("#f0eee5"));
+  painter.setPen(QPen(QColor("#f0eee5"), shadow_with / 2));
   painter.drawRect(frame_rect);
 
   // frame pattern
-  auto svg = new QSvgRenderer(this);
-  svg->load(QString(":/images/icons/wood"));
-  svg->render(&painter, frame_rect);
+  // auto svg = new QSvgRenderer(this);
+  // svg->load(QString(":/images/icons/wood"));
+  // svg->render(&painter, frame_rect);
 
   // inner shaddow
-  painter.setPen(QColor("#EBD9C7"));
-  painter.setBrush(QColor("#F2E6D3"));
+  painter.setPen(QColor("#cecec8"));
+  painter.setBrush(QColor("#cecec8"));
   painter.drawRect(QRect{image_top - QPoint{shadow_with, shadow_with},
-                         image.size() / dpr + frame_size * 2 / k});
+                         image.size() / dpr + frame_size / k});
 
   painter.drawPixmap(image_top, image);
 
