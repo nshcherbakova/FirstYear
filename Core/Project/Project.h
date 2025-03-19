@@ -1,6 +1,7 @@
 #pragma once
 #ifndef FIRSTYEAR_CORE_PROJECT_H
 #define FIRSTYEAR_CORE_PROJECT_H
+#include <QColor>
 #include <QGuiApplication>
 #include <QPixmap>
 #include <QRectF>
@@ -61,6 +62,7 @@ public:
   PhotoTransform &transformOffsetRef();
   short state() const;
   bool isStub() const;
+  QColor background() const;
 
   enum class STATE : short {
     IMAGE_CHANGED = 0x01,
@@ -76,6 +78,7 @@ protected:
   bool is_stub_image_ = false;
   PhotoTransform transform_scale_rotate_;
   PhotoTransform transform_offset_;
+  QColor background_;
 
   mutable short state_ = 0;
 };

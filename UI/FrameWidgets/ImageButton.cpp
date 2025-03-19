@@ -19,10 +19,12 @@ void ImageButton::UpdateButton() {
   }
   {
     QPainter painter(&buffer_);
-    const auto rect = QRect(0, 0, buffer_.width(), buffer_.height());
 
-    painter.setBrush(QColor(c_photo_widget_background_color));
-    painter.drawPolygon(rect);
+    const auto rect = QRect({0, 0}, buffer_.size());
+
+    painter.fillRect(rect, photo_data_->isStub()
+                               ? c_photo_widget_background_color
+                               : photo_data_->background());
 
     PhotoPainter::drawPhoto(painter);
   }
