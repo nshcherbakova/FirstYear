@@ -85,16 +85,6 @@ void PhotoData::fillImage(QPixmap image, bool is_stub, bool scaled) {
   }
   image_.setDevicePixelRatio(
       QGuiApplication::primaryScreen()->devicePixelRatio());
-
-  static const QColor color_arrey[11] = {
-      QColor("#89A8B2"), QColor(129, 140, 120), QColor(167, 180, 158),
-      QColor(137, 168, 178), QColor(179, 200, 207), QColor(165, 157, 132),
-      QColor(193, 186, 161), QColor(215, 211, 191), QColor(156, 169, 134),
-      // QColor(128, 141, 124),
-      QColor("#AAB99A"), QColor(79, 149, 157)};
-  qDebug() << image_.cacheKey();
-  qDebug() << image_.cacheKey() / 2 % 10;
-  background_ = color_arrey[image_.cacheKey() / 2 % 10];
 }
 /*
 void PhotoData::setImage(QPixmap image, PhotoTransform transform_scale_rotate,
@@ -163,7 +153,5 @@ short PhotoData::state() const { return state_; }
 bool PhotoData::isStub() const { return is_stub_image_; }
 
 void PhotoData::setState(short state) { state_ = state; }
-
-QColor PhotoData::background() const { return background_; }
 
 } // namespace FirstYear::Core

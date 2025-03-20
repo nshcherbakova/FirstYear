@@ -2,6 +2,7 @@
 #ifndef FIRSTYEAR_UI_IMAGE_BUTTON_H
 #define FIRSTYEAR_UI_IMAGE_BUTTON_H
 #include <Core/Project/Project.h>
+#include <QColor>
 #include <QPushButton>
 #include <UI/FrameWidgets/Photo/PhotoProcessor.h>
 
@@ -14,7 +15,7 @@ public:
   ImageButton &operator=(const ImageButton &) = delete;
 
 public:
-  void setPhoto(const Core::PhotoDataPtr &photo);
+  void setPhoto(const Core::PhotoDataPtr &photo, const QColor &background);
 
 public:
   virtual void paintEvent(QPaintEvent *) override;
@@ -27,6 +28,7 @@ protected:
 private:
   Core::PhotoDataPtr photo_data_;
   QPixmap buffer_;
+  QColor background_;
 };
 
 } // namespace FirstYear::UI

@@ -62,7 +62,33 @@ void PhotoWidget::setPhoto(const Core::PhotoDataPtr &photo, int id) {
 
   id_ = id;
 
-  ImageButton::setPhoto(photo);
+  static const QColor color_arrey1[12] = {
+      QColor(165, 157, 132),
+
+      QColor(167, 180, 158),
+
+      QColor(179, 200, 207), QColor(215, 211, 191),
+
+      QColor(129, 140, 120), QColor(165, 157, 132),
+      QColor(156, 169, 134), QColor("#89A8B2"),
+
+      QColor(193, 186, 161), QColor(128, 141, 124),
+      QColor(128, 141, 124), QColor(165, 157, 132)};
+
+  static const QColor color_arrey[12] = {
+      QColor(165, 157, 132), QColor(167, 180, 158),
+      QColor(179, 200, 207), QColor(215, 211, 191),
+
+      QColor(129, 140, 120), QColor(165, 157, 132),
+      QColor(156, 169, 134), QColor(137, 168, 178),
+
+      QColor(215, 211, 191), QColor(129, 140, 120),
+      QColor(165, 157, 132), QColor(156, 169, 134)};
+
+  ImageButton::setPhoto(photo, /*photo_data_->isStub()
+                                ? c_photo_widget_background_color
+                                :*/
+                        color_arrey[id]);
   setCheckable(!photo_data_->isStub() && parameters_.accept_drops);
 }
 
