@@ -367,7 +367,7 @@ QPixmap TemplateWidgetBase::renderFrame() {
   return result_image;
 }
 
-void TemplateWidgetBase::paintEvent(QPaintEvent *e) {
+void TemplateWidgetBase::paintEvent(QPaintEvent *) {
 
   // QWidget::paintEvent(e);
   // return;
