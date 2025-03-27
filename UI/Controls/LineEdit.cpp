@@ -67,8 +67,10 @@ void LineEditWidget::resizeEvent(QResizeEvent *e) {
   {
 
     int size = std::min(width(), height());
+    bool portrait = width() < height();
     int line_edit_width = (int)(width() * 0.8);
-    QRect rect = {(width() - line_edit_width) / 2, (int)(height() / 3),
+    QRect rect = {(width() - line_edit_width) / 2,
+                  portrait ? (int)(height() / 3) : (int)(height() / 8),
                   line_edit_width, (int)(size / 4.5)};
 
     line_edit_->setGeometry(rect);
