@@ -98,11 +98,6 @@
         <file alias="foreground_to_render">resources/Frames/baloons/foreground_to_render.png</file>
           <file alias="properties">resources/Frames/baloons/properties.json</file>
     </qresource>
-    <qresource prefix="/frames/Light">
-        <file alias="foreground">resources/Frames/Light/foreground.png</file>
-        <file alias="foreground_to_render">resources/Frames/Light/foreground_to_render.png</file>
-          <file alias="properties">resources/Frames/Light/properties.json</file>
-    </qresource>
     <qresource prefix="/frames/Light2">
         <file alias="foreground">resources/Frames/Light2/foreground.png</file>
         <file alias="foreground_to_render">resources/Frames/Light2/foreground_to_render.png</file>
@@ -118,11 +113,6 @@
         <file alias="foreground_to_render">resources/Frames/Flowers/foreground_to_render.png</file>
           <file alias="properties">resources/Frames/Flowers/properties.json</file>
     </qresource>
-    <qresource prefix="/frames/Flowers2">
-        <file alias="foreground">resources/Frames/Flowers2/foreground.png</file>
-        <file alias="foreground_to_render">resources/Frames/Flowers2/foreground_to_render.png</file>
-          <file alias="properties">resources/Frames/Flowers2/properties.json</file>
-    </qresource>
     <qresource prefix="/frames/Pattern">
         <file alias="foreground">resources/Frames/Pattern/foreground.png</file>
         <file alias="foreground_to_render">resources/Frames/Pattern/foreground_to_render.png</file>
@@ -132,15 +122,5 @@
         <file alias="foreground">resources/Frames/Bunny/foreground.png</file>
         <file alias="foreground_to_render">resources/Frames/Bunny/foreground_to_render.png</file>
           <file alias="properties">resources/Frames/Bunny/properties.json</file>
-    </qresource>
-    <qresource prefix="/frames/House">
-        <file alias="foreground">resources/Frames/House/foreground.png</file>
-        <file alias="foreground_to_render">resources/Frames/House/foreground_to_render.png</file>
-          <file alias="properties">resources/Frames/House/properties.json</file>
-    </qresource>
-    <qresource prefix="/frames/House2">
-        <file alias="foreground">resources/Frames/House2/foreground.png</file>
-        <file alias="foreground_to_render">resources/Frames/House2/foreground_to_render.png</file>
-          <file alias="properties">resources/Frames/House2/properties.json</file>
     </qresource>
 </RCC>
