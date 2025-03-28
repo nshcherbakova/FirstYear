@@ -85,10 +85,11 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
   setMinimumSize(window_size);
   show();
 #else
-  QSize window_size(9 * 30, 20 * 30);
-  setMinimumSize(window_size);
+  QSize window_size(316, 646);
+  //  setMinimumSize(window_size);
   show();
 #endif
+
   setStyleSheet(c_background_str);
 
   setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
@@ -721,9 +722,11 @@ QPixmap MainWindow::Render(Core::FrameControl &control) {
 
 void MainWindow::resizeEvent(QResizeEvent *e) {
   if (e) {
+
     if (!e->size().isValid() || e->size().isEmpty()) {
       return;
     }
+
     QMainWindow::resizeEvent(e);
   }
 

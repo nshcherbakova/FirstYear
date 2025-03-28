@@ -98,6 +98,11 @@
         <file alias="foreground_to_render">resources/Frames/baloons/foreground_to_render.png</file>
           <file alias="properties">resources/Frames/baloons/properties.json</file>
     </qresource>
+    <qresource prefix="/frames/shapes">
+        <file alias="foreground">resources/Frames/shapes/foreground.png</file>
+        <file alias="foreground_to_render">resources/Frames/shapes/foreground_to_render.png</file>
+          <file alias="properties">resources/Frames/shapes/properties.json</file>
+    </qresource>
     <qresource prefix="/frames/Light2">
         <file alias="foreground">resources/Frames/Light2/foreground.png</file>
         <file alias="foreground_to_render">resources/Frames/Light2/foreground_to_render.png</file>

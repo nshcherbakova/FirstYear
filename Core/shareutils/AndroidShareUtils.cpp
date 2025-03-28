@@ -24,6 +24,10 @@ AndroidShareUtils::AndroidShareUtils(QObject *parent)
     QDir("").mkpath(mSavePath);
   }
 
+  // QJniObject::callStaticMethod<void>("org/nshchapps/firstyear/utils/QShareUtils",
+  // "setActivity", "(Landroid/app/Activity;)V",
+  // QNativeInterface::QAndroidApplication::context().object());
+
   // we need the instance for JNI Call
   mInstance = this;
 }
