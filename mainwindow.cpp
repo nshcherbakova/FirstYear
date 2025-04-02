@@ -302,10 +302,10 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
                               const QStringList &frames) {
 
   auto widgets = FrameWidgetsFactory::createWidgets(frames, frame_control);
-  std::sort(widgets.begin(), widgets.end(),
-            [](const TemplateWidgetBase *v1, const TemplateWidgetBase *v2) {
-              return v1->position() < v2->position();
-            });
+  // std::sort(widgets.begin(), widgets.end(),
+  //           [](const TemplateWidgetBase *v1, const TemplateWidgetBase *v2) {
+  //             return v1->position() < v2->position();
+  //           });
 
   for (const auto &widget : widgets) {
     frame_widgets_.push_back(new TemplateWidgetHolder(nullptr, widget));

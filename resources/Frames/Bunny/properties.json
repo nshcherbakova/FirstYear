@@ -305,9 +305,9 @@
     },
     "title": {
         "alignment": 36,
-        "font": "Anisa Sans",
-        "font_color": "#337187",
-        "font_size": 130,
+        "font": "Vanilla Extract",
+        "font_color": "#7ba25f",
+        "font_size": 110,
         "rect": {
             "left": 40,
             "top": 40,

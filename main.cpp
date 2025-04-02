@@ -117,8 +117,15 @@ void setScreenOrientation() {
 #endif
 
 QStringList collectFrames() {
+
+  return {
+      "rainbow", "1",      "giraffe", "2",       "Girl",    "shapes",  "Bunny",
+      "stars",   "Light2", "colors",  "Pattern", "baloons", "Flowers",
+  };
+
   QStringList frames;
   QDirIterator it(c_frames_dir_str);
+
   while (it.hasNext()) {
     const auto fn = it.nextFileInfo();
     qDebug() << fn.fileName();
