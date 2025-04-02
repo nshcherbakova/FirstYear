@@ -108,12 +108,12 @@ void GestureProcessor::panTriggered(QPanGesture *gesture) {
 
   QPointF delta = gesture->delta();
 
-  if (delta.manhattanLength() > c_pos_chenge_max) {
-    delta = QPoint(0, 0);
-  }
-  if (delta.manhattanLength() > c_pos_chenge_max / 2) {
-    delta = delta / 2.0;
-  }
+  /*  if (delta.manhattanLength() > c_pos_chenge_max) {
+      delta = QPoint(0, 0);
+    }
+    if (delta.manhattanLength() > c_pos_chenge_max / 2) {
+      delta = delta / 2.0;
+    }*/
   processPan(delta, gesture->hotSpot());
 }
 
@@ -122,17 +122,18 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
   if (changeFlags & QPinchGesture::RotationAngleChanged) {
     qreal rotation_delta =
         gesture->rotationAngle() - gesture->lastRotationAngle();
-    if (abs(rotation_delta) >= c_angle_change_max) {
-      rotation_delta = 0.0;
-    }
+    /*   if (abs(rotation_delta) >= c_angle_change_max) {
+         rotation_delta = 0.0;
+       }*/
 
     processAngleChanged(rotation_delta, gesture->centerPoint());
   }
   if (changeFlags & QPinchGesture::ScaleFactorChanged) {
 
-    const auto scale = fabs(gesture->scaleFactor() - 1.0) > c_zoom_max
+    const auto scale = /*fabs(gesture->scaleFactor() - 1.0) > c_zoom_max
                            ? 1.0
-                           : gesture->scaleFactor();
+                           :*/
+                       gesture->scaleFactor();
 
     processScaleChanged(scale, gesture->centerPoint());
   }

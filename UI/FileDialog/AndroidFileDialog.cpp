@@ -42,6 +42,7 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QUrl>
 #include <QtCore/QJniObject>
 
 namespace FirstYear::UI::Android {
@@ -50,6 +51,92 @@ namespace FirstYear::UI::Android {
 #define REQUEST_CODE 1305 // Arbitrary
 
 const char JniIntentClass[] = "android/content/Intent";
+
+static QString getRealPathFromUri(const QUrl &url) {
+  QString path = "";
+  QString localfile = url.toLocalFile();
+  if ((QFileInfo(localfile).isFile() || QFileInfo(localfile).isDir()) &&
+      localfile != url.toString()) {
+    return localfile;
+  }
+
+  QJniObject jUrl = QJniObject::fromString(url.toString());
+  QJniObject jContext = QtAndroidPrivate::context();
+  QJniObject jContentResolver = jContext.callObjectMethod(
+      "getContentResolver", "()Landroid/content/ContentResolver;");
+  QJniObject jUri = QJniObject::callStaticObjectMethod(
+      "android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;",
+      jUrl.object<jstring>());
+  QJniObject jCursor = jContentResolver.callObjectMethod(
+      "query",
+      "(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/"
+      "String;Ljava/lang/String;)Landroid/database/Cursor;",
+      jUri.object<jobject>(), nullptr, nullptr, nullptr, nullptr);
+  QJniObject jScheme =
+      jUri.callObjectMethod("getScheme", "()Ljava/lang/String;");
+  QJniObject authority;
+  if (jScheme.isValid()) {
+    authority = jUri.callObjectMethod("getAuthority", "()Ljava/lang/String;");
+  }
+  if (authority.isValid() &&
+      authority.toString() == "com.android.externalstorage.documents") {
+    QJniObject jPath = jUri.callObjectMethod("getPath", "()Ljava/lang/String;");
+    path = jPath.toString();
+  } else if (jCursor.isValid() && jCursor.callMethod<jboolean>("moveToFirst")) {
+    QJniObject jColumnIndex = QJniObject::fromString("_data");
+    jint columnIndex = jCursor.callMethod<jint>("getColumnIndexOrThrow",
+                                                "(Ljava/lang/String;)I",
+                                                jColumnIndex.object<jstring>());
+    QJniObject jRealPath = jCursor.callObjectMethod(
+        "getString", "(I)Ljava/lang/String;", columnIndex);
+    path = jRealPath.toString();
+    if (authority.isValid() &&
+        authority.toString().startsWith("com.android.providers") &&
+        !url.toString().startsWith("content://media/external/")) {
+      QStringList list = path.split(":");
+      if (list.count() == 2) {
+        QString type = list.at(0);
+        QString id = list.at(1);
+        if (type == "image")
+          type = type + "s";
+        if (type == "document" || type == "documents")
+          type = "file";
+        if (type == "msf")
+          type = "downloads";
+        if (QList<QString>({"images", "video", "audio"}).contains(type))
+          type = type + "/media";
+        path = "content://media/external/" + type;
+        path = path + "/" + id;
+        return getRealPathFromUri(path);
+      }
+    }
+  } else {
+    QJniObject jPath = jUri.callObjectMethod("getPath", "()Ljava/lang/String;");
+    path = jPath.toString();
+    qDebug() << QFile::exists(path) << path;
+  }
+
+  if (path.startsWith("primary:")) {
+    path = path.remove(0, QString("primary:").length());
+    path = "/sdcard/" + path;
+  } else if (path.startsWith("/document/primary:")) {
+    path = path.remove(0, QString("/document/primary:").length());
+    path = "/sdcard/" + path;
+  } else if (path.startsWith("/tree/primary:")) {
+    path = path.remove(0, QString("/tree/primary:").length());
+    path = "/sdcard/" + path;
+  } else if (path.startsWith("/storage/emulated/0/")) {
+    path = path.remove(0, QString("/storage/emulated/0/").length());
+    path = "/sdcard/" + path;
+  } else if (path.startsWith("/tree//")) {
+    path = path.remove(0, QString("/tree//").length());
+    path = "/" + path;
+  }
+  if (!QFileInfo(path).isFile() && !QFileInfo(path).isDir() &&
+      !path.startsWith("/data"))
+    return url.toString();
+  return path;
+}
 
 void AndroidFileDialog::handleActivityResult(int requestCode, int resultCode,
                                              const QJniObject &intent) {
@@ -66,7 +153,7 @@ void AndroidFileDialog::handleActivityResult(int requestCode, int resultCode,
       intent.callObjectMethod("getData", "()Landroid/net/Uri;");
   if (uri.isValid()) {
     takePersistableUriPermission(uri);
-    selected_files_.append((uri.toString()));
+    selected_files_.append((getRealPathFromUri(uri.toString())));
     emit SignalFileSelected(selected_files_.first());
     hide();
     return;
@@ -83,7 +170,7 @@ void AndroidFileDialog::handleActivityResult(int requestCode, int resultCode,
       QJniObject itemUri =
           item.callObjectMethod("getUri", "()Landroid/net/Uri;");
       takePersistableUriPermission(itemUri);
-      selected_files_.append(itemUri.toString());
+      selected_files_.append(getRealPathFromUri(itemUri.toString()));
     }
     emit SignalFilesSelected(selected_files_);
   }
@@ -95,9 +182,8 @@ void AndroidFileDialog::takePersistableUriPermission(const QJniObject &uri) {
   int modeFlags = QJniObject::getStaticField<jint>(
       JniIntentClass, "FLAG_GRANT_READ_URI_PERMISSION");
 
-  QJniObject activity = QNativeInterface::QAndroidApplication::context();
-
-  QJniObject contentResolver = activity.callObjectMethod(
+  QJniObject jContext = QtAndroidPrivate::context();
+  QJniObject contentResolver = jContext.callObjectMethod(
       "getContentResolver", "()Landroid/content/ContentResolver;");
   contentResolver.callMethod<void>("takePersistableUriPermission",
                                    "(Landroid/net/Uri;I)V", uri.object(),
