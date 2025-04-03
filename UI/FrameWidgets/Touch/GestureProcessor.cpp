@@ -3,9 +3,12 @@
 #include <stdafx.h>
 
 namespace FirstYear::UI {
+
+#if QT_VERSION != QT_VERSION_CHECK(6, 4, 2)
 static const double c_zoom_max = 0.2;
 static const double c_pos_chenge_max = 20;
 static const double c_angle_change_max = 30;
+#endif
 
 GestureProcessor::GestureProcessor() {
 
