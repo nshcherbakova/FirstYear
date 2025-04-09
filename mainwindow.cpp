@@ -778,7 +778,7 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     preview_->setGeometry(rect());
 
   const int rearrange_button_width = 160;
-  const int rearrange_button_height = 45;
+  const int rearrange_button_height = 50;
   int rearrange_button_top = 0;
   if (rearrange_button_) {
     if (is_portrait) {

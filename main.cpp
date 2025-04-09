@@ -147,11 +147,9 @@ int main(int argc, char *argv[]) {
 
 #ifdef Q_OS_ANDROID
 
-  //  requestStoragePermission();
-
-  //  accessAllFiles();
-
-  //   setScreenOrientation();
+  /*  requestStoragePermission();
+    accessAllFiles();
+    setScreenOrientation();*/
 #endif
 
   initLogger();

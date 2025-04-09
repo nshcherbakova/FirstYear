@@ -6,7 +6,8 @@ namespace FirstYear::UI {
 
 #if QT_VERSION != QT_VERSION_CHECK(6, 4, 2)
 static const double c_zoom_max = 0.2;
-static const double c_pos_chenge_max = 20;
+// static const double c_pos_chenge_max = 20;
+static const double c_pos_velocity_max = 2000;
 static const double c_angle_change_max = 30;
 #endif
 
@@ -15,6 +16,13 @@ GestureProcessor::GestureProcessor() {
   double_tap_recognizer_ = new DoubleTapRecognizer();
   DoubleTapGestureType =
       QGestureRecognizer::registerRecognizer(double_tap_recognizer_);
+
+  qDebug() << "devicePixelRatio "
+           << QGuiApplication::primaryScreen()->devicePixelRatio();
+  qDebug() << "physicalDotsPerInch "
+           << QGuiApplication::primaryScreen()->physicalDotsPerInch();
+  qDebug() << "logicalDotsPerInch "
+           << QGuiApplication::primaryScreen()->logicalDotsPerInch();
 }
 
 void GestureProcessor::grabGestures(const QList<Qt::GestureType> &gestures) {
@@ -76,15 +84,21 @@ bool GestureProcessor::toucheEvent(QTouchEvent *touch) {
       continue;
     default: {
 
+#if QT_VERSION != QT_VERSION_CHECK(6, 4, 2)
+      if (touchPoint.velocity().toPoint().manhattanLength() >
+          c_pos_velocity_max) {
+        continue;
+      }
+#endif
+
       delta += touchPoint.position() - touchPoint.lastPosition();
       point += touchPoint.position();
+      count += 1;
     }
     }
-    count += 1;
   }
   if (count > 0) {
     delta /= count;
-
     processToucheEvent(delta,
                        points.isEmpty() ? std::optional<QPointF>() : (point));
     return true;
@@ -111,14 +125,6 @@ void GestureProcessor::panTriggered(QPanGesture *gesture) {
 
   QPointF delta = gesture->delta();
 
-#if QT_VERSION != QT_VERSION_CHECK(6, 4, 2)
-  if (delta.manhattanLength() > c_pos_chenge_max) {
-    delta = QPoint(0, 0);
-  }
-  if (delta.manhattanLength() > c_pos_chenge_max / 2) {
-    delta = delta / 2.0;
-  }
-#endif
   processPan(delta, gesture->hotSpot());
 }
 
