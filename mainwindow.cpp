@@ -116,6 +116,22 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
 
   swipe_view_->SetCurrentItem(current_fame_index);
 
+  left_swipe_arrow_ = new QSvgWidget(swipe_widget_);
+  left_swipe_arrow_->load(QString(":/images/icons/left"));
+  left_swipe_arrow_->setAttribute(Qt::WA_TransparentForMouseEvents);
+  left_swipe_arrow_->setContentsMargins(QMargins());
+
+  right_swipe_arrow_ = new QSvgWidget(swipe_widget_);
+  right_swipe_arrow_->load(QString(":/images/icons/right"));
+  right_swipe_arrow_->setAttribute(Qt::WA_TransparentForMouseEvents);
+  right_swipe_arrow_->setContentsMargins(QMargins());
+
+  left_swipe_arrow_->setVisible(current_fame_index != 0);
+  right_swipe_arrow_->setVisible(current_fame_index !=
+                                 (int)frame_widgets_.size() - 1);
+
+  controls_.push_back(left_swipe_arrow_);
+
   resizeEvent(nullptr);
 }
 
@@ -520,6 +536,12 @@ void MainWindow::CreateSwipeWidget(
                   (short)Core::Project::STATE::FRAME_ID_CHANGED;
               frame_control.SaveProject();
             }
+
+            if (left_swipe_arrow_ && right_swipe_arrow_) {
+              left_swipe_arrow_->setVisible(index != 0);
+              right_swipe_arrow_->setVisible(index !=
+                                             (int)frame_widgets_.size() - 1);
+            }
           });
 
   controls_.push_back(swipe_widget_);
@@ -817,6 +839,13 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
                            tap_text_height);
   }
 
+  if (left_swipe_arrow_ && right_swipe_arrow_) {
+    left_swipe_arrow_->setGeometry(
+        QRect(-10, swipe_widget_->height() / 2 - 50, 50, 100));
+    right_swipe_arrow_->setGeometry(QRect(swipe_widget_->width() - 40,
+                                          swipe_widget_->height() / 2 - 50, 50,
+                                          100));
+  }
   update();
 }
 

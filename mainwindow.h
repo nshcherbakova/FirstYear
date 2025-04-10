@@ -101,6 +101,9 @@ private:
   QPushButton *rearrange_button_ = nullptr;
   RearrangeWidget *rearrange_ = nullptr;
   QLabel *tap_text_ = nullptr;
+
+  QSvgWidget *left_swipe_arrow_ = nullptr;
+  QSvgWidget *right_swipe_arrow_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

@@ -5,6 +5,7 @@
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
 
 class QPropertyAnimation;
+class QSvgRenderer;
 
 namespace FirstYear::UI {
 class SwipeWidgetsList final : public QScrollArea {
@@ -42,6 +43,9 @@ private:
   Qt::GestureType grabbed_gesture_;
   int current_item_index_ = 0;
   std::vector<QWidget *> frame_widgets_;
+
+  QSvgRenderer *left_swipe_arrow_ = nullptr;
+  QSvgRenderer *right_swipe_arrow_ = nullptr;
   /*
   #ifdef FIRSTYEAR_PROFILING
     QTimer timer;
