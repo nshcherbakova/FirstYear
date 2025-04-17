@@ -119,7 +119,13 @@ RESOURCES += \
 android {
 
 ANDROID_VERSION_NAME = "1.0"
-ANDROID_VERSION_CODE = "06413"
+
+contains(ANDROID_TARGET_ARCH,arm64-v8a) {
+    ANDROID_VERSION_CODE = "06413"
+}
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_VERSION_CODE = "03213"
+}
 
 ANDROID_TARGET_SDK_VERSION = "35"
 ANDROID_MIN_SDK_VERSION = "30"
@@ -144,4 +150,7 @@ contains(ANDROID_TARGET_ARCH,arm64-v8a) {
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android
 }
-
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_PACKAGE_SOURCE_DIR = \
+        $$PWD/android
+}

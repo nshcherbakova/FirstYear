@@ -18,8 +18,10 @@ public:
 public:
   void SetCurrentItem(int index);
   int CurrentItem() const;
+  int Count() const;
 signals:
   void SignalItemChanged(int index);
+  void SignalItemAdded();
 
 protected:
   // virtual bool event(QEvent *event) override;
@@ -44,8 +46,8 @@ private:
   int current_item_index_ = 0;
   std::vector<QWidget *> frame_widgets_;
 
-  QSvgRenderer *left_swipe_arrow_ = nullptr;
-  QSvgRenderer *right_swipe_arrow_ = nullptr;
+  // QSvgRenderer *left_swipe_arrow_ = nullptr;
+  // QSvgRenderer *right_swipe_arrow_ = nullptr;
   /*
   #ifdef FIRSTYEAR_PROFILING
     QTimer timer;

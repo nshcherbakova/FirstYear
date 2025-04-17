@@ -48,25 +48,111 @@ static const char *c_swipe_widget_style_str = "QWidget{"
                                               "border: none;"
                                               "}";
 
+class SwipeForeground : public QWidget {
+
+public:
+  SwipeForeground(QWidget *parent)
+      : QWidget(parent)
+
+  {
+    setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    left_swipe_arrow_ = new QSvgRenderer(this);
+    left_swipe_arrow_->load(QString(":/images/icons/left"));
+
+    right_swipe_arrow_ = new QSvgRenderer(this);
+    right_swipe_arrow_->load(QString(":/images/icons/right"));
+  }
+  virtual void paintEvent(QPaintEvent *event) override final {
+    QWidget::paintEvent(event);
+    QPainter painter(this);
+    if (left_swipe_arrow_ && right_swipe_arrow_) {
+      if (left_swipe_arrow_visible_) {
+        left_swipe_arrow_->render(&painter,
+                                  QRectF(-10, height() / 2 - 50, 50, 100));
+      }
+      if (right_swipe_arrow_visible_) {
+        right_swipe_arrow_->render(
+            &painter, QRect(width() - 40, height() / 2 - 50, 50, 100));
+      }
+    }
+  }
+
+  bool left_swipe_arrow_visible_ = false;
+  bool right_swipe_arrow_visible_ = false;
+
+private:
+  QSvgRenderer *left_swipe_arrow_ = nullptr;
+  QSvgRenderer *right_swipe_arrow_ = nullptr;
+};
+
 class SwipeWidget final : public QWidget {
 public:
   SwipeWidget(QWidget *parent) : QWidget(parent) {
     setStyleSheet(c_swipe_widget_style_str);
+    foreground_ = new SwipeForeground(this);
   }
 
-  void addSwipeView(QScrollArea *swipe_widget) { swipe_widget_ = swipe_widget; }
+  void addSwipeView(SwipeWidgetsList *swipe_widget) {
+    swipe_widget_ = swipe_widget;
+
+    foreground_->raise();
+    connect(QScroller::scroller(swipe_widget_), &QScroller::stateChanged, this,
+            [&](QScroller::State newState) {
+              if (newState == QScroller::Inactive) {
+
+                foreground_->left_swipe_arrow_visible_ = pressed_;
+                foreground_->right_swipe_arrow_visible_ = pressed_;
+                foreground_->update();
+
+              } else {
+
+                foreground_->left_swipe_arrow_visible_ =
+                    (swipe_widget_->CurrentItem() != 0);
+                foreground_->right_swipe_arrow_visible_ =
+                    (swipe_widget_->CurrentItem() !=
+                     (int)swipe_widget_->Count() - 1);
+              }
+            });
+  }
 
 protected:
   virtual void resizeEvent(QResizeEvent *event) override final {
     QWidget::resizeEvent(event);
+
+    foreground_->setGeometry(rect());
 
     if (swipe_widget_) {
       swipe_widget_->setGeometry(rect());
     }
   }
 
+  virtual void mousePressEvent(QMouseEvent *event) override final {
+    QWidget::mousePressEvent(event);
+    pressed_ = true;
+    foreground_->left_swipe_arrow_visible_ =
+        (swipe_widget_->CurrentItem() != 0);
+    foreground_->right_swipe_arrow_visible_ =
+        (swipe_widget_->CurrentItem() != (int)swipe_widget_->Count() - 1);
+    foreground_->update();
+  }
+
+  virtual void mouseReleaseEvent(QMouseEvent *event) override final {
+    QWidget::mouseReleaseEvent(event);
+    pressed_ = false;
+
+    if (QScroller::scroller(swipe_widget_)->state() == QScroller::Inactive) {
+      foreground_->left_swipe_arrow_visible_ = false;
+      foreground_->right_swipe_arrow_visible_ = false;
+    }
+    foreground_->update();
+  }
+
 private:
-  QScrollArea *swipe_widget_ = nullptr;
+  SwipeWidgetsList *swipe_widget_ = nullptr;
+
+  SwipeForeground *foreground_ = nullptr;
+  bool pressed_ = false;
 };
 
 MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
@@ -115,22 +201,6 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
   int current_fame_index = CurrentTemplateIndex(frame_control);
 
   swipe_view_->SetCurrentItem(current_fame_index);
-
-  left_swipe_arrow_ = new QSvgWidget(swipe_widget_);
-  left_swipe_arrow_->load(QString(":/images/icons/left"));
-  left_swipe_arrow_->setAttribute(Qt::WA_TransparentForMouseEvents);
-  left_swipe_arrow_->setContentsMargins(QMargins());
-
-  right_swipe_arrow_ = new QSvgWidget(swipe_widget_);
-  right_swipe_arrow_->load(QString(":/images/icons/right"));
-  right_swipe_arrow_->setAttribute(Qt::WA_TransparentForMouseEvents);
-  right_swipe_arrow_->setContentsMargins(QMargins());
-
-  left_swipe_arrow_->setVisible(current_fame_index != 0);
-  right_swipe_arrow_->setVisible(current_fame_index !=
-                                 (int)frame_widgets_.size() - 1);
-
-  controls_.push_back(left_swipe_arrow_);
 
   resizeEvent(nullptr);
 }
@@ -536,12 +606,6 @@ void MainWindow::CreateSwipeWidget(
                   (short)Core::Project::STATE::FRAME_ID_CHANGED;
               frame_control.SaveProject();
             }
-
-            if (left_swipe_arrow_ && right_swipe_arrow_) {
-              left_swipe_arrow_->setVisible(index != 0);
-              right_swipe_arrow_->setVisible(index !=
-                                             (int)frame_widgets_.size() - 1);
-            }
           });
 
   controls_.push_back(swipe_widget_);
@@ -839,13 +903,6 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
                            tap_text_height);
   }
 
-  if (left_swipe_arrow_ && right_swipe_arrow_) {
-    left_swipe_arrow_->setGeometry(
-        QRect(-10, swipe_widget_->height() / 2 - 50, 50, 100));
-    right_swipe_arrow_->setGeometry(QRect(swipe_widget_->width() - 40,
-                                          swipe_widget_->height() / 2 - 50, 50,
-                                          100));
-  }
   update();
 }
 

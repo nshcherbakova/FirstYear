@@ -1,7 +1,9 @@
 #include "SwipeWidgetsList.hpp"
 #include "stdafx.h"
-#include <QParallelAnimationGroup>
+
+#ifdef FIRSTYEAR_PROFILING
 #include <QPropertyAnimation>
+#endif
 
 namespace FirstYear::UI {
 static const char *c_scroll_style_str = "QScrollArea{"
@@ -165,7 +167,11 @@ void SwipeWidgetsList::AddWidget(QWidget *widget) {
   widget->show();
   layout_->addWidget(widget);
   frame_widgets_.push_back(widget);
+
+  emit SignalItemAdded();
 }
+
+int SwipeWidgetsList::Count() const { return (int)frame_widgets_.size(); }
 
 /*#ifdef FIRSTYEAR_PROFILING
 void SwipeWidgetsList::paintEvent(QPaintEvent *painter) {
