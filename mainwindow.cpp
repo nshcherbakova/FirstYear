@@ -97,22 +97,36 @@ public:
     swipe_widget_ = swipe_widget;
 
     foreground_->raise();
+    /* connect(QScroller::scroller(swipe_widget_), &QScroller::stateChanged,
+       this,
+             [&](QScroller::State newState) {
+               if (newState == QScroller::Inactive) {
+
+                 foreground_->left_swipe_arrow_visible_ = pressed_;
+                 foreground_->right_swipe_arrow_visible_ = pressed_;
+                 foreground_->update();
+
+               } else {
+
+                 foreground_->left_swipe_arrow_visible_ =
+                     (swipe_widget_->CurrentItem() != 0);
+                 foreground_->right_swipe_arrow_visible_ =
+                     (swipe_widget_->CurrentItem() !=
+                      (int)swipe_widget_->Count() - 1);
+               }
+             });*/
+
+    foreground_->left_swipe_arrow_visible_ =
+        (swipe_widget_->CurrentItem() != 0);
+    foreground_->right_swipe_arrow_visible_ =
+        (swipe_widget_->CurrentItem() != (int)swipe_widget_->Count() - 1);
     connect(QScroller::scroller(swipe_widget_), &QScroller::stateChanged, this,
-            [&](QScroller::State newState) {
-              if (newState == QScroller::Inactive) {
-
-                foreground_->left_swipe_arrow_visible_ = pressed_;
-                foreground_->right_swipe_arrow_visible_ = pressed_;
-                foreground_->update();
-
-              } else {
-
-                foreground_->left_swipe_arrow_visible_ =
-                    (swipe_widget_->CurrentItem() != 0);
-                foreground_->right_swipe_arrow_visible_ =
-                    (swipe_widget_->CurrentItem() !=
-                     (int)swipe_widget_->Count() - 1);
-              }
+            [&]() {
+              foreground_->left_swipe_arrow_visible_ =
+                  (swipe_widget_->CurrentItem() != 0);
+              foreground_->right_swipe_arrow_visible_ =
+                  (swipe_widget_->CurrentItem() !=
+                   (int)swipe_widget_->Count() - 1);
             });
   }
 
@@ -127,32 +141,32 @@ protected:
     }
   }
 
-  virtual void mousePressEvent(QMouseEvent *event) override final {
-    QWidget::mousePressEvent(event);
-    pressed_ = true;
-    foreground_->left_swipe_arrow_visible_ =
-        (swipe_widget_->CurrentItem() != 0);
-    foreground_->right_swipe_arrow_visible_ =
-        (swipe_widget_->CurrentItem() != (int)swipe_widget_->Count() - 1);
-    foreground_->update();
-  }
+  /* virtual void mousePressEvent(QMouseEvent *event) override final {
+     QWidget::mousePressEvent(event);
+     pressed_ = true;
+     foreground_->left_swipe_arrow_visible_ =
+         (swipe_widget_->CurrentItem() != 0);
+     foreground_->right_swipe_arrow_visible_ =
+         (swipe_widget_->CurrentItem() != (int)swipe_widget_->Count() - 1);
+     foreground_->update();
+   }*/
 
-  virtual void mouseReleaseEvent(QMouseEvent *event) override final {
-    QWidget::mouseReleaseEvent(event);
-    pressed_ = false;
+  /* virtual void mouseReleaseEvent(QMouseEvent *event) override final {
+     QWidget::mouseReleaseEvent(event);
+     pressed_ = false;
 
-    if (QScroller::scroller(swipe_widget_)->state() == QScroller::Inactive) {
-      foreground_->left_swipe_arrow_visible_ = false;
-      foreground_->right_swipe_arrow_visible_ = false;
-    }
-    foreground_->update();
-  }
+     if (QScroller::scroller(swipe_widget_)->state() == QScroller::Inactive) {
+       foreground_->left_swipe_arrow_visible_ = false;
+       foreground_->right_swipe_arrow_visible_ = false;
+     }
+     foreground_->update();
+   }*/
 
 private:
   SwipeWidgetsList *swipe_widget_ = nullptr;
 
   SwipeForeground *foreground_ = nullptr;
-  bool pressed_ = false;
+  // bool pressed_ = false;
 };
 
 MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)

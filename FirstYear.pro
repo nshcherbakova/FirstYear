@@ -121,14 +121,18 @@ android {
 ANDROID_VERSION_NAME = "1.0"
 
 contains(ANDROID_TARGET_ARCH,arm64-v8a) {
-    ANDROID_VERSION_CODE = "06413"
+    ANDROID_VERSION_CODE = "06414"
 }
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
-    ANDROID_VERSION_CODE = "03213"
+    ANDROID_VERSION_CODE = "03214"
+}
+
+contains(ANDROID_TARGET_ARCH,x86) {
+    ANDROID_VERSION_CODE = "08614"
 }
 
 ANDROID_TARGET_SDK_VERSION = "35"
-ANDROID_MIN_SDK_VERSION = "30"
+ANDROID_MIN_SDK_VERSION = "25"
 
 DISTFILES += \
 android/AndroidManifest.xml \
@@ -151,6 +155,10 @@ contains(ANDROID_TARGET_ARCH,arm64-v8a) {
         $$PWD/android
 }
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_PACKAGE_SOURCE_DIR = \
+        $$PWD/android
+}
+contains(ANDROID_TARGET_ARCH,x86) {
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android
 }
