@@ -75,10 +75,6 @@ private:
   virtual void grabWidgetGesture(Qt::GestureType gesture) override;
   virtual void processDoubleTap(QPointF center) override;
 
-private:
-  // PhotoProcessor
-  virtual double initialScaleFactor() const override;
-
 protected:
   // QWidget
   virtual bool event(QEvent *event) override;

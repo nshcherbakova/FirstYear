@@ -3,9 +3,9 @@
 #include <UI/FrameData/FrameDataReader.h>
 #include <stdafx.h>
 
-namespace FirstYear::UI {
-
 static const char *c_title_defoult_text_str = "Rearrange photos";
+
+namespace FirstYear::UI {
 
 RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
     : QWidget(parent), control_(control) {
@@ -93,7 +93,7 @@ void RearrangeWidget::resizeEvent(QResizeEvent *e) {
   const auto portrait = width() < height();
 
   int text_width = height() / 5;
-  int top_margins = portrait ? 50 : 0;
+  int top_margins = portrait ? 80 : 0;
   int side_margins = width() / 20;
   QRect rect = {side_margins, top_margins, width() - 2 * side_margins,
                 text_width};
@@ -121,15 +121,15 @@ void RearrangeWidget::load(Core::FrameControl &control) {
   std::vector<QRect> photo_slots(12);
   int top_margin = height() / 5;
   int side_margins = width() / 20;
-  int wmargins = width() / 20;
-  int hmargins = height() / 20;
+  int wmargins = width() / 30;
+  int hmargins = height() / 30;
 
   int count_in_line = vertical_orientation ? 4 : 6;
   int photo_width = 0;
   int photo_height = 0;
 
   if (vertical_orientation) {
-    top_margin = height() / 4;
+    top_margin = height() / 3.5;
     photo_width =
         (width() - 2 * side_margins - (count_in_line - 1) * wmargins) /
         count_in_line;

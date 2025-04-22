@@ -3,7 +3,6 @@
 #include <stdafx.h>
 
 namespace FirstYear::UI {
-const double INITIAL_SCALE_FACTOR = 2.5;
 const double ZOOM_STEP = 1.10;
 const double ROTATE_STEP = 0.5;
 const double DOUBLE_TAP_SCALE_STEP = 1.4;
@@ -334,10 +333,6 @@ void PhotoTuneWidget::processDoubleTap(QPointF center) {
 
 void PhotoTuneWidget::grabWidgetGesture(Qt::GestureType gesture) {
   QWidget::grabGesture(gesture);
-}
-
-double PhotoTuneWidget::initialScaleFactor() const {
-  return INITIAL_SCALE_FACTOR;
 }
 
 void PhotoTuneWidget::paintEvent(QPaintEvent *) {

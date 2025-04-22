@@ -4,7 +4,7 @@
 namespace FirstYear::UI {
 const double MIN_SIZE_K = 0.7;
 const double MAX_SIZE_K = 15.0;
-const double INITIAL_SCALE_FACTOR = 2.5;
+const double INITIAL_SCALE_FACTOR = 1.5;
 
 PhotoPainter::PhotoPainter()
     : dpr_(QGuiApplication::primaryScreen()->devicePixelRatio()) {}
