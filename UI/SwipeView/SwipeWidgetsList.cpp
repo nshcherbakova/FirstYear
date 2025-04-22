@@ -158,6 +158,7 @@ void SwipeWidgetsList::SetCurrentItem(int index) {
   UNI_ASSERT(layout_->count() > index);
   QScroller::scroller(this)->scrollTo(
       QPoint((width() + layout_->spacing()) * index, 0), 0);
+  emit SignalItemChanged(current_item_index_);
 }
 
 int SwipeWidgetsList::CurrentItem() const { return current_item_index_; }

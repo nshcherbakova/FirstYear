@@ -19,6 +19,7 @@ public:
   void SetCurrentItem(int index);
   int CurrentItem() const;
   int Count() const;
+
 signals:
   void SignalItemChanged(int index);
   void SignalItemAdded();

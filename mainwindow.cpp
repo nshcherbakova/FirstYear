@@ -120,13 +120,12 @@ public:
         (swipe_widget_->CurrentItem() != 0);
     foreground_->right_swipe_arrow_visible_ =
         (swipe_widget_->CurrentItem() != (int)swipe_widget_->Count() - 1);
-    connect(QScroller::scroller(swipe_widget_), &QScroller::stateChanged, this,
-            [&]() {
-              foreground_->left_swipe_arrow_visible_ =
-                  (swipe_widget_->CurrentItem() != 0);
+
+    connect(swipe_widget_, &SwipeWidgetsList::SignalItemChanged, this,
+            [&](int index) {
+              foreground_->left_swipe_arrow_visible_ = (index != 0);
               foreground_->right_swipe_arrow_visible_ =
-                  (swipe_widget_->CurrentItem() !=
-                   (int)swipe_widget_->Count() - 1);
+                  (swipe_widget_->CurrentItem() != index - 1);
             });
   }
 
