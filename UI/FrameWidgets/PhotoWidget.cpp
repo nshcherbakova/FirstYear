@@ -201,35 +201,36 @@ void PhotoWidget::mouseReleaseEvent(QMouseEvent *event) {
 
 void PhotoWidget::paintEvent(QPaintEvent *e) {
 
-  ImageButton::paintEvent(e);
-
   if (parameters_.accept_drops) {
     QPainter painter(this);
+
+    const auto frame_rect = rect().marginsRemoved(QMargins(3, 3, 3, 3));
+
+    painter.setClipRect(rect().marginsRemoved(QMargins(4, 4, 4, 4)));
+    painter.drawPixmap(0, 0, buffer_);
+    painter.setClipRect(rect());
     if (drag_enter_) {
 
-      painter.fillRect(rect(), QColor(200, 200, 200, 200));
+      painter.fillRect(frame_rect, QColor(200, 200, 200, 200));
       painter.setBrush(Qt::transparent);
-      painter.setPen(QPen(Qt::white, 16));
-      painter.drawRect(rect());
+      painter.setPen(QPen(Qt::white, 10));
+      painter.drawRoundedRect(frame_rect, 8, 8);
+
+      // painter.drawRect(rect());
 
     } else {
       painter.setBrush(Qt::transparent);
       if (isChecked()) {
-        painter.setPen(QPen(QColor("#D69C4A"), 9));
+        painter.fillRect(frame_rect, QColor(200, 200, 200, 150));
+        painter.setPen(QPen(QColor("#D69C4A"), 5));
       } else {
-        painter.setPen(QPen(Qt::white, 5));
+        painter.setPen(QPen(Qt::white, 3));
       }
-      painter.drawRect(rect());
-    } // else if (!render_state_) {
+      painter.drawRoundedRect(frame_rect, 6, 6);
+    }
 
   } else {
-    QPainter painter(this);
-    if (QPushButton::isDown()) {
-      painter.fillRect(rect(), QColor(200, 200, 200, 200));
-    }
+    ImageButton::paintEvent(e);
   }
-  // QPushButton::paintEvent(e);
-
-  // }
 }
 } // namespace FirstYear::UI

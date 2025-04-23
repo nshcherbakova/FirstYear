@@ -10,7 +10,9 @@ static const char *c_frames_dir_str = ":/frames";
 
 void initLogger() {
   try {
-    QString logs_path = QDir::currentPath() + c_log_str;
+    QString logs_path =
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
+        c_log_str;
 
 #ifdef Q_OS_ANDROID
     auto console_logger = std::make_shared<spdlog::sinks::android_sink_st>();

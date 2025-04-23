@@ -53,10 +53,9 @@ public class QSharePathResolver {
     private static String TAG = "QSharePathResolver";
 
     public static String getRealPathFromURI(final Context context, final Uri uri) {
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if ( DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 // Log.d(TAG, " isExternalStorageDocument");

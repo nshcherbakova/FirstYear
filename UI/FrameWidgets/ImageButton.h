@@ -25,9 +25,11 @@ protected:
   virtual void UpdateButton();
   virtual void OnUpdateImageBuffer(QPixmap &buffer) = 0;
 
+protected:
+  QPixmap buffer_;
+
 private:
   Core::PhotoDataPtr photo_data_;
-  QPixmap buffer_;
   QColor background_;
 };
 
