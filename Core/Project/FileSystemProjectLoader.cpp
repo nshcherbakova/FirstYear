@@ -6,6 +6,11 @@ namespace FirstYear::Core {
 ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
   auto project = std::make_shared<Project>();
   project->monthes_.resize(12);
+  for (int month_number = 0; month_number < (int)project->monthes_.size();
+       month_number++) {
+    auto &month = project->monthes_[month_number];
+    month.photo_data = std::make_shared<PhotoData>();
+  }
 
   QFile project_metadata_file(project_metadata_path_);
   qDebug() << "Load project: " << project_metadata_path_;
@@ -88,7 +93,7 @@ bool FileSystemProjectLoader::LoadTransform(const QJsonObject &json,
 bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
 
   MonthItem &month = project->monthes_[month_number];
-  month.photo_data = std::make_shared<PhotoData>();
+
   QFile month_metadata_file(month_metadata_path_template_.arg(month_number));
 
   if (!month_metadata_file.open(QIODevice::ReadOnly)) {
@@ -138,12 +143,17 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
     }
   }
 
-  QPixmap photo(month_photo_path_template_.arg(month_number));
-
-  if (!photo.isNull()) {
-    month.photo_data->fillImage(std::move(photo), false, true);
-    month.photo_data->setState(0);
+  if (month_json.contains("photo_id")) {
+    QString photo_id;
+    if (!Core::Json::ReadString(month_json, "photo_id", photo_id)) {
+      spdlog::error("Error while reading a {0} month photo text from json {1}.",
+                    month_number, month_metadata.toStdString());
+      // return false;
+    } else {
+      month.photo_data->image_id_ = photo_id;
+    }
   }
+
   return true;
 }
 

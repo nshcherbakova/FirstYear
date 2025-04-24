@@ -10,6 +10,8 @@ using ProjectPtr = std::shared_ptr<Project>;
 class PhotoData;
 using PhotoDataPtr = std::shared_ptr<PhotoData>;
 class FrameControl;
+class ImageManager;
+using ImageManagerPtr = std::shared_ptr<ImageManager>;
 } // namespace FirstYear::Core
 
 namespace FirstYear::UI {

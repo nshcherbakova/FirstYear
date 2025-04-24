@@ -378,6 +378,7 @@ void MainWindow::CreateRearrangeWidget(
              (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
 
         rearrange_->Update();
+        //  frame_control.SaveProject();
       },
       Qt::QueuedConnection);
 
@@ -462,7 +463,9 @@ void MainWindow::DeletePhoto(int month_index) {
   if (QMessageBox::Yes == ret) {
     auto &month_data = project_control_.CurrentProject()->monthes_[month_index];
 
-    month_data.photo_data->setStubImage(QPixmap(month_data.stub_image_path));
+    month_data.photo_data->resetData(QString::number(month_index), true);
+    project_control_.imageManager()->deleteImage(
+        month_data.photo_data->imageId());
 
     UpdateFrames(nullptr);
   }
@@ -480,7 +483,9 @@ void MainWindow::DeletePhotos(std::vector<int> month_indexes) {
       auto &month_data =
           project_control_.CurrentProject()->monthes_[month_index];
 
-      month_data.photo_data->setStubImage(QPixmap(month_data.stub_image_path));
+      project_control_.imageManager()->deleteImage(
+          month_data.photo_data->imageId());
+      month_data.photo_data->resetData(QString::number(month_index), true);
     }
     UpdateFrames(nullptr);
   }
@@ -507,8 +512,8 @@ void MainWindow::OnImagePicked(QString file, int month) {
   auto &month_data = project->monthes_[month];
   if (!file.isNull()) {
 
-    auto photo = QPixmap(file);
-    if (photo.isNull()) {
+    const auto image_name = project_control_.imageManager()->addImage(file);
+    if (image_name.isNull()) {
       QMessageBox msgBox;
       msgBox.setWindowTitle("Can't open image");
       msgBox.setStandardButtons(QMessageBox::Ok);
@@ -516,7 +521,11 @@ void MainWindow::OnImagePicked(QString file, int month) {
       return;
     }
 
-    month_data.photo_data->resetData(std::move(photo), true);
+    if (!month_data.photo_data->isStub()) {
+      project_control_.imageManager()->deleteImage(
+          month_data.photo_data->imageId());
+    }
+    month_data.photo_data->resetData(image_name, true);
 
     TuneImage(month, project_control_);
 
@@ -777,9 +786,10 @@ bool MainWindow::SelectImages(QStringList files) {
         auto &month_data = project->monthes_[month];
         month++;
         if (month_data.photo_data->isStub()) {
-          QPixmap image(file);
-          if (!image.isNull()) {
-            month_data.photo_data->resetData(QPixmap(file), true);
+          const auto image_name =
+              project_control_.imageManager()->addImage(file);
+          if (!image_name.isNull()) {
+            month_data.photo_data->resetData(image_name, true);
             count_loaded++;
             progress.setValue(count_loaded);
           } else {

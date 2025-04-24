@@ -39,22 +39,23 @@ class PhotoData {
 
 public:
   static PhotoData CreateEmptyData();
-  static PhotoData CreateStubData(QPixmap image);
-  static PhotoData CreateNewData(QPixmap image, bool scale);
+  static PhotoData CreateNewData(QString image);
+  static PhotoData CreateNewData(QPixmap image);
   static PhotoData CreateCopy(const PhotoData &source);
 
   explicit PhotoData();
+  explicit PhotoData(QPixmap image);
 
 public:
-  void resetData(QPixmap image, bool scale);
+  void resetData(QString image, bool clear_state);
   /*void setImage(QPixmap image, PhotoTransform transform_scale_rotate,
                 const PhotoTransform transform_offset);*/
   void setTransforms(PhotoTransform transform_scale_rotate,
                      PhotoTransform transform_offset);
-  void setStubImage(QPixmap image);
   void setState(short state);
 
   const QPixmap &image() const;
+  const QString imageId() const;
   const PhotoTransform &transformScaleRotate() const;
   const PhotoTransform &transformOffset() const;
   PhotoTransform &transformScaleRotateRef();
@@ -68,23 +69,29 @@ public:
     TRANSFORM_OFFSET_CHANGED = 0x04,
   };
 
-protected:
-  void fillImage(QPixmap image, bool is_stub, bool scaled);
+  static ImageManagerPtr image_manager_;
 
 protected:
-  QPixmap image_;
-  bool is_stub_image_ = false;
+  void fillImage(QString image_name);
+
+protected:
+  QString image_id_;
+
+  // QPixmap image_;
+  // bool is_stub_image_ = false;
   PhotoTransform transform_scale_rotate_;
   PhotoTransform transform_offset_;
 
   mutable short state_ = 0;
+
+  QPixmap image_;
 };
 
 struct MonthItem {
   PhotoDataPtr photo_data;
   QString text;
   QString filter_id;
-  QString stub_image_path;
+  // QString stub_image_path;
 
   mutable short state = 0;
   enum class STATE : short {

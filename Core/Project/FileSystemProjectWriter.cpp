@@ -177,6 +177,8 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
     month_metadata.insert("filter_id", month_data.filter_id);
 
+    month_metadata.insert("photo_id", month_data.photo_data->image_id_);
+
     QJsonDocument month_metadata_document(month_metadata);
 
     const QString month_metadata_path =
@@ -205,21 +207,22 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
   if (month_data.photo_data->state() & (short)PhotoData::STATE::IMAGE_CHANGED) {
 
-    const auto image_path = month_photo_path_template_.arg(month);
+    /*  const auto image_path = month_photo_path_template_.arg(month);
 
-    if (!month_data.photo_data->isStub()) {
-      if (!month_data.photo_data->image().isNull()) {
-        const bool result = saveFile(image_path, [&](QString path) -> bool {
-          return month_data.photo_data->image().save(path, IMAGE_FORMAT);
-        });
+      if (!month_data.photo_data->isStub()) {
+        if (!month_data.photo_data->image().isNull()) {
+          const bool result = saveFile(image_path, [&](QString path) -> bool {
+            return month_data.photo_data->image().save(path, IMAGE_FORMAT);
+          });
 
-        if (!result) {
-          spdlog::error("Can't save {} image file.", image_path.toStdString());
+          if (!result) {
+            spdlog::error("Can't save {} image file.",
+      image_path.toStdString());
+          }
         }
-      }
-    } else if (QFileInfo::exists(image_path)) {
-      QFile::remove(image_path);
-    }
+      } else if (QFileInfo::exists(image_path)) {
+        QFile::remove(image_path);
+      }*/
   }
   month_data.photo_data->state_ = 0;
   month_data.state = 0;

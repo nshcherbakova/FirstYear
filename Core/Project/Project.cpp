@@ -1,9 +1,10 @@
 #include "Project.h"
 #include <stdafx.h>
 
-static const int c_image_scale_size = 1536;
+// static const int c_image_scale_size = 1536;
 
 namespace FirstYear::Core {
+ImageManagerPtr PhotoData::image_manager_;
 
 bool absoluteToleranceCompare(double x, double y) {
   return std::fabs(x - y) <= std::numeric_limits<double>::epsilon();
@@ -46,35 +47,42 @@ PhotoData::PhotoData()
     : transform_scale_rotate_(this, (short)STATE::TRANSFORM_SR_CHANGED),
       transform_offset_(this, (short)STATE::TRANSFORM_OFFSET_CHANGED) {}
 
+PhotoData::PhotoData(QPixmap image)
+    : transform_scale_rotate_(this, (short)STATE::TRANSFORM_SR_CHANGED),
+      transform_offset_(this, (short)STATE::TRANSFORM_OFFSET_CHANGED),
+      image_(image) {}
+
 PhotoData PhotoData::CreateEmptyData() { return PhotoData(); }
-PhotoData PhotoData::CreateStubData(QPixmap image) {
-  PhotoData data;
-  data.setStubImage(image);
+
+PhotoData PhotoData::CreateNewData(QPixmap image) {
+  PhotoData data(std::move(image));
   return data;
 }
-PhotoData PhotoData::CreateNewData(QPixmap image, bool scaled) {
+
+PhotoData PhotoData::CreateNewData(QString image) {
   PhotoData data;
-  const bool is_stub = image.isNull();
-  data.fillImage(std::move(image), is_stub, scaled);
+  data.fillImage(std::move(image));
   return data;
 }
 PhotoData PhotoData::CreateCopy(const PhotoData &source) { return source; }
 
-void PhotoData::resetData(QPixmap image, bool scale) {
-  fillImage(image, image.isNull(), scale);
+void PhotoData::resetData(QString image_name, bool clear_state) {
+  fillImage(image_name);
 
-  transform_scale_rotate_.reset();
-  transform_offset_.reset();
+  if (clear_state) {
+    transform_scale_rotate_.reset();
+    transform_offset_.reset();
 
-  state_ |= (short)STATE::IMAGE_CHANGED;
-  state_ |= (short)STATE::TRANSFORM_SR_CHANGED;
-  state_ |= (short)STATE::TRANSFORM_OFFSET_CHANGED;
+    state_ |= (short)STATE::IMAGE_CHANGED;
+    state_ |= (short)STATE::TRANSFORM_SR_CHANGED;
+    state_ |= (short)STATE::TRANSFORM_OFFSET_CHANGED;
+  }
 }
 
-void PhotoData::fillImage(QPixmap image, bool is_stub, bool scaled) {
-  is_stub_image_ = is_stub;
-  image_ = std::move(image);
-  if (scaled) {
+void PhotoData::fillImage(QString image_name) {
+  // is_stub_image_ = is_stub;
+  image_id_ = image_name;
+  /*if (scaled) {
     if (image_.width() > image_.height()) {
       image_ =
           image_.scaledToWidth(c_image_scale_size, Qt::SmoothTransformation);
@@ -84,7 +92,7 @@ void PhotoData::fillImage(QPixmap image, bool is_stub, bool scaled) {
     }
   }
   image_.setDevicePixelRatio(
-      QGuiApplication::primaryScreen()->devicePixelRatio());
+      QGuiApplication::primaryScreen()->devicePixelRatio());*/
 }
 /*
 void PhotoData::setImage(QPixmap image, PhotoTransform transform_scale_rotate,
@@ -115,20 +123,13 @@ void PhotoData::setTransforms(PhotoTransform transform_scale_rotate,
     state_ |= (short)STATE::TRANSFORM_SR_CHANGED;
   }
 }
-void PhotoData::setStubImage(QPixmap image) {
-  image_ = std::move(image);
-  image_.setDevicePixelRatio(
-      QGuiApplication::primaryScreen()->devicePixelRatio());
-  is_stub_image_ = true;
-
-  transform_scale_rotate_.reset();
-  transform_offset_.reset();
-
-  state_ |= (short)STATE::IMAGE_CHANGED;
-  state_ |= (short)STATE::TRANSFORM_SR_CHANGED;
-  state_ |= (short)STATE::TRANSFORM_OFFSET_CHANGED;
+const QPixmap &PhotoData::image() const {
+  return image_.isNull() ? image_manager_->image(image_id_) : image_;
 }
-const QPixmap &PhotoData::image() const { return image_; }
+const QString PhotoData::imageId() const {
+  UNI_ASSERT(!image_id_.isEmpty());
+  return image_id_;
+}
 
 const PhotoTransform &PhotoData::transformScaleRotate() const {
   return transform_scale_rotate_;
@@ -150,7 +151,9 @@ PhotoTransform &PhotoData::transformOffsetRef() {
 
 short PhotoData::state() const { return state_; }
 
-bool PhotoData::isStub() const { return is_stub_image_; }
+bool PhotoData::isStub() const {
+  return image_.isNull() ? image_manager_->isStub(image_id_) : false;
+}
 
 void PhotoData::setState(short state) { state_ = state; }
 
