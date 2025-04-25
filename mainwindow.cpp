@@ -260,7 +260,7 @@ void MainWindow::CreateLineEditWidget(
                 return;
               }
               project->title_ = text;
-              project->state |= (short)Core::Project::STATE::TITLE_CHANGED;
+              project->state |= (short)Core::Project::STATE::CHANGED;
             } else {
               UNI_ASSERT(id < (int)project->monthes_.size());
               if (project->monthes_[id].text == text) {
@@ -268,7 +268,7 @@ void MainWindow::CreateLineEditWidget(
               }
               project->monthes_[id].text = text;
               project->monthes_[id].state |=
-                  (short)Core::MonthItem::STATE::TEXT_CHANGED;
+                  (short)Core::MonthItem::STATE::CHANGED;
             }
             frame_control.SaveProject();
 
@@ -347,9 +347,7 @@ void MainWindow::CreateRearrangeWidget(
             tmp_photodata = new_tmp_photodata;
 
             monthes[index].photo_data->setState(
-                (short)PhotoData::STATE::IMAGE_CHANGED |
-                (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-                (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
+                (short)PhotoData::STATE::CHANGED);
 
             if (index == from_index || tmp_photodata->isStub()) {
               break;
@@ -368,14 +366,10 @@ void MainWindow::CreateRearrangeWidget(
         month_to.photo_data = month_from_photo_data;
 
         monthes[from_index].photo_data->setState(
-            ((short)PhotoData::STATE::IMAGE_CHANGED |
-             (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-             (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
+            ((short)PhotoData::STATE::CHANGED));
 
         monthes[to_index].photo_data->setState(
-            ((short)PhotoData::STATE::IMAGE_CHANGED |
-             (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED |
-             (short)PhotoData::STATE::TRANSFORM_SR_CHANGED));
+            ((short)PhotoData::STATE::CHANGED));
 
         rearrange_->Update();
         //  frame_control.SaveProject();
@@ -625,7 +619,7 @@ void MainWindow::CreateSwipeWidget(
             if (new_id != frame_control.CurrentProject()->frame_id_) {
               frame_control.CurrentProject()->frame_id_ = new_id;
               frame_control.CurrentProject()->state |=
-                  (short)Core::Project::STATE::FRAME_ID_CHANGED;
+                  (short)Core::Project::STATE::CHANGED;
               frame_control.SaveProject();
             }
           });

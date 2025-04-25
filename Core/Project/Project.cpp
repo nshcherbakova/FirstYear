@@ -44,27 +44,12 @@ void PhotoTransform::setOwner(PhotoData *owner) { owner_ = owner; }
 const PhotoData *PhotoTransform::owner() const { return owner_; }
 
 PhotoData::PhotoData()
-    : transform_scale_rotate_(this, (short)STATE::TRANSFORM_SR_CHANGED),
-      transform_offset_(this, (short)STATE::TRANSFORM_OFFSET_CHANGED) {}
+    : transform_scale_rotate_(this, (short)STATE::UNCHANGED),
+      transform_offset_(this, (short)STATE::UNCHANGED) {}
 
 PhotoData::PhotoData(QPixmap image)
-    : transform_scale_rotate_(this, (short)STATE::TRANSFORM_SR_CHANGED),
-      transform_offset_(this, (short)STATE::TRANSFORM_OFFSET_CHANGED),
-      image_(image) {}
-
-PhotoData PhotoData::CreateEmptyData() { return PhotoData(); }
-
-PhotoData PhotoData::CreateNewData(QPixmap image) {
-  PhotoData data(std::move(image));
-  return data;
-}
-
-PhotoData PhotoData::CreateNewData(QString image) {
-  PhotoData data;
-  data.fillImage(std::move(image));
-  return data;
-}
-PhotoData PhotoData::CreateCopy(const PhotoData &source) { return source; }
+    : transform_scale_rotate_(this, (short)STATE::UNCHANGED),
+      transform_offset_(this, (short)STATE::UNCHANGED), image_(image) {}
 
 void PhotoData::resetData(QString image_name, bool clear_state) {
   fillImage(image_name);
@@ -73,39 +58,11 @@ void PhotoData::resetData(QString image_name, bool clear_state) {
     transform_scale_rotate_.reset();
     transform_offset_.reset();
 
-    state_ |= (short)STATE::IMAGE_CHANGED;
-    state_ |= (short)STATE::TRANSFORM_SR_CHANGED;
-    state_ |= (short)STATE::TRANSFORM_OFFSET_CHANGED;
+    state_ |= (short)STATE::CHANGED;
   }
 }
 
-void PhotoData::fillImage(QString image_name) {
-  // is_stub_image_ = is_stub;
-  image_id_ = image_name;
-  /*if (scaled) {
-    if (image_.width() > image_.height()) {
-      image_ =
-          image_.scaledToWidth(c_image_scale_size, Qt::SmoothTransformation);
-    } else {
-      image_ =
-          image_.scaledToHeight(c_image_scale_size, Qt::SmoothTransformation);
-    }
-  }
-  image_.setDevicePixelRatio(
-      QGuiApplication::primaryScreen()->devicePixelRatio());*/
-}
-/*
-void PhotoData::setImage(QPixmap image, PhotoTransform transform_scale_rotate,
-                         const PhotoTransform transform_offset) {
-  is_stub_image_ = false;
-
-  image_ = std::move(image);
-  image_.setDevicePixelRatio(
-      QGuiApplication::primaryScreen()->devicePixelRatio());
-  state_ |= (short)STATE::IMAGE_CHANGED;
-
-  setTransforms(std::move(transform_scale_rotate), std::move(transform_offset));
-}*/
+void PhotoData::fillImage(QString image_name) { image_id_ = image_name; }
 
 void PhotoData::setTransforms(PhotoTransform transform_scale_rotate,
                               PhotoTransform transform_offset) {
@@ -115,12 +72,12 @@ void PhotoData::setTransforms(PhotoTransform transform_scale_rotate,
 
   if (transform_offset_.owner() != this) {
     transform_offset_.setOwner(this);
-    state_ |= (short)STATE::TRANSFORM_OFFSET_CHANGED;
+    state_ |= (short)STATE::CHANGED;
   }
 
   if (transform_scale_rotate_.owner() != this) {
     transform_scale_rotate_.setOwner(this);
-    state_ |= (short)STATE::TRANSFORM_SR_CHANGED;
+    state_ |= (short)STATE::CHANGED;
   }
 }
 const QPixmap &PhotoData::image() const {
@@ -140,14 +97,10 @@ const PhotoTransform &PhotoData::transformOffset() const {
 }
 
 PhotoTransform &PhotoData::transformScaleRotateRef() {
-  //  state_ |= (short)STATE::TRANSFORM_SR_CHANGED;
   return transform_scale_rotate_;
 }
 
-PhotoTransform &PhotoData::transformOffsetRef() {
-  // state_ |= (short)STATE::TRANSFORM_OFFSET_CHANGED;
-  return transform_offset_;
-}
+PhotoTransform &PhotoData::transformOffsetRef() { return transform_offset_; }
 
 short PhotoData::state() const { return state_; }
 

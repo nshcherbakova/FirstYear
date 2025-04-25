@@ -11,6 +11,7 @@ constexpr const char *c_stub_month_photo_template_str =
 static const QStringList monthes = {"one",  "two", "three",  "four",
                                     "five", "six", "seven",  "eight",
                                     "nine", "ten", "eleven", "twelve"};
+constexpr const char *c_photo_prefix_str = "photo";
 
 namespace FirstYear::Core {
 
@@ -26,9 +27,7 @@ ProjectPtr FrameControl::LoadProject() {
   if (!current_project_) {
     CreateNewProject();
   }
-
-  image_manager_->loadImages((int)current_project_->monthes_.size());
-
+  image_manager_->loadImages(monthes.size());
   return current_project_;
 }
 
@@ -52,13 +51,13 @@ QString FrameControl::LastProjectName() const { return DEF_PROGECT_NAME; }
 
 void FrameControl::CreateNewProject() {
   current_project_ = std::make_shared<Project>();
-  current_project_->monthes_.resize(12);
+  current_project_->monthes_.resize(monthes.size());
 
   for (int month_number = 0; month_number < (int)monthes.size();
        month_number++) {
     auto &month = current_project_->monthes_[month_number];
     month.text = monthes[month_number];
-    month.state |= (short)Core::MonthItem::STATE::TEXT_CHANGED;
+    month.state |= (short)Core::MonthItem::STATE::CHANGED;
     month.photo_data = std::make_shared<PhotoData>();
     month.photo_data->resetData(QString::number(month_number), false);
   }
@@ -112,6 +111,7 @@ void ImageManager::fillImage(QString image_path, QString image_name) {
 void ImageManager::deleteImage(QString image_name) {
   UNI_ASSERT(!isStub(image_name));
   if (isStub(image_name)) {
+    spdlog::error("Trying to delete stub {}", image_name.toStdString());
     return;
   }
   if (const auto it = images_.find(image_name); it != images_.end()) {
@@ -123,6 +123,7 @@ void ImageManager::deleteImage(QString image_name) {
 QString ImageManager::addImage(QString image_path) {
   QPixmap image(image_path);
   if (image.isNull()) {
+    spdlog::error("Can't read image {}", image_path.toStdString());
     return QString();
   }
   QString new_image_name;
@@ -138,12 +139,16 @@ QString ImageManager::addImage(QString image_path) {
       QGuiApplication::primaryScreen()->devicePixelRatio());
 
   do {
-    new_image_name = QString::number(QRandomGenerator::global()->generate());
+    new_image_name = QString(c_photo_prefix_str) +
+                     QString::number(QRandomGenerator::global()->generate());
     new_image_path = project_images_path_ + "/" + new_image_name;
   } while (QFileInfo::exists(new_image_path));
 
   image.save(new_image_path, IMAGE_FORMAT);
   images_[new_image_name] = image;
+
+  spdlog::info("Image {} added", image_path.toStdString());
+
   return new_image_name;
 }
 
@@ -159,11 +164,13 @@ void ImageManager::fillStubImage(QString month_name) {
 const QPixmap &ImageManager::image(QString image_name) const {
   if (const auto it = images_.find(image_name); it != images_.end())
     return it->second;
-  else
+  else {
+    spdlog::error("Image was nof found in cache {}", image_name.toStdString());
     return empty_;
+  }
 }
 bool ImageManager::isStub(QString image_name) const {
-  return image_name.size() < 3;
+  return !image_name.startsWith(c_photo_prefix_str);
 }
 
 } // namespace FirstYear::Core

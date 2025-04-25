@@ -113,6 +113,8 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project) {
       spdlog::error("Can't save {} project metadata.",
                     project_metadata_path_.toStdString());
     }
+
+    spdlog::info("Project data saved");
   }
 
   for (int i = 0; i < 12; i++) {
@@ -144,26 +146,8 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
   const auto &month_data = project->monthes_[month];
 
-  /* qDebug() << "**********";
-   qDebug()  << month_data.photo_data->state();
-   qDebug()  << month_data.state;
-   qDebug() << "TRANSFORM_SR_CHANGED "<< (month_data.photo_data->state() &
-       (short)PhotoData::STATE::TRANSFORM_SR_CHANGED);
-   qDebug() << "TRANSFORM_OFFSET_CHANGED "<< (month_data.photo_data->state() &
-                                           (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED);
-   qDebug() << "TEXT_CHANGED "<< (month_data.state &
-                                           (short)MonthItem::STATE::TEXT_CHANGED);
-   qDebug() << "FILTER_ID_CHANGED "<< (month_data.state &
-                                   (short)MonthItem::STATE::FILTER_ID_CHANGED);
-
- */
-
-  if (month_data.photo_data->state() &
-          (short)PhotoData::STATE::TRANSFORM_SR_CHANGED ||
-      month_data.photo_data->state() &
-          (short)PhotoData::STATE::TRANSFORM_OFFSET_CHANGED ||
-      month_data.state & (short)MonthItem::STATE::TEXT_CHANGED ||
-      month_data.state & (short)MonthItem::STATE::FILTER_ID_CHANGED) {
+  if (month_data.photo_data->state() & (short)PhotoData::STATE::CHANGED ||
+      month_data.state & (short)MonthItem::STATE::CHANGED) {
     QJsonObject month_metadata;
 
     month_metadata.insert(
@@ -203,27 +187,9 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
       spdlog::error("Can't save {} metadata.",
                     month_metadata_path.toStdString());
     }
+    spdlog::info("Month {} data saved", month);
   }
 
-  if (month_data.photo_data->state() & (short)PhotoData::STATE::IMAGE_CHANGED) {
-
-    /*  const auto image_path = month_photo_path_template_.arg(month);
-
-      if (!month_data.photo_data->isStub()) {
-        if (!month_data.photo_data->image().isNull()) {
-          const bool result = saveFile(image_path, [&](QString path) -> bool {
-            return month_data.photo_data->image().save(path, IMAGE_FORMAT);
-          });
-
-          if (!result) {
-            spdlog::error("Can't save {} image file.",
-      image_path.toStdString());
-          }
-        }
-      } else if (QFileInfo::exists(image_path)) {
-        QFile::remove(image_path);
-      }*/
-  }
   month_data.photo_data->state_ = 0;
   month_data.state = 0;
 }

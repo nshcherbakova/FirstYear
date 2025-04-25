@@ -38,11 +38,6 @@ class PhotoData {
   friend class FrameControl;
 
 public:
-  static PhotoData CreateEmptyData();
-  static PhotoData CreateNewData(QString image);
-  static PhotoData CreateNewData(QPixmap image);
-  static PhotoData CreateCopy(const PhotoData &source);
-
   explicit PhotoData();
   explicit PhotoData(QPixmap image);
 
@@ -64,9 +59,8 @@ public:
   bool isStub() const;
 
   enum class STATE : short {
-    IMAGE_CHANGED = 0x01,
-    TRANSFORM_SR_CHANGED = 0x02,
-    TRANSFORM_OFFSET_CHANGED = 0x04,
+    UNCHANGED = 0x01,
+    CHANGED = 0x01,
   };
 
   static ImageManagerPtr image_manager_;
@@ -95,9 +89,8 @@ struct MonthItem {
 
   mutable short state = 0;
   enum class STATE : short {
-    //  PHOTO_DATA_CHANGED = 0x01,
-    TEXT_CHANGED = 0x01,
-    FILTER_ID_CHANGED = 0x02,
+    UNCHANGED = 0x01,
+    CHANGED = 0x01,
   };
 };
 
@@ -113,9 +106,8 @@ public:
   // bool changed = false;
   mutable short state = 0;
   enum class STATE : short {
-    ID_CHANGED = 0x01,
-    TITLE_CHANGED = 0x02,
-    FRAME_ID_CHANGED = 0x04,
+    UNCHANGED = 0x01,
+    CHANGED = 0x01,
   };
 };
 
