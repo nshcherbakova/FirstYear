@@ -125,7 +125,7 @@ public:
             [&](int index) {
               foreground_->left_swipe_arrow_visible_ = (index != 0);
               foreground_->right_swipe_arrow_visible_ =
-                  (swipe_widget_->CurrentItem() != index - 1);
+                  (swipe_widget_->CurrentItem() != swipe_widget_->Count() - 1);
             });
   }
 
@@ -752,14 +752,18 @@ bool MainWindow::SelectImages(QStringList files) {
     }
 
     QString time;
-    if (file_info.birthTime().isValid()) {
-      time = QString().setNum(file_info.birthTime().toSecsSinceEpoch());
-    } else if (file_info.lastModified().isValid()) {
-      time = QString().setNum(file_info.lastModified().toSecsSinceEpoch());
-    } else {
+    /*  if (file_info.birthTime().isValid()) {
+        time = QString().setNum(file_info.birthTime().toSecsSinceEpoch());
+      } else if (file_info.lastModified().isValid()) {
+        time = QString().setNum(file_info.lastModified().toSecsSinceEpoch());
+      } else*/
+    {
       time = file_info.fileName();
     }
-
+    /*   qDebug() << "** birthTime " << file_info.birthTime();
+       qDebug() << "** lastModified " << file_info.lastModified();
+        qDebug() << "** fileName " << file_info.fileName();
+      qDebug() << "** " << time;*/
     map[time].push_back(path);
   }
 
@@ -767,14 +771,14 @@ bool MainWindow::SelectImages(QStringList files) {
 
   size_t month = 0;
   for (const auto &[time, file_vector] : map) {
-    //   qDebug() << "**  " <<   time;
-    for (const auto &file : file_vector) {
+    for (auto file_it = file_vector.rbegin(); file_it != file_vector.rend();
+         file_it++) {
       while (project->monthes_.size() > month) {
         auto &month_data = project->monthes_[month];
         month++;
         if (month_data.photo_data->isStub()) {
           const auto image_name =
-              project_control_.imageManager()->addImage(file);
+              project_control_.imageManager()->addImage(*file_it);
           if (!image_name.isNull()) {
             month_data.photo_data->resetData(image_name, true);
             count_loaded++;
@@ -782,7 +786,7 @@ bool MainWindow::SelectImages(QStringList files) {
           } else {
             month--;
             spdlog::error("SelectImages invalid image file {}",
-                          file.toStdString());
+                          file_it->toStdString());
           }
           break;
         }

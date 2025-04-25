@@ -19,8 +19,11 @@ namespace FirstYear::Core {
 FrameControl::FrameControl(QObject *parent)
     : QObject(parent), image_manager_(std::make_shared<ImageManager>()),
       save_timer_(new QTimer(this)) {
+
   PhotoData::image_manager_ = image_manager_;
+
   save_timer_->setInterval(c_save_timeout * 1000);
+
   connect(save_timer_, &QTimer::timeout, this, [&]() {
     FileSystemProjectWriter().Write(current_project_);
 
