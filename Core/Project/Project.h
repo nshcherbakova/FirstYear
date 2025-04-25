@@ -33,31 +33,11 @@ private:
 };
 
 class PhotoData {
-  friend class FileSystemProjectLoader;
-  friend class FileSystemProjectWriter;
-  friend class FrameControl;
-
 public:
   explicit PhotoData();
-  explicit PhotoData(QPixmap image);
+  virtual ~PhotoData(){};
 
 public:
-  void resetData(QString image, bool clear_state);
-  /*void setImage(QPixmap image, PhotoTransform transform_scale_rotate,
-                const PhotoTransform transform_offset);*/
-  void setTransforms(PhotoTransform transform_scale_rotate,
-                     PhotoTransform transform_offset);
-  void setState(short state);
-
-  const QPixmap &image() const;
-  const QString imageId() const;
-  const PhotoTransform &transformScaleRotate() const;
-  const PhotoTransform &transformOffset() const;
-  PhotoTransform &transformScaleRotateRef();
-  PhotoTransform &transformOffsetRef();
-  short state() const;
-  bool isStub() const;
-
   enum class STATE : short {
     UNCHANGED = 0x01,
     CHANGED = 0x01,
@@ -65,20 +45,30 @@ public:
 
   static ImageManagerPtr image_manager_;
 
-protected:
-  void fillImage(QString image_name);
+public:
+  virtual const QPixmap &image() const;
+  virtual bool isStub() const;
+
+  void resetData(QString image, bool clear_state);
+  void setTransforms(PhotoTransform transform_scale_rotate,
+                     PhotoTransform transform_offset);
+  void setState(short state);
+
+  const QString imageId() const;
+  void setImageId(QString image_id);
+  const PhotoTransform &transformScaleRotate() const;
+  const PhotoTransform &transformOffset() const;
+  PhotoTransform &transformScaleRotateRef();
+  PhotoTransform &transformOffsetRef();
+  short state() const;
 
 protected:
   QString image_id_;
 
-  // QPixmap image_;
-  // bool is_stub_image_ = false;
   PhotoTransform transform_scale_rotate_;
   PhotoTransform transform_offset_;
 
   mutable short state_ = 0;
-
-  QPixmap image_;
 };
 
 struct MonthItem {

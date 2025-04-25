@@ -161,7 +161,7 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
 
     month_metadata.insert("filter_id", month_data.filter_id);
 
-    month_metadata.insert("photo_id", month_data.photo_data->image_id_);
+    month_metadata.insert("photo_id", month_data.photo_data->imageId());
 
     QJsonDocument month_metadata_document(month_metadata);
 
@@ -190,7 +190,7 @@ void FileSystemProjectWriter::Write(const ProjectPtr &project, int month) {
     spdlog::info("Month {} data saved", month);
   }
 
-  month_data.photo_data->state_ = 0;
+  month_data.photo_data->setState(0);
   month_data.state = 0;
 }
 } // namespace FirstYear::Core

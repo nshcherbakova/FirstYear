@@ -9,7 +9,7 @@
 
 namespace FirstYear::Core {
 
-class FrameControl final {
+class FrameControl {
 public:
   explicit FrameControl();
   FrameControl &operator=(const FrameControl &) = delete;

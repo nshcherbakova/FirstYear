@@ -47,12 +47,8 @@ PhotoData::PhotoData()
     : transform_scale_rotate_(this, (short)STATE::UNCHANGED),
       transform_offset_(this, (short)STATE::UNCHANGED) {}
 
-PhotoData::PhotoData(QPixmap image)
-    : transform_scale_rotate_(this, (short)STATE::UNCHANGED),
-      transform_offset_(this, (short)STATE::UNCHANGED), image_(image) {}
-
 void PhotoData::resetData(QString image_name, bool clear_state) {
-  fillImage(image_name);
+  image_id_ = image_name;
 
   if (clear_state) {
     transform_scale_rotate_.reset();
@@ -61,8 +57,6 @@ void PhotoData::resetData(QString image_name, bool clear_state) {
     state_ |= (short)STATE::CHANGED;
   }
 }
-
-void PhotoData::fillImage(QString image_name) { image_id_ = image_name; }
 
 void PhotoData::setTransforms(PhotoTransform transform_scale_rotate,
                               PhotoTransform transform_offset) {
@@ -81,12 +75,14 @@ void PhotoData::setTransforms(PhotoTransform transform_scale_rotate,
   }
 }
 const QPixmap &PhotoData::image() const {
-  return image_.isNull() ? image_manager_->image(image_id_) : image_;
+  return image_manager_->image(image_id_);
 }
 const QString PhotoData::imageId() const {
   UNI_ASSERT(!image_id_.isEmpty());
   return image_id_;
 }
+
+void PhotoData::setImageId(QString image_id) { image_id_ = image_id; }
 
 const PhotoTransform &PhotoData::transformScaleRotate() const {
   return transform_scale_rotate_;
@@ -104,9 +100,7 @@ PhotoTransform &PhotoData::transformOffsetRef() { return transform_offset_; }
 
 short PhotoData::state() const { return state_; }
 
-bool PhotoData::isStub() const {
-  return image_.isNull() ? image_manager_->isStub(image_id_) : false;
-}
+bool PhotoData::isStub() const { return image_manager_->isStub(image_id_); }
 
 void PhotoData::setState(short state) { state_ = state; }
 

@@ -111,14 +111,14 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   auto month_json = month_json_document.object();
 
   if (!LoadTransform(month_json, "transform_scale_rotate",
-                     month.photo_data->transform_scale_rotate_)) {
+                     month.photo_data->transformScaleRotateRef())) {
     spdlog::error("Error while reading  transform_scale_rotate in a {0} month "
                   "photo scale from json {1}.",
                   month_number, month_metadata.toStdString());
     // return false;
   }
   if (!LoadTransform(month_json, "transform_offset",
-                     month.photo_data->transform_offset_)) {
+                     month.photo_data->transformOffsetRef())) {
     spdlog::error("Error while reading transform_offset in a {0} month photo "
                   "scale from json {1}.",
                   month_number, month_metadata.toStdString());
@@ -150,7 +150,7 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
                     month_number, month_metadata.toStdString());
       // return false;
     } else {
-      month.photo_data->image_id_ = photo_id;
+      month.photo_data->setImageId(photo_id);
     }
   }
 

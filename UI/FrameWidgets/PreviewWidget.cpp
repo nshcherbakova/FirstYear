@@ -7,6 +7,25 @@ const double INITIAL_SCALE_FACTOR = 1.3;
 const double ZOOM_STEP = 1.10;
 const double DOUBLE_TAP_SCALE_STEP = 1.4;
 
+class PreviewPhotoData final : public Core::PhotoData {
+
+public:
+  explicit PreviewPhotoData(QPixmap image);
+
+public:
+  virtual const QPixmap &image() const override;
+  virtual bool isStub() const override;
+
+private:
+  QPixmap image_;
+};
+
+PreviewPhotoData::PreviewPhotoData(QPixmap image) : image_(image) {}
+
+const QPixmap &PreviewPhotoData::image() const { return image_; }
+
+bool PreviewPhotoData::isStub() const { return false; }
+
 PreviewWidget::PreviewWidget(QWidget &parent)
     : QWidget(&parent) /*, background_(c_background_str)*/ {
 
@@ -91,9 +110,7 @@ bool PreviewWidget::event(QEvent *event) {
 }
 
 void PreviewWidget::setImage(QPixmap photo) {
-  // Core::PhotoData photo_data =
-  // Core::PhotoData::CreateNewData(std::move(photo));
-  updatePhoto(std::make_shared<Core::PhotoData>(std::move(photo)));
+  updatePhoto(std::make_shared<PreviewPhotoData>(std::move(photo)));
 }
 
 void PreviewWidget::updatePhoto(const Core::PhotoDataPtr &photo) {
