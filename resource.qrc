@@ -52,10 +52,10 @@
         <file alias="stars2@2x">resources/Images/stars2.svg</file>
         <file alias="open_button">resources/Images/open_button.svg</file>
         <file alias="open_button@2x">resources/Images/open_button.svg</file>
-        <file alias="right">resources/Images/right.svg</file>
-        <file alias="right@2x">resources/Images/right.svg</file>
-        <file alias="left">resources/Images/left.svg</file>
-        <file alias="left@2x">resources/Images/left.svg</file>
+        <file alias="right">resources/Images/arrowhead-right.svg</file>
+        <file alias="right@2x">resources/Images/arrowhead-right.svg</file>
+        <file alias="left">resources/Images/arrowhead-left.svg</file>
+        <file alias="left@2x">resources/Images/arrowhead-left.svg</file>
     </qresource>
     <qresource prefix="/fonts">
         <file alias="header_1_font">resources/Fonts/Bellany.otf</file>

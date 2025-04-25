@@ -66,14 +66,16 @@ public:
   virtual void paintEvent(QPaintEvent *event) override final {
     QWidget::paintEvent(event);
     QPainter painter(this);
+    const int iheight = 100;
     if (left_swipe_arrow_ && right_swipe_arrow_) {
       if (left_swipe_arrow_visible_) {
-        left_swipe_arrow_->render(&painter,
-                                  QRectF(-10, height() / 2 - 50, 50, 100));
+        left_swipe_arrow_->render(
+            &painter, QRectF(-5, height() / 2 - iheight / 2, 50, iheight));
       }
       if (right_swipe_arrow_visible_) {
         right_swipe_arrow_->render(
-            &painter, QRect(width() - 40, height() / 2 - 50, 50, 100));
+            &painter,
+            QRect(width() - 45, height() / 2 - iheight / 2, 50, iheight));
       }
     }
   }
@@ -757,9 +759,7 @@ bool MainWindow::SelectImages(QStringList files) {
       } else if (file_info.lastModified().isValid()) {
         time = QString().setNum(file_info.lastModified().toSecsSinceEpoch());
       } else*/
-    {
-      time = file_info.fileName();
-    }
+    { time = file_info.fileName(); }
     /*   qDebug() << "** birthTime " << file_info.birthTime();
        qDebug() << "** lastModified " << file_info.lastModified();
         qDebug() << "** fileName " << file_info.fileName();
