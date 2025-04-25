@@ -12,12 +12,23 @@ static const QStringList monthes = {"one",  "two", "three",  "four",
                                     "five", "six", "seven",  "eight",
                                     "nine", "ten", "eleven", "twelve"};
 constexpr const char *c_photo_prefix_str = "photo";
+constexpr const int c_save_timeout = 20;
 
 namespace FirstYear::Core {
 
-FrameControl::FrameControl()
-    : image_manager_(std::make_shared<ImageManager>()) {
+FrameControl::FrameControl(QObject *parent)
+    : QObject(parent), image_manager_(std::make_shared<ImageManager>()),
+      save_timer_(new QTimer(this)) {
   PhotoData::image_manager_ = image_manager_;
+  save_timer_->setInterval(c_save_timeout * 1000);
+  connect(save_timer_, &QTimer::timeout, this, [&]() {
+    FileSystemProjectWriter().Write(current_project_);
+
+    for (int i = 0; i < monthes.size(); i++) {
+      FileSystemProjectWriter().Write(current_project_, i);
+    };
+    save_timer_->start();
+  });
 }
 
 ProjectPtr FrameControl::LoadProject() {
@@ -32,13 +43,19 @@ ProjectPtr FrameControl::LoadProject() {
 }
 
 void FrameControl::SaveProject() {
+  save_timer_->stop();
+
   FileSystemProjectWriter().Write(current_project_);
-  spdlog::info("Project saved");
+
+  save_timer_->start();
 }
 
 void FrameControl::SaveProjectMonth(int month) {
+  save_timer_->stop();
+
   FileSystemProjectWriter().Write(current_project_, month);
-  spdlog::info("Month saved");
+
+  save_timer_->start();
 }
 
 void FrameControl::LoadProject(QString name) {
@@ -165,7 +182,7 @@ const QPixmap &ImageManager::image(QString image_name) const {
   if (const auto it = images_.find(image_name); it != images_.end())
     return it->second;
   else {
-    spdlog::error("Image was nof found in cache {}", image_name.toStdString());
+    spdlog::error("Image was nof found in cache {0}", image_name.toStdString());
     return empty_;
   }
 }

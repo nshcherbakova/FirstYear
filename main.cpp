@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 
   loadFonts();
 
-  FirstYear::Core::FrameControl frame_control;
+  FirstYear::Core::FrameControl frame_control(&a);
   frame_control.LoadProject();
 
   const auto frames = collectFrames();

@@ -372,7 +372,6 @@ void MainWindow::CreateRearrangeWidget(
             ((short)PhotoData::STATE::CHANGED));
 
         rearrange_->Update();
-        //  frame_control.SaveProject();
       },
       Qt::QueuedConnection);
 
@@ -380,11 +379,6 @@ void MainWindow::CreateRearrangeWidget(
     UpdateFrames(nullptr);
     frame_control.SaveProject();
   });
-
-  // connect(
-  //     rearrange_, &RearrangeWidget::SignalRemoveButtonClicked, this,
-  //     [&](int month_index) { DeletePhoto(month_index); },
-  //     Qt::QueuedConnection);
 
   connect(
       rearrange_, &RearrangeWidget::SignalDeleteButtonClicked, this,
@@ -620,7 +614,6 @@ void MainWindow::CreateSwipeWidget(
               frame_control.CurrentProject()->frame_id_ = new_id;
               frame_control.CurrentProject()->state |=
                   (short)Core::Project::STATE::CHANGED;
-              frame_control.SaveProject();
             }
           });
 

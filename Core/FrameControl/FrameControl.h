@@ -2,6 +2,7 @@
 #ifndef FIRSTYEAR_FRAME_CONTROL_H
 #define FIRSTYEAR_FRAME_CONTROL_H
 #include <Core/Project/Constants.h>
+#include <QObject>
 #include <QString>
 #include <QWidget>
 #include <Types.h>
@@ -9,9 +10,10 @@
 
 namespace FirstYear::Core {
 
-class FrameControl {
+class FrameControl : public QObject {
+  Q_OBJECT
 public:
-  explicit FrameControl();
+  explicit FrameControl(QObject *parent);
   FrameControl &operator=(const FrameControl &) = delete;
 
   ProjectPtr LoadProject();
@@ -28,6 +30,8 @@ private:
 private:
   ProjectPtr current_project_;
   ImageManagerPtr image_manager_;
+
+  QTimer *save_timer_ = nullptr;
 };
 
 class ImageManager : private ProjectConstants {
