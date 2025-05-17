@@ -7,7 +7,8 @@ const double ZOOM_STEP = 1.10;
 const double ROTATE_STEP = 0.5;
 const double DOUBLE_TAP_SCALE_STEP = 1.4;
 
-void Frame::init(const FrameParameters &frame_data, QRectF widget_rect) {
+void Frame::init(const FrameParameters &frame_data, QRectF widget_rect,
+                 double scale_factor) {
 
   if (frame_data.data.isNull()) {
     return;
@@ -20,7 +21,7 @@ void Frame::init(const FrameParameters &frame_data, QRectF widget_rect) {
 
     // auto size = std::min(widget_rect.width(), widget_rect.height());
     auto frame_size = frame_data_.data.toSizeF().scaled(
-        widget_rect.width() / 1.5, widget_rect.height() / 1.5,
+        widget_rect.width() / scale_factor, widget_rect.height() / scale_factor,
         Qt::KeepAspectRatio);
 
     frame_boundary_rect_.setTopLeft(QPoint(0, 0));
@@ -146,7 +147,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   next_->setIcon(QIcon(":/images/icons/next"));
   next_->setIconSize(QSize(40, 40));
   next_->setSize(QSize(80, 60));
-  next_->setObjectName("Darkbutton");
+  next_->setObjectName("DarkButton");
   next_->setStyleSheet(c_dark_button_style_str);
   connect(next_, &QPushButton::clicked, this,
           [&]() { emit SignalTuneNextImage(); });
@@ -155,7 +156,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   prev_->setIcon(QIcon(":/images/icons/prev"));
   prev_->setIconSize(QSize(40, 40));
   prev_->setSize(QSize(80, 60));
-  prev_->setObjectName("Darkbutton");
+  prev_->setObjectName("DarkButton");
   prev_->setStyleSheet(c_dark_button_style_str);
   connect(prev_, &QPushButton::clicked, this,
           [&]() { emit SignalTunePrevImage(); });
@@ -215,11 +216,14 @@ void PhotoTuneWidget::resizeEvent(QResizeEvent *e) {
                       next_->size()});
 
   if (photo_data_ && !photo_data_->image().isNull()) {
-    Frame::init(frame_data_, rect());
+    Frame::init(frame_data_, rect(), initialScaleFactor());
     updatePhoto(photo_data_);
   }
 
-  const auto top = std::max((int)frameRect().top() - 70, 0);
+  const bool is_portrait = width() < height();
+
+  const auto top =
+      std::max((int)frameRect().top() - (is_portrait ? 70 : 50), 0);
   const auto text_width = (int)(width() / 1.5);
   QRect rect(QPoint{(int)(width() - text_width) / 2, top},
              QSize{text_width, 40});
@@ -247,7 +251,7 @@ void PhotoTuneWidget::setPhoto(int id, const FrameParameters &frame_data,
                                const Core::PhotoDataPtr &photo, QString text) {
 
   id_ = id;
-  Frame::init(frame_data, rect());
+  Frame::init(frame_data, rect(), initialScaleFactor());
   updatePhoto(photo);
   text_->setText(text);
   resizeEvent(nullptr);

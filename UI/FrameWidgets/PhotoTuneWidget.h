@@ -21,7 +21,8 @@ public:
   Frame &operator=(const Frame &) = delete;
 
 protected:
-  void init(const FrameParameters &frame_data, QRectF widget_rect);
+  void init(const FrameParameters &frame_data, QRectF widget_rect,
+            double scale_factor);
   void drawFrame(QPainter &);
   QRectF frameRect();
 

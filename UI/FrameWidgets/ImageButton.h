@@ -29,7 +29,7 @@ protected:
   QPixmap buffer_;
 
 private:
-  Core::PhotoDataPtr photo_data_;
+  // Core::PhotoDataPtr photo_data_;
   QColor background_;
 };
 

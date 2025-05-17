@@ -60,7 +60,7 @@ static const char *c_rearrange_button_str =
 
 // Tune Widget styles
 static const char *c_dark_button_style_str =
-    "QPushButton#Darkbutton{"
+    "QPushButton#DarkButton{"
     "background-color: rgba(255, 255, 255, 200);"
     "color:#555C24; "
     "font-size: 23px; "
@@ -71,8 +71,8 @@ static const char *c_dark_button_style_str =
     "border-width: 3;"
     "}"
 
-    "QPushButton#Darkbutton:pressed {border-color: #C3BED1;}"
-    "QPushButton#Darkbutton:pressed{color: #C3BED1;}";
+    "QPushButton#DarkButton:pressed {border-color: #C3BED1;}"
+    "QPushButton#DarkButton:pressed{color: #C3BED1;}";
 
 static const char *c_light_button_style_str =
     "QPushButton#LightButton{"
@@ -132,6 +132,37 @@ static const char *c_select_button_style_str =
     "QPushButton#Select:disabled {border-color: #C3BED1;}"
     "QPushButton#Select:disabled{color: #C3BED1;}";
 
+static const char *c_info_button_style_str =
+    "QPushButton#Info{"
+    "background-color: rgba(207, 209, 191, 200);"
+    "color:#9B8463;; "
+    "font-size: 20px; "
+    //   "font-family: Typo Round Regular Demo;"
+    "border-style: solid;"
+    "border-radius: 20;"
+    "border-color: #9B8463;"
+    "border-width: 3;"
+    "}"
+    "QPushButton#Select:pressed {border-color: #C3BED1;}"
+    "QPushButton#Select:pressed{color: #C3BED1;}"
+    "QPushButton#Select:disabled {border-color: #C3BED1;}"
+    "QPushButton#Select:disabled{color: #C3BED1;}";
+
+static const char *c_share_log_button_style_str =
+    "QPushButton#ShareLogButton{"
+    "background-color: transparent;"
+    "color:#555C24; "
+    "font-size: 25px; "
+    //    "font-family: Typo Round Regular Demo;"
+    "border-style: solid;"
+    "border-radius: 0;"
+    "border-color: transparent;"
+    "border-width: 0;"
+    "}"
+
+    "QPushButton#ShareLogButton:pressed {border-color: #C3BED1;}"
+    "QPushButton#ShareLogButton:pressed{color: #C3BED1;}";
+
 static const char *c_tune_frame_light_color_str = "#E9D5EB";
 static const char *c_tune_frame_dark_color_str = "#555C24";
 static const char *c_tune_frame_text_color_str = "#53798C";
@@ -170,12 +201,22 @@ static const char *c_clickable_label_style_str =
     "border-radius: 20;"
     "}";
 
-static const char *c_tap_text_style_str = "QLabel{"
+static const char *c_tap_text_style_str = "QLabel#TapText{"
                                           "background-color: transparent;"
                                           "font-size: 23px; "
                                           "border: none;"
                                           "color:#A98653; "
                                           "}";
+
+static const char *c_info_text_style_str = "QLabel#InfoText{"
+                                           "background-color: transparent;"
+                                           "font-size: %1pt; "
+                                           "border: none;"
+                                           "color:#ffffff; "
+                                           "}";
+
+static const QColor c_info_text__background_color = QColor(164, 166, 151, 220);
+
 static const QColor c_line_edit_background_color = QColor(164, 166, 151, 200);
 
 // Frame

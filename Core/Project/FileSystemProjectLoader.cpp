@@ -29,26 +29,23 @@ ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
   const auto project_json = project_json_document.object();
 
   if (!Core::Json::ReadString(project_json, "id", project->id_)) {
-    spdlog::error("Error while reading a project id from json {0}.",
-                  project_metadata.toStdString());
+    spdlog::error("Error while reading a project id from json.");
     // return nullptr;
   }
 
   if (!Core::Json::ReadString(project_json, "title", project->title_)) {
-    spdlog::error("Error while reading a project title from json {0}.",
-                  project_metadata.toStdString());
+    spdlog::error("Error while reading a project title from json.");
     // return nullptr;
   }
 
   if (!Core::Json::ReadString(project_json, "frame_id", project->frame_id_)) {
-    spdlog::error("Error while reading a project frame id from json {0}.",
-                  project_metadata.toStdString());
+    spdlog::error("Error while reading a project frame id from json.");
     // return nullptr;
   }
 
   for (int i = 0; i < 12; i++) {
     if (!LoadMonth(i, project)) {
-      spdlog::error("Error while loading a project month  data .", i);
+      spdlog::error("Error while loading a project month {0} data.", i);
     }
   }
 
@@ -113,30 +110,29 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   if (!LoadTransform(month_json, "transform_scale_rotate",
                      month.photo_data->transformScaleRotateRef())) {
     spdlog::error("Error while reading  transform_scale_rotate in a {0} month "
-                  "photo scale from json {1}.",
-                  month_number, month_metadata.toStdString());
+                  "photo scale from json.",
+                  month_number);
     // return false;
   }
   if (!LoadTransform(month_json, "transform_offset",
                      month.photo_data->transformOffsetRef())) {
     spdlog::error("Error while reading transform_offset in a {0} month photo "
-                  "scale from json {1}.",
-                  month_number, month_metadata.toStdString());
+                  "scale from json.",
+                  month_number);
     // return false;
   }
 
   if (!Core::Json::ReadString(month_json, "filter_id", month.filter_id)) {
-    spdlog::error(
-        "Error while reading a {0} month photo filter_id from json {1}.",
-        month_number, month_metadata.toStdString());
+    spdlog::error("Error while reading a {0} month photo filter_id from json",
+                  month_number);
     // return false;
   }
 
   if (month_json.contains("text")) {
     QString text;
     if (!Core::Json::ReadString(month_json, "text", text)) {
-      spdlog::error("Error while reading a {0} month photo text from json {1}.",
-                    month_number, month_metadata.toStdString());
+      spdlog::error("Error while reading a {0} month photo text from json.",
+                    month_number);
       // return false;
     } else {
       month.text = text;
@@ -146,8 +142,8 @@ bool FileSystemProjectLoader::LoadMonth(int month_number, ProjectPtr &project) {
   if (month_json.contains("photo_id")) {
     QString photo_id;
     if (!Core::Json::ReadString(month_json, "photo_id", photo_id)) {
-      spdlog::error("Error while reading a {0} month photo text from json {1}.",
-                    month_number, month_metadata.toStdString());
+      spdlog::error("Error while reading a {0} month photo text from json.",
+                    month_number);
       // return false;
     } else {
       month.photo_data->setImageId(photo_id);

@@ -7,7 +7,7 @@ ImageButton::ImageButton(QWidget &parent) : QPushButton(&parent) {}
 
 void ImageButton::setPhoto(const Core::PhotoDataPtr &photo,
                            const QColor &background) {
-  photo_data_ = photo;
+  // photo_data_ = photo;
   background_ = background;
   PhotoPainter::init(photo, rect(), rect());
 

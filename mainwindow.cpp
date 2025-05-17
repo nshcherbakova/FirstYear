@@ -1,16 +1,19 @@
 #include "mainwindow.h"
 #include <QProgressDialog>
 #include <UI/FrameWidgets/DefaultTemplateWidget.h>
+#include <UI/FrameWidgets/InfoWidget.h>
 #include <UI/FrameWidgets/PhotoTuneWidget.h>
 #include <UI/FrameWidgets/PreviewWidget.h>
 #include <UI/FrameWidgets/RearrangeWidget.h>
 #include <UI/SwipeView/SwipeWidgetsList.hpp>
+
 #include <stdafx.h>
 
 static const int TITLE_ID = -1;
 static const char *c_share_image_tmp_name_str = "/FirstYear.jpg";
 static const char *c_save_share_image_format_str = "JPG";
 static const char *c_share_image_mime_type_str = "image/jpeg";
+static const char *c_share_text_mime_type_str = "text/plain";
 
 using namespace FirstYear::Core;
 namespace FirstYear::UI {
@@ -206,6 +209,7 @@ MainWindow::MainWindow(FrameControl &frame_control, const QStringList &frames)
   CreateTapText();
   CreatePreviewWindow();
   CreateRearrangeWidget(frame_control);
+  CreateInfoWidget();
 
   photo_tune_widget_->raise();
 
@@ -323,6 +327,15 @@ void MainWindow::CreatePhotoTuneWidget(
             line_edit_->show();
             line_edit_->raise();
           });
+}
+
+void MainWindow::CreateInfoWidget() {
+  info_widget_ = new InfoWidget(this, project_control_);
+  info_widget_->hide();
+
+  connect(
+      info_widget_, &InfoWidget::SignalShareLog, this, [&]() { ShareLog(); },
+      Qt::QueuedConnection);
 }
 
 void MainWindow::CreateRearrangeWidget(
@@ -709,6 +722,17 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
   controls_.push_back(select_images_button_);
 
   UpdateSelectionButton(project_control_);
+
+  info_button_ = new TextButton(this);
+  info_button_->setObjectName("Info");
+  info_button_->setStyleSheet(c_info_button_style_str);
+  info_button_->setText("i");
+  ((TextButton *)info_button_)->setSize(QSize(40, 40));
+
+  connect(info_button_, &QPushButton::clicked, this,
+          [&] { info_widget_->show(); });
+
+  controls_.push_back(select_images_button_);
 }
 
 void MainWindow::ShowLoadingDialogStub(std::function<void()> f) {
@@ -734,6 +758,8 @@ void MainWindow::CreateTapText() {
   tap_text_->setWordWrap(true);
 
   controls_.push_back(tap_text_);
+
+  UpdateTapText();
 }
 
 bool MainWindow::SelectImages(QStringList files) {
@@ -749,7 +775,7 @@ bool MainWindow::SelectImages(QStringList files) {
   for (const auto &path : files) {
     QFileInfo file_info(path);
     if (!file_info.exists()) {
-      spdlog::error("SelectImages invalid file {}", path.toStdString());
+      spdlog::error("SelectImages invalid file");
       continue;
     }
 
@@ -785,8 +811,7 @@ bool MainWindow::SelectImages(QStringList files) {
             progress.setValue(count_loaded);
           } else {
             month--;
-            spdlog::error("SelectImages invalid image file {}",
-                          file_it->toStdString());
+            spdlog::error("SelectImages invalid image file");
           }
           break;
         }
@@ -813,6 +838,16 @@ void MainWindow::Share(const QPixmap &pixmap) const {
 
   share_utiles_->sendFile(tmp_path, "View File", c_share_image_mime_type_str,
                           0);
+}
+
+void MainWindow::ShareLog() const {
+
+  if (!share_utiles_) {
+    share_utiles_ = std::make_shared<ShareUtils::ShareUtilsCpp>();
+  }
+
+  share_utiles_->sendFile(project_control_.logFilePath(), "View File",
+                          c_share_text_mime_type_str, 1);
 }
 
 QPixmap MainWindow::Render(Core::FrameControl &control) {
@@ -847,6 +882,9 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   if (rearrange_)
     rearrange_->setGeometry(rect());
 
+  if (info_widget_)
+    info_widget_->setGeometry(rect());
+
   if (line_edit_)
     line_edit_->setGeometry(rect());
 
@@ -880,7 +918,7 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
   const int rearrange_button_width = 160;
   const int rearrange_button_height = 50;
   int rearrange_button_top = 0;
-  if (rearrange_button_) {
+  if (rearrange_button_ && select_images_button_ && share_button_) {
     if (is_portrait) {
       rearrange_button_top = share_button_->geometry().top() - height() / 17;
     } else {
@@ -890,6 +928,22 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
     rearrange_button_->setGeometry(height() / 60, rearrange_button_top,
                                    rearrange_button_width,
                                    rearrange_button_height);
+  }
+
+  if (info_button_ && select_images_button_ && rearrange_button_) {
+    int info_butoon_top =
+        select_images_button_->geometry().top() +
+        (select_images_button_->geometry().height() - info_button_->height()) /
+            2;
+    info_butoon_top =
+        is_portrait
+            ? info_butoon_top
+            : (rearrange_button_->isVisible()
+                   ? height() / 20 + rearrange_button_->geometry().bottom()
+                   : select_images_button_->geometry().top());
+
+    info_button_->setGeometry(
+        {{height() / 57, info_butoon_top}, info_button_->size()});
   }
 
   if (tap_text_) {
@@ -969,6 +1023,12 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     event->ignore();
   } else if (rearrange_->isVisible()) {
     rearrange_->hide();
+
+    setEnabledControls(true);
+
+    event->ignore();
+  } else if (info_widget_->isVisible()) {
+    info_widget_->hide();
 
     setEnabledControls(true);
 

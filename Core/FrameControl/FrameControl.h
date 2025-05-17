@@ -13,7 +13,7 @@ namespace FirstYear::Core {
 class FrameControl : public QObject {
   Q_OBJECT
 public:
-  explicit FrameControl(QObject *parent);
+  explicit FrameControl(QObject *parent, QString log_file_path);
   FrameControl &operator=(const FrameControl &) = delete;
 
   ProjectPtr LoadProject();
@@ -21,6 +21,8 @@ public:
   void SaveProjectMonth(int month);
   ProjectPtr CurrentProject();
   ImageManagerPtr imageManager();
+
+  QString logFilePath() const;
 
 private:
   void LoadProject(QString name);
@@ -32,6 +34,7 @@ private:
   ImageManagerPtr image_manager_;
 
   QTimer *save_timer_ = nullptr;
+  QString log_file_path_;
 };
 
 class ImageManager : private ProjectConstants {

@@ -16,9 +16,9 @@ constexpr const int c_save_timeout = 20;
 
 namespace FirstYear::Core {
 
-FrameControl::FrameControl(QObject *parent)
+FrameControl::FrameControl(QObject *parent, QString log_file_path)
     : QObject(parent), image_manager_(std::make_shared<ImageManager>()),
-      save_timer_(new QTimer(this)) {
+      log_file_path_(log_file_path), save_timer_(new QTimer(this)) {
 
   PhotoData::image_manager_ = image_manager_;
 
@@ -72,6 +72,7 @@ QString FrameControl::LastProjectName() const { return DEF_PROGECT_NAME; }
 void FrameControl::CreateNewProject() {
   current_project_ = std::make_shared<Project>();
   current_project_->monthes_.resize(monthes.size());
+  current_project_->state |= (short)Project::STATE::CHANGED;
 
   for (int month_number = 0; month_number < (int)monthes.size();
        month_number++) {
@@ -86,6 +87,8 @@ void FrameControl::CreateNewProject() {
 }
 
 ImageManagerPtr FrameControl::imageManager() { return image_manager_; }
+
+QString FrameControl::logFilePath() const { return log_file_path_; }
 
 static const int c_image_scale_size = 1536;
 
@@ -143,7 +146,7 @@ void ImageManager::deleteImage(QString image_name) {
 QString ImageManager::addImage(QString image_path) {
   QPixmap image(image_path);
   if (image.isNull()) {
-    spdlog::error("Can't read image {}", image_path.toStdString());
+    spdlog::error("Can't read image");
     return QString();
   }
   QString new_image_name;

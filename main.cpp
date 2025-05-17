@@ -3,16 +3,14 @@
 
 static const char *c_org_str = "natshch";
 static const char *c_app_str = "FirstYear";
-static const char *c_log_str = "/logs/FirstYearLog.txt";
+static const char *c_log_dir_str = "/logs/";
+static const char *c_log_file_str = "/FirstYearLog.txt";
 static const char *c_logger_str = "logger";
 static const char *c_fonts_dir_str = ":/fonts";
 static const char *c_frames_dir_str = ":/frames";
 
-void initLogger() {
+QString initLogger() {
   try {
-    QString logs_path =
-        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
-        c_log_str;
 
 #ifdef Q_OS_ANDROID
     auto console_logger = std::make_shared<spdlog::sinks::android_sink_st>();
@@ -21,8 +19,16 @@ void initLogger() {
 #endif
     console_logger->set_level(spdlog::level::debug);
 
+    const QString logs_path =
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
+        c_log_dir_str;
+    if (!QDir().exists(logs_path)) {
+      QDir().mkpath(logs_path);
+    }
+    const QString log_file_path = logs_path + c_log_file_str;
+
     auto file_logger = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-        QDir().toNativeSeparators(logs_path).toStdString(), 1024 * 1024, 5,
+        QDir().toNativeSeparators(log_file_path).toStdString(), 1024 * 1024, 5,
         false);
     file_logger->set_level(spdlog::level::err);
 
@@ -33,14 +39,16 @@ void initLogger() {
         c_logger_str, begin(sinks), end(sinks));
 
     spdlog::set_default_logger(combined_logger);
-    spdlog::info("Log file path {}", logs_path.toStdString());
+    spdlog::info("Log file path {}", log_file_path.toStdString());
 
+    return log_file_path;
   } catch (const spdlog::spdlog_ex &ex) {
 #ifndef Q_OS_IOS
     // TODO fix iOS exception
     // UNI_ASSERT(false);
 #endif
   }
+  return QString();
 }
 
 #ifdef Q_OS_ANDROID
@@ -154,18 +162,20 @@ int main(int argc, char *argv[]) {
     setScreenOrientation();*/
 #endif
 
-  initLogger();
+  QCoreApplication::setOrganizationName(c_org_str);
+  QCoreApplication::setApplicationName(c_app_str);
+
+  const QString log_file_path = initLogger();
   spdlog::info("Initialize First Year application");
 
   QApplication a(argc, argv);
-  QCoreApplication::setOrganizationName(c_org_str);
-  QCoreApplication::setApplicationName(c_app_str);
+
   QCoreApplication::setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents);
   QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
 
   loadFonts();
 
-  FirstYear::Core::FrameControl frame_control(&a);
+  FirstYear::Core::FrameControl frame_control(&a, log_file_path);
   frame_control.LoadProject();
 
   const auto frames = collectFrames();

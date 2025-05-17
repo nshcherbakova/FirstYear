@@ -24,6 +24,7 @@ class LineEditWidget;
 class TextButton;
 class RearrangeWidget;
 class ClickableLabel;
+class InfoWidget;
 
 namespace Preview {
 class PreviewWidget;
@@ -49,6 +50,7 @@ private:
   void CreateTapText();
   void CreatePreviewWindow();
   void CreateRearrangeWidget(Core::FrameControl &frame_control);
+  void CreateInfoWidget();
 
   void UpdateFrames(TemplateWidgetHolder *exept);
   int CurrentTemplateIndex(FirstYear::Core::FrameControl &frame_control) const;
@@ -65,6 +67,7 @@ private:
 
   QPixmap Render(Core::FrameControl &control);
   void Share(const QPixmap &pixmap) const;
+  void ShareLog() const;
 
   void OnImagePicked(QString file, int month);
   bool SelectImages(QStringList files);
@@ -100,7 +103,9 @@ private:
   QSvgWidget *background_svg_ = nullptr;
   QPushButton *rearrange_button_ = nullptr;
   RearrangeWidget *rearrange_ = nullptr;
+  InfoWidget *info_widget_ = nullptr;
   QLabel *tap_text_ = nullptr;
+  QPushButton *info_button_ = nullptr;
 };
 } // namespace FirstYear::UI
 #endif // MAINWINDOW_H

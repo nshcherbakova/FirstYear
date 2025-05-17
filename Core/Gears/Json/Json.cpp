@@ -9,8 +9,7 @@ bool ReadString(const QJsonObject &json, QString key, QString &value) {
     return true;
   }
 
-  spdlog::error("Error while reading a string from json. {}",
-                key.toStdString());
+  spdlog::error("Error while reading a string from json {}", key.toStdString());
   return false;
 }
 
@@ -20,7 +19,7 @@ bool ReadInt(const QJsonObject &json, QString key, int &value) {
     return true;
   }
 
-  spdlog::error("Error while reading an int from json. {}", key.toStdString());
+  spdlog::error("Error while reading an int from json {}", key.toStdString());
   return false;
 }
 
@@ -30,8 +29,7 @@ bool ReadDouble(const QJsonObject &json, QString key, double &value) {
     return true;
   }
 
-  spdlog::error("Error while reading a double from json. {}",
-                key.toStdString());
+  spdlog::error("Error while reading a double from json {}", key.toStdString());
   return false;
 }
 
@@ -43,7 +41,7 @@ bool ReadSizeF(const QJsonObject &json, QString key, QSizeF &value) {
     return result;
   }
 
-  spdlog::error("Error while reading an QSizeF from json. {}",
+  spdlog::error("Error while reading an QSizeF from json {}",
                 key.toStdString());
   return false;
 }
@@ -56,7 +54,7 @@ bool ReadPoint(const QJsonObject &json, QString key, QPoint &value) {
     return result;
   }
 
-  spdlog::error("Error while reading an QPoint from json. {}",
+  spdlog::error("Error while reading an QPoint from json {}",
                 key.toStdString());
   return false;
 }

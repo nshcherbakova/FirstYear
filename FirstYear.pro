@@ -45,6 +45,7 @@ SOURCES += \
     UI/FrameData/FrameDataReader.cpp \
     UI/FrameWidgets/DefaultTemplateWidget.cpp \
     UI/FrameWidgets/RearrangeWidget.cpp \
+    UI/FrameWidgets/InfoWidget.cpp \
     UI/FrameWidgets/ImageButton.cpp \
     UI/FrameWidgets/Photo/PhotoProcessor.cpp \
     UI/FrameWidgets/PhotoTuneWidget.cpp \
@@ -82,6 +83,7 @@ HEADERS += \
     UI/FrameWidgets/DefaultTemplateWidget.h \
     UI/FrameWidgets/RearrangeWidget.h \
     UI/FrameWidgets/ImageButton.h \
+    UI/FrameWidgets/InfoWidget.h \
     UI/FrameWidgets/Photo.h \
     UI/FrameWidgets/Photo/PhotoProcessor.h \
     UI/FrameWidgets/PhotoTuneWidget.h \
@@ -121,14 +123,18 @@ android {
 ANDROID_VERSION_NAME = "1.0"
 
 contains(ANDROID_TARGET_ARCH,arm64-v8a) {
-    ANDROID_VERSION_CODE = "06415"
+    ANDROID_VERSION_CODE = "06416"
 }
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
-    ANDROID_VERSION_CODE = "03215"
+    ANDROID_VERSION_CODE = "03216"
 }
 
 contains(ANDROID_TARGET_ARCH,x86) {
-    ANDROID_VERSION_CODE = "08615"
+    ANDROID_VERSION_CODE = "08616"
+}
+
+contains(ANDROID_TARGET_ARCH,x86_64) {
+    ANDROID_VERSION_CODE = "08616"
 }
 
 ANDROID_TARGET_SDK_VERSION = "35"
@@ -159,6 +165,11 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
         $$PWD/android
 }
 contains(ANDROID_TARGET_ARCH,x86) {
+    ANDROID_PACKAGE_SOURCE_DIR = \
+        $$PWD/android
+}
+
+contains(ANDROID_TARGET_ARCH,x86_64) {
     ANDROID_PACKAGE_SOURCE_DIR = \
         $$PWD/android
 }
