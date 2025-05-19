@@ -90,6 +90,7 @@ private:
   mutable std::shared_ptr<ShareUtils::ShareUtilsCpp> share_utiles_;
   std::vector<TemplateWidgetHolder *> frame_widgets_;
   std::vector<QWidget *> controls_;
+  std::vector<QWidget *> child_widgets_;
   SwipeWidgetsList *swipe_view_ = nullptr;
   SwipeWidget *swipe_widget_ = nullptr;
   PhotoTuneWidget *photo_tune_widget_ = nullptr;

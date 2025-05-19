@@ -4,7 +4,6 @@
 // static const int c_image_scale_size = 1536;
 
 namespace FirstYear::Core {
-ImageManagerPtr PhotoData::image_manager_;
 
 bool absoluteToleranceCompare(double x, double y) {
   return std::fabs(x - y) <= std::numeric_limits<double>::epsilon();
@@ -43,12 +42,15 @@ void PhotoTransform::setOwner(PhotoData *owner) { owner_ = owner; }
 
 const PhotoData *PhotoTransform::owner() const { return owner_; }
 
-PhotoData::PhotoData()
+PhotoData::PhotoData(ImageManagerPtr image_manager)
     : transform_scale_rotate_(this, (short)STATE::UNCHANGED),
-      transform_offset_(this, (short)STATE::UNCHANGED) {}
+      transform_offset_(this, (short)STATE::UNCHANGED),
+      image_manager_(image_manager) {}
 
 void PhotoData::resetData(QString image_name, bool clear_state) {
-  image_id_ = image_name;
+  UNI_ASSERT(image_manager_);
+
+  setImageId(image_name);
 
   if (clear_state) {
     transform_scale_rotate_.reset();
@@ -75,14 +77,25 @@ void PhotoData::setTransforms(PhotoTransform transform_scale_rotate,
   }
 }
 const QPixmap &PhotoData::image() const {
-  return image_manager_->image(image_id_);
+  if (!cached_image_) {
+    return empty_;
+  }
+  return *cached_image_;
 }
 const QString PhotoData::imageId() const {
-  UNI_ASSERT(!image_id_.isEmpty());
+  // UNI_ASSERT(!image_id_.isEmpty());
   return image_id_;
 }
 
-void PhotoData::setImageId(QString image_id) { image_id_ = image_id; }
+void PhotoData::setImageId(QString image_id) {
+  UNI_ASSERT(image_manager_);
+  image_id_ = image_id;
+  cached_image_ = &(image_manager_->image(image_id_));
+  cached_is_stub_ = image_manager_->isStub(image_id_);
+  if (!cached_image_) {
+    spdlog::error("No image with id {0}", image_id_.toStdString());
+  }
+}
 
 const PhotoTransform &PhotoData::transformScaleRotate() const {
   return transform_scale_rotate_;
@@ -100,7 +113,7 @@ PhotoTransform &PhotoData::transformOffsetRef() { return transform_offset_; }
 
 short PhotoData::state() const { return state_; }
 
-bool PhotoData::isStub() const { return image_manager_->isStub(image_id_); }
+bool PhotoData::isStub() const { return cached_is_stub_; }
 
 void PhotoData::setState(short state) { state_ = state; }
 

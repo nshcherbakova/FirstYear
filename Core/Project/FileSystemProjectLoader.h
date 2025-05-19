@@ -11,7 +11,7 @@ namespace FirstYear::Core {
 
 class FileSystemProjectLoader : protected ProjectConstants {
 public:
-  ProjectPtr Load(QString name);
+  ProjectPtr Load(QString name, const ImageManagerPtr &image_manager);
 
 private:
   bool LoadMonth(int month_number, ProjectPtr &project);

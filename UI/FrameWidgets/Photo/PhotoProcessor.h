@@ -58,6 +58,7 @@ protected:
 protected:
   QTransform transform_;
   Core::PhotoDataPtr photo_data_;
+  // const QPixmap* image_ = nullptr;
   QPixmap frame_;
 
   double internal_scale_ = 1;

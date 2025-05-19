@@ -3,15 +3,8 @@
 
 namespace FirstYear::Core {
 
-ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
-  auto project = std::make_shared<Project>();
-  project->monthes_.resize(12);
-  for (int month_number = 0; month_number < (int)project->monthes_.size();
-       month_number++) {
-    auto &month = project->monthes_[month_number];
-    month.photo_data = std::make_shared<PhotoData>();
-  }
-
+ProjectPtr FileSystemProjectLoader::Load(QString /*name*/,
+                                         const ImageManagerPtr &image_manager) {
   QFile project_metadata_file(project_metadata_path_);
   qDebug() << "Load project: " << project_metadata_path_;
 
@@ -19,6 +12,14 @@ ProjectPtr FileSystemProjectLoader::Load(QString /*name*/) {
     spdlog::info("Couldn't open file {0}.",
                  project_metadata_path_.toStdString());
     return nullptr;
+  }
+
+  auto project = std::make_shared<Project>();
+  project->monthes_.resize(12);
+  for (int month_number = 0; month_number < (int)project->monthes_.size();
+       month_number++) {
+    auto &month = project->monthes_[month_number];
+    month.photo_data = std::make_shared<PhotoData>(image_manager);
   }
 
   const QByteArray project_metadata = project_metadata_file.readAll();

@@ -134,19 +134,15 @@ static const char *c_select_button_style_str =
 
 static const char *c_info_button_style_str =
     "QPushButton#Info{"
-    "background-color: rgba(207, 209, 191, 200);"
-    "color:#9B8463;; "
-    "font-size: 20px; "
+    "background-color: rgba(169, 134, 83,130);"
+    "color:#CFD1BF; "
+    "font-size: 28px; "
     //   "font-family: Typo Round Regular Demo;"
     "border-style: solid;"
     "border-radius: 20;"
-    "border-color: #9B8463;"
-    "border-width: 3;"
+    "border-width: 0;"
     "}"
-    "QPushButton#Select:pressed {border-color: #C3BED1;}"
-    "QPushButton#Select:pressed{color: #C3BED1;}"
-    "QPushButton#Select:disabled {border-color: #C3BED1;}"
-    "QPushButton#Select:disabled{color: #C3BED1;}";
+    "QPushButton#Info:pressed{background-color: rgba(169, 134, 83,90);}";
 
 static const char *c_share_log_button_style_str =
     "QPushButton#ShareLogButton{"

@@ -13,6 +13,7 @@ void PhotoPainter::init(const Core::PhotoDataPtr &photo,
                         QRectF destanation_rect, QRectF boundary_rect) {
 
   photo_data_ = photo;
+  // image_ = &(photo_data_->image());
   boundary_rect_ = boundary_rect;
   destanation_rect_ = destanation_rect;
 

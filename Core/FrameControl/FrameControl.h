@@ -10,7 +10,7 @@
 
 namespace FirstYear::Core {
 
-class FrameControl : public QObject {
+class FrameControl : public QObject, private ProjectConstants {
   Q_OBJECT
 public:
   explicit FrameControl(QObject *parent, QString log_file_path);

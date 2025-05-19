@@ -20,7 +20,8 @@ private:
   QPixmap image_;
 };
 
-PreviewPhotoData::PreviewPhotoData(QPixmap image) : image_(image) {}
+PreviewPhotoData::PreviewPhotoData(QPixmap image)
+    : Core::PhotoData(nullptr), image_(image) {}
 
 const QPixmap &PreviewPhotoData::image() const { return image_; }
 

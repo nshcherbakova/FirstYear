@@ -174,7 +174,7 @@ void RearrangeWidget::load(Core::FrameControl &control) {
     photo_text_widget->setFont(font);
   }
 
-  delete_->setSize(!vertical_orientation ? QSize(80, 40) : QSize(110, 60));
+  delete_->setSize(!vertical_orientation ? QSize(90, 50) : QSize(110, 60));
   const int delete_top =
       (vertical_orientation ? height() - delete_->height() - hmargins * 1.4
                             : height() - delete_->height() - hmargins / 2);

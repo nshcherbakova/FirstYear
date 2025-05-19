@@ -42,18 +42,10 @@ bool saveFile(QString path, std::function<bool(QString namec)> saveFunction) {
 }
 
 bool FileSystemProjectWriter::CheckExistingProject() {
-  return QDir().exists(project_data_path_);
+  return QDir().exists(project_metadata_path_);
 }
 
 bool FileSystemProjectWriter::CreateProjectFiles() {
-
-  QDir project_dir(project_data_path_);
-  UNI_ENSURE_RETURN(!project_dir.exists(), false);
-  if (!QDir().mkpath(project_data_path_)) {
-    spdlog::error("Error while creating directory {0}",
-                  project_data_path_.toStdString());
-    return false;
-  }
 
   QFile projetct_metadata(project_metadata_path_);
   if (!projetct_metadata.open(QIODevice::WriteOnly)) {

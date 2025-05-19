@@ -237,6 +237,8 @@ void MainWindow::CreatePreviewWindow() {
   });
   connect(preview_, &Preview::PreviewWidget::SignalClosed, this,
           [&] { setEnabledControls(true); });
+
+  child_widgets_.push_back(preview_);
 }
 
 int MainWindow::CurrentTemplateIndex(
@@ -327,6 +329,8 @@ void MainWindow::CreatePhotoTuneWidget(
             line_edit_->show();
             line_edit_->raise();
           });
+
+  child_widgets_.push_back(photo_tune_widget_);
 }
 
 void MainWindow::CreateInfoWidget() {
@@ -336,6 +340,8 @@ void MainWindow::CreateInfoWidget() {
   connect(
       info_widget_, &InfoWidget::SignalShareLog, this, [&]() { ShareLog(); },
       Qt::QueuedConnection);
+
+  child_widgets_.push_back(info_widget_);
 }
 
 void MainWindow::CreateRearrangeWidget(
@@ -399,6 +405,8 @@ void MainWindow::CreateRearrangeWidget(
       rearrange_, &RearrangeWidget::SignalDeleteButtonClicked, this,
       [&](std::vector<int> month_indexes) { DeletePhotos(month_indexes); },
       Qt::QueuedConnection);
+
+  child_widgets_.push_back(rearrange_);
 }
 
 void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
@@ -1008,35 +1016,27 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event) {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
 
-  if (photo_tune_widget_->isVisible()) {
-
-    photo_tune_widget_->hide();
-
+  if (line_edit_->isVisible()) {
+    line_edit_->hide();
     setEnabledControls(true);
-
     event->ignore();
-  } else if (preview_->isVisible()) {
-    preview_->hide();
-
-    setEnabledControls(true);
-
-    event->ignore();
-  } else if (rearrange_->isVisible()) {
-    rearrange_->hide();
-
-    setEnabledControls(true);
-
-    event->ignore();
-  } else if (info_widget_->isVisible()) {
-    info_widget_->hide();
-
-    setEnabledControls(true);
-
-    event->ignore();
-  } else {
-    project_control_.SaveProject();
-    QMainWindow::closeEvent(event);
+    return;
   }
+
+  for (auto &widget : child_widgets_) {
+    if (widget->isVisible()) {
+
+      widget->hide();
+
+      setEnabledControls(true);
+
+      event->ignore();
+      return;
+    }
+  }
+
+  project_control_.SaveProject();
+  QMainWindow::closeEvent(event);
 }
 
 void MainWindow::setEnabledControls(bool enabled) {

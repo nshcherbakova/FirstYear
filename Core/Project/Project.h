@@ -34,16 +34,16 @@ private:
 
 class PhotoData {
 public:
-  explicit PhotoData();
+  explicit PhotoData(ImageManagerPtr image_manager);
   virtual ~PhotoData(){};
+
+  PhotoData &operator=(const PhotoData &) = delete;
 
 public:
   enum class STATE : short {
     UNCHANGED = 0x01,
     CHANGED = 0x01,
   };
-
-  static ImageManagerPtr image_manager_;
 
 public:
   virtual const QPixmap &image() const;
@@ -69,6 +69,10 @@ protected:
   PhotoTransform transform_offset_;
 
   mutable short state_ = 0;
+  ImageManagerPtr image_manager_;
+  const QPixmap *cached_image_ = nullptr;
+  bool cached_is_stub_ = true;
+  QPixmap empty_;
 };
 
 struct MonthItem {

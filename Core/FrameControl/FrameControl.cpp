@@ -18,9 +18,7 @@ namespace FirstYear::Core {
 
 FrameControl::FrameControl(QObject *parent, QString log_file_path)
     : QObject(parent), image_manager_(std::make_shared<ImageManager>()),
-      log_file_path_(log_file_path), save_timer_(new QTimer(this)) {
-
-  PhotoData::image_manager_ = image_manager_;
+      save_timer_(new QTimer(this)), log_file_path_(log_file_path) {
 
   save_timer_->setInterval(c_save_timeout * 1000);
 
@@ -35,13 +33,24 @@ FrameControl::FrameControl(QObject *parent, QString log_file_path)
 }
 
 ProjectPtr FrameControl::LoadProject() {
+
+  QDir project_dir(project_data_path_);
+  if (!project_dir.exists()) {
+    if (!QDir().mkpath(project_data_path_)) {
+      spdlog::error("Error while creating directory {0}",
+                    project_data_path_.toStdString());
+      return nullptr;
+    }
+  }
+
+  image_manager_->loadImages(monthes.size());
   if (auto name = LastProjectName(); !name.isEmpty()) {
     LoadProject(name);
   }
   if (!current_project_) {
     CreateNewProject();
   }
-  image_manager_->loadImages(monthes.size());
+
   return current_project_;
 }
 
@@ -62,7 +71,7 @@ void FrameControl::SaveProjectMonth(int month) {
 }
 
 void FrameControl::LoadProject(QString name) {
-  current_project_ = FileSystemProjectLoader().Load(name);
+  current_project_ = FileSystemProjectLoader().Load(name, image_manager_);
 }
 
 ProjectPtr FrameControl::CurrentProject() { return current_project_; }
@@ -79,7 +88,7 @@ void FrameControl::CreateNewProject() {
     auto &month = current_project_->monthes_[month_number];
     month.text = monthes[month_number];
     month.state |= (short)Core::MonthItem::STATE::CHANGED;
-    month.photo_data = std::make_shared<PhotoData>();
+    month.photo_data = std::make_shared<PhotoData>(image_manager_);
     month.photo_data->resetData(QString::number(month_number), false);
   }
 
@@ -188,7 +197,7 @@ const QPixmap &ImageManager::image(QString image_name) const {
   if (const auto it = images_.find(image_name); it != images_.end())
     return it->second;
   else {
-    spdlog::error("Image was nof found in cache {0}", image_name.toStdString());
+    spdlog::error("Image was not found in cache {0}", image_name.toStdString());
     return empty_;
   }
 }
