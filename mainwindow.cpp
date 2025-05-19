@@ -951,7 +951,7 @@ void MainWindow::resizeEvent(QResizeEvent *e) {
                    : select_images_button_->geometry().top());
 
     info_button_->setGeometry(
-        {{height() / 57, info_butoon_top}, info_button_->size()});
+        {{height() / 55, info_butoon_top}, info_button_->size()});
   }
 
   if (tap_text_) {

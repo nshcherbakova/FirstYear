@@ -6,7 +6,6 @@ namespace FirstYear::UI {
 InfoWidget::InfoWidget(QWidget *parent, Core::FrameControl &frame_control)
     : QWidget(parent), frame_control_(frame_control) {
   setObjectName("Info");
-  setContentsMargins(0, 0, 0, 0);
 
   setAutoFillBackground(true);
   auto palette = QWidget::palette();
@@ -55,7 +54,6 @@ void InfoWidget::resizeEvent(QResizeEvent *e) {
 
 void InfoWidget::mouseReleaseEvent(QMouseEvent *e) {
   QWidget::mouseReleaseEvent(e);
-
-  hide();
+  QTimer::singleShot(300, this, [&]() { hide(); });
 }
 } // namespace FirstYear::UI
