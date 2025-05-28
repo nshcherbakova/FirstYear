@@ -52,8 +52,6 @@ private:
   QPixmap image_to_paint_;
 };
 
-static const char *c_title_defoult_text_str = "My First Year";
-
 ////////////////////////////////////////////////////////////////////
 ///
 ///
@@ -292,8 +290,8 @@ void TemplateWidgetBase::load(Core::FrameControl &control) {
   InitPhotos(control);
 
   auto project = control.CurrentProject();
-  title_text_widget_->setText(
-      project->title_.isEmpty() ? c_title_defoult_text_str : project->title_);
+  title_text_widget_->setText(project->title_.isEmpty() ? tr("My First Year")
+                                                        : project->title_);
 }
 
 void TemplateWidgetBase::InitPhotos(Core::FrameControl &control) {

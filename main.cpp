@@ -153,6 +153,21 @@ void loadFonts() {
   }
 }
 
+void localization(QApplication &application, QTranslator &translator) {
+
+  qDebug() << "language: " << QLocale::system().language();
+
+  if (QLocale::system().language() != QLocale::Russian) {
+    return;
+  }
+
+  const auto translation_file_name = QString(":/translations/translation_ru");
+  if (!translator.load(translation_file_name)) {
+    spdlog::error("Can't load {}", translation_file_name.toStdString());
+  }
+  application.installTranslator(&translator);
+}
+
 int main(int argc, char *argv[]) {
 
 #ifdef Q_OS_ANDROID
@@ -169,6 +184,15 @@ int main(int argc, char *argv[]) {
   spdlog::info("Initialize First Year application");
 
   QApplication a(argc, argv);
+
+  QTranslator translator;
+  localization(a, translator);
+  /*QTranslator translator;
+  if(!translator.load(":/translations/translation_ru"))
+  {
+       spdlog::info("Can't load translation_ru");
+  }
+  a.installTranslator(&translator);*/
 
   QCoreApplication::setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents);
   QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);

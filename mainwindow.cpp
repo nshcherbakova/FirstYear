@@ -467,7 +467,7 @@ void MainWindow::CreateFrames(FirstYear::Core::FrameControl &frame_control,
 
 void MainWindow::DeletePhoto(int month_index) {
   QMessageBox msgBox;
-  msgBox.setWindowTitle("Delete this photo?");
+  msgBox.setWindowTitle(tr("Delete this photo?"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
   int ret = msgBox.exec();
 
@@ -484,8 +484,8 @@ void MainWindow::DeletePhoto(int month_index) {
 
 void MainWindow::DeletePhotos(std::vector<int> month_indexes) {
   QMessageBox msgBox;
-  msgBox.setWindowTitle(month_indexes.size() == 1 ? "Delete this photo?"
-                                                  : "Delete this photos?");
+  msgBox.setWindowTitle(month_indexes.size() == 1 ? tr("Delete this photo?")
+                                                  : tr("Delete this photos?"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
   int ret = msgBox.exec();
 
@@ -645,11 +645,11 @@ void MainWindow::CreateSwipeWidget(
 
 QString MainWindow::SelectButtonText(int count) {
   if (count == 12 || count == 0) {
-    return "Load photos";
+    return tr("Load photos");
   } else if (count != 1) {
-    return QString("Load %1 photos").arg(count);
+    return tr("Load %1 photos").arg(count);
   } else {
-    return "Load a photo";
+    return tr("Load a photo");
   }
 }
 void MainWindow::CreateButtons(Core::FrameControl &control) {
@@ -659,7 +659,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
   preview_button_->setStyleSheet(c_white_button_style_str);
 
   preview_button_->setSize(QSize(120, 60));
-  preview_button_->setText("Preview");
+  preview_button_->setText(tr("Preview"));
   //  preview_button_->setVisible(false);
   controls_.push_back(preview_button_);
 
@@ -709,7 +709,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
   rearrange_button_ = new QPushButton(this);
   rearrange_button_->setObjectName("Rearrange");
   rearrange_button_->setStyleSheet(c_rearrange_button_str);
-  rearrange_button_->setText("Rearrange");
+  rearrange_button_->setText(tr("Rearrange"));
 
   connect(rearrange_button_, &QPushButton::clicked, this,
           [&] { rearrange_->show(); });
@@ -745,7 +745,7 @@ void MainWindow::CreateButtons(Core::FrameControl &control) {
 
 void MainWindow::ShowLoadingDialogStub(std::function<void()> f) {
 
-  QProgressDialog progress("Loading...", "", 0, 100, this);
+  QProgressDialog progress(tr("Loading..."), "", 0, 100, this);
   progress.setStyleSheet(c_progress_dialog_style_str);
   progress.setMinimumDuration(1);
   progress.setCancelButton(nullptr);
@@ -762,7 +762,7 @@ void MainWindow::CreateTapText() {
   tap_text_ = new QLabel(this);
   tap_text_->setObjectName("TapText");
   tap_text_->setStyleSheet(c_tap_text_style_str);
-  tap_text_->setText("tap photo to edit");
+  tap_text_->setText(tr("tap photo to edit"));
   tap_text_->setWordWrap(true);
 
   controls_.push_back(tap_text_);
@@ -771,7 +771,7 @@ void MainWindow::CreateTapText() {
 }
 
 bool MainWindow::SelectImages(QStringList files) {
-  QProgressDialog progress("Loading photos...", "", 0, files.size(), this);
+  QProgressDialog progress(tr("Loading photos..."), "", 0, files.size(), this);
   progress.setStyleSheet(c_progress_dialog_style_str);
   progress.setMinimumDuration(500);
   progress.setCancelButton(nullptr);

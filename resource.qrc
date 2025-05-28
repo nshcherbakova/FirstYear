@@ -132,4 +132,7 @@
         <file alias="foreground_to_render">resources/Frames/Bunny/foreground_to_render.png</file>
           <file alias="properties">resources/Frames/Bunny/properties.json</file>
     </qresource>
-</RCC>
+    <qresource prefix="translations">
+        <file alias="translation_ru">translation_ru.qm</file>
+    </qresource>
+    </RCC>

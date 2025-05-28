@@ -48,7 +48,7 @@ PreviewWidget::PreviewWidget(QWidget &parent)
           [&]() { emit SignalShareImage(); });
 
   close_ = new TextButton(this, true);
-  close_->setText("Back");
+  close_->setText(tr("Back"));
   close_->setSize(QSize(110, 60));
   close_->setObjectName("Close");
   close_->setStyleSheet(c_close_button_style_str);

@@ -3,8 +3,6 @@
 #include <UI/FrameData/FrameDataReader.h>
 #include <stdafx.h>
 
-static const char *c_title_defoult_text_str = "Rearrange photos";
-
 namespace FirstYear::UI {
 
 RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
@@ -20,14 +18,14 @@ RearrangeWidget::RearrangeWidget(QWidget *parent, Core::FrameControl &control)
   createPhotoTextWidgets();
 
   close_ = new TextButton(this);
-  close_->setText("Ok");
+  close_->setText(tr("Ok"));
   close_->setSize(QSize(110, 60));
   close_->setObjectName("LightButton");
   close_->setStyleSheet(c_light_button_style_str);
   connect(close_, &QPushButton::clicked, this, [&]() { hide(); });
 
   delete_ = new TextButton(this);
-  delete_->setText("Delete");
+  delete_->setText(tr("Delete"));
   delete_->setObjectName("Delete");
   delete_->setStyleSheet(c_delete_button_style_str);
   connect(delete_, &QPushButton::clicked, this, [&]() {
@@ -98,7 +96,7 @@ void RearrangeWidget::resizeEvent(QResizeEvent *e) {
   QRect rect = {side_margins, top_margins, width() - 2 * side_margins,
                 text_width};
   title_text_widget_->setGeometry(rect);
-  title_text_widget_->setText(c_title_defoult_text_str);
+  title_text_widget_->setText(tr("Rearrange photos"));
 
   auto font = title_text_widget_->font();
   font.setPointSize(portrait ? text_width / 6 : text_width / 2);

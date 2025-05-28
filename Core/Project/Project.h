@@ -88,12 +88,13 @@ struct MonthItem {
   };
 };
 
-class Project {
+class Project : public QObject {
+  Q_OBJECT
 public:
   using MonthItems = std::vector<MonthItem>;
-
+  virtual ~Project(){};
   QString id_; // project id
-  QString title_ = "My First Year";
+  QString title_ = QObject::tr("My First Year");
   QString frame_id_; // frame identificator
   MonthItems monthes_;
 

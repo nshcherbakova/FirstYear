@@ -14,14 +14,13 @@ InfoWidget::InfoWidget(QWidget *parent, Core::FrameControl &frame_control)
 
   text_ = new QLabel(this);
   text_->setObjectName("InfoText");
-  text_->setText(QString("<h2>First Year</h2><br/><br/>"
-                         "NShchApps<br/>"
-                         "Version %1")
+  text_->setText(QString(tr("<h2>First Year</h2><br/><br/>") +
+                         QString("NShchApps<br/>") + tr("Version %1"))
                      .arg(QCoreApplication::applicationVersion()));
   text_->setWordWrap(true);
 
   share_ = new TextButton(this);
-  share_->setText("Share an errors report");
+  share_->setText(tr("Share an errors report"));
   share_->setSize(QSize(280, 70));
   share_->setObjectName("ShareLogButton");
   share_->setStyleSheet(c_share_log_button_style_str);

@@ -35,6 +35,7 @@
 #include <QSvgWidget>
 // #include <QTextEdit>
 #include <QTouchEvent>
+#include <QTranslator>
 #include <QVariant>
 #include <QWidget>
 #include <QtWidgets/QApplication>

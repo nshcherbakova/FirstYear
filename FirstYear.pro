@@ -114,6 +114,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
+TRANSLATIONS = translation_ru.ts
 
 RESOURCES += \
     resource.qrc
@@ -123,18 +124,18 @@ android {
 ANDROID_VERSION_NAME = "1.0"
 
 contains(ANDROID_TARGET_ARCH,arm64-v8a) {
-    ANDROID_VERSION_CODE = "06416"
+    ANDROID_VERSION_CODE = "06417"
 }
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
-    ANDROID_VERSION_CODE = "03216"
+    ANDROID_VERSION_CODE = "03217"
 }
 
 contains(ANDROID_TARGET_ARCH,x86) {
-    ANDROID_VERSION_CODE = "08616"
+    ANDROID_VERSION_CODE = "08617"
 }
 
 contains(ANDROID_TARGET_ARCH,x86_64) {
-    ANDROID_VERSION_CODE = "08616"
+    ANDROID_VERSION_CODE = "08617"
 }
 
 ANDROID_TARGET_SDK_VERSION = "35"

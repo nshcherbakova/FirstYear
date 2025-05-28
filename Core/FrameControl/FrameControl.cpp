@@ -8,9 +8,7 @@
 constexpr const char *DEF_PROGECT_NAME = "Frame";
 constexpr const char *c_stub_month_photo_template_str =
     ":images/month_stubs/month_stub_%1";
-static const QStringList monthes = {"one",  "two", "three",  "four",
-                                    "five", "six", "seven",  "eight",
-                                    "nine", "ten", "eleven", "twelve"};
+
 constexpr const char *c_photo_prefix_str = "photo";
 constexpr const int c_save_timeout = 20;
 
@@ -20,12 +18,17 @@ FrameControl::FrameControl(QObject *parent, QString log_file_path)
     : QObject(parent), image_manager_(std::make_shared<ImageManager>()),
       save_timer_(new QTimer(this)), log_file_path_(log_file_path) {
 
+  monthes_text_ =
+      QStringList{tr("one"),  tr("two"), tr("three"),  tr("four"),
+                  tr("five"), tr("six"), tr("seven"),  tr("eight"),
+                  tr("nine"), tr("ten"), tr("eleven"), tr("twelve")};
+
   save_timer_->setInterval(c_save_timeout * 1000);
 
   connect(save_timer_, &QTimer::timeout, this, [&]() {
     FileSystemProjectWriter().Write(current_project_);
 
-    for (int i = 0; i < monthes.size(); i++) {
+    for (int i = 0; i < monthes_text_.size(); i++) {
       FileSystemProjectWriter().Write(current_project_, i);
     };
     save_timer_->start();
@@ -43,7 +46,7 @@ ProjectPtr FrameControl::LoadProject() {
     }
   }
 
-  image_manager_->loadImages(monthes.size());
+  image_manager_->loadImages(monthes_text_.size());
   if (auto name = LastProjectName(); !name.isEmpty()) {
     LoadProject(name);
   }
@@ -80,13 +83,13 @@ QString FrameControl::LastProjectName() const { return DEF_PROGECT_NAME; }
 
 void FrameControl::CreateNewProject() {
   current_project_ = std::make_shared<Project>();
-  current_project_->monthes_.resize(monthes.size());
+  current_project_->monthes_.resize(monthes_text_.size());
   current_project_->state |= (short)Project::STATE::CHANGED;
 
-  for (int month_number = 0; month_number < (int)monthes.size();
+  for (int month_number = 0; month_number < (int)monthes_text_.size();
        month_number++) {
     auto &month = current_project_->monthes_[month_number];
-    month.text = monthes[month_number];
+    month.text = monthes_text_[month_number];
     month.state |= (short)Core::MonthItem::STATE::CHANGED;
     month.photo_data = std::make_shared<PhotoData>(image_manager_);
     month.photo_data->resetData(QString::number(month_number), false);

@@ -137,7 +137,7 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
           &PhotoTuneWidget::SignalOpenFile);
 
   close_ = new TextButton(this, true);
-  close_->setText("Ok");
+  close_->setText(tr("Ok"));
   close_->setSize(QSize(110, 60));
   close_->setObjectName("LightButton");
   close_->setStyleSheet(c_light_button_style_str);

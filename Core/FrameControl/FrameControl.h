@@ -35,6 +35,7 @@ private:
 
   QTimer *save_timer_ = nullptr;
   QString log_file_path_;
+  QStringList monthes_text_;
 };
 
 class ImageManager : private ProjectConstants {
