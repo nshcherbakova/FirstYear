@@ -24,7 +24,11 @@
                 "alignment": 1,
                 "font": "Rounded Elegance",
                 "font_color": "#ffffff",
-                "font_size": 45
+                "font_size": 45,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 42
+                }
             }
         },
         "1": {

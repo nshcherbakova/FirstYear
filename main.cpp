@@ -217,15 +217,15 @@ int main(int argc, char *argv[]) {
   spdlog::info("Initialize First Year application");
 
   QApplication a(argc, argv);
+  QCoreApplication::setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents);
+  QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
 
   const auto locale = loadLocale();
-  FirstYear::Core::FrameControl frame_control({&a, log_file_path, locale});
 
   QTranslator translator;
   localization(a, translator, locale);
 
-  QCoreApplication::setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents);
-  QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
+  FirstYear::Core::FrameControl frame_control({&a, log_file_path, locale});
 
   loadFonts(locale);
 

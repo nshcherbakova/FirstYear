@@ -24,7 +24,12 @@
                 "alignment": 1,
                 "font": "Timeburner",
                 "font_color": "#000000",
-                "font_size": 50
+                "font_size": 50,
+                "ru": {
+                    "font": "Caveat",
+                    "font_size": 50,
+                    "font_color": "#787875"
+                }
             }
         },
         "1": {

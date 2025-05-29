@@ -25,7 +25,11 @@
                 "alignment": 132,
                 "font": "Bellany",
                 "font_color": "#969692",
-                "font_size": 50
+                "font_size": 50,
+                "ru":{
+                    "font": "Good Vibes Pro",
+                    "font_size": 50
+                }
             }
         },
         "1": {
@@ -310,13 +314,13 @@
         "font_color": "#669692",
         "font_size": 120,
         "ru":{
-            "font": "Sacramento"
+            "font": "Caveat"
         },
         "rect": {
             "left": 40,
             "top": 50,
             "width": 1150,
-            "height": 190
+            "height": 220
         }
     }
 }

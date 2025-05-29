@@ -78,6 +78,8 @@
      <file alias="header_13_font">resources/Fonts/ru/monof55.ttf</file>
      <file alias="header_14_font">resources/Fonts/ru/Vasek Italic_0.ttf</file>
      <file alias="header_15_font">resources/Fonts/PassionsConflictRUS-Regular.otf</file>
+      <file alias="header_16_font">resources/Fonts/ru/GoodVibesCyr.ttf</file>
+      <file alias="header_17_font">resources/Fonts/ru/Caveat.ttf</file>
 </qresource>
     <qresource prefix="/frames/1">
         <file alias="foreground">resources/Frames/1/foreground.png</file>

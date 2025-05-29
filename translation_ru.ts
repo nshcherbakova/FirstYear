@@ -6,62 +6,62 @@
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="21"/>
         <source>one</source>
-        <translation>1</translation>
+        <translation>1 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="21"/>
         <source>two</source>
-        <translation>2</translation>
+        <translation>2 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="21"/>
         <source>three</source>
-        <translation>3</translation>
+        <translation>3 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="21"/>
         <source>four</source>
-        <translation>4</translation>
+        <translation>4 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="22"/>
         <source>five</source>
-        <translation>5</translation>
+        <translation>5 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="22"/>
         <source>six</source>
-        <translation>6</translation>
+        <translation>6 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="22"/>
         <source>seven</source>
-        <translation>7</translation>
+        <translation>7 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="22"/>
         <source>eight</source>
-        <translation>8</translation>
+        <translation>8 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="23"/>
         <source>nine</source>
-        <translation>9</translation>
+        <translation>9 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="23"/>
         <source>ten</source>
-        <translation>10</translation>
+        <translation>10 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="23"/>
         <source>eleven</source>
-        <translation>11</translation>
+        <translation>11 мес</translation>
     </message>
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="23"/>
         <source>twelve</source>
-        <translation>12</translation>
+        <translation>12 мес</translation>
     </message>
 </context>
 <context>

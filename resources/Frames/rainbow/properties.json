@@ -24,7 +24,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 37
+                }
             }
         },
         "1": {
@@ -49,7 +53,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "10": {
@@ -74,7 +82,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "11": {
@@ -99,7 +111,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "2": {
@@ -124,7 +140,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "3": {
@@ -149,7 +169,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "4": {
@@ -174,7 +198,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "5": {
@@ -199,7 +227,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "6": {
@@ -224,7 +256,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "7": {
@@ -249,7 +285,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "8": {
@@ -274,7 +314,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 40
+                }
             }
         },
         "9": {
@@ -299,7 +343,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 35
+                }
             }
         }
     },

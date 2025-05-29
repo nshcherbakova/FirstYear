@@ -24,7 +24,11 @@
                 "alignment": 132,
                 "font": "Timeburner",
                 "font_color": "#ffffff",
-                "font_size": 40
+                "font_size": 40,
+                "ru": {
+                    "font": "Cruinn",
+                    "font_size": 35
+                }
             }
         },
         "1": {
