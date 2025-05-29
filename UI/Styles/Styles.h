@@ -199,7 +199,7 @@ static const char *c_clickable_label_style_str =
 
 static const char *c_tap_text_style_str = "QLabel#TapText{"
                                           "background-color: transparent;"
-                                          "font-size: 23px; "
+                                          "font-size: 20px; "
                                           "border: none;"
                                           "color:#A98653; "
                                           "}";

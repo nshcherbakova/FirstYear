@@ -313,13 +313,13 @@
         "font_color": "#6faa29",
         "font_size": 130,
         "ru":{
-            "font": "TS Remarker"
+            "font": "Bad Script"
         },
         "rect": {
             "left": 40,
             "top": 40,
             "width": 1160,
-            "height": 195
+            "height": 250
         }
     }
 }

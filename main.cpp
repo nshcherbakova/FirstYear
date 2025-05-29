@@ -7,7 +7,6 @@ static const char *c_log_dir_str = "/logs/";
 static const char *c_log_file_str = "FirstYearLog.txt";
 static const char *c_logger_str = "logger";
 static const char *c_fonts_dir_str = ":/fonts";
-static const char *c_frames_dir_str = ":/frames";
 static const char *c_dev_settings_file_str = "DeveloperSettings.ini";
 
 QString initLogger() {
@@ -149,12 +148,12 @@ QString loadLocale() {
 
 QStringList collectFrames() {
 
-  return {
-      "rainbow", "1",      "giraffe", "2",       "Girl",    "shapes",  "Bunny",
-      "stars",   "Light2", "colors",  "Pattern", "baloons", "Flowers",
-  };
+  const QString list =
+      QObject::tr("rainbow,1,giraffe,2,Girl,shapes,Bunny,stars,Light2,colors,"
+                  "Pattern,baloons,Flowers");
+  return list.split(",");
 
-  QStringList frames;
+  /*QStringList frames;
   QDirIterator it(c_frames_dir_str);
 
   while (it.hasNext()) {
@@ -162,7 +161,7 @@ QStringList collectFrames() {
     qDebug() << fn.fileName();
     frames << fn.fileName();
   }
-  return frames;
+  return frames;*/
 }
 
 void loadFonts(const QString &locale) {

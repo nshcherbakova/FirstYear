@@ -4,62 +4,62 @@
 <context>
     <name>FirstYear::Core::FrameControl</name>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="21"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="27"/>
         <source>one</source>
         <translation>1 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="21"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="27"/>
         <source>two</source>
         <translation>2 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="21"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="27"/>
         <source>three</source>
         <translation>3 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="21"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="27"/>
         <source>four</source>
         <translation>4 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="22"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="28"/>
         <source>five</source>
         <translation>5 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="22"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="28"/>
         <source>six</source>
         <translation>6 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="22"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="28"/>
         <source>seven</source>
         <translation>7 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="22"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="28"/>
         <source>eight</source>
         <translation>8 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="23"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="29"/>
         <source>nine</source>
         <translation>9 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="23"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="29"/>
         <source>ten</source>
         <translation>10 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="23"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="29"/>
         <source>eleven</source>
         <translation>11 мес</translation>
     </message>
     <message>
-        <location filename="Core/FrameControl/FrameControl.cpp" line="23"/>
+        <location filename="Core/FrameControl/FrameControl.cpp" line="29"/>
         <source>twelve</source>
         <translation>12 мес</translation>
     </message>
@@ -72,12 +72,12 @@
         <translation>&lt;h2&gt;Первый год&lt;/h2&gt;&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="UI/FrameWidgets/InfoWidget.cpp" line="19"/>
+        <location filename="UI/FrameWidgets/InfoWidget.cpp" line="18"/>
         <source>Version %1</source>
         <translation>Версия %1</translation>
     </message>
     <message>
-        <location filename="UI/FrameWidgets/InfoWidget.cpp" line="24"/>
+        <location filename="UI/FrameWidgets/InfoWidget.cpp" line="23"/>
         <source>Share an errors report</source>
         <translation>Поделиться логом</translation>
     </message>
@@ -181,15 +181,18 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="main.cpp" line="178"/>
-        <location filename="main.cpp" line="180"/>
         <source>test</source>
-        <translation>тест</translation>
+        <translation type="vanished">тест</translation>
     </message>
     <message>
-        <location filename="Core/Project/Project.h" line="98"/>
+        <location filename="Core/Project/Project.h" line="97"/>
         <source>My First Year</source>
         <translation>Мой первый год</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="151"/>
+        <source>rainbow,1,giraffe,2,Girl,shapes,Bunny,stars,Light2,colors,Pattern,baloons,Flowers</source>
+        <translation type="unfinished">giraffe,Flowers,1,rainbow,2,Girl,shapes,Bunny,stars,Light2,colors,Pattern,baloons</translation>
     </message>
 </context>
 <context>

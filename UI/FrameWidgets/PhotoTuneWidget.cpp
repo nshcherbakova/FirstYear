@@ -161,7 +161,8 @@ PhotoTuneWidget::PhotoTuneWidget(QWidget &parent)
   connect(prev_, &QPushButton::clicked, this,
           [&]() { emit SignalTunePrevImage(); });
 
-  text_ = new TouchClickableLabel(this, 10, c_tune_frame_text_color_str, "");
+  text_ = new TouchClickableLabel(this, 10, c_tune_frame_text_color_str,
+                                  QApplication::font().family());
   text_->setAlignment(Qt::AlignCenter);
   connect(text_, &ClickableLabel::clicked, this,
           [&] { emit SignalTextClicked(text_->text()); });
