@@ -4,10 +4,11 @@
 static const char *c_org_str = "natshch";
 static const char *c_app_str = "FirstYear";
 static const char *c_log_dir_str = "/logs/";
-static const char *c_log_file_str = "/FirstYearLog.txt";
+static const char *c_log_file_str = "FirstYearLog.txt";
 static const char *c_logger_str = "logger";
 static const char *c_fonts_dir_str = ":/fonts";
 static const char *c_frames_dir_str = ":/frames";
+static const char *c_dev_settings_file_str = "DeveloperSettings.ini";
 
 QString initLogger() {
   try {
@@ -126,6 +127,26 @@ void setScreenOrientation() {
 
 #endif
 
+QString loadLocale() {
+  const auto settings_path =
+      QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" +
+      c_dev_settings_file_str;
+  /*{
+  QSettings developer_settings1(settings_path, QSettings::IniFormat);
+  developer_settings1.setValue("locale", "ru");
+  }*/
+  if (QFileInfo::exists(settings_path)) {
+    QSettings developer_settings(settings_path, QSettings::IniFormat);
+    const auto locale = developer_settings.value("locale");
+
+    if (locale.isValid()) {
+      return locale.toString();
+    }
+  }
+  return QLocale::languageToCode(QLocale::system().language(),
+                                 QLocale::ISO639Alpha2);
+}
+
 QStringList collectFrames() {
 
   return {
@@ -144,26 +165,38 @@ QStringList collectFrames() {
   return frames;
 }
 
-void loadFonts() {
-  QDirIterator it(c_fonts_dir_str);
+void loadFonts(const QString &locale) {
+
+  QString fonts_dir = QString(c_fonts_dir_str) + "/" + locale;
+
+  if (QDir(fonts_dir).isEmpty()) {
+    fonts_dir = c_fonts_dir_str;
+  }
+  QDirIterator it(fonts_dir);
   while (it.hasNext()) {
-    const QString fn = it.nextFileInfo().fileName();
-    QFontDatabase::addApplicationFont(QString(c_fonts_dir_str) + "/" + fn);
+    const auto &file_info = it.nextFileInfo();
+
+    if (!file_info.isFile() || !file_info.isReadable()) {
+      continue;
+    }
+
+    const QString fn = file_info.fileName();
+    QFontDatabase::addApplicationFont(QString(fonts_dir) + "/" + fn);
     qDebug() << "Font file: " << fn;
   }
 }
 
-void localization(QApplication &application, QTranslator &translator) {
+void localization(QApplication &application, QTranslator &translator,
+                  const QString &locale) {
 
-  qDebug() << "language: " << QLocale::system().language();
+  qDebug() << "language: " << locale;
 
-  if (QLocale::system().language() != QLocale::Russian) {
-    return;
-  }
-
-  const auto translation_file_name = QString(":/translations/translation_ru");
+  const auto translation_file_name =
+      QString(":/translations/translation_") + locale;
   if (!translator.load(translation_file_name)) {
-    spdlog::error("Can't load {}", translation_file_name.toStdString());
+    spdlog::info("Can't load translation file {} for locale {}",
+                 translation_file_name.toStdString(), locale.toStdString());
+    return;
   }
   application.installTranslator(&translator);
 }
@@ -185,27 +218,22 @@ int main(int argc, char *argv[]) {
 
   QApplication a(argc, argv);
 
+  const auto locale = loadLocale();
+  FirstYear::Core::FrameControl frame_control({&a, log_file_path, locale});
+
   QTranslator translator;
-  localization(a, translator);
-  /*QTranslator translator;
-  if(!translator.load(":/translations/translation_ru"))
-  {
-       spdlog::info("Can't load translation_ru");
-  }
-  a.installTranslator(&translator);*/
+  localization(a, translator, locale);
 
   QCoreApplication::setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents);
   QCoreApplication::setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
 
-  loadFonts();
+  loadFonts(locale);
 
-  FirstYear::Core::FrameControl frame_control(&a, log_file_path);
   frame_control.LoadProject();
 
   const auto frames = collectFrames();
 
   FirstYear::UI::MainWindow w(frame_control, frames);
-  // todo list of farmes and registration system
 
   w.show();
 

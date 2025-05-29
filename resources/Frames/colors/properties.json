@@ -305,9 +305,12 @@
     },
     "title": {
         "alignment": 36,
-        "font": "Apalu",
+         "font": "Apalu",
         "font_color": "#4f4019",
         "font_size": 170,
+        "ru":{
+            "font": "Vasek"
+        },
         "rect": {
             "left": 40,
             "top": 50,

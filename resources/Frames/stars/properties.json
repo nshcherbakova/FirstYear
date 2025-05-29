@@ -308,6 +308,10 @@
         "font": "Walkway Bold",
         "font_color": "#4f4019",
         "font_size": 140,
+        "ru":{
+            "font": "Cruinn",
+            "font_size": 120
+        },
         "rect": {
             "left": 40,
             "top": 50,

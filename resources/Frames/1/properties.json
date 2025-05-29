@@ -309,6 +309,9 @@
         "font": "Bellany",
         "font_color": "#669692",
         "font_size": 120,
+        "ru":{
+            "font": "Sacramento"
+        },
         "rect": {
             "left": 40,
             "top": 50,

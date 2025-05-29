@@ -9,22 +9,44 @@ bool ReadTextParameters(const QJsonObject &object, TextParameters &parameters) {
   bool result = true;
 
   int alignment = 0;
-  result = result && Core::Json::ReadInt(object, "alignment", alignment);
-  parameters.alignment = (Qt::Alignment)alignment;
+  if (object.contains("alignment")) {
+    result = result && Core::Json::ReadInt(object, "alignment", alignment);
+    if (result) {
+      parameters.alignment = (Qt::Alignment)alignment;
+    }
+  }
 
-  result = result && Core::Json::ReadString(object, "font", parameters.font);
+  if (object.contains("font")) {
+    result = result && Core::Json::ReadString(object, "font", parameters.font);
+  }
+  if (object.contains("font_size")) {
+    result = result &&
+             Core::Json::ReadDouble(object, "font_size", parameters.font_size);
+  }
+  if (object.contains("font_color")) {
+    result = result && Core::Json::ReadString(object, "font_color",
+                                              parameters.font_color);
+  }
+  return result;
+}
 
-  result = result &&
-           Core::Json::ReadDouble(object, "font_size", parameters.font_size);
+bool ReadTextParametersLocalized(const QJsonObject &object,
+                                 TextParameters &parameters,
+                                 const Core::Context &contex) {
 
-  result = result &&
-           Core::Json::ReadString(object, "font_color", parameters.font_color);
+  bool result = ReadTextParameters(object, parameters);
+
+  if (object.contains(contex.locale())) {
+    if (const auto data = object[contex.locale()]; data.isObject()) {
+      result = result && ReadTextParameters(data.toObject(), parameters);
+    }
+  }
 
   return result;
 }
 
 bool readTitle(const QJsonObject &json, QString name,
-               TitleParameters &parameters) {
+               TitleParameters &parameters, const Core::Context &context) {
   if (const auto data = json[name]; data.isObject()) {
     const auto object = data.toObject();
 
@@ -33,7 +55,8 @@ bool readTitle(const QJsonObject &json, QString name,
     result =
         result && Core::Json::ReadRect(object, "rect", parameters.title_rect);
 
-    result = result && ReadTextParameters(object, parameters.text_parameters);
+    result = result && ReadTextParametersLocalized(
+                           object, parameters.text_parameters, context);
 
     return result;
   }
@@ -41,7 +64,8 @@ bool readTitle(const QJsonObject &json, QString name,
 }
 
 bool ReadPhotoTextParameters(const QJsonObject &json,
-                             PhotoTextParameters &parameters) {
+                             PhotoTextParameters &parameters,
+                             const Core::Context &context) {
   bool result = true;
 
   result =
@@ -49,20 +73,21 @@ bool ReadPhotoTextParameters(const QJsonObject &json,
 
   if (const auto data = json["text"]; data.isObject()) {
     const auto object = data.toObject();
-    result = result && ReadTextParameters(object, parameters.text_parameters);
+    result = result && ReadTextParametersLocalized(
+                           object, parameters.text_parameters, context);
   }
   return result;
 }
 
 bool readMonth(const QJsonObject &json, QString name,
-               MonthParameters &parameters) {
+               MonthParameters &parameters, const Core::Context &context) {
   if (const auto data = json[name]; data.isObject()) {
     const auto object = data.toObject();
 
     bool result = true;
 
-    result =
-        result && ReadPhotoTextParameters(object, parameters.text_parameters);
+    result = result && ReadPhotoTextParameters(
+                           object, parameters.text_parameters, context);
     result =
         result && Core::Json::ReadRectF(object, "slot", parameters.photo_slot);
 
@@ -87,7 +112,8 @@ bool readMonth(const QJsonObject &json, QString name,
 }
 
 bool FrameDataReader::readJson(const QString &id,
-                               PhotoFrameParameters &parameters) {
+                               PhotoFrameParameters &parameters,
+                               const Core::Context &context) {
 
   QFile file(QString(c_foreground_parameters_str).arg(id));
   if (!file.open(QIODevice::ReadOnly)) {
@@ -102,7 +128,7 @@ bool FrameDataReader::readJson(const QString &id,
   auto json = document.object();
 
   Core::Json::ReadString(json, "position", parameters.position);
-  readTitle(json, "title", parameters.title_parameters);
+  readTitle(json, "title", parameters.title_parameters, context);
 
   bool result = true;
   if (const auto data = json["mothes"]; data.isObject()) {
@@ -111,7 +137,7 @@ bool FrameDataReader::readJson(const QString &id,
     parameters.months_parameters.resize(12);
     for (int i = 0; i < 12; ++i) {
       result = result && readMonth(object, QString::number(i),
-                                   parameters.months_parameters[i]);
+                                   parameters.months_parameters[i], context);
     }
   }
   return result;

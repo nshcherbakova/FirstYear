@@ -14,10 +14,15 @@ constexpr const int c_save_timeout = 20;
 
 namespace FirstYear::Core {
 
-FrameControl::FrameControl(QObject *parent, QString log_file_path)
-    : QObject(parent), image_manager_(std::make_shared<ImageManager>()),
-      save_timer_(new QTimer(this)), log_file_path_(log_file_path) {
+Context::Context(const QString &locale) : locale_(locale) {}
 
+QString Context::locale() const { return locale_; }
+
+FrameControl::FrameControl(FrameControlParameters parameters)
+    : QObject(parameters.parent),
+      image_manager_(std::make_shared<ImageManager>()),
+      save_timer_(new QTimer(this)), log_file_path_(parameters.log_file_path),
+      context_(parameters.locale) {
   monthes_text_ =
       QStringList{tr("one"),  tr("two"), tr("three"),  tr("four"),
                   tr("five"), tr("six"), tr("seven"),  tr("eight"),
@@ -101,6 +106,8 @@ void FrameControl::CreateNewProject() {
 ImageManagerPtr FrameControl::imageManager() { return image_manager_; }
 
 QString FrameControl::logFilePath() const { return log_file_path_; }
+
+const Context &FrameControl::context() { return context_; }
 
 static const int c_image_scale_size = 1536;
 

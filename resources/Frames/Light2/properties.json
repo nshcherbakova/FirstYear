@@ -305,9 +305,12 @@
     },
     "title": {
         "alignment": 36,
-        "font": "Anisa Sans",
+         "font": "Anisa Sans",
         "font_color": "#6faa29",
         "font_size": 130,
+        "ru":{
+            "font": "TS Remarker"
+        },
         "rect": {
             "left": 40,
             "top": 40,

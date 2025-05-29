@@ -12,6 +12,7 @@ using PhotoDataPtr = std::shared_ptr<PhotoData>;
 class FrameControl;
 class ImageManager;
 using ImageManagerPtr = std::shared_ptr<ImageManager>;
+class Context;
 } // namespace FirstYear::Core
 
 namespace FirstYear::UI {

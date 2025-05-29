@@ -309,6 +309,9 @@
         "font": "Vanilla Extract",
         "font_color": "#adbf80",
         "font_size": 80,
+        "ru":{
+            "font": "Comic Helvetic"
+        },
         "rect": {
             "left": 40,
             "top": 30,

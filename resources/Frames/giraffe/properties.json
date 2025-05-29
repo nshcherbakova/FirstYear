@@ -308,6 +308,10 @@
         "font": "Anisa Sans",
         "font_color": "#36a3ad",
         "font_size": 130,
+        "ru":{
+            "font": "TS Remarker",
+            "font_size": 150
+        },
         "rect": {
             "left": 40,
             "top": 40,

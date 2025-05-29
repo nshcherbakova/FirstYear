@@ -9,11 +9,27 @@
 #include <unordered_map>
 
 namespace FirstYear::Core {
+class Context {
+public:
+  Context(const QString &locale);
+
+public:
+  QString locale() const;
+
+private:
+  const QString locale_;
+};
+
+struct FrameControlParameters {
+  QObject *parent;
+  const QString log_file_path;
+  const QString locale;
+};
 
 class FrameControl : public QObject, private ProjectConstants {
   Q_OBJECT
 public:
-  explicit FrameControl(QObject *parent, QString log_file_path);
+  explicit FrameControl(FrameControlParameters parameters);
   FrameControl &operator=(const FrameControl &) = delete;
 
   ProjectPtr LoadProject();
@@ -23,6 +39,7 @@ public:
   ImageManagerPtr imageManager();
 
   QString logFilePath() const;
+  const Context &context();
 
 private:
   void LoadProject(QString name);
@@ -36,12 +53,10 @@ private:
   QTimer *save_timer_ = nullptr;
   QString log_file_path_;
   QStringList monthes_text_;
+  Context context_;
 };
 
 class ImageManager : private ProjectConstants {
-public:
-  ImageManager() {}
-
 public:
   void loadImages(int month_count);
   const QPixmap &image(QString image_name) const;

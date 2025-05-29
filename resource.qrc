@@ -63,10 +63,22 @@
         <file alias="header_3_font">resources/Fonts/Apalu.ttf</file>
         <file alias="header_4_font">resources/Fonts/VanillaExtractRegular.ttf</file>
         <file alias="header_5_font">resources/Fonts/Anisa Sans.ttf</file>
-             <file alias="header_8_font">resources/Fonts/Rounded Elegance.ttf</file>
- <file alias="header_10_font">resources/Fonts/Walkway Bold.ttf</file>
-             <!--file alias="header_11_font">resources/Fonts/Typo_Round_Regular_Demo.otf</file-->
+        <file alias="header_8_font">resources/Fonts/Rounded Elegance.ttf</file>
+        <file alias="header_10_font">resources/Fonts/Walkway Bold.ttf</file>
+        <!--file alias="header_11_font">resources/Fonts/Typo_Round_Regular_Demo.otf</file-->
+        <file alias="header_12_font">resources/Fonts/PassionsConflictRUS-Regular.otf</file>
     </qresource>
+
+<qresource prefix="/fonts/ru">
+    <file alias="header_2_font">resources/Fonts/ru/BubbleSans-Regular.otf</file>
+    <file alias="header_3_font">resources/Fonts/ru/Cruinn_Regular.ttf</file>
+    <file alias="header_10_font">resources/Fonts/ru/Sacramento.ttf</file>
+     <file alias="header_11_font">resources/Fonts/ru/Vitaliy Tsygankov - TS Remarker Regular 2.otf</file>
+     <file alias="header_12_font">resources/Fonts/ru/ComicHelvetic_Medium.otf</file>
+     <file alias="header_13_font">resources/Fonts/ru/monof55.ttf</file>
+     <file alias="header_14_font">resources/Fonts/ru/Vasek Italic_0.ttf</file>
+     <file alias="header_15_font">resources/Fonts/PassionsConflictRUS-Regular.otf</file>
+</qresource>
     <qresource prefix="/frames/1">
         <file alias="foreground">resources/Frames/1/foreground.png</file>
         <file alias="foreground_to_render">resources/Frames/1/foreground_to_render.png</file>

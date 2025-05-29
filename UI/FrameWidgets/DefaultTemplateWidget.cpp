@@ -90,7 +90,8 @@ TemplateWidgetBase::TemplateWidgetBase(
 
   PhotoFrameParameters parameters;
 
-  FrameDataReader::readJson(widget_parameters.id, parameters);
+  FrameDataReader::readJson(widget_parameters.id, parameters,
+                            control_.context());
   fillParameters(parameters);
 
   setContentsMargins(0, 0, 0, 0);

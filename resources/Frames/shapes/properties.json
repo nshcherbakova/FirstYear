@@ -308,11 +308,14 @@
         "font": "Anisa Sans",
         "font_color": "#337187",
         "font_size": 130,
+        "ru":{
+            "font": "monofur"
+        },
         "rect": {
             "left": 40,
             "top": 40,
             "width": 1160,
-            "height": 195
+            "height": 220
         }
     }
 }

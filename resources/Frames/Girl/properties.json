@@ -308,11 +308,15 @@
         "font": "Vanilla Extract",
         "font_color": "#64a8b2",
         "font_size": 110,
+        "ru":{
+            "font": "Vasek",
+            "font_size": 200
+        },
         "rect": {
             "left": 40,
             "top": 40,
             "width": 1160,
-            "height": 195
+            "height": 240
         }
     }
 }

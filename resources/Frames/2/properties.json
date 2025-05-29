@@ -305,9 +305,12 @@
     },
     "title": {
         "alignment": 36,
-        "font": "Timeburner",
+         "font": "Timeburner",
         "font_color": "#000000",
         "font_size": 120,
+        "ru":{
+            "font": "Cruinn"
+        },
         "rect": {
             "left": 40,
             "top": 50,
