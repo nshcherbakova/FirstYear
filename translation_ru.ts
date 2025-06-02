@@ -61,7 +61,7 @@
     <message>
         <location filename="Core/FrameControl/FrameControl.cpp" line="29"/>
         <source>twelve</source>
-        <translation>12 мес</translation>
+        <translation>ГОД!</translation>
     </message>
 </context>
 <context>
@@ -175,7 +175,7 @@
     <message>
         <location filename="UI/FrameWidgets/DefaultTemplateWidget.cpp" line="294"/>
         <source>My First Year</source>
-        <translation>Мой первый год</translation>
+        <translation>Мой первый год!</translation>
     </message>
 </context>
 <context>
@@ -187,7 +187,7 @@
     <message>
         <location filename="Core/Project/Project.h" line="97"/>
         <source>My First Year</source>
-        <translation>Мой первый год</translation>
+        <translation>Мой первый год!</translation>
     </message>
     <message>
         <location filename="main.cpp" line="151"/>
