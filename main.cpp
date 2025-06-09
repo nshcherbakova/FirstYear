@@ -53,10 +53,11 @@ QString initLogger() {
 
 #ifdef Q_OS_ANDROID
 bool requestStoragePermission() {
-  const QVector<QString> permissions(
-      {"android.permission.WRITE_EXTERNAL_STORAGE",
-       "android.permission.READ_EXTERNAL_STORAGE",
-       "android.permission.MANAGE_EXTERNAL_STORAGE"});
+  const QVector<QString> permissions({
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.READ_EXTERNAL_STORAGE"
+      // ,"android.permission.MANAGE_EXTERNAL_STORAGE"
+  });
 
   for (const QString &permission : permissions) {
     auto result = QtAndroidPrivate::checkPermission(permission);
@@ -204,8 +205,10 @@ int main(int argc, char *argv[]) {
 
 #ifdef Q_OS_ANDROID
 
-  /*  requestStoragePermission();
-    accessAllFiles();
+  if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Android13) {
+    requestStoragePermission();
+  }
+  /*   accessAllFiles();
     setScreenOrientation();*/
 #endif
 

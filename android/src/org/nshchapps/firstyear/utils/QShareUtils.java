@@ -36,6 +36,7 @@
 
 package org.nshchapps.firstyear.utils;
 
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -167,6 +168,7 @@ public class QShareUtils {
         }
 
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        sendIntent.setClipData(ClipData.newRawUri("", uri));
 
         if (mimeType == null || mimeType.isEmpty()) {
             // fallback if mimeType not set

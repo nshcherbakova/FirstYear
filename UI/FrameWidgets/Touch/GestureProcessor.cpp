@@ -5,10 +5,13 @@
 namespace FirstYear::UI {
 
 #if QT_VERSION != QT_VERSION_CHECK(6, 4, 2)
+#define CHECK_GESTURES
+#ifdef CHECK_GESTURES
 static const double c_zoom_max = 0.2;
 // static const double c_pos_chenge_max = 20;
 static const double c_pos_velocity_max = 2000;
 static const double c_angle_change_max = 30;
+#endif
 #endif
 
 GestureProcessor::GestureProcessor() {
@@ -84,7 +87,7 @@ bool GestureProcessor::toucheEvent(QTouchEvent *touch) {
       continue;
     default: {
 
-#if QT_VERSION != QT_VERSION_CHECK(6, 4, 2)
+#if QT_VERSION != QT_VERSION_CHECK(6, 4, 2) && defined CHECK_GESTURES
       if (touchPoint.velocity().toPoint().manhattanLength() >
           c_pos_velocity_max) {
         continue;
@@ -133,7 +136,7 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
   if (changeFlags & QPinchGesture::RotationAngleChanged) {
     qreal rotation_delta =
         gesture->rotationAngle() - gesture->lastRotationAngle();
-#if QT_VERSION != QT_VERSION_CHECK(6, 4, 2)
+#if QT_VERSION != QT_VERSION_CHECK(6, 4, 2) && defined CHECK_GESTURES
     if (abs(rotation_delta) >= c_angle_change_max) {
       rotation_delta = 0.0;
     }
@@ -143,7 +146,7 @@ void GestureProcessor::pinchTriggered(QPinchGesture *gesture) {
   }
   if (changeFlags & QPinchGesture::ScaleFactorChanged) {
 
-#if QT_VERSION == QT_VERSION_CHECK(6, 4, 2)
+#if QT_VERSION == QT_VERSION_CHECK(6, 4, 2) || !defined CHECK_GESTURES
     const auto scale = gesture->scaleFactor();
 #else
     const auto scale = fabs(gesture->scaleFactor() - 1.0) > c_zoom_max

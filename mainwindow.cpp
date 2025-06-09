@@ -838,11 +838,18 @@ void MainWindow::Share(const QPixmap &pixmap) const {
   if (!share_utiles_) {
     share_utiles_ = std::make_shared<ShareUtils::ShareUtilsCpp>();
   }
-  auto tmp_path = QStandardPaths::writableLocation(
-                      QStandardPaths::StandardLocation::PicturesLocation) +
-                  c_share_image_tmp_name_str;
+  const QString share_location_dir = QStandardPaths::writableLocation(
+      QStandardPaths::StandardLocation::PicturesLocation);
 
-  pixmap.save(tmp_path, c_save_share_image_format_str);
+  if (!QDir(share_location_dir).exists()) {
+    spdlog::error("A path doesn't exist: {}", share_location_dir.toStdString());
+  }
+
+  auto tmp_path = share_location_dir + c_share_image_tmp_name_str;
+
+  if (!pixmap.save(tmp_path, c_save_share_image_format_str)) {
+    spdlog::error("File was not saved: {}", tmp_path.toStdString());
+  }
 
   share_utiles_->sendFile(tmp_path, "View File", c_share_image_mime_type_str,
                           0);
