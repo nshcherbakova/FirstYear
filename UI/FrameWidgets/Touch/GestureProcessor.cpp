@@ -5,7 +5,7 @@
 namespace FirstYear::UI {
 
 #if QT_VERSION != QT_VERSION_CHECK(6, 4, 2)
-#define CHECK_GESTURES
+// #define CHECK_GESTURES
 #ifdef CHECK_GESTURES
 static const double c_zoom_max = 0.2;
 // static const double c_pos_chenge_max = 20;

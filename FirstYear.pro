@@ -121,6 +121,8 @@ RESOURCES += \
 
 android {
 
+QMAKE_LFLAGS += -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
+
 ANDROID_VERSION_NAME = "1.0"
 ANDROID_VERSION_CODE_LOW = "21"
 

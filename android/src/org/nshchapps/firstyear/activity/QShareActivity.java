@@ -56,7 +56,7 @@ import java.io.File;
 import java.lang.String;
 
 import android.os.Bundle;
-import com.google.firebase.analytics.FirebaseAnalytics;
+//import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class QShareActivity extends QtActivity {
     // native - must be implemented in Cpp via JNI
@@ -73,7 +73,7 @@ public class QShareActivity extends QtActivity {
 
     private static String TAG = "QShareActivity";
 
-       private static FirebaseAnalytics mFirebaseAnalytics;
+    //private static FirebaseAnalytics mFirebaseAnalytics;
 
     // Use a custom Chooser without providing own App as share target !
     // see QShareUtils.java createCustomChooserAndStartActivity()
@@ -98,14 +98,14 @@ public class QShareActivity extends QtActivity {
             }
         }
 
-     mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+    /* mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
      Bundle fe_bundle = new Bundle();
     mFirebaseAnalytics.logEvent("share_image", fe_bundle);
 
     Bundle viewItemParams = new Bundle();
     mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, viewItemParams);
-
+*/
 
     } // onCreate
 
@@ -162,11 +162,12 @@ public class QShareActivity extends QtActivity {
 
     // process the Intent if Action is SEND or VIEW
     private void processIntent() {
-          Bundle fe_bundle = new Bundle();
+       /*   Bundle fe_bundle = new Bundle();
          mFirebaseAnalytics.logEvent("share_image", fe_bundle);
 
          Bundle viewItemParams = new Bundle();
          mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, viewItemParams);
+*/
 
         Intent intent = getIntent();
         // Log.d(TAG, " process Intent");

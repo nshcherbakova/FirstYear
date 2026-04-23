@@ -75,8 +75,8 @@ public class QShareUtils {
     private static Activity m_activity = null;
 
     public static Activity getActivity() {
-        return QtNative.activity();
-    //    return m_activity;
+       // return QtNative.activity();
+        return m_activity;
     }
 
     public static void setActivity(Activity activity) {

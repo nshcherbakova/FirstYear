@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "899899085056",
+    "project_id": "firstyear-2cb47",
+    "storage_bucket": "firstyear-2cb47.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899899085056:android:f2fefce26ad46e05f0e3e5",
+        "android_client_info": {
+          "package_name": "org.nshchapps.firstyear"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQTbJsLK3RiRM6i3p4vMIjLULttaoDB5o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
